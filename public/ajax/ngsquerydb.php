@@ -11,7 +11,8 @@ $query = new dbfuncs();
 $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamples', 'grabReload', 'getReportNames', 'lanesToSamples',
 				'checkMatePaired', 'getAllSampleIds', 'getLaneIdFromSample', 'getSingleSample', 'getSeriesIdFromLane', 'getAllLaneIds',
                 'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'profileLoad',
-                'obtainAmazonKeys', 'checkAmazonPermissions', 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples'];
+                'obtainAmazonKeys', 'checkAmazonPermissions', 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples',
+                'getLanesFromName'];
 
 $data = "";
                 
@@ -585,13 +586,23 @@ else if($p == 'getSamplesFromName')
             $sqlnames.= "'".$n."'";    
         }
     }
-    $data=$query->queryTable("
-    SELECT ns.id
-    FROM ngs_samples ns, ngs_lanes nl, ngs_experiment_series ne 
-    WHERE ns.name in ($sqlnames)
-    AND ns.lane_id = nl.id and nl.name = '$lane'
-    AND ns.series_id = ne.id and ne.experiment_name = '$experiment';
-    ");
+    if(strpos($lane, ',') !== false){
+        $data=$query->queryTable("
+        SELECT DISTINCT ns.id
+        FROM ngs_samples ns, ngs_lanes nl, ngs_experiment_series ne 
+        WHERE ns.name in ($sqlnames)
+        AND nl.id = ns.lane_id and nl.name in ($lane)
+        AND ns.series_id = ne.id and ne.experiment_name = '$experiment';
+        ");
+    }else{
+        $data=$query->queryTable("
+        SELECT DISTINCT ns.id
+        FROM ngs_samples ns, ngs_lanes nl, ngs_experiment_series ne 
+        WHERE ns.name in ($sqlnames)
+        AND nl.id = ns.lane_id and nl.name = $lane
+        AND ns.series_id = ne.id and ne.experiment_name = '$experiment';
+        ");
+    }
 }
 else if ($p == 'getLanesWithSamples')
 {
@@ -609,7 +620,17 @@ else if ($p == 'getLanesWithSamples')
     )
     ");
 }
-
+else if ($p == 'getLanesFromName')
+{
+    if (isset($_GET['lane'])){$lane = $_GET['lane'];}
+    if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+    $data=$query->queryTable("
+    SELECT DISTINCT nl.id
+    FROM ngs_lanes nl, ngs_experiment_series ne 
+    WHERE nl.name in ($lane)
+    AND nl.series_id = ne.id and ne.experiment_name = '$experiment';
+    ");
+}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

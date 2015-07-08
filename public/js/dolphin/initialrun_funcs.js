@@ -30,7 +30,6 @@ function organismSelect(org){
 }
 
 $(function() {
-	
 	if (typeof(initialSubmission) != undefined && window.location.href.split("/")[window.location.href.split("/").length -1] == 'process') {
 		var initial_split = initialSubmission.split(",");
 		var json;
@@ -101,8 +100,14 @@ $(function() {
 			json = json + '"trim":"none","split":"none","commonind":"none"}'
 			
 			var names_list = initialNameList.split(",");
-			sample_lane = initial_split[5];
-			
+			console.log(initial_split);
+			for(var y = 5; y < initial_split.length; y++ ){
+				if (y == 5){
+					sample_lane = "'" + initial_split[y] + "'";
+				}else{
+					sample_lane = sample_lane + ",'" + initial_split[y] + "'";
+				}
+			}
 		}
 		
 		if (json != undefined & outdir != undefined && runname != undefined && rundesc != undefined) {
@@ -110,7 +115,22 @@ $(function() {
 			var run_ids = [];
 			var initial_run_ids = [];
 			var names_to_ids = [];
+			var lanes_to_ids = [];
 			
+			console.log(names_list);
+			$.ajax({
+				type: 	'GET',
+				url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
+				data:  	{ p: 'getLanesFromName', lane: sample_lane, experiment: experiment_series },
+				async:	false,
+				success: function(s)
+				{
+					for(var x = 0; x < s.length; x++){
+						lanes_to_ids.push(s[x].id);
+					}
+				}
+			});
+			console.log(lanes_to_ids);
 			$.ajax({
 				type: 	'GET',
 				url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
@@ -123,6 +143,7 @@ $(function() {
 					}
 				}
 			});
+			console.log(names_to_ids)
 			$.ajax({
 				type: 	'GET',
 				url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
@@ -135,6 +156,7 @@ $(function() {
 					}
 				}
 			});
+			console.log(run_ids);
 			if (run_ids.length > 0) {
 				$.ajax({
 					type: 	'GET',
@@ -167,8 +189,6 @@ $(function() {
 						});
 						if (added_samples.length > 0) {
 							var submitted = postInsertRunlist('insertRunList', added_samples, initial_run_ids[x]);
-						}else{
-							console.log('works?');
 						}
 					}
 				}
@@ -177,7 +197,8 @@ $(function() {
 				var runparamsInsert = postInsertRunparams(json, outdir, runname, rundesc);
 				console.log(runparamsInsert);
 				//insert new values into ngs_runlist
-				var submitted = postInsertRunlist(runparamsInsert[0], names_to_ids, runparamsInsert[1]);	
+				var submitted = postInsertRunlist(runparamsInsert[0], names_to_ids, runparamsInsert[1]);
+				console.log(submitted);
 			}
 			
 		}

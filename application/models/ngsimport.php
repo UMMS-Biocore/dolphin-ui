@@ -505,6 +505,8 @@ class Ngsimport extends VanillaModel {
 				if($this->sheetData[3][$j]=="Lane name"){
 					if ($this->laneList == null){
 						$this->laneList = $samp->lane_name;
+					}else if(strpos($this->laneList, $samp->lane_name) === false){
+						$this->laneList .= ','.$samp->lane_name;
 					}
 				}
 				if($this->sheetData[3][$j]=="organism" && $this->organismCheck == null){
