@@ -1316,7 +1316,7 @@ class samples extends main{
 				}
 			}
 		}
-		if(strtolower($sample->name) == 'nobarcode'){
+		if(strpos(strtolower($sample->name), 'nobarcode') !== false){
 			if(!$underscore_mark){
 					$samplename.="_";
 				}
