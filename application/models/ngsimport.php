@@ -1320,7 +1320,7 @@ class samples extends main{
 			if(!$underscore_mark){
 					$samplename.="_";
 				}
-			$samplename.= "nobarcode";
+			$samplename.= "$sample->name";
 		}
 		
 		$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '$samplename' WHERE `id` = $sample_id");
