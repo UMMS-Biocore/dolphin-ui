@@ -115,7 +115,6 @@ $(function() {
 			var run_ids = [];
 			var initial_run_ids = [];
 			var names_to_ids = [];
-			
 			console.log(names_list);
 			$.ajax({
 				type: 	'GET',
@@ -159,10 +158,12 @@ $(function() {
 				if (initial_run_ids.length > 0){
 					for(var x = 0; x < initial_run_ids.length; x++){
 						var added_samples = [];
+						nonaltered_files = [];
+						altered_files = [];
 						$.ajax({
 							type: 	'GET',
 							url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
-							data:  	{ p: 'checkRunToSamples', run_id: initial_run_ids[x], sample_ids: names_to_ids.toString()},
+							data:  	{ p: 'checkRunToSamples', run_id: initial_run_ids[x]},
 							async:	false,
 							success: function(s)
 							{
@@ -175,6 +176,9 @@ $(function() {
 						});
 						if (added_samples.length > 0) {
 							var submitted = postInsertRunlist('insertRunList', added_samples, initial_run_ids[x]);
+							console.log(submitted);
+							var runparamsInsert = postInsertRunparams(json, outdir, runname, rundesc);
+							console.log(runparamsInsert)
 						}
 					}
 				}

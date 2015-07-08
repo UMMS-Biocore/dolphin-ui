@@ -26,25 +26,40 @@ if ($p == "submitPipeline" )
     if (isset($_POST['uid'])){$uid = $_POST['uid'];}
     if (isset($_POST['gids'])){$gids = $_POST['gids'];}
     
-	//run_group_id set to -1 as a placeholder.Cannot grab primary key as it's being made, so a placeholder is needed.
-	$data=$query->runSQL("
-	INSERT INTO biocore.ngs_runparams (run_group_id, outdir, run_status, barcode, json_parameters, run_name, run_description,
-    owner_id, group_id, perms, date_created, date_modified, last_modified_user)
-	VALUES (-1, '$outdir', 0, $barcode, '$json', '$name', '$desc',
-    $uid, NULL, 3, now(), now(), $uid)");
-	//need to grab the id for runlist insertion
-        $idKey=$query->queryAVal("SELECT id FROM biocore.ngs_runparams WHERE run_group_id = -1 and run_name = '$name' order by id desc limit 1");
+    $outdir_check = $query->queryAVal("SELECT outdir FROM ngs_runparams WHERE outdir = '$outdir'");
+    
+    if($outdir_check == $outdir){
+        $data=$query->runSQL("
+        UPDATE ngs_runparams
+        SET run_status = 0,
+        date_modified = now()
+        WHERE outdir = '$outdir'
+        ");
+        $idKey=$query->queryAVal("SELECT id FROM biocore.ngs_runparams WHERE outdir = '$outdir' limit 1");
         $cmd = "cd ../../scripts && echo 'Re-run started($idKey)' >> ../tmp/run.log && python dolphin_wrapper.py -r $idKey >> ../tmp/run.log 2>&1 & echo $! &";
         pclose(popen( $cmd, "r"));
-	//update required to make run_group_id equal to it's primary key "id".Replace the arbitrary -1 with the id
-	if (isset($_POST['runid'])){$runGroupID = $_POST['runid'];}
-	if( $runGroupID == 'new'){
-		$data=$query->runSQL("UPDATE biocore.ngs_runparams SET run_group_id = id WHERE run_group_id = -1");
-	}else{
-		$data=$query->runSQL("UPDATE biocore.ngs_runparams SET run_group_id = $runGroupID WHERE run_group_id = -1");
-		$idKey= $idKey - $runGroupID;
-	}
-	$data=$idKey;
+        $data=$idKey;
+    }else{
+        //run_group_id set to -1 as a placeholder.Cannot grab primary key as it's being made, so a placeholder is needed.
+        $data=$query->runSQL("
+        INSERT INTO biocore.ngs_runparams (run_group_id, outdir, run_status, barcode, json_parameters, run_name, run_description,
+        owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+        VALUES (-1, '$outdir', 0, $barcode, '$json', '$name', '$desc',
+        $uid, NULL, 3, now(), now(), $uid)");
+        //need to grab the id for runlist insertion
+            $idKey=$query->queryAVal("SELECT id FROM biocore.ngs_runparams WHERE run_group_id = -1 and run_name = '$name' order by id desc limit 1");
+            $cmd = "cd ../../scripts && echo 'Re-run started($idKey)' >> ../tmp/run.log && python dolphin_wrapper.py -r $idKey >> ../tmp/run.log 2>&1 & echo $! &";
+            pclose(popen( $cmd, "r"));
+        //update required to make run_group_id equal to it's primary key "id".Replace the arbitrary -1 with the id
+        if (isset($_POST['runid'])){$runGroupID = $_POST['runid'];}
+        if( $runGroupID == 'new'){
+            $data=$query->runSQL("UPDATE biocore.ngs_runparams SET run_group_id = id WHERE run_group_id = -1");
+        }else{
+            $data=$query->runSQL("UPDATE biocore.ngs_runparams SET run_group_id = $runGroupID WHERE run_group_id = -1");
+            $idKey= $idKey - $runGroupID;
+        }
+        $data=$idKey;
+    }
 }
 else if ($p == 'insertRunlist')
 {

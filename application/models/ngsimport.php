@@ -11,6 +11,7 @@ class Ngsimport extends VanillaModel {
 	public $backup_dir;
 	public $amazon_bucket;
 	public $samples=[];
+	public $sample_ids = [];
 	
 	public $organismCheck;
 	public $pairedEndCheck;
@@ -39,6 +40,7 @@ class Ngsimport extends VanillaModel {
 	
 	//	FILES
 	public $file_arr = [];
+	public $file_names = [];
 	
 	//	Sheet Check bools
 	public $final_check;
@@ -130,6 +132,7 @@ class Ngsimport extends VanillaModel {
 		$text.="<script type='text/javascript'>";
 		$text.="var initialSubmission = '" . implode(",", $this->initialSubmission) . "';";
 		$text.="var initialNameList = '" . $this->namesList . "';";
+		$text.="var initialSampleIDS = '" .implode(",",$this->sample_ids). "';";
 		$text.="</script>";
 		
 		return $text;
@@ -669,6 +672,12 @@ class Ngsimport extends VanillaModel {
 		$text="SAMPLE:".$new_samples->getStat()."<BR>";
 		$new_chars = new characteristics($this, $this->char_arr);
 		$text.="CHAR:".$new_chars->getStat();
+		foreach(explode(",",$this->namesList) as $nl){
+			$nl_id = json_decode($this->query("SELECT id FROM ngs_samples WHERE name = '$nl' and lane_id in
+																   (SELECT id FROM ngs_lanes WHERE name in ('".implode("','", explode(",",$this->laneList))."') and series_id in 
+																   (SELECT id FROM ngs_experiment_series WHERE experiment_name = '$this->experiment_name'))"))[0]->id;
+			array_push($this->sample_ids, $nl_id);
+		}
 		return $text;
 	}
 	
@@ -732,6 +741,7 @@ class Ngsimport extends VanillaModel {
 			//	File Name
 			if(isset($file->file_name)){
 				$this->file_arr[$file->file_name]=$file;
+				array_push($this->file_names, $file->file_name);
 			}else{
 				$text.= $this->errorText("file name is required for submission (row " . $i . ")");
 				$this->final_check = false;
@@ -750,6 +760,37 @@ class Ngsimport extends VanillaModel {
 		$new_files = new files($this, $this->file_arr, $this->samples);
 		$text.="FILES:".$new_files->getStat();
 		//var_dump($sheetData);
+		if($this->laneArrayCheck == 'lane'){
+			$all_file_names_array = [];
+			$all_file_names = json_decode($this->query("select file_name from ngs_temp_lane_files where lane_id in 
+													(SELECT id from ngs_lanes WHERE name in ('".implode("','", explode(",",$this->laneList))."') and series_id in 
+													(SELECT id FROM ngs_experiment_series WHERE experiment_name = '$this->experiment_name'))"));
+			foreach($all_file_names as $afn){
+				array_push($all_file_names_array, $afn->file_name);
+			}
+			foreach($all_file_names_array as $afna){
+				if(!in_array($afna, $this->file_names)){
+					//remove
+					$this->query("DELETE FROM ngs_temp_lane_files where file_name = '$afna' and lane_id in
+								(SELECT id FROM ngs_lanes WHERE name in ('".implode("','", explode(",",$this->laneList))."') and series_id in 
+								(SELECT id FROM ngs_experiment_series WHERE experiment_name = '$this->experiment_name'))");
+				}
+			}
+		}else{
+			$all_file_names_array = [];
+			$all_file_names = json_decode($this->query("select file_name from ngs_temp_sample_files where sample_id in (".implode(",",$this->sample_ids).");"));
+			foreach($all_file_names as $afn){
+				array_push($all_file_names_array, $afn->file_name);
+			}
+			foreach($all_file_names_array as $afna){
+				if(!in_array($afna, $this->file_names)){
+					//remove
+					var_dump($afna);
+					$this->query("DELETE FROM ngs_temp_sample_files where file_name = '$afna' and sample_id in (".implode(",",$this->sample_ids).");");
+				}
+			}
+		}
+		
 		return $text;
 	}
 }
@@ -1190,7 +1231,11 @@ class samples extends main{
 
 	function getStat()
 	{
-		return "Update:$this->update, Insert:$this->insert";
+		
+		return "<script type='text/javascript'>
+		var sample_inserts = ".$this->insert . 
+		"</script>
+		Update:$this->update, Insert:$this->insert";
 	}
 
 	function getId($sample)
@@ -1816,13 +1861,16 @@ class files extends main{
 		now(), now(), '".$this->model->uid."');";
 		$this->insert++;
 		//return $sql;
+		
 		return $this->model->query($sql);
 	}
 
 	function update($file)
 	{
+		$original_file_name = $this->model->query("SELECT `file_name` FROM `$this->tablename` WHERE
+												  `$this->fieldname` = `$this->value` and `file_name` = `$file->file_name`");
 		$sql="update `biocore`.`$this->tablename` set
-			`fieldname`='$this->value', `dir_id`='$this->dir_id',
+			`$this->fieldname`='$this->value', `dir_id`='$this->dir_id',
 			`group_id`='".$this->model->gid."', `perms`='".$this->model->sid."',
 		`date_modified`=now(), `last_modified_user`='".$this->model->uid."'
 			where `id` = ".$this->getId($file);
