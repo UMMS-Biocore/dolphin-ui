@@ -620,17 +620,6 @@ else if ($p == 'getLanesWithSamples')
     )
     ");
 }
-else if ($p == 'getLanesFromName')
-{
-    if (isset($_GET['lane'])){$lane = $_GET['lane'];}
-    if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
-    $data=$query->queryTable("
-    SELECT DISTINCT nl.id
-    FROM ngs_lanes nl, ngs_experiment_series ne 
-    WHERE nl.name in ($lane)
-    AND nl.series_id = ne.id and ne.experiment_name = '$experiment';
-    ");
-}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
