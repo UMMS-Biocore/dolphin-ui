@@ -115,22 +115,8 @@ $(function() {
 			var run_ids = [];
 			var initial_run_ids = [];
 			var names_to_ids = [];
-			var lanes_to_ids = [];
 			
 			console.log(names_list);
-			$.ajax({
-				type: 	'GET',
-				url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
-				data:  	{ p: 'getLanesFromName', lane: sample_lane, experiment: experiment_series },
-				async:	false,
-				success: function(s)
-				{
-					for(var x = 0; x < s.length; x++){
-						lanes_to_ids.push(s[x].id);
-					}
-				}
-			});
-			console.log(lanes_to_ids);
 			$.ajax({
 				type: 	'GET',
 				url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
