@@ -785,7 +785,6 @@ class Ngsimport extends VanillaModel {
 			foreach($all_file_names_array as $afna){
 				if(!in_array($afna, $this->file_names)){
 					//remove
-					var_dump($afna);
 					$this->query("DELETE FROM ngs_temp_sample_files where file_name = '$afna' and sample_id in (".implode(",",$this->sample_ids).");");
 				}
 			}
