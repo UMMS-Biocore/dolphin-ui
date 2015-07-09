@@ -67,7 +67,102 @@ class Ngsimport extends VanillaModel {
         endforeach;
         return rtrim($group_str, ",");
     }
-	
+	function createSampleName($sample){
+		$samplename = '';
+		$underscore_mark = true;
+		//	Donor
+		if(isset($sample->donor)){
+			if($sample->donor != NULL && $sample->donor != '' && $sample->donor != null && $sample->donor != 'null'){
+				$samplename.= $sample->donor;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Source
+		if(isset($sample->source_symbol)){
+			if($sample->source_symbol != NULL && $sample->source_symbol != '' && $sample->source_symbol != null && $sample->source_symbol != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= $sample->source_symbol;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Conditions
+		if(isset($sample->condition_symbol)){
+			if($sample->condition_symbol != NULL && $sample->condition_symbol != '' && $sample->condition_symbol != null && $sample->condition_symbol != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$conds = explode(",", $sample->condition_symbol);
+				foreach($conds as $c){
+					$samplename.= strtoupper(substr($c, 0, 1)) . strtolower(substr($c, 1, strlen($c)));
+				}
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Time
+		if(isset($sample->time)){
+			if($sample->time != NULL && $sample->time != '' && $sample->time != null && $sample->time != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= floor($sample->time/60)."h";
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Antibody Targets
+		if(isset($sample->target)){
+			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= $sample->target;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Biological Replicas
+		if(isset($sample->biological_replica)){
+			if($sample->biological_replica != NULL && $sample->biological_replica != '' && $sample->biological_replica != null && $sample->biological_replica != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= "b".$sample->biological_replica;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Technical Replicas
+		if(isset($sample->technical_replica)){
+			if($sample->technical_replica != NULL && $sample->technical_replica != '' && $sample->technical_replica != null && $sample->technical_replica != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= "t".$sample->technical_replica;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		if(strpos(strtolower($sample->name), 'nobarcode') !== false){
+			if(!$underscore_mark){
+					$samplename.="_";
+				}
+			$samplename.= "$sample->name";
+		}
+		//$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '$samplename' WHERE `id` = $sample_id");
+		return $samplename;
+	}
 	function parseExcel($gid, $sid, $worksheet, $sheetData, $passed_final_check) {
 		$this->worksheet=$worksheet;
 		$this->sheetData=$sheetData;
@@ -534,7 +629,37 @@ class Ngsimport extends VanillaModel {
 			/*
 			 *	Check for proper data input
 			 */
-			//	Sample Name
+			
+			//	Samplename
+			//$all_samplenames = json_decode($this->query("SELECT samplename FROM ngs_samples"));
+			
+			$samp->samplename = $this->createSampleName($samp);
+			$samplename_bool = true;
+			
+			if(isset($this->sample_arr)){
+				if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
+					foreach($this->sample_arr as $sa){
+						if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
+							$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . "). <br>
+													 DC project sample naming scheme = Donor_Source_Conditions_Time_Bio-rep_Tech-rep.");
+							$this->final_check = false;
+							$samp_check = false;
+							$samplename_bool = false;
+						}
+					}
+				}else{
+					foreach($this->sample_arr as $sa){
+						if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
+							$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . ")");
+							$this->final_check = false;
+							$samp_check = false;
+							$samplename_bool = false;
+						}
+					}
+				}
+			}
+			
+			//	Name
 			if(isset($samp->name)){
 				if($this->checkAlphaNumWithAddChars('_-', $samp->name)){
 					//	Need to check the database for similar names as well at a later date
@@ -1273,102 +1398,6 @@ class samples extends main{
 			}
 		}
 	}
-	function createSampleName($sample, $sample_id){
-		$samplename = '';
-		$underscore_mark = true;
-		//	Donor
-		if(isset($sample->donor)){
-			if($sample->donor != NULL && $sample->donor != '' && $sample->donor != null && $sample->donor != 'null'){
-				$samplename.= $sample->donor;
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Source
-		if(isset($sample->source_symbol)){
-			if($sample->source_symbol != NULL && $sample->source_symbol != '' && $sample->source_symbol != null && $sample->source_symbol != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= $sample->source_symbol;
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Conditions
-		if(isset($sample->condition_symbol)){
-			if($sample->condition_symbol != NULL && $sample->condition_symbol != '' && $sample->condition_symbol != null && $sample->condition_symbol != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$conds = explode(",", $sample->condition_symbol);
-				foreach($conds as $c){
-					$samplename.= strtoupper(substr($c, 0, 1)) . strtolower(substr($c, 1, strlen($c)));
-				}
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Time
-		if(isset($sample->time)){
-			if($sample->time != NULL && $sample->time != '' && $sample->time != null && $sample->time != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= floor($sample->time/60)."h";
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Antibody Targets
-		if(isset($sample->target)){
-			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= $sample->target;
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Biological Replicas
-		if(isset($sample->biological_replica)){
-			if($sample->biological_replica != NULL && $sample->biological_replica != '' && $sample->biological_replica != null && $sample->biological_replica != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= "b".$sample->biological_replica;
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		//	Technical Replicas
-		if(isset($sample->technical_replica)){
-			if($sample->technical_replica != NULL && $sample->technical_replica != '' && $sample->technical_replica != null && $sample->technical_replica != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= "t".$sample->technical_replica;
-				if($underscore_mark){
-					$underscore_mark = false;
-				}
-			}
-		}
-		if(strpos(strtolower($sample->name), 'nobarcode') !== false){
-			if(!$underscore_mark){
-					$samplename.="_";
-				}
-			$samplename.= "$sample->name";
-		}
-		
-		$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '$samplename' WHERE `id` = $sample_id");
-	}
 	function insert($sample)
 	{
 		$lane_id=$this->getLaneId($sample->lane_name);
@@ -1540,7 +1569,7 @@ class samples extends main{
 		
 		//	Samplename
 		if(strtolower($DC_PROJECT[0]->experiment_name) == 'dendritic cell transcriptional landscape'){
-			$this->createSampleName($sample, $sample_id);	
+			$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '".$sample->samplename."' WHERE `id` = $sample_id");
 		}else{
 			$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '".$sample->name."' WHERE `id` = $sample_id");
 		}
@@ -1699,7 +1728,7 @@ class samples extends main{
 		
 		//	Samplename
 		if(strtolower($DC_PROJECT[0]->experiment_name) == 'dendritic cell transcriptional landscape'){
-			$this->createSampleName($sample, $sample_id);	
+			$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '".$sample->samplename."' WHERE `id` = $sample_id");
 		}else{
 			$this->model->query("UPDATE `biocore`.`ngs_samples` SET `samplename` = '".$sample->name."' WHERE `id` = $sample_id");
 		}
