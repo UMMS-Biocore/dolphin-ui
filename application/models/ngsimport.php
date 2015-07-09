@@ -632,8 +632,12 @@ class Ngsimport extends VanillaModel {
 			
 			//	Samplename
 			//$all_samplenames = json_decode($this->query("SELECT samplename FROM ngs_samples"));
+			if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
+				$samp->samplename = $this->createSampleName($samp);
+			}else{
+				$samp->samplename = $samp->name;
+			}
 			
-			$samp->samplename = $this->createSampleName($samp);
 			$samplename_bool = true;
 			
 			if(isset($this->sample_arr)){
