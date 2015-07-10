@@ -68,16 +68,19 @@ else if ($p == 'insertRunlist')
 	if (isset($_POST['runID'])){$runID = $_POST['runID'];}
     if (isset($_POST['uid'])){$uid = $_POST['uid'];}
     if (isset($_POST['gids'])){$gids = $_POST['gids'];}
-
 	$searchQuery = "INSERT INTO ngs_runlist
 		(run_id, sample_id, owner_id, group_id, perms, date_created, date_modified, last_modified_user)
 		VALUES ";
-	foreach ($sampID as $s){
-				$searchQuery .= "($runID, $s, $uid, NULL, 3, NOW(), NOW(), $uid)";
-				if($s != end($sampID)){
-					$searchQuery .= ",";
-				}
-			}
+    if(is_string($sampID)){
+        $searchQuery .= "($runID, $sampID, $uid, NULL, 3, NOW(), NOW(), $uid)";
+    }else{
+        foreach ($sampID as $s){
+            $searchQuery .= "($runID, $s, $uid, NULL, 3, NOW(), NOW(), $uid)";
+            if($s != end($sampID)){
+                $searchQuery .= ",";
+            }
+        }
+    }
 	$data=$query->runSQL($searchQuery);
 }
 else if ($p == 'deleteRunparams')

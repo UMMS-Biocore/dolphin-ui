@@ -30,6 +30,7 @@ class Ngsimport extends VanillaModel {
 	
 	//	LANES
 	public $lane_arr = [];
+	public $lane_ids = [];
 	
 	//	PROTOCOLS
 	public $prot_arr = [];
@@ -465,6 +466,11 @@ class Ngsimport extends VanillaModel {
 		$new_lanes = new lanes($this, $this->lane_arr);
 		$text="LANE:".$new_lanes->getStat()."</br>";
 		#$text.="LANE:".$new_lanes->getSQL();
+		foreach(explode(",",$this->laneList) as $ll){
+			$ll_id = json_decode($this->query("SELECT id FROM ngs_lanes WHERE name = '$ll' and series_id in 
+											(SELECT id FROM ngs_experiment_series WHERE experiment_name = '".$this->experiment_name."')"))[0]->id;
+			array_push($this->lane_ids, $ll_id);
+		}
 		return $text;
 	}
 
@@ -889,6 +895,8 @@ class Ngsimport extends VanillaModel {
 		$new_files = new files($this, $this->file_arr, $this->samples);
 		$text.="FILES:".$new_files->getStat();
 		//var_dump($sheetData);
+		
+		//	Checks for new file_names of same samples/lanes
 		if($this->laneArrayCheck == 'lane'){
 			$all_file_names_array = [];
 			$all_file_names = json_decode($this->query("select file_name from ngs_temp_lane_files where lane_id in 
@@ -904,6 +912,19 @@ class Ngsimport extends VanillaModel {
 								(SELECT id FROM ngs_lanes WHERE name in ('".implode("','", explode(",",$this->laneList))."') and series_id in 
 								(SELECT id FROM ngs_experiment_series WHERE experiment_name = '$this->experiment_name'))");
 				}
+				$count_files = json_decode($this->query("SELECT lane_id, count(file_name) as count FROM ngs_temp_lane_files LEFT JOIN ngs_dirs ON ngs_temp_lane_files.dir_id = ngs_dirs.id
+									WHERE file_name = '$afna'"));
+				if($count_files[0]->count > 1){
+					$lane_name_removal = json_decode($this->query("SELECT ngs_lanes.id, ngs_lanes.name FROM ngs_temp_lane_files LEFT JOIN ngs_lanes ON ngs_temp_lane_files.lane_id = ngs_lanes.id
+																	WHERE file_name = '$afna'"));
+					foreach($lane_name_removal as $lnr){
+						if(!in_array($lnr->id, $this->lane_ids)){
+							$this->query("DELETE FROM ngs_temp_lane_files where lane_id = $lnr->id");
+							$this->query("DELETE FROM ngs_lanes where id = $lnr->id");
+							$this->query("DELETE FROM ngs_samples where lane_id = $lnr->id");
+						}
+					}
+				}
 			}
 		}else{
 			$all_file_names_array = [];
@@ -916,7 +937,27 @@ class Ngsimport extends VanillaModel {
 					//remove
 					$this->query("DELETE FROM ngs_temp_sample_files where file_name = '$afna' and sample_id in (".implode(",",$this->sample_ids).");");
 				}
+				$count_files = json_decode($this->query("SELECT sample_id, count(file_name) as count FROM ngs_temp_sample_files LEFT JOIN ngs_dirs ON ngs_temp_sample_files.dir_id = ngs_dirs.id
+									WHERE file_name = '$afna'"));
+				if($count_files[0]->count > 1){
+					$sample_name_removal = json_decode($this->query("SELECT ngs_samples.id, ngs_samples.name FROM ngs_temp_sample_files LEFT JOIN ngs_samples ON ngs_temp_sample_files.sample_id = ngs_samples.id
+																	WHERE file_name = '$afna'"));
+					foreach($sample_name_removal as $snr){
+						if(!in_array($snr->id, $this->sample_ids)){
+							$this->query("DELETE FROM ngs_temp_sample_files where sample_id = $snr->id");
+							$this->query("DELETE FROM ngs_samples where id = $snr->id");
+						}
+					}
+				}
+				
 			}
+		}
+		
+		//	Checks for new names for files with same file_names
+		if($this->laneArrayCheck == 'lane'){
+			
+		}else{
+			
 		}
 		
 		return $text;

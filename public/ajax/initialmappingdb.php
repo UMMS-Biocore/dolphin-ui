@@ -95,7 +95,34 @@ else if ($p == 'checkFileToSamples')
 	WHERE file_name = '$name'
 	");
 }
-
+else if ($p == 'removeRunlistSamples')
+{
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
+	$sample_ids_array = explode(",",$sample_ids);
+	$ids=json_decode($query->queryTable("
+	SELECT sample_id
+	FROM biocore.ngs_runlist
+	WHERE run_id = $run_id
+	"));
+	foreach($ids as $i){
+		if(!in_array(strval($i->sample_id), $sample_ids_array)){
+			$query->runSQL("
+			DELETE FROM ngs_runlist
+			WHERE run_id = $run_id
+			AND sample_id = ".$i->sample_id
+			);
+			$query->runSQL("
+			DELETE FROM ngs_samples
+			WHERE id = ".$i->sample_id
+			);
+			$query->runSQL("
+			DELETE FROM ngs_fastq_files
+			WHERE sample_id = ".$i->sample_id
+			);
+		}
+	}
+}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

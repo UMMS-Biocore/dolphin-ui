@@ -128,7 +128,7 @@ $(function() {
 					}
 				}
 			});
-			console.log(names_to_ids)
+			console.log(names_to_ids.toString())
 			$.ajax({
 				type: 	'GET',
 				url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
@@ -136,6 +136,7 @@ $(function() {
 				async:	false,
 				success: function(s)
 				{
+					console.log(s);
 					for(var x = 0; x < s.length; x++){
 						run_ids.push(s[x].run_id);
 					}
@@ -155,11 +156,11 @@ $(function() {
 						}
 					}
 				});
+				console.log(initial_run_ids);
 				if (initial_run_ids.length > 0){
 					for(var x = 0; x < initial_run_ids.length; x++){
 						var added_samples = [];
-						nonaltered_files = [];
-						altered_files = [];
+						var samples_returned = [];
 						$.ajax({
 							type: 	'GET',
 							url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
@@ -167,16 +168,29 @@ $(function() {
 							async:	false,
 							success: function(s)
 							{
-								for(var x = 0; x < s.length; x++){
-									if (names_to_ids.indexOf(s[x].id) > -1) {
-										added_samples.push(s[x].id);
+								for(var z = 0; z < s.length; z++){
+									samples_returned.push(s[z].sample_id);
+								}
+								for(var z = 0; z < names_to_ids.length; z++){
+									if (samples_returned.indexOf(names_to_ids[z]) < 0) {
+										added_samples.push(names_to_ids[z]);
 									}
 								}
 							}
 						});
+						console.log(added_samples);
 						if (added_samples.length > 0) {
-							var submitted = postInsertRunlist('insertRunList', added_samples, initial_run_ids[x]);
+							var submitted = postInsertRunlist('insertRunlist', added_samples, initial_run_ids[x]);
 							console.log(submitted);
+							$.ajax({
+								type: 	'GET',
+								url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
+								data:  	{ p: 'removeRunlistSamples', run_id: initial_run_ids[x], sample_ids: names_to_ids.toString()},
+								async:	false,
+								success: function(s)
+								{
+								}
+							});
 							var runparamsInsert = postInsertRunparams(json, outdir, runname, rundesc);
 							console.log(runparamsInsert)
 						}
@@ -186,6 +200,15 @@ $(function() {
 				//insert new values into ngs_runparams
 				var runparamsInsert = postInsertRunparams(json, outdir, runname, rundesc);
 				console.log(runparamsInsert);
+				$.ajax({
+					type: 	'GET',
+					url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
+					data:  	{ p: 'removeRunlistSamples', run_id: runparamsInsert[1], sample_ids: names_to_ids.toString()},
+					async:	false,
+					success: function(s)
+					{
+					}
+				});
 				//insert new values into ngs_runlist
 				var submitted = postInsertRunlist(runparamsInsert[0], names_to_ids, runparamsInsert[1]);
 				console.log(submitted);
