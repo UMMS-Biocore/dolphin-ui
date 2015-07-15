@@ -12,7 +12,7 @@ $query = new dbfuncs();
 $data=$query->queryTable('
 SELECT CONCAT("id_", CAST(sr.service_run_id AS CHAR)) id, sr.service_run_id num,  s.servicename title,
  TIME_TO_SEC(timediff(sr.end_time, sr.start_time)) duration, sp.percentComplete, sr.start_time start, sr.end_time finish, sr.result result
-  FROM biocore.workflow_run wr, biocore.service_run sr, services s,
+  FROM workflow_run wr, service_run sr, services s,
 (Select a.service_run_id, (jobFinished/jobCount)*100 percentComplete
 FROM
 (SELECT s.service_run_id, count(j.job_id) jobCount

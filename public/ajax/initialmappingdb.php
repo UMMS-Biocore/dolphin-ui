@@ -71,7 +71,7 @@ else if($p == 'checkRunParams')
 	if (isset($_GET['run_ids'])){$run_ids = $_GET['run_ids'];}
 	$data=$query->queryTable("
 	SELECT id
-	FROM biocore.ngs_runparams
+	FROM ngs_runparams
 	WHERE id IN ($run_ids)
 	AND (run_name = 'Fastlane Initial Run' OR run_name = 'Import Initial Run')
 	");
@@ -81,7 +81,7 @@ else if ($p == 'checkRunToSamples')
 	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
 	$data=$query->queryTable("
 	SELECT distinct sample_id
-	FROM biocore.ngs_runlist
+	FROM ngs_runlist
 	WHERE run_id = '$run_id'
 	");
 }
@@ -91,7 +91,7 @@ else if ($p == 'checkFileToSamples')
 	if (isset($_GET['file_name'])){$file_name = $_GET['file_name'];}
 	$data=$query->queryTable("
 	SELECT distinct file_name
-	FROM biocore.ngs_fastq_files
+	FROM ngs_fastq_files
 	WHERE file_name = '$name'
 	");
 }
@@ -102,7 +102,7 @@ else if ($p == 'removeRunlistSamples')
 	$sample_ids_array = explode(",",$sample_ids);
 	$ids=json_decode($query->queryTable("
 	SELECT sample_id
-	FROM biocore.ngs_runlist
+	FROM ngs_runlist
 	WHERE run_id = $run_id
 	"));
 	foreach($ids as $i){

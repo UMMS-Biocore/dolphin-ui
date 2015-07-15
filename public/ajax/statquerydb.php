@@ -22,8 +22,8 @@ if($p == "getDailyRuns")
    select * from
    (select * from
    (select a.countTotal, b.countDolphin, a.day from
-   (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m-%d") day from biocore.galaxy_run g where 1=1 '.$userstr.' group by day order by day) a,
-   (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m-%d") day from biocore.galaxy_run g where dolphin=TRUE '.$userstr.' group by day order by day) b
+   (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where 1=1 '.$userstr.' group by day order by day) a,
+   (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where dolphin=TRUE '.$userstr.' group by day order by day) b
    where a.day=b.day order by day desc) a limit 30) a order by day asc
    ');
 }
@@ -32,7 +32,7 @@ else if($p == "getTopUsers")
     if ($type=="Dolphin"){$dolphin="and dolphin=true";}else{$dolphin="and dolphin=false";}
     $data=$query->queryTable("
     select u.name, count(g.id) count
-    from biocore.galaxy_run g, biocore.users u
+    from galaxy_run g, users u
     where u.username=g.username $dolphin $userstr
     group by g.username
     order by count desc
@@ -46,7 +46,7 @@ else if($p == "getTopUsersTime")
     if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
     $data=$query->queryTable("
     select u.name, count(g.id) count
-    from biocore.galaxy_run g, biocore.users u
+    from galaxy_run g, users u
     where u.username=g.username $userstr
     $time $dolphin
     group by g.username
@@ -61,7 +61,7 @@ else if($p == "getUsersTime")
     if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
     $data=$query->queryTable("
     select u.name, u.lab, count(g.id) count
-    from biocore.galaxy_run g, biocore.users u
+    from galaxy_run g, users u
     where u.username=g.username 
     $time $dolphin $userstr
     group by g.username
@@ -75,7 +75,7 @@ else if($p == "getLabsTime")
     if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
     $data=$query->queryTable("
     select u.lab, count(g.id) count
-    from biocore.galaxy_run g, biocore.users u
+    from galaxy_run g, users u
     where u.username=g.username $userstr
     $time $dolphin
     group by u.lab
@@ -89,7 +89,7 @@ else if($p == "getToolTime")
     if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
     $data=$query->queryTable("
     select g.tool_name, count(g.id) count
-    from biocore.galaxy_run g
+    from galaxy_run g
     where 1=1 $time $dolphin $userstr
     group by g.tool_name
     order by count desc
@@ -103,7 +103,7 @@ else if($p == "getJobTime")
     if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
     $sql="
     select s.servicename, count(j.job_id) count
-    from biocore.jobs j, biocore.services s
+    from jobs j, services s
     where j.service_id=s.service_id $time $userstr
     group by servicename
     order by count desc

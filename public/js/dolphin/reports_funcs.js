@@ -174,7 +174,7 @@ function showTable(type){
 	}else if (type == 'DESEQ') {
 		temp_currentResultSelection = currentResultSelection;
 	}
-	
+	console.log(BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection);
 	$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
 			async: false,
@@ -500,7 +500,11 @@ $(function() {
 			success : function(s)
 			{
 				for(var x  = 0; x < s.length; x++){
-					libraries.push(s[x].name);
+					if (s[x].samplename == null) {
+						libraries.push(s[x].name);
+					}else{
+						libraries.push(s[x].samplename);
+					}
 				}
 				for(var x  = 0; x < s.length; x++){
 					samplenames.push(s[x].samplename);
