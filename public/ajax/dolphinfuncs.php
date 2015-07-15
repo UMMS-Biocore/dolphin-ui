@@ -15,7 +15,7 @@ if($p == "getFileList")
 {
     $data=$query->queryTable("
     SELECT d.fastq_dir, f.file_name, d.amazon_bucket 
-    FROM biocore.ngs_fastq_files f, biocore.ngs_dirs d 
+    FROM ngs_fastq_files f, ngs_dirs d 
     where d.id=f.dir_id and (f.backup_checksum='' or isnull(f.backup_checksum))
     ");
 }
@@ -28,8 +28,8 @@ else if($p == "updateHashBackup")
    print $dirname."<br>";
    print $hashstr."<br>";
    $data=$query->queryTable(" 
-   UPDATE  biocore.ngs_fastq_files nff, 
-   (SELECT nff.id FROM biocore.ngs_fastq_files nff, biocore.ngs_dirs nd
+   UPDATE  ngs_fastq_files nff, 
+   (SELECT nff.id FROM ngs_fastq_files nff, ngs_dirs nd
    where nff.dir_id = nd.id AND 
    nff.file_name='$input' AND 
    nd.fastq_dir='$dirname') a 
