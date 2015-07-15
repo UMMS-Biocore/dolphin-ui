@@ -163,7 +163,7 @@ class funcs
                     $retval = $this->checkJobInCluster($wkey, $row['job_num'], $row['username']);
                     
                     if (eregi("^EXIT", $retval)) {
-                        $sql    = "SELECT j.jobname, jo.jobout FROM biocore.jobs j, biocore.jobsout jo where j.wkey=jo.wkey and j.job_num=jo.jobnum and j.job_num=" . $row['job_num'] . " and jo.wkey='$wkey'";
+                        $sql    = "SELECT j.jobname, jo.jobout FROM jobs j, jobsout jo where j.wkey=jo.wkey and j.job_num=jo.jobnum and j.job_num=" . $row['job_num'] . " and jo.wkey='$wkey'";
                         $resout = $this->runSQL($sql);
                         $rowout = $resout->fetch_assoc();
                         require_once('class.html2text.inc');
@@ -174,10 +174,10 @@ class funcs
                     }
                     if (eregi("DONE", $retval)) {
                         $jn     = rtrim(substr($retval, 5));
-                        $sql    = "select * from biocore.jobs where result=3 and job_num='" . $jn . "' and wkey='$wkey'";
+                        $sql    = "select * from jobs where result=3 and job_num='" . $jn . "' and wkey='$wkey'";
                         $result = $this->runSQL($sql);
                         if (is_object($result)) {
-                            $sql    = "UPDATE biocore.jobs set result='3', end_time=now() where job_num='" . $jn . "' and wkey='$wkey'";
+                            $sql    = "UPDATE jobs set result='3', end_time=now() where job_num='" . $jn . "' and wkey='$wkey'";
                             $result = $this->runSQL($sql);
                         } else {
                             $sql = "insert into jobs(`username`, `wkey`, `jobname`, `service_id`, `result`, `submit_time`, `start_time`,`end_time`,`job_num`) values ('" . $row['username'] . "', '$wkey', '$servicename', '$service_id', '3', now(), now(), now(),  '$jn' )";
@@ -340,7 +340,7 @@ class funcs
             
             $service_id = $this->getId("service", $username, $servicename, $wkey, $defaultparam);
             
-            $sql = "SELECT service_id FROM biocore.service_run where wkey='$wkey' and service_id='$service_id';";
+            $sql = "SELECT service_id FROM service_run where wkey='$wkey' and service_id='$service_id';";
             $res = $this->runSQL($sql);
             if (empty($res) == "") {
                 // sql query for INSERT INTO service_run
@@ -388,7 +388,7 @@ class funcs
     
     function checkLastServiceJobs($wkey)
     {
-        $sql    = "SELECT username, job_num from jobs where service_id=(SELECT service_id FROM biocore.service_run where wkey='$wkey' order by service_run_id desc limit 1)  and wkey='$wkey' and jobstatus=1;";
+        $sql    = "SELECT username, job_num from jobs where service_id=(SELECT service_id FROM service_run where wkey='$wkey' order by service_run_id desc limit 1)  and wkey='$wkey' and jobstatus=1;";
         $result = $this->runSQL($sql);
         #Get how many jobs hasn't finished
         $ret    = 1;
@@ -413,12 +413,12 @@ class funcs
         $result = $this->runSQL($sql);
         #return $sql;
         return "Success!!!";
-        $sql1    = "SELECT sum(w.result) from (SELECT result from workflow_services ws left join service_run s on ws.service_id=s.service_id where ws.workflow_id=(SELECT workflow_id FROM biocore.workflow_run wr where wkey='$wkey') and wkey='$wkey') w";
+        $sql1    = "SELECT sum(w.result) from (SELECT result from workflow_services ws left join service_run s on ws.service_id=s.service_id where ws.workflow_id=(SELECT workflow_id FROM workflow_run wr where wkey='$wkey') and wkey='$wkey') w";
         $result1 = $this->runSQL($sql1);
         #Get how many service successfuly finished
         if (is_object($result1) && $row1 = $result1->fetch_row()) {
             #Get how many services exist in the workflow
-            $sql2    = "SELECT count(*) from workflow_services ws where workflow_id=(SELECT workflow_id FROM biocore.workflow_run wr where wkey='$wkey')";
+            $sql2    = "SELECT count(*) from workflow_services ws where workflow_id=(SELECT workflow_id FROM workflow_run wr where wkey='$wkey')";
             $result2 = $this->runSQL($sql2);
             if (is_object($result2) && $row2 = $result2->fetch_row()) {
                 
@@ -545,7 +545,7 @@ class funcs
      */
      public function updateRunParams($wkey, $runparamsid)
      {
-         $sql = "UPDATE biocore.ngs_runparams set run_status=2, wkey='$wkey' where id=$runparamsid";
+         $sql = "UPDATE ngs_runparams set run_status=2, wkey='$wkey' where id=$runparamsid";
          $res = $this->runSQL($sql);
 
          return $res;
@@ -557,7 +557,7 @@ class funcs
      */
      function insertReportTable($wkey, $version, $type, $file)
      {
-         $sql = "select id from biocore.report_list where wkey='$wkey' and file='$file'";
+         $sql = "select id from report_list where wkey='$wkey' and file='$file'";
          $res = $this->queryAVal($sql);
          if ($res == 0) {
             $sql = "INSERT INTO report_list(wkey, version, type, file) VALUES ('$wkey', '$version', '$type', '$file')";
