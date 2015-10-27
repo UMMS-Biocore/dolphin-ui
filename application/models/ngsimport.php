@@ -285,12 +285,12 @@ class Ngsimport extends VanillaModel {
 			if($this->sheetData[$i]["A"]=="contributor"){array_push($this->conts, $this->esc($this->sheetData[$i]["B"]));}
 			if($this->sheetData[$i]["A"]=="fastq directory"){
 				$this->fastq_dir=$this->esc($this->sheetData[$i]["B"]);
-			}elseif($this->sheetData[$i]["A"]=="processed directory"){
+			}elseif($this->sheetData[$i]["A"]=="input directory"){
 				$this->fastq_dir=$this->esc($this->sheetData[$i]["B"]);
 			}
 			if($this->sheetData[$i]["A"]=="backup directory"){
 				$this->backup_dir=$this->esc($this->sheetData[$i]["B"]);
-			}elseif($this->sheetData[$i]["A"]=="temporary directory"){
+			}elseif($this->sheetData[$i]["A"]=="processed directory"){
 				$this->backup_dir=$this->esc($this->sheetData[$i]["B"]);
 				
 			}
@@ -889,6 +889,8 @@ class Ngsimport extends VanillaModel {
 				if($this->sheetData[3][$j]=="Fastq directory"){
 					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
 				}elseif($this->sheetData[3][$j]=="Processed directory"){
+					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
+				}elseif($this->sheetData[3][$j]=="Input directory"){
 					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
 				}
 			}
