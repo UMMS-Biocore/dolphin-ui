@@ -51,26 +51,34 @@ else if($p == "getMonthlyJobs")
     where a.month=b.month order by month
     ');
 }
-else if ($p == 'getSmallBoxInfo')
+else if ($p == 'getGalaxyRuns')
 {
     $username = $_SESSION['user'];
     $totalGalaxy = $query->queryAVal("SELECT count(id) totalGalaxyRuns FROM galaxy_run where username in (select u.username from user_group ug, users u
                                      where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))");
+    $data = json_encode($totalGalaxy);
+}
+else if ($p == 'getDolphinRuns')
+{
+    $username = $_SESSION['user'];
     $totalDolphin = $query->queryAVal("SELECT count(id) totalGalaxyRuns FROM galaxy_run where dolphin=true and username in (select u.username
                                       from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))");
+    $data=json_encode($totalDolphin);
+}
+else if ($p == 'getTotalSamples')
+{
+    $username = $_SESSION['user'];
     $totalSamples = $query->queryAVal("SELECT count(ng.id)  FROM ngs_samples ng, users u where u.id=ng.owner_id  and username in (select u.username
                                       from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))");
+    $data=json_encode($totalSamples);
+    
+}
+else if ($p == 'getTotalJobs')
+{
+    $username = $_SESSION['user'];
     $totalJobs = $query->queryAVal("SELECT count(j.job_id) totaljobs FROM jobs j, users u where j.username=u.clusteruser and j.username in (select u.clusteruser
                                    from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))");
-    $post_data = array(
-        'item' => array(
-            'galaxy' => $totalGalaxy,
-            'dolphin' => $totalDolphin,
-            'samples' => $totalSamples,
-            'jobs' => $totalJobs,
-        )
-    );
-    $data = json_encode($post_data);
+    $data=json_encode($totalJobs);
 }
 
 header('Cache-Control: no-cache, must-revalidate');

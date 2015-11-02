@@ -14,16 +14,40 @@ $(function() {
     /* smallBoxes */
     $.ajax({ type: "GET",   
             url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
-            data: { p: "getSmallBoxInfo" },
-            async: false,
+            data: { p: "getGalaxyRuns" },
+            async: true,
             success : function(text)
             {
                 $('#totalGalaxyRunsHeader').html(text.item.galaxy);
                 $('#totalGalaxyRunsText').html("Total Galaxy runs");
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getDolphinRuns" },
+            async: true,
+            success : function(text)
+            {
                 $('#totalDolphinRunsHeader').html(text.item.dolphin);
                 $('#totalDolphinRunsText').html("Total Dolphin runs");
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getTotalSamples" },
+            async: true,
+            success : function(text)
+            {
                 $('#totalSamplesHeader').html(text.item.samples);
                 $('#totalSamplesText').html("Total Samples");
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getTotalJobs" },
+            async: true,
+            success : function(text)
+            {
                 $('#totalClusterJobsHeader').html(text.item.jobs);
                 $('#totalClusterJobsText').html("Total cluster submissions");
             }
