@@ -17,17 +17,41 @@ $(function() {
     /* smallBoxes */
     $.ajax({ type: "GET",   
             url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
-            data: { p: "getSmallBoxInfo" },
-            async: false,
+            data: { p: "getGalaxyRuns" },
+            async: true,
             success : function(text)
             {
-                $('#totalGalaxyRunsHeader').html(text.item.galaxy);
+                $('#totalGalaxyRunsHeader').html(text);
                 $('#totalGalaxyRunsText').html("Total Galaxy runs");
-                $('#totalDolphinRunsHeader').html(text.item.dolphin);
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getDolphinRuns" },
+            async: true,
+            success : function(text)
+            {
+                $('#totalDolphinRunsHeader').html(text);
                 $('#totalDolphinRunsText').html("Total Dolphin runs");
-                $('#totalSamplesHeader').html(text.item.samples);
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getTotalSamples" },
+            async: true,
+            success : function(text)
+            {
+                $('#totalSamplesHeader').html(text);
                 $('#totalSamplesText').html("Total Samples");
-                $('#totalClusterJobsHeader').html(text.item.jobs);
+            }
+    });
+    $.ajax({ type: "GET",   
+            url: BASE_PATH+"/public/ajax/dashboardquerydb.php",
+            data: { p: "getTotalJobs" },
+            async: true,
+            success : function(text)
+            {
+                $('#totalClusterJobsHeader').html(text);
                 $('#totalClusterJobsText').html("Total cluster submissions");
             }
     });
@@ -93,7 +117,6 @@ $(function() {
         ],
         hideHover: 'auto'
     });
-
 
     /*Bar chart*/
     var bar = new Morris.Bar({
