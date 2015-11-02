@@ -58,7 +58,7 @@ $(function() {
             $.ajax({ type: "GET",   
                      url: BASE_PATH+"/public/ajax/admindashboardquerydb.php",
                      data: { p: "getMonthlyJobs" },
-                     async: false,
+                     async: true,
                      success : function(text)
                      {
                          responseJobs = text;
@@ -78,7 +78,7 @@ $(function() {
             $.ajax({ type: "GET",   
                      url: BASE_PATH+"/public/ajax/admindashboardquerydb.php",
                      data: { p: "getMonthlyRuns" },
-                     async: false,
+                     async: true,
                      success : function(text)
                      {
                          response = text;
