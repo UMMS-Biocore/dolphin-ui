@@ -116,6 +116,10 @@ function obtainGroups(){
 		async: false,
 		success : function(s)
 		{
+			var new_json_array = [];
+			for(var i = 0; i < s.length; i++) {
+				
+			}
 			createStreamTable('groups', s, "", true, [20,50], 20, true, true);
 		}
 	});
