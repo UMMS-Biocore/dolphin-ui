@@ -23,8 +23,8 @@ function updateProfile(){
 
 	if (access_key_change.length > 0) {
 		for(var x = 0; x < access_key_change.length; x++){
-			$.ajax({ type: "POST",
-				url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/profiledb.php",
 				data: { p: 'alterAccessKey', id: access_key_change[x].split("_")[0], a_key: document.getElementById(access_key_change).value},
 				async: false,
 				success : function(s)
@@ -35,8 +35,8 @@ function updateProfile(){
 	}
 	if (secret_key_change.length > 0) {
 		for(var x = 0; x < secret_key_change.length; x++){
-			$.ajax({ type: "POST",
-				url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/profiledb.php",
 				data: { p: 'alterSecretKey', id: secret_key_change[x].split("_")[0], s_key: document.getElementById(secret_key_change).value},
 				async: false,
 				success : function(s)
@@ -47,8 +47,8 @@ function updateProfile(){
 	}
 	
 	if (change_check) {
-		$.ajax({ type: "POST",
-			url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'updateProfile', img: change_value},
 			async: false,
 			success : function(s)
@@ -62,7 +62,7 @@ function updateProfile(){
 function obtainPermissions(id){
 	var verdict = false;
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'checkAmazonPermissions', a_id: id},
 			async: false,
 			success : function(s)
@@ -84,12 +84,10 @@ function credentials_change(id){
 }
 
 function obtainKeys(){
-	//	FIRST OBTAIN GROUPS
-	var groups = [];
 	var bucket_list = $('#jsontable_amazon').dataTable();
 
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'obtainAmazonKeys' },
 			async: false,
 			success : function(s)
@@ -115,12 +113,48 @@ function obtainKeys(){
 	});
 }
 
+function obtainGroups(){
+	var groups_table = $('#jsontable_groups').dataTable();
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'obtainGroups' },
+		async: false,
+		success : function(s)
+		{
+			groups_table.fnClearTable();
+			for(var i = 0; i < s.length; i++) {
+				groups_table.fnAddData([
+					s[i].id,
+					s[i].name,
+					s[i].date_created
+				]);
+			}
+		}
+	});
+}
+
+function requestNewGroup(){
+	
+}
+
+function obtainProfileInfo(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'obtainProfileInfo' },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+}
+
 $(function() {
 	"use strict";
 	
 	//	PROFILE AVATAR
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'profileLoad' },
 			async: false,
 			success : function(s)
@@ -134,7 +168,10 @@ $(function() {
 				}
 			}
 	});
-	
+	//	PROFILE
+	obtainProfileInfo();
+	//	GROUPS
+	obtainGroups();
 	//	AMAZON KEYS
 	obtainKeys();
 });
