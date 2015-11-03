@@ -84,57 +84,41 @@ function credentials_change(id){
 }
 
 function obtainKeys(){
-	var bucket_list = $('#jsontable_amazon').dataTable();
-
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'obtainAmazonKeys' },
 			async: false,
 			success : function(s)
 			{
-				bucket_list.fnClearTable();
+				var new_json_array = [];
 				for(var i = 0; i < s.length; i++) {
 					if (obtainPermissions(s[i].id)) {
-						bucket_list.fnAddData([
-						s[i].bucket,
-						'<input id="'+s[i].id+'_access" type="textbox" class="input-group col-md-12" value="'+s[i].aws_access_key_id+'" onchange="credentials_change(this.id)">',
-						'<input id="'+s[i].id+'_secret" type="textbox" class="input-group col-md-12" value="'+s[i].aws_secret_access_key+'" onchange="credentials_change(this.id)">'
-						]);
+						new_json_array.push(
+						{"bucket":s[i].bucket,
+						"access_key":'<input id="'+s[i].id+'_access" type="textbox" class="input-group col-md-12" value="'+s[i].aws_access_key_id+'" onchange="credentials_change(this.id)">',
+						"secret_key":'<input id="'+s[i].id+'_secret" type="textbox" class="input-group col-md-12" value="'+s[i].aws_secret_access_key+'" onchange="credentials_change(this.id)">'});
 					}else{
-						bucket_list.fnAddData([
-						s[i].bucket,
-						'<input type="textbox" class="input-group col-md-12" value="'+Array(17).join('*') + s[i].aws_access_key_id.substring(16, 20)+'" disabled>',
-						'<input type="textbox" class="input-group col-md-12" value="'+Array(37).join('*') + s[i].aws_secret_access_key.substring(36,40)+'" disabled>'
-						]);
+						new_json_array.push(
+						{"bucket":s[i].bucket,
+						"access_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(17).join('*') + s[i].aws_access_key_id.substring(16, 20)+'" disabled>',
+						"secret_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(37).join('*') + s[i].aws_secret_access_key.substring(36,40)+'" disabled>'});
 					}
-					
 				}
+				createStreamTable('amazon', new_json_array, "", true, [20,50], 20, true, true);
 			}
 	});
 }
 
 function obtainGroups(){
-	var groups_table = $('#jsontable_groups').dataTable();
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/profiledb.php",
 		data: { p: 'obtainGroups' },
 		async: false,
 		success : function(s)
 		{
-			groups_table.fnClearTable();
-			for(var i = 0; i < s.length; i++) {
-				groups_table.fnAddData([
-					s[i].id,
-					s[i].name,
-					s[i].date_created
-				]);
-			}
+			createStreamTable('groups', s, "", true, [20,50], 20, true, true);
 		}
 	});
-}
-
-function requestNewGroup(){
-	
 }
 
 function obtainProfileInfo(){
@@ -146,13 +130,17 @@ function obtainProfileInfo(){
 		{
 			var modified_json = [];
 			for(var key in s[0]){
-				if (key != 'owner_id' && key != 'group_id' && key !='photo_loc' && key != 'last_modified_user') {
+				if (key != 'owner_id' && key != 'group_id' && key !='photo_loc' && key != 'last_modified_user' && key != 'perms') {
 					modified_json.push({'id':key,'value':s[0][key]});
 				}
 			}
 			createStreamTable('user_profile', modified_json, "", false, [20], 20, false, false);
 		}
 	});
+}
+
+function requestNewGroup(){
+	
 }
 
 $(function() {

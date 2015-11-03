@@ -37,7 +37,7 @@
 									</div>
 									<div class="tab-pane" id="groups">
 										<div id="user_groups" class="margin">
-											<?php echo $html->getRespBoxTable_ng("View your Current Groups", "groups", "<th>ID</th><th>Group Name</th><th>Date Created</th>"); ?>
+											<?php echo $html->getRespBoxTableStreamNoExpand("Group Information", "groups", ['ID', 'Group Name', 'Date Created'], ['id','name','date_created']); ?>
 										</div>
 										<div>
 											<button type="button" id="requestgroup" class="btn btn-primary" onclick="requestNewGroup()">Create a New Group</button>
@@ -70,7 +70,7 @@
 									</div>
 									<div class="tab-pane" id="bucket">
 										<div id="amazon_keys" class="margin">
-											<?php echo $html->getRespBoxTable_ng("Update your Amazon Buckets", "amazon", "<th>Bucket</th><th>Access Key</th><th>Secret Key</th>"); ?>
+											<?php echo $html->getRespBoxTableStreamNoExpand("Update your Amazon Buckets", "amazon", ['Bucket', 'Access Key', 'Secret Key'], ['bucket','access_key','secret_key']); ?>
 										</div>
 										<div class="box-footer margin">
 											<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Update</button>
