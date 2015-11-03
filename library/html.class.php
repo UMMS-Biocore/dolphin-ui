@@ -261,6 +261,37 @@ class HTML {
 		return $html;
 	}
 	
+	function getRespBoxTableStreamNoExpand($title, $table, $fields, $tableKeys){
+		$html = '';
+		$html.= '<div class="box">
+						<div class="box-header">
+								<h3 class="box-title">'.$title.'</h3>';
+		$html.= $this->getInfoBox($table);
+		$html.=			'</div><!-- /.box-head -->
+						<div id="table_div_'.$table.'" class="box-body table-responsive">
+								<table id="jsontable_'.$table.'" class="table table-hover table-striped table-condensed table-scrollable">
+										<thead>
+										<tr>';
+										for($x = 0; $x < count($tableKeys); $x++){
+												if($tableKeys[$x] == "id" || $tableKeys[$x] == "total_reads" || $tableKeys[$x] == "total_samples"){
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::number" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}else{
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::string" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}
+										}
+		$html.=							'</tr>
+										</thead>
+										<tbody>
+										</tbody>
+								</table>
+						</div><!-- /.box-body -->
+				</div><!-- /.box -->';
+		
+		return $html;
+	}
+	
 	function getBoxTable_ng($title, $table, $fields)
 	{
 	$html='				<style>

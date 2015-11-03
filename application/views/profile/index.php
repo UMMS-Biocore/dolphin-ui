@@ -31,14 +31,16 @@
 								</ul>
 								<div class="tab-content">
 									<div class="tab-pane active" id="profile">
-										
+										<div id="profileInformation" class="margin">
+											<?php echo $html->getRespBoxTableStreamNoExpand("Profile Information", "user_profile", [], []); ?>
+										</div>
 									</div>
 									<div class="tab-pane" id="groups">
 										<div id="user_groups" class="margin">
 											<?php echo $html->getRespBoxTable_ng("View your Current Groups", "groups", "<th>ID</th><th>Group Name</th><th>Date Created</th>"); ?>
 										</div>
 										<div>
-											<button type="button" id="requestgroup" class="btn btn-primary" onclick="requestNewGroup()">Request New Group</button>
+											<button type="button" id="requestgroup" class="btn btn-primary" onclick="requestNewGroup()">Create a New Group</button>
 										</div>
 									</div>
 									<div class="tab-pane" id="photo">

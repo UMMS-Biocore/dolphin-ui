@@ -144,7 +144,13 @@ function obtainProfileInfo(){
 		async: false,
 		success : function(s)
 		{
-			console.log(s);
+			var modified_json = [];
+			for(var key in s[0]){
+				if (key != 'owner_id' && key != 'group_id' && key !='photo_loc' && key != 'last_modified_user') {
+					modified_json.push({'id':key,'value':s[0][key]});
+				}
+			}
+			createStreamTable('user_profile', modified_json, "", false, [20], 20, false, false);
 		}
 	});
 }
