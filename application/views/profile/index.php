@@ -1,4 +1,26 @@
 		<!-- Content Header (Page header) -->
+				<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myModalLabel">Groups</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<label id="groupLabel"></label>
+									<div id="groupModalDiv" class="form-group"></div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmGroupButton" class="btn btn-default" data-dismiss="modal" onclick="">OK</button>
+							  <button type="button" id="cancelGroupButton" class="btn btn-default" data-dismiss="modal" onclick="">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Group modal -->
 				<section class="content-header">
 					<h1>
 						Profile
@@ -15,7 +37,7 @@
 						<div class="col-md-12">
 							<!-- general form elements -->
 							<div class="nav-tabs-custom">
-								<ul class="nav nav-tabs">
+								<ul id="tabList" class="nav nav-tabs">
 									<li class="active">
 										<a href="#profile" data-toggle="tab" aria-expanded="true">Profile Information</a>
 									</li>
@@ -41,6 +63,7 @@
 										</div>
 										<div>
 											<button type="button" id="requestgroup" class="btn btn-primary" onclick="requestNewGroup()">Create a New Group</button>
+											<button type="button" id="requestgroup" class="btn btn-primary" onclick="requestJoinGroup()">Join a Group</button>
 										</div>
 									</div>
 									<div class="tab-pane" id="photo">

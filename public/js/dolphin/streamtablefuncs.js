@@ -74,6 +74,7 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 	}else{
 		pagination.remove();
 	}
+	return st;
 }
 
 function createStreamScript(keys, type){

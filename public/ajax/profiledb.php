@@ -83,6 +83,53 @@ else if ($p == 'obtainProfileInfo')
     WHERE username = '".$_SESSION['user']."'"
     );
 }
+else if ($p == 'newGroupProcess')
+{
+	if (isset($_GET['newGroup'])){$newGroup = $_GET['newGroup'];}
+	$groupCheck = $query->queryAVal("
+	SELECT id
+	FROM groups
+	WHERE name = '" . $newGroup . "'
+	");
+	if($groupCheck > 0){
+		$data = json_encode('A group with the same name already exists');
+	}else{
+		$groupsInsert=$query->runSQL("
+		INSERT INTO groups
+		( `name`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user` )
+		VALUES
+		( '".$newGroup."', 1, 1, 15, NOW(), NOW(), ".$_SESSION['uid']." )
+		");
+		$groupsQuery=$query->queryAVal("
+		SELECT id
+		FROM groups
+		WHERE name = '".$newGroup."'
+		");
+		$user_group=$query->runSQL("
+		INSERT INTO user_group
+		( `u_id`, `g_id`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user` )
+		VALUES
+		( ".$_SESSION['uid'].", ".$groupsQuery.", 1, 1, 15, NOW(), NOW(), ".$_SESSION['uid']." )
+		");
+		$data = json_encode('Your group has been created');
+	}
+}
+else if ($p == 'joinGroupList')
+{
+	$data=$query->queryTable("
+	SELECT name
+	FROM groups
+	WHERE id NOT IN (
+		SELECT g_id
+		FROM user_group
+		WHERE u_id = " . $_SESSION['uid'] . "
+	)
+	");
+}
+else if ($p == 'sendJoinGroupRequest')
+{
+	
+}
 
 
 header('Cache-Control: no-cache, must-revalidate');

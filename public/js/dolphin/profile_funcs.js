@@ -116,11 +116,9 @@ function obtainGroups(){
 		async: false,
 		success : function(s)
 		{
-			var new_json_array = [];
-			for(var i = 0; i < s.length; i++) {
-				
-			}
-			createStreamTable('groups', s, "", true, [20,50], 20, true, true);
+			testdata = s;
+			console.log(s);
+			groupsStreamTable = createStreamTable('groups', s, "", true, [20,50], 20, true, true);
 		}
 	});
 }
@@ -144,7 +142,76 @@ function obtainProfileInfo(){
 }
 
 function requestNewGroup(){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'Request for a New Group';
+	document.getElementById('groupLabel').innerHTML ='Name the group you wish to create:';
 	
+	document.getElementById('groupModalDiv').innerHTML = '<input id="groupNew" class="form-control" type="text" placeholder="Group Name">';
+	document.getElementById('confirmGroupButton').innerHTML = 'Submit';
+	document.getElementById('confirmGroupButton').setAttribute('data-dismiss', '');
+	document.getElementById('confirmGroupButton').setAttribute('onClick', 'confirmNewGroup()');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:show');
+}
+
+function confirmNewGroup() {
+	document.getElementById('groupLabel').innerHTML = '';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'newGroupProcess', newGroup: document.getElementById('groupNew').value },
+		async: false,
+		success : function(s)
+		{
+			document.getElementById('groupLabel').innerHTML = s;
+		}
+	});
+	document.getElementById('groupModalDiv').innerHTML = '';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelGroupButton').innerHTML = 'OK';
+	if (document.getElementById('groupLabel').innerHTML == 'Your group has been created') {
+		document.getElementById('cancelGroupButton').setAttribute('onClick', 'window.location.reload()');
+	}
+}
+
+function requestJoinGroup(){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'Request to join a group';
+	document.getElementById('groupLabel').innerHTML ='Select a group to join';
+	document.getElementById('groupModalDiv').innerHTML = '<select id="joinGroup" class="form-control" size="25" multiple>';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', 'submitJoinRequest()');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:show');
+	document.getElementById('confirmGroupButton').setAttribute('data-dismiss', '');
+	document.getElementById('cancelGroupButton').setAttribute('onClick', '');
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'joinGroupList' },
+		async: false,
+		success : function(s)
+		{
+			for (var x = 0; x < s.length; x++) {
+				document.getElementById('joinGroup').innerHTML += '<option>'+s[x].name+'</option>';
+			}
+		}
+	});
+}
+
+function submitJoinRequest(){
+	if (document.querySelector("select").selectedOptions.length > 0) {
+		//	Add request to pending DB table
+		$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'sendJoinGroupRequest' },
+		async: false,
+		success : function(s)
+		{
+
+		}
+	});
+	}
 }
 
 $(function() {
