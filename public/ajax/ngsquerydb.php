@@ -11,7 +11,7 @@ $query = new dbfuncs();
 $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamples', 'grabReload', 'getReportNames', 'lanesToSamples',
 				'checkMatePaired', 'getAllSampleIds', 'getLaneIdFromSample', 'getSingleSample', 'getSeriesIdFromLane', 'getAllLaneIds',
                 'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList',
-                'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples',
+                'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples', 'changeDataGroup', 'changeDataGroupNames',
                 'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV'];
 
 $data = "";
@@ -637,6 +637,50 @@ else if ($p == 'getCustomTSV')
     where owner_id = ".$_SESSION['uid']
     );
 }
+else if ($p == 'changeDataGroupNames')
+{
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	$owner_check=$query->queryAVal("
+	SELECT owner_id
+	FROM ngs_experiment_series
+	WHERE id = $experiment
+	");
+	if($owner_check == $_SESSION['uid']){
+		$data=$query->queryTable("
+		SELECT id,name
+		FROM groups
+		WHERE owner_id = " . $_SESSION['uid'] . "
+		");
+	}else{
+		$data=json_encode("");
+	}
+}
+else if ($p == 'changeDataGroup')
+{
+	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	
+	//	EXPERIMENT SERIES
+	$ES_UPDATE=$query->runSQL("
+	UPDATE ngs_experiment_series
+	SET group_id = $group_id
+	WHERE id = $experiment
+	");
+	//	IMPORTS
+	$IMPORTS_UPDATE=$query->runSQL("
+	UPDATE ngs_lanes
+	SET group_id = $group_id
+	WHERE series_id = $experiment
+	");
+	//	SAMPLES
+	$ES_UPDATE=$query->runSQL("
+	UPDATE ngs_samples
+	SET group_id = $group_id
+	WHERE series_id = $experiment
+	");
+	$data=json_encode('passed');
+}
+
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

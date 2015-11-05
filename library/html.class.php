@@ -612,15 +612,21 @@ e range"><i class="fa fa-calendar"></i></button>
 	function getSubmitBrowserButton()
 	{
 	$html = '';
-	$html.= '<div id="btn-group">';
-	$html.= '	<input type="button" class="btn btn-primary" name="pipeline_button" value="Send to Pipeline" onClick="submitSelected();"/>
-				<input type="button" class="btn btn-primary" name="send_to_status_button" value="Pipeline Status" onClick="sendToStatus()"/>
-				<input type="button" class="btn btn-primary" name="export_excel_button" value="Export to Excel" onClick="exportExcel()"/>
-				<input type="button" class="btn btn-primary" name="table_generation_button" value="Generate Tables" onClick="generateTableLink()"/>
-				<input type="button" class="btn btn-primary" name="send_to_NCBI_button" value="Send to NCBI" onClick="sendToStatus()" disabled/>
-				<input type="button" class="btn btn-primary" name="send_to_ENCODE_button" value="Send to ENCODE" onClick="sendToStatus()" disabled/>
-				<input type="button" class="btn btn-danger pull-right" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>';
-	$html.= '</div>';
+	$html.= '<div class="pull-left btn-group">';
+	$html.= '	<button id="dso_menu" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Data Selection Options <span class="fa fa-caret-down"></span></button>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu" onClick="scrollWindow(0,200)">
+					<li><a name="pipeline_button">Send to Pipeline</a></li>
+					<li><a name="send_to_status_button" onClick="sendToStatus()">Pipeline Status</a></li>
+					<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>
+					<li class="divider"></li>
+					<li><a name="table_generation_button" onClick="generateTableLink()">Generate Tables</a></li>
+					<li class="divider"></li>
+					<li><a name="change_group_perms" onClick="changeDataGroup()" disabled>Change Data Group</a></li>
+				</ul>';
+				#<li><a name="send_to_NCBI_button" onClick="sendToStatus()" disabled>Send to NCBI</a></li>
+				#<li><a name="send_to_ENCODE_button" onClick="sendToStatus()" disabled>Send to ENCODE</a></li>
+	$html.= '</div>
+			<input type="button" class="btn btn-danger pull-right" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>';
 	return $html;
 	}
 	function getSelectionBox($title, $selection){

@@ -24,6 +24,33 @@
 					  </div>
 					</div>
 				</div><!-- End Delete modal -->
+				<div class="modal fade" id="permsModal" tabindex="-1" role="dialog" aria-labelledby="myPermsModal" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myPermsModal">Change the Data's Group</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group">
+										<label id="permsLabel"></label>
+										<br>
+										<div id="permsDiv">
+											
+										</div>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmPermsButton" class="btn btn-primary" onclick="confirmPermsPressed()">Confirm</button>
+							  <button type="button" id="cancelPermsButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Delete modal -->
 				<section class="content-header">
 					<h1>
 						NGS Browser
