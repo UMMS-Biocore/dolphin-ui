@@ -192,6 +192,7 @@ function requestJoinGroup(){
 		async: false,
 		success : function(s)
 		{
+			console.log(s);
 			for (var x = 0; x < s.length; x++) {
 				document.getElementById('joinGroup').innerHTML += '<option>'+s[x].name+'</option>';
 			}
@@ -203,14 +204,14 @@ function submitJoinRequest(){
 	if (document.querySelector("select").selectedOptions.length > 0) {
 		//	Add request to pending DB table
 		$.ajax({ type: "GET",
-		url: BASE_PATH+"/public/ajax/profiledb.php",
-		data: { p: 'sendJoinGroupRequest' },
-		async: false,
-		success : function(s)
-		{
-
-		}
-	});
+			url: BASE_PATH+"/public/ajax/profiledb.php",
+			data: { p: 'sendJoinGroupRequest', group: document.querySelector("select").selectedOptions[0].innerHTML },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+			}
+		});
 	}
 }
 

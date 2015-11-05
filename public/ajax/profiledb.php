@@ -124,11 +124,27 @@ else if ($p == 'joinGroupList')
 		FROM user_group
 		WHERE u_id = " . $_SESSION['uid'] . "
 	)
+	AND name NOT IN (
+		SELECT group_name
+		FROM user_group_requests
+		WHERE user_request = ".$_SESSION['uid']."
+	)
 	");
 }
 else if ($p == 'sendJoinGroupRequest')
 {
-	
+	if (isset($_GET['group'])){$group = $_GET['group'];}
+	$group_owner=$query->queryAVal("
+	SELECT owner_id
+	FROM groups
+	WHERE name = '$group'
+	");
+	$data=json_decode($query->runSQL("
+	INSERT INTO user_group_requests
+	( `user_request`, `user_check`, `group_name`, `group_owner` )
+	VALUES
+	( ".$_SESSION['uid'].", 0, '$group', $group_owner )
+	"));
 }
 
 
