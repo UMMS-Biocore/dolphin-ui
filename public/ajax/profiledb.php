@@ -68,10 +68,10 @@ else if ($p == 'profileLoad')
 else if ($p == 'obtainGroups')
 {
 	$data=$query->queryTable("
-    SELECT groups.id, name, groups.date_created
+    SELECT groups.id, name, groups.date_created, groups.owner_id, user_group.u_id
     FROM groups
 	LEFT JOIN user_group
-	ON groups.id = user_group.g_id
+	ON user_group.g_id = groups.id
     WHERE u_id = ".$_SESSION['uid']
     );
 }
@@ -145,6 +145,19 @@ else if ($p == 'sendJoinGroupRequest')
 	VALUES
 	( ".$_SESSION['uid'].", 0, '$group', $group_owner )
 	"));
+}
+else if ($p == 'viewGroupMembers')
+{
+	if (isset($_GET['group'])){$group = $_GET['group'];}
+	$data=$query->queryTable("
+	SELECT username
+	FROM users
+	WHERE id in (
+		SELECT u_id
+		FROM user_group
+		WHERE g_id = $group
+	)
+	");
 }
 
 

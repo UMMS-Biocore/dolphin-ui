@@ -116,11 +116,71 @@ function obtainGroups(){
 		async: false,
 		success : function(s)
 		{
-			testdata = s;
-			console.log(s);
+			var new_json_array = [];
+			var uid = s[0].u_id;
+			for(var i = 0; i < s.length; i++ ){
+				/*
+				new_json_array.push(
+					{
+						"id":s[i].id,
+						"name":s[i].name,
+						"date_created":s[i].date_created
+					}
+				)
+				*/
+				s[i].options = '<div class="btn-group pull-right">' +
+				'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options ' +
+				'<span class="fa fa-caret-down"></span>' +
+				'</button>' +
+				'<ul class="dropdown-menu" role="menu">' +
+				'<li><a href="#" onclick="viewGroupMembers(\''+s[i].id+'\')">View Group Members</a></li>';
+				if (uid == s[i].owner_id) {
+					s[i].options += '<li class="divider"></li>' +
+					'<li><a href="#" onclick="admitNewUsers()">Admit New Users</a></li>' +
+					'<li class="divider"></li>' +
+					'<li><a href="#" onclick="deleteGroup()">Delete Group</a></li></ul>' +
+					'</div>';
+				}else{
+					s[i].options += '</div>';
+				}
+				delete s[i].u_id;
+				delete s[i].owner_id;
+			}
 			groupsStreamTable = createStreamTable('groups', s, "", true, [20,50], 20, true, true);
 		}
 	});
+}
+
+function viewGroupMembers(group){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'User list for Selected Group';
+	document.getElementById('groupLabel').innerHTML ='';
+	document.getElementById('groupModalDiv').innerHTML = '<select id="viewGroup" class="form-control" size="25" multiple>';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelGroupButton').setAttribute('onClick', '');
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'viewGroupMembers', group: group },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for (var x = 0; x < s.length; x++) {
+				document.getElementById('viewGroup').innerHTML += '<option>'+s[x].username+'</option>';
+			}
+		}
+	});
+}
+
+function admitNewUsers(){
+	
+}
+
+function deleteGroup(){
+	
 }
 
 function obtainProfileInfo(){
@@ -202,6 +262,7 @@ function requestJoinGroup(){
 
 function submitJoinRequest(){
 	if (document.querySelector("select").selectedOptions.length > 0) {
+		var result = 0;
 		//	Add request to pending DB table
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/profiledb.php",
@@ -209,9 +270,18 @@ function submitJoinRequest(){
 			async: false,
 			success : function(s)
 			{
-				console.log(s);
+				result = s;
 			}
 		});
+		document.getElementById('groupModalDiv').innerHTML = '';
+		document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+		document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+		document.getElementById('cancelGroupButton').innerHTML = 'OK';
+		if (result == 0) {
+			document.getElementById('groupLabel').innerHTML ='Request did not process, please try again.';
+		}else{
+			document.getElementById('groupLabel').innerHTML ='Request to join group has been sent to its owner!';
+		}
 	}
 }
 
