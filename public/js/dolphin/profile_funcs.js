@@ -136,7 +136,7 @@ function obtainGroups(){
 				'<li><a href="#" onclick="viewGroupMembers(\''+s[i].id+'\')">View Group Members</a></li>';
 				if (uid == s[i].owner_id) {
 					s[i].options += '<li class="divider"></li>' +
-					'<li><a href="#" onclick="admitNewUsers()">Admit New Users</a></li>' +
+					'<li><a href="#" onclick="addNewUsers()">Add New Users</a></li>' +
 					'<li class="divider"></li>' +
 					'<li><a href="#" onclick="deleteGroup()">Delete Group</a></li></ul>' +
 					'</div>';
@@ -175,7 +175,7 @@ function viewGroupMembers(group){
 	});
 }
 
-function admitNewUsers(){
+function addNewUsers(){
 	
 }
 
@@ -231,7 +231,11 @@ function confirmNewGroup() {
 	document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
 	document.getElementById('cancelGroupButton').innerHTML = 'OK';
 	if (document.getElementById('groupLabel').innerHTML == 'Your group has been created') {
-		document.getElementById('cancelGroupButton').setAttribute('onClick', 'window.location.reload()');
+		document.getElementById('st_search_groups').remove();
+		document.getElementById('st_label_groups').remove();
+		document.getElementById('st_num_search_groups').remove();
+		document.getElementById('st_pagination_groups').remove();
+		obtainGroups();
 	}
 }
 

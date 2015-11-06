@@ -52,7 +52,7 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 		num_search.id = 'st_num_search_' + type;
 		num_search.setAttribute('class',"st_per_page margin pull-left input-sm");
 		
-		var newlabel = createElement('label', ['class'], ['margin']);
+		var newlabel = createElement('label', ['id','class'], ['st_label_'+type, 'margin']);
 		newlabel.setAttribute("for",'st_num_search_'+type);
 		newlabel.innerHTML = " entries per page";
 		document.getElementById('table_div_'+type).insertBefore(newlabel, document.getElementById('jsontable_'+type));

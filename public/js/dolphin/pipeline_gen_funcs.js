@@ -1324,6 +1324,8 @@ function changeDataGroup(){
 	if (checklist_experiment_series.length == 1) {
 		document.getElementById('permsLabel').innerHTML = 'Which group should own the selected Experiment Series?'
 		document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>'
+		document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
+		document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
 		$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
 				data: { p: 'changeDataGroupNames', experiment: checklist_experiment_series.toString() },
@@ -1356,4 +1358,6 @@ function confirmPermsPressed(){
 	});
 	document.getElementById('permsLabel').innerHTML = 'Selected data\'s group has been changed!'
 	document.getElementById('permsDiv').innerHTML = '';
+	document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelPermsButton').innerHTML = 'OK';
 }

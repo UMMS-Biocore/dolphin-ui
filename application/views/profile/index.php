@@ -14,7 +14,7 @@
 								</fieldset>   
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="confirmGroupButton" class="btn btn-default" data-dismiss="modal" onclick="">OK</button>
+							  <button type="button" id="confirmGroupButton" class="btn btn-primary" data-dismiss="modal" onclick="">OK</button>
 							  <button type="button" id="cancelGroupButton" class="btn btn-default" data-dismiss="modal" onclick="">Cancel</button>
 							</div>
 						</form>
