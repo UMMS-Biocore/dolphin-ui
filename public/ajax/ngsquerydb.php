@@ -10,7 +10,7 @@ $query = new dbfuncs();
 
 $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamples', 'grabReload', 'getReportNames', 'lanesToSamples',
 				'checkMatePaired', 'getAllSampleIds', 'getLaneIdFromSample', 'getSingleSample', 'getSeriesIdFromLane', 'getAllLaneIds',
-                'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList',
+                'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'getExperimentSeriesGroup',
                 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples', 'changeDataGroup', 'changeDataGroupNames',
                 'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV'];
 
@@ -679,6 +679,15 @@ else if ($p == 'changeDataGroup')
 	WHERE series_id = $experiment
 	");
 	$data=json_encode('passed');
+}
+else if ($p == 'getExperimentSeriesGroup')
+{
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	$data=json_encode($query->queryAVal("
+	SELECT group_id
+	FROM ngs_experiment_series
+	WHERE id = $experiment
+	"));
 }
 
 

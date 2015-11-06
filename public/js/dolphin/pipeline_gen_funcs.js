@@ -1326,14 +1326,29 @@ function changeDataGroup(){
 		document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>'
 		document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
 		document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
+		var experiment_series_group;
+		$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+				data: { p: 'getExperimentSeriesGroup', experiment: checklist_experiment_series.toString() },
+				async: false,
+				success : function(s)
+				{
+					experiment_series_group = s;
+				}
+			});
 		$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
 				data: { p: 'changeDataGroupNames', experiment: checklist_experiment_series.toString() },
 				async: false,
 				success : function(s)
 				{
+					console.log(s);
 					for(var x = 0; x < s.length; x++){
-						document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+						if (s[x].id == experiment_series_group) {
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
+						}else{
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+						}
 					}
 				}
 			});
