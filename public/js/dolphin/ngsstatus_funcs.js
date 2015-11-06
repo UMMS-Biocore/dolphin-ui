@@ -166,4 +166,27 @@ function joboutDataModal(jobname, jobout) {
    document.getElementById('job_modal_jobname').innerHTML = jobname;
    document.getElementById('job_modal_text').innerHTML = jobout;
 }
+
+function changeRunGroup(id, group){
+	document.getElementById('myModalPerms').innerHTML = 'Change run group';
+	document.getElementById('confirmPermsButton').setAttribute('onclick','confirmGroupChange()');
+	$('#permsModal').modal({
+		show: true
+	});
+}
+
+function confirmGroupChange(){
 	
+}
+
+function changeRunPerms(id, group) {
+	document.getElementById('myModalPerms').innerHTML = 'Change run permissions';
+	document.getElementById('confirmPermsButton').setAttribute('onclick','confirmPermsChange()');
+	$('#permsModal').modal({
+		show: true
+	});
+}
+
+function confirmPermsChange(){
+	
+}

@@ -12,7 +12,8 @@ $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamp
 				'checkMatePaired', 'getAllSampleIds', 'getLaneIdFromSample', 'getSingleSample', 'getSeriesIdFromLane', 'getAllLaneIds',
                 'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'getExperimentSeriesGroup',
                 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples', 'changeDataGroup', 'changeDataGroupNames',
-                'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV'];
+                'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV',
+				'changeRunGroup', 'changeRunPerms'];
 
 $data = "";
                 
@@ -402,7 +403,7 @@ else if ($p =='getStatus')
 	$time="";
 	if (isset($start)){$time="and `date_created`>='$start' and `date_created`<='$end'";}
 	$data=$query->queryTable("
-	SELECT id, run_group_id, run_name, wkey, outdir, run_description, run_status
+	SELECT id, run_group_id, run_name, wkey, outdir, run_description, run_status, owner_id, group_id, perms
 	FROM ngs_runparams
 	$perms $time
 	");
@@ -657,6 +658,7 @@ else if ($p == 'changeDataGroupNames')
 }
 else if ($p == 'changeDataGroup')
 {
+	if (isset($_GET['oldGID'])){$oldGID = $_GET['oldGID'];}
 	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 	
@@ -673,10 +675,16 @@ else if ($p == 'changeDataGroup')
 	WHERE series_id = $experiment
 	");
 	//	SAMPLES
-	$ES_UPDATE=$query->runSQL("
+	$SAMPLE_UPDATE=$query->runSQL("
 	UPDATE ngs_samples
 	SET group_id = $group_id
 	WHERE series_id = $experiment
+	");
+	//	RUNPARAMS
+	$SAMPLE_UPDATE=$query->runSQL("
+	UPDATE ngs_runparams
+	SET group_id = $group_id
+	WHERE group_id = $oldGID
 	");
 	$data=json_encode('passed');
 }
@@ -689,7 +697,14 @@ else if ($p == 'getExperimentSeriesGroup')
 	WHERE id = $experiment
 	"));
 }
-
+else if ($p == 'changeRunGroup')
+{
+	
+}
+else if ($p == 'changeRunPerms')
+{
+	
+}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

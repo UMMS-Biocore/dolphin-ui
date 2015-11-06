@@ -49,7 +49,33 @@
 					</form>
 				  </div>
 				</div>
-			</div><!-- End logging modal -->	
+			</div><!-- End logging modal -->
+			<div class="modal fade" id="permsModal" tabindex="-1" role="dialog" aria-labelledby="myModalPerms" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					  <h4 class="modal-title" id="myModalPerms"></h4>
+					</div>
+					<form name="logForm" role="form" method="post">
+						<div class="modal-body" style="overflow:scroll">
+							<fieldset>
+								<div class="form-group">
+									<label id="permsLabel"></label>
+									<br>
+									<div id="permsDiv">
+									</div>
+								</div>
+							</fieldset>   
+						</div>
+						<div class="modal-footer">
+							<button type="button" id="confirmPermsButton" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+							<button type="button" id="cancelPermsButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				  </div>
+				</div>
+			</div><!-- End perms modal -->	
 				<section class="content-header">
 					<h1>
 						NGS Run Status
