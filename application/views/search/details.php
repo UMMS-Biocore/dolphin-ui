@@ -92,7 +92,8 @@
 		</div>
 		<!-- END ACCORDION & CAROUSEL-->
 			</div><!-- /.col (LEFT) -->
-						<div class="col-md-9">
+				<?php echo $html->getSubmitBrowserButton()?>
+				<div class="col-md-9">
 				<?php
 				if ($table!=""){
 				echo $html->getBrowserPanel($experiment_series, $experiment_series_fields, "Experiment Series", 'experiment_name');

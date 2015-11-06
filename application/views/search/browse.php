@@ -39,7 +39,6 @@
 				<section class="content">
 					<div class="row">
 						<div class="col-md-3">
-
 			<div class="box box-solid">
 				<div class="box-header with-border">
 				<h3 class="box-title">Browse</h3>
@@ -66,6 +65,7 @@
 		</div>
 		<!-- END ACCORDION & CAROUSEL-->
 			</div><!-- /.col (LEFT) -->
+						<?php echo $html->getSubmitBrowserButton()?>
 						<div class="col-md-9">
 							<?php if(!isset($_SESSION['ngs_experiments'])){
 								echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
@@ -94,7 +94,6 @@
 																						"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
 																						"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
 							}?>
-				<?php echo $html->getSubmitBrowserButton()?>
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->
