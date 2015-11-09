@@ -622,10 +622,12 @@ e range"><i class="fa fa-calendar"></i></button>
 						<li class="divider"></li>
 						<li><a name="table_generation_button" onClick="generateTableLink()">Generate Tables</a></li>
 						<li class="divider"></li>
-						<li><a name="change_group_perms" onClick="changeDataGroup()" disabled>Change Data Group</a></li>
-					</ul>';
-					#<li><a name="send_to_NCBI_button" onClick="sendToStatus()" disabled>Send to NCBI</a></li>
-					#<li><a name="send_to_ENCODE_button" onClick="sendToStatus()" disabled>Send to ENCODE</a></li>
+						<li><a name="change_group_perms" onClick="changeDataGroup()" disabled>Change Data Group</a></li>';
+	if($_SESSION['uid'] == 1){
+							#<li><a name="send_to_NCBI_button" onClick="" disabled>Send to NCBI</a></li>
+		$html.= 			'<li><a name="send_to_ENCODE_button" onClick="checkForEncodeSubmission()" disabled>Send to ENCODE</a></li>';
+	}
+	$html.= 		'</ul>';
 	$html.= '	</div>
 				<div class="margin pull-right">
 					<input type="button" class="btn btn-danger" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>
