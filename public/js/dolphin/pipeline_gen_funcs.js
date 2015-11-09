@@ -1356,16 +1356,16 @@ function changeDataGroup(){
 			$('#permsModal').modal({
 				show: true
 			});
-			document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed('+experiment_series_group+')');
+			document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
 		}
 	}
 }
 
-function confirmPermsPressed(experiment_series_group){
+function confirmPermsPressed(){
 	console.log(document.querySelector("select").selectedOptions[0].value);
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
-		data: { p: 'changeDataGroup', group_id: document.querySelector("select").selectedOptions[0].value, oldGID: experiment_series_group, experiment: checklist_experiment_series.toString() },
+		data: { p: 'changeDataGroup', group_id: document.querySelector("select").selectedOptions[0].value, experiment: checklist_experiment_series.toString() },
 		async: false,
 		success : function(s)
 		{

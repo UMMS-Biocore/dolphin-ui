@@ -13,7 +13,7 @@ $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamp
                 'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'getExperimentSeriesGroup',
                 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples', 'changeDataGroup', 'changeDataGroupNames',
                 'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV',
-				'changeRunGroup', 'changeRunPerms'];
+				'changeRunGroup', 'changeRunPerms', 'getGroups'];
 
 $data = "";
                 
@@ -680,12 +680,6 @@ else if ($p == 'changeDataGroup')
 	SET group_id = $group_id
 	WHERE series_id = $experiment
 	");
-	//	RUNPARAMS
-	$SAMPLE_UPDATE=$query->runSQL("
-	UPDATE ngs_runparams
-	SET group_id = $group_id
-	WHERE group_id = $oldGID
-	");
 	$data=json_encode('passed');
 }
 else if ($p == 'getExperimentSeriesGroup')
@@ -697,9 +691,28 @@ else if ($p == 'getExperimentSeriesGroup')
 	WHERE id = $experiment
 	"));
 }
+else if ($p == 'getGroups')
+{
+	$data=$query->queryTable("
+	SELECT id, name
+	FROM groups
+	WHERE id in (
+		SELECT g_id
+		FROM user_group
+		WHERE u_id = ".$_SESSION['uid']."
+	)
+	");
+}
 else if ($p == 'changeRunGroup')
 {
-	
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
+	$RUNPARAM_UPDATE=$query->runSQL("
+	UPDATE ngs_runparams
+	SET group_id = $group_id
+	WHERE id = $run_id
+	");
+	$data=json_encode('pass');
 }
 else if ($p == 'changeRunPerms')
 {

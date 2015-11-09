@@ -169,14 +169,52 @@ function joboutDataModal(jobname, jobout) {
 
 function changeRunGroup(id, group){
 	document.getElementById('myModalPerms').innerHTML = 'Change run group';
-	document.getElementById('confirmPermsButton').setAttribute('onclick','confirmGroupChange()');
+	document.getElementById('permsLabel').innerHTML = 'Which group should see this run?'
+	document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>'
+	document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
+	document.getElementById('confirmPermsButton').setAttribute('onclick','confirmGroupChange('+id+')');
+	document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: 'getGroups'},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for(var x = 0; x < s.length; x++){
+				if (s[x].id == group) {
+					document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
+				}else{
+					document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+				}
+			}
+		}
+	});
 	$('#permsModal').modal({
 		show: true
 	});
 }
 
-function confirmGroupChange(){
-	
+function confirmGroupChange(id){
+	var group_id = document.querySelector("select").selectedOptions[0].value;
+	var group_changed;
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: 'changeRunGroup', group_id: group_id, run_id: id},
+		async: false,
+		success : function(s)
+		{
+			group_changed = s;
+		}	
+	});
+	if (group_changed == 'pass') {
+		document.getElementById('permsLabel').innerHTML = 'Run group has been changed!'
+		document.getElementById('permsDiv').innerHTML = '';
+		document.getElementById(id).setAttribute('name', group_id);
+	}else{
+		document.getElementById('permsLabel').innerHTML = 'Error occured, run group was not changed.'
+		document.getElementById('permsDiv').innerHTML = '';
+	}
 }
 
 function changeRunPerms(id, group) {

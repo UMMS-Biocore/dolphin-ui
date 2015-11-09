@@ -69,7 +69,7 @@
 							</fieldset>   
 						</div>
 						<div class="modal-footer">
-							<button type="button" id="confirmPermsButton" class="btn btn-primary" data-dismiss="modal">Confirm</button>
+							<button type="button" id="confirmPermsButton" class="btn btn-primary" data-dismiss="">Confirm</button>
 							<button type="button" id="cancelPermsButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
 						</div>
 					</form>

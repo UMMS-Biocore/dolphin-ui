@@ -73,8 +73,8 @@ $(function() {
 					}
 					
 					if (s[i].owner_id == uid) {
-						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
-							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
+						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
 					}
 					
 					if (runstat != "") {
@@ -147,8 +147,8 @@ $(function() {
 					}
 					
 					if (s[i].owner_id == uid) {
-						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
-							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
+						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
 					}
 					
 					if (runstat != "") {
@@ -272,8 +272,8 @@ $(function() {
 						}
 						
 						if (s[i].owner_id == uid) {
-							disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
-								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
+							disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
 						}
 						
 						if (runstat != "") {
