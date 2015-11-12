@@ -55,3 +55,7 @@ function mergeTidy(headDiv, size, elementList){
 	}
 	return headDiv;
 }
+
+function scrollWindow(x, y){
+	window.scrollBy(x, y);
+}

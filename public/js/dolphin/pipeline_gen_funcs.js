@@ -1343,3 +1343,62 @@ function bisulphiteSelect(id, num){
 		dig_site.value = '';
 	}
 }
+
+function changeDataGroup(){
+	if (checklist_experiment_series.length == 1) {
+		document.getElementById('permsLabel').innerHTML = 'Which group should own the selected Experiment Series?'
+		document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>'
+		document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
+		document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
+		var experiment_series_group;
+		$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+				data: { p: 'getExperimentSeriesGroup', experiment: checklist_experiment_series.toString() },
+				async: false,
+				success : function(s)
+				{
+					experiment_series_group = s;
+				}
+			});
+		$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+				data: { p: 'changeDataGroupNames', experiment: checklist_experiment_series.toString() },
+				async: false,
+				success : function(s)
+				{
+					console.log(s);
+					for(var x = 0; x < s.length; x++){
+						if (s[x].id == experiment_series_group) {
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
+						}else{
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+						}
+					}
+				}
+			});
+		if (document.getElementById('permsIDSelect').innerHTML != '') {
+			$('#permsModal').modal({
+				show: true
+			});
+			document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
+		}
+	}
+}
+
+function confirmPermsPressed(){
+	console.log(document.querySelector("select").selectedOptions[0].value);
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: 'changeDataGroup', group_id: document.querySelector("select").selectedOptions[0].value, experiment: checklist_experiment_series.toString() },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+	document.getElementById('permsLabel').innerHTML = 'Selected data\'s group has been changed!'
+	document.getElementById('permsDiv').innerHTML = '';
+	document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+	document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
+	document.getElementById('cancelPermsButton').innerHTML = 'OK';
+}

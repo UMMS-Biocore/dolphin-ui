@@ -23,8 +23,8 @@ function updateProfile(){
 
 	if (access_key_change.length > 0) {
 		for(var x = 0; x < access_key_change.length; x++){
-			$.ajax({ type: "POST",
-				url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/profiledb.php",
 				data: { p: 'alterAccessKey', id: access_key_change[x].split("_")[0], a_key: document.getElementById(access_key_change).value},
 				async: false,
 				success : function(s)
@@ -35,8 +35,8 @@ function updateProfile(){
 	}
 	if (secret_key_change.length > 0) {
 		for(var x = 0; x < secret_key_change.length; x++){
-			$.ajax({ type: "POST",
-				url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/profiledb.php",
 				data: { p: 'alterSecretKey', id: secret_key_change[x].split("_")[0], s_key: document.getElementById(secret_key_change).value},
 				async: false,
 				success : function(s)
@@ -47,8 +47,8 @@ function updateProfile(){
 	}
 	
 	if (change_check) {
-		$.ajax({ type: "POST",
-			url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'updateProfile', img: change_value},
 			async: false,
 			success : function(s)
@@ -62,7 +62,7 @@ function updateProfile(){
 function obtainPermissions(id){
 	var verdict = false;
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'checkAmazonPermissions', a_id: id},
 			async: false,
 			success : function(s)
@@ -84,35 +84,209 @@ function credentials_change(id){
 }
 
 function obtainKeys(){
-	//	FIRST OBTAIN GROUPS
-	var groups = [];
-	var bucket_list = $('#jsontable_amazon').dataTable();
-
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'obtainAmazonKeys' },
 			async: false,
 			success : function(s)
 			{
-				bucket_list.fnClearTable();
+				var new_json_array = [];
 				for(var i = 0; i < s.length; i++) {
 					if (obtainPermissions(s[i].id)) {
-						bucket_list.fnAddData([
-						s[i].bucket,
-						'<input id="'+s[i].id+'_access" type="textbox" class="input-group col-md-12" value="'+s[i].aws_access_key_id+'" onchange="credentials_change(this.id)">',
-						'<input id="'+s[i].id+'_secret" type="textbox" class="input-group col-md-12" value="'+s[i].aws_secret_access_key+'" onchange="credentials_change(this.id)">'
-						]);
+						new_json_array.push(
+						{"bucket":s[i].bucket,
+						"access_key":'<input id="'+s[i].id+'_access" type="textbox" class="input-group col-md-12" value="'+s[i].aws_access_key_id+'" onchange="credentials_change(this.id)">',
+						"secret_key":'<input id="'+s[i].id+'_secret" type="textbox" class="input-group col-md-12" value="'+s[i].aws_secret_access_key+'" onchange="credentials_change(this.id)">'});
 					}else{
-						bucket_list.fnAddData([
-						s[i].bucket,
-						'<input type="textbox" class="input-group col-md-12" value="'+Array(17).join('*') + s[i].aws_access_key_id.substring(16, 20)+'" disabled>',
-						'<input type="textbox" class="input-group col-md-12" value="'+Array(37).join('*') + s[i].aws_secret_access_key.substring(36,40)+'" disabled>'
-						]);
+						new_json_array.push(
+						{"bucket":s[i].bucket,
+						"access_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(17).join('*') + s[i].aws_access_key_id.substring(16, 20)+'" disabled>',
+						"secret_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(37).join('*') + s[i].aws_secret_access_key.substring(36,40)+'" disabled>'});
 					}
-					
 				}
+				createStreamTable('amazon', new_json_array, "", true, [20,50], 20, true, true);
 			}
 	});
+}
+
+function obtainGroups(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'obtainGroups' },
+		async: false,
+		success : function(s)
+		{
+			var new_json_array = [];
+			var uid = s[0].u_id;
+			for(var i = 0; i < s.length; i++ ){
+				/*
+				new_json_array.push(
+					{
+						"id":s[i].id,
+						"name":s[i].name,
+						"date_created":s[i].date_created
+					}
+				)
+				*/
+				s[i].options = '<div class="btn-group pull-right">' +
+				'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options ' +
+				'<span class="fa fa-caret-down"></span>' +
+				'</button>' +
+				'<ul class="dropdown-menu" role="menu">' +
+				'<li><a href="#" onclick="viewGroupMembers(\''+s[i].id+'\')">View Group Members</a></li>';
+				if (uid == s[i].owner_id) {
+					s[i].options += '<li class="divider"></li>' +
+					'<li><a href="#" onclick="addNewUsers()">Add New Users</a></li>' +
+					'<li class="divider"></li>' +
+					'<li><a href="#" onclick="deleteGroup()">Delete Group</a></li></ul>' +
+					'</div>';
+				}else{
+					s[i].options += '</div>';
+				}
+				delete s[i].u_id;
+				delete s[i].owner_id;
+			}
+			groupsStreamTable = createStreamTable('groups', s, "", true, [20,50], 20, true, true);
+		}
+	});
+}
+
+function viewGroupMembers(group){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'User list for Selected Group';
+	document.getElementById('groupLabel').innerHTML ='';
+	document.getElementById('groupModalDiv').innerHTML = '<select id="viewGroup" class="form-control" size="25" multiple>';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelGroupButton').setAttribute('onClick', '');
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'viewGroupMembers', group: group },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for (var x = 0; x < s.length; x++) {
+				document.getElementById('viewGroup').innerHTML += '<option>'+s[x].username+'</option>';
+			}
+		}
+	});
+}
+
+function addNewUsers(){
+	
+}
+
+function deleteGroup(){
+	
+}
+
+function obtainProfileInfo(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'obtainProfileInfo' },
+		async: false,
+		success : function(s)
+		{
+			var modified_json = [];
+			for(var key in s[0]){
+				if (key != 'owner_id' && key != 'group_id' && key !='photo_loc' && key != 'last_modified_user' && key != 'perms') {
+					modified_json.push({'id':key,'value':s[0][key]});
+				}
+			}
+			createStreamTable('user_profile', modified_json, "", false, [20], 20, false, false);
+		}
+	});
+}
+
+function requestNewGroup(){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'Request for a New Group';
+	document.getElementById('groupLabel').innerHTML ='Name the group you wish to create:';
+	
+	document.getElementById('groupModalDiv').innerHTML = '<input id="groupNew" class="form-control" type="text" placeholder="Group Name">';
+	document.getElementById('confirmGroupButton').innerHTML = 'Submit';
+	document.getElementById('confirmGroupButton').setAttribute('data-dismiss', '');
+	document.getElementById('confirmGroupButton').setAttribute('onClick', 'confirmNewGroup()');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:show');
+}
+
+function confirmNewGroup() {
+	document.getElementById('groupLabel').innerHTML = '';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'newGroupProcess', newGroup: document.getElementById('groupNew').value },
+		async: false,
+		success : function(s)
+		{
+			document.getElementById('groupLabel').innerHTML = s;
+		}
+	});
+	document.getElementById('groupModalDiv').innerHTML = '';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelGroupButton').innerHTML = 'OK';
+	if (document.getElementById('groupLabel').innerHTML == 'Your group has been created') {
+		document.getElementById('st_search_groups').remove();
+		document.getElementById('st_label_groups').remove();
+		document.getElementById('st_num_search_groups').remove();
+		document.getElementById('st_pagination_groups').remove();
+		obtainGroups();
+	}
+}
+
+function requestJoinGroup(){
+	$('#groupModal').modal({
+		show: true
+	});
+	document.getElementById('myModalLabel').innerHTML = 'Request to join a group';
+	document.getElementById('groupLabel').innerHTML ='Select a group to join';
+	document.getElementById('groupModalDiv').innerHTML = '<select id="joinGroup" class="form-control" size="25" multiple>';
+	document.getElementById('confirmGroupButton').setAttribute('onClick', 'submitJoinRequest()');
+	document.getElementById('confirmGroupButton').setAttribute('style', 'display:show');
+	document.getElementById('confirmGroupButton').setAttribute('data-dismiss', '');
+	document.getElementById('cancelGroupButton').setAttribute('onClick', '');
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'joinGroupList' },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for (var x = 0; x < s.length; x++) {
+				document.getElementById('joinGroup').innerHTML += '<option>'+s[x].name+'</option>';
+			}
+		}
+	});
+}
+
+function submitJoinRequest(){
+	if (document.querySelector("select").selectedOptions.length > 0) {
+		var result = 0;
+		//	Add request to pending DB table
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
+			data: { p: 'sendJoinGroupRequest', group: document.querySelector("select").selectedOptions[0].innerHTML },
+			async: false,
+			success : function(s)
+			{
+				result = s;
+			}
+		});
+		document.getElementById('groupModalDiv').innerHTML = '';
+		document.getElementById('confirmGroupButton').setAttribute('onClick', '');
+		document.getElementById('confirmGroupButton').setAttribute('style', 'display:none');
+		document.getElementById('cancelGroupButton').innerHTML = 'OK';
+		if (result == 0) {
+			document.getElementById('groupLabel').innerHTML ='Request did not process, please try again.';
+		}else{
+			document.getElementById('groupLabel').innerHTML ='Request to join group has been sent to its owner!';
+		}
+	}
 }
 
 $(function() {
@@ -120,7 +294,7 @@ $(function() {
 	
 	//	PROFILE AVATAR
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'profileLoad' },
 			async: false,
 			success : function(s)
@@ -134,7 +308,10 @@ $(function() {
 				}
 			}
 	});
-	
+	//	PROFILE
+	obtainProfileInfo();
+	//	GROUPS
+	obtainGroups();
 	//	AMAZON KEYS
 	obtainKeys();
 });

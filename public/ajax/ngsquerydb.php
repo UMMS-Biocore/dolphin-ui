@@ -10,9 +10,10 @@ $query = new dbfuncs();
 
 $pDictionary = ['getSelectedSamples', 'submitPipeline', 'getStatus', 'getRunSamples', 'grabReload', 'getReportNames', 'lanesToSamples',
 				'checkMatePaired', 'getAllSampleIds', 'getLaneIdFromSample', 'getSingleSample', 'getSeriesIdFromLane', 'getAllLaneIds',
-                'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'profileLoad',
-                'obtainAmazonKeys', 'checkAmazonPermissions', 'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples',
-                'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV'];
+                'getGIDs', 'getSampleNames', 'getWKey', 'getFastQCBool', 'getReportList', 'getTSVFileList', 'getExperimentSeriesGroup',
+                'getInfoBoxData', 'getSamplesFromName', 'getLanesWithSamples', 'changeDataGroup', 'changeDataGroupNames',
+                'getLanesFromName', 'getSamplesfromExperimentSeries', 'getExperimentIdFromSample','getCustomTSV',
+				'changeRunGroup', 'changeRunPerms', 'getGroups'];
 
 $data = "";
                 
@@ -402,7 +403,7 @@ else if ($p =='getStatus')
 	$time="";
 	if (isset($start)){$time="and `date_created`>='$start' and `date_created`<='$end'";}
 	$data=$query->queryTable("
-	SELECT id, run_group_id, run_name, wkey, outdir, run_description, run_status
+	SELECT id, run_group_id, run_name, wkey, outdir, run_description, run_status, owner_id, group_id, perms
 	FROM ngs_runparams
 	$perms $time
 	");
@@ -573,23 +574,6 @@ else if ($p == 'getTSVFileList')
     WHERE wkey = '$wkey' and file like '%.tsv'
     ");
 }
-else if ($p == 'profileLoad')
-{
-    $data=$query->queryTable("
-    SELECT photo_loc
-    FROM users
-    WHERE username = '".$_SESSION['user']."'"
-    );
-}
-else if ($p == 'obtainAmazonKeys')
-{
-    $data=$query->queryTable("
-    SELECT * FROM amazon_credentials WHERE id IN(
-        SELECT amazon_id FROM group_amazon WHERE id IN(
-            SELECT id FROM groups WHERE id IN(
-                SELECT g_id FROM user_group WHERE u_id = ".$_SESSION['uid'].")))
-    ");
-}
 else if ($p == 'getInfoBoxData')
 {
     if (isset($_GET['fieldname'])){$fieldname = $_GET['fieldname'];}
@@ -597,15 +581,6 @@ else if ($p == 'getInfoBoxData')
     SELECT help_text
     FROM ngs_help
     WHERE field_name = '$fieldname';
-    ");
-}
-else if ($p == 'checkAmazonPermissions')
-{
-    if (isset($_GET['a_id'])){$a_id = $_GET['a_id'];}
-    $data=$query->queryTable("
-    SELECT id FROM groups WHERE owner_id = ".$_SESSION['uid']." AND id IN(
-    SELECT group_id FROM group_amazon WHERE amazon_id = (
-    SELECT DISTINCT id FROM amazon_credentials where id = $a_id));
     ");
 }
 else if($p == 'getSamplesFromName')
@@ -662,6 +637,86 @@ else if ($p == 'getCustomTSV')
     FROM ngs_createdtables
     where owner_id = ".$_SESSION['uid']
     );
+}
+else if ($p == 'changeDataGroupNames')
+{
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	$owner_check=$query->queryAVal("
+	SELECT owner_id
+	FROM ngs_experiment_series
+	WHERE id = $experiment
+	");
+	if($owner_check == $_SESSION['uid']){
+		$data=$query->queryTable("
+		SELECT id,name
+		FROM groups
+		WHERE owner_id = " . $_SESSION['uid'] . "
+		");
+	}else{
+		$data=json_encode("");
+	}
+}
+else if ($p == 'changeDataGroup')
+{
+	if (isset($_GET['oldGID'])){$oldGID = $_GET['oldGID'];}
+	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	
+	//	EXPERIMENT SERIES
+	$ES_UPDATE=$query->runSQL("
+	UPDATE ngs_experiment_series
+	SET group_id = $group_id
+	WHERE id = $experiment
+	");
+	//	IMPORTS
+	$IMPORTS_UPDATE=$query->runSQL("
+	UPDATE ngs_lanes
+	SET group_id = $group_id
+	WHERE series_id = $experiment
+	");
+	//	SAMPLES
+	$SAMPLE_UPDATE=$query->runSQL("
+	UPDATE ngs_samples
+	SET group_id = $group_id
+	WHERE series_id = $experiment
+	");
+	$data=json_encode('passed');
+}
+else if ($p == 'getExperimentSeriesGroup')
+{
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	$data=json_encode($query->queryAVal("
+	SELECT group_id
+	FROM ngs_experiment_series
+	WHERE id = $experiment
+	"));
+}
+else if ($p == 'getGroups')
+{
+	$data=$query->queryTable("
+	SELECT id, name
+	FROM groups
+	WHERE id in (
+		SELECT g_id
+		FROM user_group
+		WHERE u_id = ".$_SESSION['uid']."
+	)
+	");
+}
+else if ($p == 'changeRunGroup')
+{
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
+	$RUNPARAM_UPDATE=$query->runSQL("
+	UPDATE ngs_runparams
+	SET group_id = $group_id
+	WHERE id = $run_id
+	");
+	$data=json_encode('pass');
+}
+else if ($p == 'changeRunPerms')
+{
+	
 }
 
 header('Cache-Control: no-cache, must-revalidate');

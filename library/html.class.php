@@ -261,6 +261,37 @@ class HTML {
 		return $html;
 	}
 	
+	function getRespBoxTableStreamNoExpand($title, $table, $fields, $tableKeys){
+		$html = '';
+		$html.= '<div class="box">
+						<div class="box-header">
+								<h3 class="box-title">'.$title.'</h3>';
+		$html.= $this->getInfoBox($table);
+		$html.=			'</div><!-- /.box-head -->
+						<div id="table_div_'.$table.'" class="box-body table-responsive">
+								<table id="jsontable_'.$table.'" class="table table-hover table-striped table-condensed table-scrollable">
+										<thead>
+										<tr>';
+										for($x = 0; $x < count($tableKeys); $x++){
+												if($tableKeys[$x] == "id" || $tableKeys[$x] == "total_reads" || $tableKeys[$x] == "total_samples"){
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::number" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}else{
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::string" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}
+										}
+		$html.=							'</tr>
+										</thead>
+										<tbody>
+										</tbody>
+								</table>
+						</div><!-- /.box-body -->
+				</div><!-- /.box -->';
+		
+		return $html;
+	}
+	
 	function getBoxTable_ng($title, $table, $fields)
 	{
 	$html='				<style>
@@ -581,15 +612,27 @@ e range"><i class="fa fa-calendar"></i></button>
 	function getSubmitBrowserButton()
 	{
 	$html = '';
-	$html.= '<div id="btn-group">';
-	$html.= '	<input type="button" class="btn btn-primary" name="pipeline_button" value="Send to Pipeline" onClick="submitSelected();"/>
-				<input type="button" class="btn btn-primary" name="send_to_status_button" value="Pipeline Status" onClick="sendToStatus()"/>
-				<input type="button" class="btn btn-primary" name="export_excel_button" value="Export to Excel" onClick="exportExcel()"/>
-				<input type="button" class="btn btn-primary" name="table_generation_button" value="Generate Tables" onClick="generateTableLink()"/>
-				<input type="button" class="btn btn-primary" name="send_to_NCBI_button" value="Send to NCBI" onClick="sendToStatus()" disabled/>
-				<input type="button" class="btn btn-primary" name="send_to_ENCODE_button" value="Send to ENCODE" onClick="sendToStatus()" disabled/>
-				<input type="button" class="btn btn-danger pull-right" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>';
-	$html.= '</div>';
+	$html.= '<div class="col-md-9">
+				<div class="margin pull-left btn-group">
+					<button id="dso_menu" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Data Selection Options <span class="fa fa-caret-down"></span></button>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu" onClick="scrollWindow(0,200)">
+						<li><a name="pipeline_button">Send to Pipeline</a></li>
+						<li><a name="send_to_status_button" onClick="sendToStatus()">Pipeline Status</a></li>
+						<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>
+						<li class="divider"></li>
+						<li><a name="table_generation_button" onClick="generateTableLink()">Generate Tables</a></li>
+						<li class="divider"></li>
+						<li><a name="change_group_perms" onClick="changeDataGroup()" disabled>Change Data Group</a></li>';
+	if($_SESSION['uid'] == 1){
+							#<li><a name="send_to_NCBI_button" onClick="" disabled>Send to NCBI</a></li>
+		$html.= 			'<li><a name="send_to_ENCODE_button" onClick="checkForEncodeSubmission()" disabled>Send to ENCODE</a></li>';
+	}
+	$html.= 		'</ul>';
+	$html.= '	</div>
+				<div class="margin pull-right">
+					<input type="button" class="btn btn-danger" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>
+				</div>
+			</div>';
 	return $html;
 	}
 	function getSelectionBox($title, $selection){

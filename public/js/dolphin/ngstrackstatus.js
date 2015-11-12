@@ -72,6 +72,11 @@ $(function() {
 						disabled = disabled + '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Rerun</a></li>';
 					}
 					
+					if (s[i].owner_id == uid) {
+						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
+					}
+					
 					if (runstat != "") {
 						runparams.fnAddData([
 						s[i].id,
@@ -139,6 +144,11 @@ $(function() {
 						runstat = '<button id="'+s[i].id+'" class="btn btn-danger btn-xs" onclick="errorOutModal(this.id, \''+ s[i].wkey + '\')"><i class="fa fa-warning">\tError</i></button>';
 					}else if (s[i].run_status == 4){
 						runstat = '<button id="'+s[i].id+'" class="btn btn-danger btn-xs" onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-warning">\tStopped</i></button>';
+					}
+					
+					if (s[i].owner_id == uid) {
+						disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
 					}
 					
 					if (runstat != "") {
@@ -259,6 +269,11 @@ $(function() {
 						
 						if (s[i].outdir.split("/")[s[i].outdir.split("/").length - 1] != 'initial_run' || s[i].run_status == 1) {
 							disabled = disabled + '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Rerun</a></li>';
+						}
+						
+						if (s[i].owner_id == uid) {
+							disabled += '<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunGroup(this.id, this.name)">Change Group</a></li>' +
+								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>';
 						}
 						
 						if (runstat != "") {
