@@ -83,20 +83,18 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	masterScript.appendChild(tr);
 	document.getElementsByTagName('body')[0].appendChild(masterScript);
 	
-	var lanes_with_good_samples;
-	var owner_ids = [];
-	if (type == 'lanes') {
-		$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
-				data: { p: 'getLanesWithSamples' },
-				async: false,
-				success : function(s)
-				{
-					lanes_with_good_samples = s;
+	var samples_with_good_runs = [];
+	$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/ngstrack_stats.php",
+			data: { p: "getSamplesWithMoreRuns" },
+			async: false,
+			success : function(q)
+			{
+				for(var z = 0; z < q.length; z++){
+					samples_with_good_runs.push(q[z].sample_id);
 				}
-		});
-	}
-	
+			}
+	});
 	var tableToggle = getTableToggle(type);
 	
 	var data = queryData, html = $.trim($("#template_"+type).html()), template = Mustache.compile(html);
@@ -209,14 +207,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		var initialRunWarning = "<button id=\"perms_"+record.id+"\" class=\"btn btn-default btn-xs\" value=\"initialRunWarning\" onclick=\"initialRunButton('"+type+"', "+record.id+", this)\"><span class=\"fa fa-warning\"></span></button>";
 		var sample_name = '';
 		
-		if (type == 'lanes') {
-			for(var y = 0; y < lanes_with_good_samples.length; y++){
-				if (lanes_with_good_samples[y].id == record.id) {
-					initialRunWarning = '';
-				}
-			}
-		}
-		if (record.total_reads != '' && type == 'samples'){
+		if ((record.total_reads != '' || samples_with_good_runs.indexOf(record.id) > -1) && type == 'samples'){
 			initialRunWarning = '';
 		}
 		if (record.samplename == 'null' || record.samplename == 'NULL' || record.samplename == '' || record.samplename == null || record.samplename == undefined) {
@@ -288,7 +279,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this)\">"+record.total_reads+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this)\">"+record.total_samples+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'cost', 'ngs_lanes', this)\">"+record.cost+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'phix_requested', 'ngs_lanes', this)\">"+record.phix_requested+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_in_lane', 'ngs_lanes', this)\">"+record.phix_in_lane+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'notes', 'ngs_lanes', this)\">"+record.notes+"</td>"+
-					"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
 					
 			}else if(type == 'experiments'){
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiment_series/"+record.id+'/'+theSearch+"\">"+record.experiment_name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this)\">"+record.summary+
@@ -315,7 +306,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 			}else if (type == 'lanes') {
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiments/"+record.id+'/'+theSearch+"\">"+record.name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'facility', 'ngs_lanes', this)\">"+record.facility+
 					"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this)\">"+record.total_reads+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this)\">"+record.total_samples+"</td><td>"+
-					""+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
+					"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
 					
 			}else if(type == 'experiments'){
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiment_series/"+record.id+'/'+theSearch+"\">"+record.experiment_name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this)\">"+record.summary+
