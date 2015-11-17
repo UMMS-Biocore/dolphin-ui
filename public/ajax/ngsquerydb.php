@@ -310,6 +310,15 @@ else if ($p == 'getCustomTSV')
     where owner_id = ".$_SESSION['uid']
     );
 }
+else if ($p == 'getSamplesWithMoreRuns')
+{
+	$data=$query->queryTable("
+    SELECT sample_id 
+	FROM ngs_runlist 
+	GROUP BY sample_id
+	HAVING count(sample_id) > 1
+    ");
+}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
