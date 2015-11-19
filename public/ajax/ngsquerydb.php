@@ -339,7 +339,6 @@ else if ($p == 'changeDataGroupNames')
 }
 else if ($p == 'changeDataGroup')
 {
-	if (isset($_GET['oldGID'])){$oldGID = $_GET['oldGID'];}
 	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 	
@@ -366,11 +365,11 @@ else if ($p == 'changeDataGroup')
 else if ($p == 'getExperimentSeriesGroup')
 {
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
-	$data=json_encode($query->queryAVal("
-	SELECT group_id
+	$data=$query->queryTable("
+	SELECT group_id, owner_id
 	FROM ngs_experiment_series
 	WHERE id = $experiment
-	"));
+	");
 }
 else if ($p == 'getGroups')
 {
@@ -431,6 +430,31 @@ else if ($p == 'getAllUsers')
 	}else{
 		$data=json_encode("");
 	}
+}
+else if ($p == "changeOwnerExperiment")
+{
+	if (isset($_GET['owner_id'])){$owner_id = $_GET['owner_id'];}
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	
+	//	EXPERIMENT SERIES
+	$ES_UPDATE=$query->runSQL("
+	UPDATE ngs_experiment_series
+	SET owner_id = $owner_id
+	WHERE id = $experiment
+	");
+	//	IMPORTS
+	$IMPORTS_UPDATE=$query->runSQL("
+	UPDATE ngs_lanes
+	SET owner_id = $owner_id
+	WHERE series_id = $experiment
+	");
+	//	SAMPLES
+	$SAMPLE_UPDATE=$query->runSQL("
+	UPDATE ngs_samples
+	SET owner_id = $owner_id
+	WHERE series_id = $experiment
+	");
+	$data=json_encode('passed');
 }
 
 header('Cache-Control: no-cache, must-revalidate');

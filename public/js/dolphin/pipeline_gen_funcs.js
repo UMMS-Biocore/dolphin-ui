@@ -988,7 +988,7 @@ function changeDataGroup(command){
 				{
 					console.log(s);
 					for(var x = 0; x < s.length; x++){
-						if (s[x].id == experiment_series_group) {
+						if (s[x].id == experiment_series_group[0].owner_id) {
 							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].username + '</option>';
 						}else{
 							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].username + '</option>';
@@ -999,7 +999,7 @@ function changeDataGroup(command){
 			if (document.getElementById('permsIDSelect').innerHTML != '') {
 				document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
 				document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
-				document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
+				document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmOwnerPressed()');
 			}else{
 				document.getElementById('permsLabel').innerHTML = 'You do not have permissions to change this Experiment Series Group.';
 				document.getElementById('permsDiv').innerHTML = '';
@@ -1018,7 +1018,7 @@ function changeDataGroup(command){
 					{
 						console.log(s);
 						for(var x = 0; x < s.length; x++){
-							if (s[x].id == experiment_series_group) {
+							if (s[x].id == experiment_series_group[0].group_id) {
 								document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
 							}else{
 								document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
@@ -1070,8 +1070,21 @@ function confirmPermsPressed(){
 	document.getElementById('cancelPermsButton').innerHTML = 'OK';
 }
 
-function changeDataOwner(){
-	
+function confirmOwnerPressed(){
+	console.log(document.querySelector("select").selectedOptions[0].value);
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: 'changeOwnerExperiement', owner_id: document.querySelector("select").selectedOptions[0].value, experiment: checklist_experiment_series.toString() },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+	document.getElementById('permsLabel').innerHTML = 'Selected data\'s owner has been changed!'
+	document.getElementById('permsDiv').innerHTML = '';
+	document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelPermsButton').innerHTML = 'OK';
 }
 
 /*##### SEND TO PIPELINE WITH SELECTION #####*/
