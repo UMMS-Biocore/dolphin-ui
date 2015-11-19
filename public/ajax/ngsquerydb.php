@@ -415,6 +415,23 @@ else if ($p == 'changeRunPerms')
 	");
 	$data=json_encode('pass');
 }
+else if ($p == 'getAllUsers')
+{
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	$owner_check=$query->queryAVal("
+	SELECT owner_id
+	FROM ngs_experiment_series
+	WHERE id = $experiment
+	");
+	if($owner_check == $_SESSION['uid']){
+		$data=$query->queryTable("
+		SELECT id, username
+		FROM users
+		");
+	}else{
+		$data=json_encode("");
+	}
+}
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
