@@ -26,10 +26,7 @@
 		<script src='<?php echo BASE_PATH?>/js/dolphin/js_to_html_funcs.js'></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/sessionget_funcs.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/profile_funcs.js" type="text/javascript"></script>
-<<<<<<< HEAD
-=======
 		<script src="<?php echo BASE_PATH?>/js/dolphin/streamtablefuncs.js" type="text/javascript"></script>
->>>>>>> 1d4f6b6e9155a0f6f91abfcd1b3157d306cd13f3
 		<script src="<?php echo BASE_PATH?>/js/streamTable/stream_table.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
 	</body>
