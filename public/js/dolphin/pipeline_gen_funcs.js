@@ -621,6 +621,9 @@ function submitPipeline(type) {
 					dir_check_2 = JSON.parse(s);
 				}
 		});
+		console.log(dir_check_1);
+		console.log(dir_check_2);
+		alert();
 		var dir_tests;
 		if (dir_check_1.Result != 'Ok' || dir_check_2.Result != 'Ok') {
 			//	perms errors
