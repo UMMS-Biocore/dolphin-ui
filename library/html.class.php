@@ -617,15 +617,17 @@ e range"><i class="fa fa-calendar"></i></button>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu">
 						<li><a name="pipeline_button" onClick="submitSelected()">Send to Pipeline</a></li>
 						<li><a name="send_to_status_button" onClick="sendToStatus()">Pipeline Status</a></li>
-						<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>
 						<li class="divider"></li>
-						<li><a name="table_generation_button" onClick="generateTableLink()">Generate Tables</a></li>
-						<li class="divider"></li>
-						<li><a name="change_group_perms" onClick="changeDataGroup()" disabled>Change Experiment Group</a></li>';
+						<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>';
 	if($_SESSION['uid'] == 1){
 							#<li><a name="send_to_NCBI_button" onClick="" disabled>Send to NCBI</a></li>
 		$html.= 			'<li><a name="send_to_ENCODE_button" onClick="checkForEncodeSubmission()" disabled>Send to ENCODE</a></li>';
 	}
+	$html.=				'<li class="divider"></li>
+						<li><a name="change_group" onClick="changeDataGroup(this.name)" disabled>Change Experiment Group</a></li>
+						<li><a name="change_owner" onClick="changeDataGroup(this.name)" disabled>Change Experiment Owner</a></li>
+						<li class="divider"></li>
+						<li><a name="table_generation_button" onClick="generateTableLink()">Generate Tables</a></li>';
 	$html.= 		'</ul>';
 	$html.= '	</div>
 				<div class="margin pull-right">

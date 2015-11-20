@@ -60,18 +60,24 @@ class FastlaneController extends VanillaController {
 					}else if($key == 4){
 						$text.="Experiment field is either empty or contains improper white space<br>";
 					}else if($key == 5){
-						$text.="Input Directory is either empty or contains improper white space<br>";
+						$text.="Input Directory is either empty or contains improper white space.<br><br>";
+						$text.="You may not have the proper credentials within the cluster!!!<br>";
+						$text.="If you're not sure if you have cluster access, visit <a href='http://umassmed.edu/biocore/resources/galaxy-group/'>this website</a> for more help.<br><br>";
+						$text.="If you're already within the cluster, run this script to give dolphin access to your user account to run on your behalf:<br>";
+						$text.="/project/umw_biocore/bin/addKey.bash <br>";
 					}else if($key == 6){
-						$text.="Input files are either empty or do not fit the correct format for the current selection<br>";
-						$text.="Check to make sure that the file input follows the proper barcode/mate-paired formatting.<br><br>";
-						$text.="If barcode separation is not selected, input files should be the name and the file for single-end or the name and the two files for paired end.<br>";
-						$text.="If barcode separation is selected, input files should either be one file per line for single-end or two files per line for paired-end.<br><br>";
-						$text.="Sample name and file name(s) should be space-separated.<br><br>";
-						$text.="Ex: (No barcode separation, paired-end)<br>";
-						$text.="test_sample sample_fastq_1.fastq.gz sample_fastq_2.fastq.gz<br>";
-						$text.="test2_sample sample2_fastq_1.fastq.gz sample2_fastq_2.fastq.gz<br>";
+						$text.="There was an error with the file information you sent us.<br>";
+						$text.="Check to make sure that the file names are correct.<br><br>";
+						$text.="You may not have the proper credentials within the cluster!!!<br>";
+						$text.="If you're not sure if you have cluster access, visit <a href='http://umassmed.edu/biocore/resources/galaxy-group/'>this website</a> for more help.<br><br>";
+						$text.="If you're already within the cluster, run this script to give dolphin access to your user account to run on your behalf:<br>";
+						$text.="/project/umw_biocore/bin/addKey.bash <br>";
 					}else if($key == 7){
-						$text.="Backup directory is either empty or contains improper white space<br>";
+						$text.="Backup directory is either empty or contains improper white space.<br><br>";
+						$text.="You may not have the proper credentials within the cluster!!!<br>";
+						$text.="If you're not sure if you have cluster access, visit <a href='http://umassmed.edu/biocore/resources/galaxy-group/'>this website</a> for more help.<br><br>";
+						$text.="If you're already within the cluster, run this script to give dolphin access to your user account to run on your behalf:<br>";
+						$text.="/project/umw_biocore/bin/addKey.bash <br>";
 					}else if($key >= 9){
 						$database_sample_bool = true;
 					}

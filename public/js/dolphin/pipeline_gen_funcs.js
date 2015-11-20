@@ -585,12 +585,66 @@ function submitPipeline(type) {
 		json = json + customSeqSet;
 		json = json + pipelines + '}'
 		//end json construction
+		
+		//	get Username
+		var username;
+		$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			data:  	{ p: 'getUserName' },
+			async:	false,
+			success: function(s)
+			{
+				username = s;
+			}
+		});
+		//	Directory Checks
+		var dir_check_1;
+		$.ajax({
+				type: 	'GET',
+				url: 	BASE_PATH+'/public/api/service.php',
+				data:  	{ func: 'checkPermissions', username: username },
+				async:	false,
+				success: function(s)
+				{
+					dir_check_1 = JSON.parse(s);
+				}
+		});
+		var dir_check_2;
+		$.ajax({
+				type: 	'GET',
+				url: 	BASE_PATH+'/public/api/service.php',
+				data:  	{ func: 'checkPermissions', username: username, outdir: outputdir },
+				async:	false,
+				success: function(s)
+				{
+					dir_check_2 = JSON.parse(s);
+				}
+		});
+		console.log(dir_check_1);
+		console.log(dir_check_2);
+		alert();
+		var dir_tests;
+		if (dir_check_1.Result != 'Ok' || dir_check_2.Result != 'Ok') {
+			//	perms errors
+			dir_tests = false;
+		}else{
+			//	No errors
+			dir_tests = true;
+		}
 	
 		if (adapterCheck && doAdapter == 'yes') {
 			$('#errorModal').modal({
 				show: true
 			});
 			document.getElementById('errorLabel').innerHTML ='Please use A,T,C,G only in the adapter';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else if (!dir_tests){
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML ='You do not have permissions for the directory, or you do not have cluster permissions whatsoever.' +
+				'Please visit <a href="http://umassmed.edu/biocore/resources/galaxy-group/">this website</a> for more help.';
 			document.getElementById('errorAreas').innerHTML = '';
 		}else{
 			//insert new values into ngs_runparams
@@ -964,45 +1018,78 @@ function returnToIndex(){
 	window.location.href = BASE_PATH+"/search/index/";
 }
 
-function changeDataGroup(){
+function changeDataGroup(command){
 	if (checklist_experiment_series.length == 1) {
-		document.getElementById('permsLabel').innerHTML = 'Which group should own the selected Experiment Series?';
-		document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>';
 		var experiment_series_group;
 		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			data: { p: 'getExperimentSeriesGroup', experiment: checklist_experiment_series.toString() },
+			async: false,
+			success : function(s)
+			{
+				experiment_series_group = s;
+			}
+		});
+		if (command == 'change_owner') {
+			//	Change Experiment Series Owner
+			document.getElementById('permsLabel').innerHTML = 'Which user should own the selected Experiment Series?';
+			document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>';
+			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
-				data: { p: 'getExperimentSeriesGroup', experiment: checklist_experiment_series.toString() },
-				async: false,
-				success : function(s)
-				{
-					experiment_series_group = s;
-				}
-			});
-		$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
-				data: { p: 'changeDataGroupNames', experiment: checklist_experiment_series.toString() },
+				data: { p: 'getAllUsers', experiment: checklist_experiment_series.toString() },
 				async: false,
 				success : function(s)
 				{
 					console.log(s);
 					for(var x = 0; x < s.length; x++){
-						if (s[x].id == experiment_series_group) {
-							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
+						if (s[x].id == experiment_series_group[0].owner_id) {
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].username + '</option>';
 						}else{
-							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+							document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].username + '</option>';
 						}
 					}
 				}
 			});
-		if (document.getElementById('permsIDSelect').innerHTML != '') {
-			document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
-			document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
-			document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
-		}else{
-			document.getElementById('permsLabel').innerHTML = 'You do not have permissions to change this Experiment Series Group.';
-			document.getElementById('permsDiv').innerHTML = '';
-			document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
-			document.getElementById('cancelPermsButton').innerHTML = 'OK';
+			if (document.getElementById('permsIDSelect').innerHTML != '') {
+				document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
+				document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
+				document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmOwnerPressed()');
+			}else{
+				document.getElementById('permsLabel').innerHTML = 'You do not have permissions to change this Experiment Series Group.';
+				document.getElementById('permsDiv').innerHTML = '';
+				document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+				document.getElementById('cancelPermsButton').innerHTML = 'OK';
+			}
+		}else if (command == 'change_group') {
+			//	Change Experiment Series group
+			document.getElementById('permsLabel').innerHTML = 'Which group should own the selected Experiment Series?';
+			document.getElementById('permsDiv').innerHTML = '<select id="permsIDSelect" class="form-control"></select>';
+			$.ajax({ type: "GET",
+					url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+					data: { p: 'changeDataGroupNames', experiment: checklist_experiment_series.toString() },
+					async: false,
+					success : function(s)
+					{
+						console.log(s);
+						for(var x = 0; x < s.length; x++){
+							if (s[x].id == experiment_series_group[0].group_id) {
+								document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '" selected="true">' + s[x].name + '</option>';
+							}else{
+								document.getElementById('permsIDSelect').innerHTML += '<option value="' + s[x].id + '">' + s[x].name + '</option>';
+							}
+						}
+					}
+				});
+			if (document.getElementById('permsIDSelect').innerHTML != '') {
+				document.getElementById('confirmPermsButton').setAttribute('style', 'display:show');
+				document.getElementById('cancelPermsButton').innerHTML = 'Cancel';
+				document.getElementById('confirmPermsButton').setAttribute('onclick', 'confirmPermsPressed()');
+			}else{
+				document.getElementById('permsLabel').innerHTML = 'You do not have permissions to change this Experiment Series Group.';
+				document.getElementById('permsDiv').innerHTML = '';
+				document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+				document.getElementById('cancelPermsButton').innerHTML = 'OK';
+			}
 		}
 	}else if (checklist_experiment_series.length == 0){
 		document.getElementById('permsLabel').innerHTML = 'You must select a Experiment Series to change it\'s group.';
@@ -1032,6 +1119,23 @@ function confirmPermsPressed(){
 		}
 	});
 	document.getElementById('permsLabel').innerHTML = 'Selected data\'s group has been changed!'
+	document.getElementById('permsDiv').innerHTML = '';
+	document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
+	document.getElementById('cancelPermsButton').innerHTML = 'OK';
+}
+
+function confirmOwnerPressed(){
+	console.log(document.querySelector("select").selectedOptions[0].value);
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: 'changeOwnerExperiement', owner_id: document.querySelector("select").selectedOptions[0].value, experiment: checklist_experiment_series.toString() },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+	document.getElementById('permsLabel').innerHTML = 'Selected data\'s owner has been changed!'
 	document.getElementById('permsDiv').innerHTML = '';
 	document.getElementById('confirmPermsButton').setAttribute('style', 'display:none');
 	document.getElementById('cancelPermsButton').innerHTML = 'OK';
