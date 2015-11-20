@@ -585,12 +585,63 @@ function submitPipeline(type) {
 		json = json + customSeqSet;
 		json = json + pipelines + '}'
 		//end json construction
+		
+		//	get Username
+		var username;
+		$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			data:  	{ p: 'getUserName' },
+			async:	false,
+			success: function(s)
+			{
+				username = s;
+			}
+		});
+		//	Directory Checks
+		var dir_check_1;
+		$.ajax({
+				type: 	'GET',
+				url: 	BASE_PATH+'/public/api/service.php',
+				data:  	{ func: 'checkPermissions', username: username },
+				async:	false,
+				success: function(s)
+				{
+					dir_check_1 = JSON.parse(s);
+				}
+		});
+		var dir_check_2;
+		$.ajax({
+				type: 	'GET',
+				url: 	BASE_PATH+'/public/api/service.php',
+				data:  	{ func: 'checkPermissions', username: username, outdir: outputdir },
+				async:	false,
+				success: function(s)
+				{
+					dir_check_2 = JSON.parse(s);
+				}
+		});
+		var dir_tests;
+		if (dir_check_1.Result != 'Ok' || dir_check_2.Result != 'Ok') {
+			//	perms errors
+			dir_tests = false;
+		}else{
+			//	No errors
+			dir_tests = true;
+		}
 	
 		if (adapterCheck && doAdapter == 'yes') {
 			$('#errorModal').modal({
 				show: true
 			});
 			document.getElementById('errorLabel').innerHTML ='Please use A,T,C,G only in the adapter';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else if (!dir_tests){
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML ='You do not have permissions for the directory, or you do not have cluster permissions whatsoever.' +
+				'Please visit <a href="http://umassmed.edu/biocore/resources/galaxy-group/">this website</a> for more help.';
 			document.getElementById('errorAreas').innerHTML = '';
 		}else{
 			//insert new values into ngs_runparams

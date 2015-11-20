@@ -615,7 +615,7 @@ e range"><i class="fa fa-calendar"></i></button>
 				<div class="margin pull-left btn-group">
 					<button id="dso_menu" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Data Selection Options <span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu">
-						<li><a name="pipeline_button">Send to Pipeline</a></li>
+						<li><a name="pipeline_button" onClick="submitSelected()">Send to Pipeline</a></li>
 						<li><a name="send_to_status_button" onClick="sendToStatus()">Pipeline Status</a></li>
 						<li class="divider"></li>
 						<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>';
