@@ -11,9 +11,6 @@ if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 if (isset($_GET['replicate'])){$replicate = $_GET['replicate'];}
 
-$file_accs = [];
-$file_uuids = [];
-
 //Obtain database variables
 $experiment_info = json_decode($query->queryTable("
 	SELECT `lab`, `grant`
@@ -53,8 +50,12 @@ $encValData = 'encValData';
 $assembly = 'hg19';
 $replicate = "/replicates/" . $replicate . "/";
 
+$previous_file_alias = [];
 //For each file (single or paired end)
 foreach($file_query as $fq){
+	$file_accs = [];
+	$file_acc_aliases = [];
+	$file_uuids = [];
 	//File names (single or paired end)
 	$file_names = explode(",",$fq->file_name);
 	foreach($file_names as $fn){
@@ -100,12 +101,15 @@ foreach($file_query as $fq){
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "paired-ended";
 				if(end($file_names) == $fn){
-					$data["aliases"] = array($my_lab.':'.$step.'_p22_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_p2_'.end(explode("/",$fn)));
 					$data["paired_end"] = '2';
-					$data["paired_with"] = $my_lab.':'.$step.'_p11_'.$file_names[0];
+					$data["paired_with"] = $my_lab.':'.$step.'_p1_'.$file_names[0];
 				}else{
-					$data["aliases"] = array($my_lab.':'.$step.'_p11_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_p1_'.end(explode("/",$fn)));
 					$data["paired_end"] = '1';
+				}
+				if($previous_file_alias != [] && $step != 'step1'){
+					$data['derived_from'] = $previous_file_alias;
 				}
 			}else if (count($file_names) == 1){
 				//	FASTQ SINGLE
@@ -118,16 +122,25 @@ foreach($file_query as $fq){
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
 			$data["aliases"] = array($my_lab.'":"step7_'.end(explode("/",$fn)));
+			if($previous_file_alias != ''){
+				$data['derived_from'] = $previous_file_alias;
+			}
 		}else if($fq->file_type = 'bigwig'){
 			//	BIGWIG
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
 			$data["aliases"] = array($my_lab.'":"step8_'.end(explode("/",$fn)));
+			if($previous_file_alias != ''){
+				$data['derived_from'] = $previous_file_alias;
+			}
 		}else if($fq->file_type = 'tsv'){
 			//	TSV
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
 			$data["aliases"] = array($my_lab.':step9_'.end(explode("/",$fn)));
+			if($previous_file_alias != ''){
+				$data['derived_from'] = $previous_file_alias;
+			}
 		}
 		$gzip_types = array(
 			"CEL",
@@ -234,8 +247,10 @@ foreach($file_query as $fq){
 			}else{
 				if(end($file_names) == $fn){
 					$url = $server_start . 'file/' . end(explode(",",$fq->file_acc)) . $server_end;
+					array_push($file_acc_aliases, '/files/' . explode(",",$fq->file_acc)[0] . $server_end);
 				}else{
 					$url = $server_start . 'file/' . explode(",",$fq->file_acc)[0] . $server_end;
+					array_push($file_acc_aliases, '/files/' . explode(",",$fq->file_acc)[0] . $server_end);
 				}
 				$response = Requests::patch($url, $headers, json_encode($data), $auth);
 				$body = json_decode($response->body);
@@ -244,7 +259,8 @@ foreach($file_query as $fq){
 			$item = $body->{'@graph'}[0];
 			
 			if(end($file_names) == $fn){
-				echo $response->body;
+				echo $response->body . ",";
+				$previous_file_alias = $file_acc_aliases;
 			}else{
 				echo $response->body . ",";	
 			}
@@ -257,6 +273,11 @@ foreach($file_query as $fq){
 			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " & ";
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
+			if(end($file_names) == $fn){
+				echo $AWS_COMMAND_READ;
+			}else{
+				echo $AWS_COMMAND_READ . ",";
+			}
 			pclose($AWS_COMMAND_DO);
 		}else{
 			//	File Validation Failed
