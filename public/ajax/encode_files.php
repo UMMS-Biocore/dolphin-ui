@@ -269,8 +269,8 @@ foreach($file_query as $fq){
 			# POST file to S3
 			
 			$creds = $item->{'upload_credentials'};
-			
-			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " & ";
+			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'};
+			echo $cmd_aws_launch;
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
 			if(end($file_names) == $fn){
