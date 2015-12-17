@@ -1,0 +1,11 @@
+CREATE TABLE `biocore`.`ngs_file_submissions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `dir_id` INT NULL DEFAULT NULL,
+  `run_id` INT NULL DEFAULT NULL,
+  `sample_id` INT NULL DEFAULT NULL,
+  `file_name` VARCHAR(100) NULL DEFAULT NULL,
+  `file_type` VARCHAR(45) NULL DEFAULT NULL,
+  `file_md5` VARCHAR(100) NULL DEFAULT NULL,
+  `file_uuid` VARCHAR(100) NULL DEFAULT NULL,
+  `file_acc` VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));

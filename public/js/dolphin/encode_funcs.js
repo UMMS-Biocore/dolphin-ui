@@ -1145,18 +1145,22 @@ function getEncodeUUID(json_name, uuid){
 
 function encodeFilePost(){
 	console.log(biosample_ids);
-	$.ajax({ type: "GET",
-		url: BASE_PATH + "/public/ajax/encode_files.php",
-		data: { sample_id: biosample_ids[0], experiment: experiment_accs[0], replicate: replicate_uuids[0] },
-		async: false,
-		success : function(s)
-		{
-			var file_post_string = "[" + s + "]";
-			console.log(file_post_string);
-			var file_response = JSON.parse(file_post_string);
-			console.log(file_response);
-		}
-	});
+	console.log(experiment_accs);
+	console.log(replicate_uuids);
+	for(var x = 0; x < biosample_ids.length; x++){
+		$.ajax({ type: "GET",
+			url: BASE_PATH + "/public/ajax/encode_files.php",
+			data: { sample_id: biosample_ids[x], experiment: experiment_accs[x], replicate: replicate_uuids[x] },
+			async: false,
+			success : function(s)
+			{
+				var file_post_string = "[" + s + "]";
+				console.log(file_post_string);
+				var file_response = JSON.parse(file_post_string);
+				console.log(file_response);
+			}
+		});
+	}
 }
 
 function encodeSubmission(name, json, subType, type, table){

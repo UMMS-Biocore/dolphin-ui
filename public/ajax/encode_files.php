@@ -53,14 +53,16 @@ $replicate = "/replicates/" . $replicate . "/";
 $previous_file_alias = [];
 //For each file (single or paired end)
 foreach($file_query as $fq){
-	$file_accs = [];
-	$file_acc_aliases = [];
-	$file_uuids = [];
+	$inserted = false;
+	$file_accs = array();
+	$file_acc_aliases = array();
+	$file_uuids = array();
+	$paired = '';
 	//File names (single or paired end)
 	$file_names = explode(",",$fq->file_name);
 	foreach($file_names as $fn){
 		//File path
-		if($fq->file_type = 'fastq' && strpos($fn, "/") == false){
+		if($fq->file_type == 'fastq' && strpos($fn, "/") == false){
 			$directory = $dir_query[0]->backup_dir;
 			if(substr($directory, -1) != '/'){
 				$directory = $directory . "/";
@@ -90,7 +92,7 @@ foreach($file_query as $fq){
 			"lab" => $my_lab,
 			"award" => $my_award,
 		);
-		if($fq->file_type = 'fastq'){
+		if($fq->file_type == 'fastq'){
 			if(strpos($fn, "/") > -1){
 				$step = "step5";
 			}else{
@@ -103,41 +105,49 @@ foreach($file_query as $fq){
 				if(end($file_names) == $fn){
 					$data["aliases"] = array($my_lab.':'.$step.'_p2_'.end(explode("/",$fn)));
 					$data["paired_end"] = '2';
-					$data["paired_with"] = $my_lab.':'.$step.'_p1_'.$file_names[0];
+					$data["paired_with"] = $paired;
 				}else{
 					$data["aliases"] = array($my_lab.':'.$step.'_p1_'.end(explode("/",$fn)));
 					$data["paired_end"] = '1';
+					$paired = $my_lab.':'.$step.'_p1_'.end(explode("/",$fn));
 				}
-				if($previous_file_alias != [] && $step != 'step1'){
-					$data['derived_from'] = $previous_file_alias;
+				if($step != 'step1'){
+					if(end($file_names) == $fn){
+						$data['derived_from'] = array(end($previous_file_alias));
+					}else{
+						$data['derived_from'] = array($previous_file_alias[0]);
+					}
 				}
 			}else if (count($file_names) == 1){
 				//	FASTQ SINGLE
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "single-ended";
 				$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+				if($previous_file_alias != [] && $step != 'step1'){
+					$data['derived_from'] = $previous_file_alias;
+				}
 			}
-		}else if($fq->file_type = 'bam'){
+		}else if($fq->file_type == 'bam'){
 			//	BAM
+			$data["aliases"] = array($my_lab.'":"step7_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
-			$data["aliases"] = array($my_lab.'":"step7_'.end(explode("/",$fn)));
 			if($previous_file_alias != ''){
 				$data['derived_from'] = $previous_file_alias;
 			}
-		}else if($fq->file_type = 'bigwig'){
+		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
+			$data["aliases"] = array($my_lab.'":"step8_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
-			$data["aliases"] = array($my_lab.'":"step8_'.end(explode("/",$fn)));
 			if($previous_file_alias != ''){
 				$data['derived_from'] = $previous_file_alias;
 			}
-		}else if($fq->file_type = 'tsv'){
+		}else if($fq->file_type == 'tsv'){
 			//	TSV
+			$data["aliases"] = array($my_lab.':step9_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
-			$data["aliases"] = array($my_lab.':step9_'.end(explode("/",$fn)));
 			if($previous_file_alias != ''){
 				$data['derived_from'] = $previous_file_alias;
 			}
@@ -222,12 +232,13 @@ foreach($file_query as $fq){
 		
 		$validate_args = $validate_map[$data['file_format']][null];
 		
-		$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
-		$VALIDATE = popen( $cmd, "r" );
-		$VALIDATE_READ =fread($VALIDATE, 2096);
-		pclose($VALIDATE);
-		
-		if($VALIDATE_READ == "Error count 0\n"){
+		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
+		//$VALIDATE = popen( $cmd, "r" );
+		//$VALIDATE_READ =fread($VALIDATE, 2096);
+		//pclose($VALIDATE);
+		$VALIDATE_READ == "Error count 0\n";
+		$VALIDATE_READ == "";
+		if($VALIDATE_READ == ""){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 			
@@ -247,7 +258,7 @@ foreach($file_query as $fq){
 			}else{
 				if(end($file_names) == $fn){
 					$url = $server_start . 'file/' . end(explode(",",$fq->file_acc)) . $server_end;
-					array_push($file_acc_aliases, '/files/' . explode(",",$fq->file_acc)[0] . $server_end);
+					array_push($file_acc_aliases, '/files/' . end(explode(",",$fq->file_acc)) . $server_end);
 				}else{
 					$url = $server_start . 'file/' . explode(",",$fq->file_acc)[0] . $server_end;
 					array_push($file_acc_aliases, '/files/' . explode(",",$fq->file_acc)[0] . $server_end);
@@ -272,7 +283,7 @@ foreach($file_query as $fq){
 			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'};
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
-			if(end($file_names) == $fn){
+			if(end($file_names) == $fn && end($file_query) == $fq){
 				echo $AWS_COMMAND_READ;
 			}else{
 				echo $AWS_COMMAND_READ . ",";
@@ -280,16 +291,15 @@ foreach($file_query as $fq){
 			pclose($AWS_COMMAND_DO);
 		}else{
 			//	File Validation Failed
-			echo json_encode('"error":"$fn not validated');
+			echo json_encode('"error":"'.$fn.' not validated"');
 		}
-	}
-	
-	if(isset($inserted) && implode(",",$file_accs) != ","){
-		$file_update = json_decode($query->runSQL("
-		UPDATE ngs_file_submissions
-		SET `file_acc` = '" . implode(",",$file_accs) . "',
-		`file_uuid` = '" . implode(",",$file_uuids) . "' 
-		WHERE id = " . $fq->id));
+		if($inserted && implode(",",$file_accs) != ","){
+			$file_update = json_decode($query->runSQL("
+			UPDATE ngs_file_submissions
+			SET `file_acc` = '" . implode(",",$file_accs) . "',
+			`file_uuid` = '" . implode(",",$file_uuids) . "' 
+			WHERE id = " . $fq->id));
+		}
 	}
 }
 
