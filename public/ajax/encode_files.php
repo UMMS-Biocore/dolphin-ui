@@ -232,10 +232,10 @@ foreach($file_query as $fq){
 		
 		$validate_args = $validate_map[$data['file_format']][null];
 		
-		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
-		//$VALIDATE = popen( $cmd, "r" );
-		//$VALIDATE_READ =fread($VALIDATE, 2096);
-		//pclose($VALIDATE);
+		$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
+		$VALIDATE = popen( $cmd, "r" );
+		$VALIDATE_READ =fread($VALIDATE, 2096);
+		pclose($VALIDATE);
 		$VALIDATE_READ == "Error count 0\n";
 		$VALIDATE_READ == "";
 		if($VALIDATE_READ == ""){
@@ -280,7 +280,7 @@ foreach($file_query as $fq){
 			# POST file to S3
 			
 			$creds = $item->{'upload_credentials'};
-			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'};
+			$cmd_aws_launch = "bsub -q short \"python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . "\"";
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
 			if(end($file_names) == $fn && end($file_query) == $fq){
@@ -291,7 +291,11 @@ foreach($file_query as $fq){
 			pclose($AWS_COMMAND_DO);
 		}else{
 			//	File Validation Failed
-			echo json_encode('"error":"'.$fn.' not validated"');
+			if(end($file_names) == $fn && end($file_query) == $fq){
+				echo json_encode('{"error":"'.$fn.' not validated"}');
+			}else{
+				echo json_encode('{"error":"'.$fn.' not validated"}' . ',');
+			}
 		}
 		if($inserted && implode(",",$file_accs) != ","){
 			$file_update = json_decode($query->runSQL("
