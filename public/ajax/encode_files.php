@@ -132,7 +132,7 @@ foreach($file_query as $fq){
 			$data["aliases"] = array($my_lab.'":"step7_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != ''){
+			if($previous_file_alias != []){
 				$data['derived_from'] = $previous_file_alias;
 			}
 		}else if($fq->file_type == 'bigwig'){
@@ -140,15 +140,22 @@ foreach($file_query as $fq){
 			$data["aliases"] = array($my_lab.'":"step8_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != ''){
+			if($previous_file_alias != []){
 				$data['derived_from'] = $previous_file_alias;
 			}
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
-			$data["aliases"] = array($my_lab.':step9_'.end(explode("/",$fn)));
+			if(strpos($fn, "counts/") > -1){
+				$step = 'step6';
+			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
+				$step = 'step12';
+			}else{
+				$step = 'step9';
+			}
+			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != ''){
+			if($previous_file_alias != []){
 				$data['derived_from'] = $previous_file_alias;
 			}
 		}
@@ -232,11 +239,11 @@ foreach($file_query as $fq){
 		
 		$validate_args = $validate_map[$data['file_format']][null];
 		
-		$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
-		$VALIDATE = popen( $cmd, "r" );
-		$VALIDATE_READ =fread($VALIDATE, 2096);
-		pclose($VALIDATE);
-		$VALIDATE_READ == "Error count 0\n";
+		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
+		//$VALIDATE = popen( $cmd, "r" );
+		//$VALIDATE_READ =fread($VALIDATE, 2096);
+		//pclose($VALIDATE);
+		//$VALIDATE_READ == "Error count 0\n";
 		$VALIDATE_READ == "";
 		if($VALIDATE_READ == ""){
 			//	File Validation Passed
@@ -248,13 +255,20 @@ foreach($file_query as $fq){
 			$server_end = "/";	
 			
 			$auth = array('auth' => array($encoded_access_key, $encoded_secret_access_key));
-			if($fq->file_acc == null){
+			if($fq->file_acc == null || $fq->file_acc == ""){
 				$url = $server_start . 'file' . $server_end;
 				$response = Requests::post($url, $headers, json_encode($data), $auth);
 				$body = json_decode($response->body);
 				$inserted = true;
 				array_push($file_accs, $body->{'@graph'}[0]->{'accession'});
+				var_dump($body->{'@graph'}[0]->{'accession'});
 				array_push($file_uuids, $body->{'@graph'}[0]->{'uuid'});
+				if(end($file_names) == $fn){
+					array_push($file_acc_aliases, '/files/' . end(explode(",",$file_accs)) . $server_end);
+				}else{
+					array_push($file_acc_aliases, '/files/' . explode(",",$file_accs)[0] . $server_end);
+				}
+				var_dump($file_acc_aliases);
 			}else{
 				if(end($file_names) == $fn){
 					$url = $server_start . 'file/' . end(explode(",",$fq->file_acc)) . $server_end;
@@ -280,7 +294,7 @@ foreach($file_query as $fq){
 			# POST file to S3
 			
 			$creds = $item->{'upload_credentials'};
-			$cmd_aws_launch = "bsub -q short \"python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . "\"";
+			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'};
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
 			if(end($file_names) == $fn && end($file_query) == $fq){
