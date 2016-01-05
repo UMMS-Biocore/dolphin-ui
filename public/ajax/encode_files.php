@@ -94,7 +94,7 @@ foreach($file_query as $fq){
 		);
 		if($fq->file_type == 'fastq'){
 			if(strpos($fn, "/") > -1){
-				$step = "step5";
+				$step = "step2";
 			}else{
 				$step = "step1";
 			}
@@ -129,7 +129,7 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
-			$data["aliases"] = array($my_lab.'":"step7_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.'":"step4_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
 			if($previous_file_alias != []){
@@ -137,7 +137,7 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
-			$data["aliases"] = array($my_lab.'":"step8_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.'":"step5_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
 			if($previous_file_alias != []){
@@ -146,11 +146,11 @@ foreach($file_query as $fq){
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
 			if(strpos($fn, "counts/") > -1){
-				$step = 'step6';
+				$step = 'step3';
 			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
-				$step = 'step12';
+				$step = 'step7';
 			}else{
-				$step = 'step9';
+				$step = 'step6';
 			}
 			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
