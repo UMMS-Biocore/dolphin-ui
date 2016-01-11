@@ -127,6 +127,14 @@ foreach($file_query as $fq){
 					$data['derived_from'] = $previous_file_alias;
 				}
 			}
+		}else if($fq->file_type == 'fastqc'){
+			//	FASTQC
+			$data["aliases"] = array($my_lab.'":"step2_'.end(explode("/",$fn)));
+			$data["file_format"] = 'tar';
+			$data['assembly'] = "hg19";
+			if($previous_file_alias != []){
+				$data['derived_from'] = $previous_file_alias;
+			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
 			$data["aliases"] = array($my_lab.'":"step4_'.end(explode("/",$fn)));
@@ -236,9 +244,8 @@ foreach($file_query as $fq){
 			'hdf5' => array(null => array(null)),
 			'gff' => array(null => array(null))
 		);
-		
+		var_dump($data);
 		$validate_args = $validate_map[$data['file_format']][null];
-		
 		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
 		//$VALIDATE = popen( $cmd, "r" );
 		//$VALIDATE_READ =fread($VALIDATE, 2096);
