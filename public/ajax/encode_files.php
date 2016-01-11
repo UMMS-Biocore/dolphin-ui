@@ -50,12 +50,11 @@ $encValData = 'encValData';
 $assembly = 'hg19';
 $replicate = "/replicates/" . $replicate . "/";
 
-$previous_file_alias = [];
+$step_list = array();
 //For each file (single or paired end)
 foreach($file_query as $fq){
 	$inserted = false;
 	$file_accs = array();
-	$file_acc_aliases = array();
 	$file_uuids = array();
 	$paired = '';
 	//File names (single or paired end)
@@ -93,7 +92,7 @@ foreach($file_query as $fq){
 			"award" => $my_award,
 		);
 		if($fq->file_type == 'fastq'){
-			if(strpos($fn, "/") > -1){
+			if(strpos($fn, "seqmapping") > -1){
 				$step = "step3";
 			}else{
 				$step = "step1";
@@ -113,9 +112,9 @@ foreach($file_query as $fq){
 				}
 				if($step != 'step1'){
 					if(end($file_names) == $fn){
-						$data['derived_from'] = array(end($previous_file_alias));
+						$data['derived_from'] = end(explode(",",$step_list['step1']));
 					}else{
-						$data['derived_from'] = array($previous_file_alias[0]);
+						$data['derived_from'] = explode(",",$step_list['step1'])[0];
 					}
 				}
 			}else if (count($file_names) == 1){
@@ -123,8 +122,8 @@ foreach($file_query as $fq){
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "single-ended";
 				$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
-				if($previous_file_alias != [] && $step != 'step1'){
-					$data['derived_from'] = $previous_file_alias;
+				if($step != 'step1'){
+					$data['derived_from'] = explod(",",$step_list['step1']);
 				}
 			}
 		}else if($fq->file_type == 'fastqc'){
@@ -133,9 +132,7 @@ foreach($file_query as $fq){
 			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != []){
-				$data['derived_from'] = $previous_file_alias;
-			}
+			$data['derived_from'] = explode(",",$step_list['step1']);
 		}else if($fq->file_type == 'bam'){
 			//	BAM
 			if(strpos($fn, "seqmapping") > -1){
@@ -146,8 +143,10 @@ foreach($file_query as $fq){
 			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != []){
-				$data['derived_from'] = $previous_file_alias;
+			if($step == 'step3'){
+				$data['derived_from'] = explode(",",$step_list['step1']);;
+			}else{
+				$data['derived_from'] = explode(",",$step_list['step3']);;
 			}
 		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
@@ -155,23 +154,31 @@ foreach($file_query as $fq){
 			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != []){
-				$data['derived_from'] = $previous_file_alias;
-			}
+			$data['derived_from'] = explode(",",$step_list['step5']);;
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
+			var_dump($fn);
 			if(strpos($fn, "counts/") > -1){
 				$step = 'step4';
 			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
-				$step = 'step8';
-			}else{
+				$step = 'step9';
+			}elseif(strpos($fn, 'rsem/') > -1){
 				$step = 'step7';
+			}else{
+				$step = 'step8';
 			}
+			var_dump($step);
 			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
-			if($previous_file_alias != []){
-				$data['derived_from'] = $previous_file_alias;
+			if($step == 'step4'){
+				$data['derived_from'] = explode(",",$step_list['step3']);
+			}else if ($step == 'step7'){
+				$data['derived_from'] = explode(",",$step_list['step3']);
+			}else if ($step == 'step8'){
+				$data['derived_from'] = explode(",",$step_list['step5']);
+			}else{
+				$data['derived_from'] = explode(",",$step_list['step5']);
 			}
 		}
 		$gzip_types = array(
@@ -251,7 +258,6 @@ foreach($file_query as $fq){
 			'hdf5' => array(null => array(null)),
 			'gff' => array(null => array(null))
 		);
-		var_dump($data);
 		$validate_args = $validate_map[$data['file_format']][null];
 		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
 		//$VALIDATE = popen( $cmd, "r" );
@@ -275,20 +281,27 @@ foreach($file_query as $fq){
 				$body = json_decode($response->body);
 				$inserted = true;
 				array_push($file_accs, $body->{'@graph'}[0]->{'accession'});
-				var_dump($body->{'@graph'}[0]->{'accession'});
 				array_push($file_uuids, $body->{'@graph'}[0]->{'uuid'});
 				if(end($file_names) == $fn){
-					array_push($file_acc_aliases, '/files/' . end(explode(",",$file_accs)) . $server_end);
+					$step_list[$step] = '/files/' . end(explode(",",$file_accs)) . $server_end;
 				}else{
-					array_push($file_acc_aliases, '/files/' . explode(",",$file_accs)[0] . $server_end);
+					$step_list[$step] = '/files/' . explode(",",$file_accs)[0] . $server_end;
 				}
 			}else{
 				if(end($file_names) == $fn){
 					$url = $server_start . 'file/' . end(explode(",",$fq->file_acc)) . $server_end;
-					array_push($file_acc_aliases, '/files/' . end(explode(",",$fq->file_acc)) . $server_end);
+					if(isset($step_list[$step])){
+						$step_list[$step] .= ',/files/' . end(explode(",",$fq->file_acc)) . $server_end;
+					}else{
+						$step_list[$step] = '/files/' . end(explode(",",$fq->file_acc)) . $server_end;
+					}
 				}else{
 					$url = $server_start . 'file/' . explode(",",$fq->file_acc)[0] . $server_end;
-					array_push($file_acc_aliases, '/files/' . explode(",",$fq->file_acc)[0] . $server_end);
+					if(isset($step_list[$step])){
+						$step_list[$step] = ',/files/' . explode(",",$fq->file_acc)[0] . $server_end;
+					}else{
+						$step_list[$step] = '/files/' . explode(",",$fq->file_acc)[0] . $server_end;
+					}
 				}
 				$response = Requests::patch($url, $headers, json_encode($data), $auth);
 				$body = json_decode($response->body);
@@ -298,7 +311,6 @@ foreach($file_query as $fq){
 			
 			if(end($file_names) == $fn){
 				echo $response->body . ",";
-				$previous_file_alias = $file_acc_aliases;
 			}else{
 				echo $response->body . ",";	
 			}
@@ -324,6 +336,7 @@ foreach($file_query as $fq){
 				echo json_encode('{"error":"'.$fn.' not validated"}' . ',');
 			}
 		}
+		var_dump($step_list);
 		if($inserted && implode(",",$file_accs) != ","){
 			$file_update = json_decode($query->runSQL("
 			UPDATE ngs_file_submissions
