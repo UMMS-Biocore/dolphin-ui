@@ -31,6 +31,11 @@ $dir_query=json_decode($query->queryTable("
 	SELECT fastq_dir, backup_dir, amazon_bucket
 	FROM ngs_dirs
 	WHERE id = " . $file_query[0]->dir_id));
+$sample_name = $query->queryAVal("
+	SELECT samplename
+	FROM ngs_samples
+	WHERE id = " . $sample_id
+	);
 //Needed?
 $host = 'http://localhost:6543';
 
@@ -157,7 +162,6 @@ foreach($file_query as $fq){
 			$data['derived_from'] = explode(",",$step_list['step5']);;
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
-			var_dump($fn);
 			if(strpos($fn, "counts/") > -1){
 				$step = 'step4';
 			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
@@ -167,7 +171,6 @@ foreach($file_query as $fq){
 			}else{
 				$step = 'step8';
 			}
-			var_dump($step);
 			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
@@ -175,6 +178,38 @@ foreach($file_query as $fq){
 				$data['derived_from'] = explode(",",$step_list['step3']);
 			}else if ($step == 'step7'){
 				$data['derived_from'] = explode(",",$step_list['step3']);
+				
+				if(strpos($fn, "gene_exp")){
+					$origin = 'rsem/genes_expression_expected_count.tsv';
+				}else if(strpos($fn, "gene_tpm")){
+					$origin = 'rsem/genes_expression_tpm.tsv';
+				}else if(strpos($fn, "iso_exp")){
+					$origin = 'rsem/isoforms_expression_expected_count.tsv';
+				}else{
+					$origin = 'rsem/isoforms_expression_tpm.tsv';
+				}
+				#$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "'.$sample_name.'"){ print "$"i; } } }\'';
+				$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "control_rep1"){ print "$"i; } } }\'';
+				$STEP7_INPUT = popen( $step7_com, "r" );
+				$STEP7_COL_GRAB =fread($STEP7_INPUT, 2096);
+				pclose($STEP7_INPUT);
+				
+				$step7_com = 'awk \'{ print $1"\t"$2"\t"' . preg_replace( "/\r|\n/", "", $STEP7_COL_GRAB ) . ' }\' '. $directory.$origin . ' > '. $directory . $fn;
+				$STEP7_INPUT = popen( $step7_com, "r" );
+				pclose($STEP7_INPUT);
+				
+				$step7_com = 'md5sum ' . $directory . $fn . ' | awk \'{ print $1 }\'';
+				$STEP7_INPUT = popen( $step7_com, "r" );
+				$STEP7_MD5SUM = fread($STEP7_INPUT, 2096);
+				pclose($STEP7_INPUT);
+				
+				$data["md5sum"] = $STEP7_MD5SUM;
+				$data["file_size"] = filesize($directory . $fn);
+				$update_md5sum = json_decode($query->runSQL("
+					UPDATE ngs_file_submissions
+					SET file_md5 = '$STEP7_MD5SUM'
+					WHERE id = " .$fq->id
+				));
 			}else if ($step == 'step8'){
 				$data['derived_from'] = explode(",",$step_list['step5']);
 			}else{
@@ -283,9 +318,18 @@ foreach($file_query as $fq){
 				array_push($file_accs, $body->{'@graph'}[0]->{'accession'});
 				array_push($file_uuids, $body->{'@graph'}[0]->{'uuid'});
 				if(end($file_names) == $fn){
-					$step_list[$step] = '/files/' . end(explode(",",$file_accs)) . $server_end;
+					if(isset($step_list[$step])){
+						$step_list[$step] .= ',/files/' . end($file_accs) . $server_end;
+					}else{
+						$step_list[$step] = '/files/' . end($file_accs) . $server_end;
+					}
 				}else{
-					$step_list[$step] = '/files/' . explode(",",$file_accs)[0] . $server_end;
+					if(isset($step_list[$step])){
+						$step_list[$step] .= ',/files/' . $file_accs[0] . $server_end;
+					}else{
+						$step_list[$step] = '/files/' . $file_accs[0] . $server_end;
+					}
+					
 				}
 			}else{
 				if(end($file_names) == $fn){
@@ -298,7 +342,7 @@ foreach($file_query as $fq){
 				}else{
 					$url = $server_start . 'file/' . explode(",",$fq->file_acc)[0] . $server_end;
 					if(isset($step_list[$step])){
-						$step_list[$step] = ',/files/' . explode(",",$fq->file_acc)[0] . $server_end;
+						$step_list[$step] .= ',/files/' . explode(",",$fq->file_acc)[0] . $server_end;
 					}else{
 						$step_list[$step] = '/files/' . explode(",",$fq->file_acc)[0] . $server_end;
 					}
@@ -309,10 +353,9 @@ foreach($file_query as $fq){
 			
 			$item = $body->{'@graph'}[0];
 			
-			if(end($file_names) == $fn){
-				echo $response->body . ",";
-			}else{
-				echo $response->body . ",";	
+			echo $response->body;
+			if(end($file_query) != $fq){
+				echo ",";
 			}
 			
 			####################
@@ -323,20 +366,19 @@ foreach($file_query as $fq){
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
 			if(end($file_names) == $fn && end($file_query) == $fq){
-				echo $AWS_COMMAND_READ;
+				//echo $AWS_COMMAND_READ;
 			}else{
-				echo $AWS_COMMAND_READ . ",";
+				//echo $AWS_COMMAND_READ . ",";
 			}
 			pclose($AWS_COMMAND_DO);
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
-				echo json_encode('{"error":"'.$fn.' not validated"}');
+				//echo json_encode('{"error":"'.$fn.' not validated"}');
 			}else{
-				echo json_encode('{"error":"'.$fn.' not validated"}' . ',');
+				//echo json_encode('{"error":"'.$fn.' not validated"}' . ',');
 			}
 		}
-		var_dump($step_list);
 		if($inserted && implode(",",$file_accs) != ","){
 			$file_update = json_decode($query->runSQL("
 			UPDATE ngs_file_submissions
