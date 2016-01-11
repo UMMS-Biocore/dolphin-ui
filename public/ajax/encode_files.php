@@ -94,7 +94,7 @@ foreach($file_query as $fq){
 		);
 		if($fq->file_type == 'fastq'){
 			if(strpos($fn, "/") > -1){
-				$step = "step2";
+				$step = "step3";
 			}else{
 				$step = "step1";
 			}
@@ -129,7 +129,8 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'fastqc'){
 			//	FASTQC
-			$data["aliases"] = array($my_lab.'":"step2_'.end(explode("/",$fn)));
+			$step = 'step2';
+			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
 			if($previous_file_alias != []){
@@ -137,7 +138,12 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
-			$data["aliases"] = array($my_lab.'":"step4_'.end(explode("/",$fn)));
+			if(strpos($fn, "seqmapping") > -1){
+				$step = "step3";
+			}else{
+				$step = "step5";
+			}
+			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
 			if($previous_file_alias != []){
@@ -145,7 +151,8 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
-			$data["aliases"] = array($my_lab.'":"step5_'.end(explode("/",$fn)));
+			$step = 'step6';
+			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
 			if($previous_file_alias != []){
@@ -154,11 +161,11 @@ foreach($file_query as $fq){
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
 			if(strpos($fn, "counts/") > -1){
-				$step = 'step3';
+				$step = 'step4';
 			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
-				$step = 'step7';
+				$step = 'step8';
 			}else{
-				$step = 'step6';
+				$step = 'step7';
 			}
 			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tsv';
@@ -275,7 +282,6 @@ foreach($file_query as $fq){
 				}else{
 					array_push($file_acc_aliases, '/files/' . explode(",",$file_accs)[0] . $server_end);
 				}
-				var_dump($file_acc_aliases);
 			}else{
 				if(end($file_names) == $fn){
 					$url = $server_start . 'file/' . end(explode(",",$fq->file_acc)) . $server_end;
