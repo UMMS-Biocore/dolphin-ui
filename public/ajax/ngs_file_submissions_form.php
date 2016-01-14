@@ -145,7 +145,7 @@ foreach($sample_id_array as $sia){
 		$sub3_file_md5_2 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz');
 		$sub3_file_md5 = $sub3_file_md5_1 . "," . $sub3_file_md5_2;
 	}else{
-		$sub3_file_name = 'fastqc/'.$ngs_samples.'/'.$ngs_samples.'_fastqc.zip';
+		$sub3_file_name = 'seqmapping/srna/'.$ngs_samples.'_fastq.gz';
 		$sub3_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.fastq.gz');
 	}
 	$sub3_file_type = 'fastq';
@@ -203,11 +203,11 @@ foreach($sample_id_array as $sia){
 	
 	//	9.
 	$sub9_file_name = 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv';
-	$sub9_file_md5 = getMD5sum($directory . 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv');
+	$sub9_file_md5 = createTSVFile($ngs_samples, $directory . $sub9_file_name, $directory . 'picard_Tophat/picard.CollectRnaSeqMetrics.stats.tsv');
 	$sub9_file_type = 'tsv';
 	
 	//	10.
-	$sub10_file_name = 'RSeQC_Tophat/RSqQC.rsem.out.'.$ngs_samples.'.genome.out';
+	$sub10_file_name = 'RSeQC_RSEM/RSqQC.rsem.out.'.$ngs_samples.'.genome.out';
 	$sub10_file_md5 = getMD5sum($directory . 'RSeQC_RSEM/RSqQC.rsem.out.'.$ngs_samples.'.genome.out');
 	$sub10_file_type = 'tsv';
 	

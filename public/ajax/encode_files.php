@@ -191,16 +191,12 @@ foreach($file_query as $fq){
 				
 				if(strpos($fn, "gene_exp")){
 					$data['output_type'] = 'gene quantifications';
-					$origin = 'rsem/genes_expression_expected_count.tsv';
 				}else if(strpos($fn, "gene_tpm")){
 					$data['output_type'] = 'gene quantifications';
-					$origin = 'rsem/genes_expression_tpm.tsv';
 				}else if(strpos($fn, "iso_exp")){
 					$data['output_type'] = 'transcript quantifications';
-					$origin = 'rsem/isoforms_expression_expected_count.tsv';
 				}else{
 					$data['output_type'] = 'transcript quantifications';
-					$origin = 'rsem/isoforms_expression_tpm.tsv';
 				}
 				$data["file_size"] = filesize($directory . $fn);
 			}else if ($step == 'step8'){
