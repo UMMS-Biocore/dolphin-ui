@@ -129,78 +129,86 @@ foreach($sample_id_array as $sia){
 	//	2.
 	if(count(explode(",",$sub1_file_name)) > 1){
 		$sub2_file_name = 'fastqc/'.$ngs_samples.'.1/'.$ngs_samples.'.1_fastqc.zip,fastqc/'.$ngs_samples.'.2/'.$ngs_samples.'.2_fastqc.zip';
-		$sub2_file_md5_1 = md5_file($directory . 'fastqc/'.$ngs_samples.'.1/'.$ngs_samples.'.1_fastqc.zip');
-		$sub2_file_md5_2 = md5_file($directory . 'fastqc/'.$ngs_samples.'.2/'.$ngs_samples.'.2_fastqc.zip');
+		$sub2_file_md5_1 = getMD5sum($directory . 'fastqc/'.$ngs_samples.'.1/'.$ngs_samples.'.1_fastqc.zip');
+		$sub2_file_md5_2 = getMD5sum($directory . 'fastqc/'.$ngs_samples.'.2/'.$ngs_samples.'.2_fastqc.zip');
 		$sub2_file_md5 = $sub2_file_md5_1 . "," . $sub2_file_md5_2;
 	}else{
 		$sub2_file_name = 'fastqc/'.$ngs_samples.'/'.$ngs_samples.'_fastqc.zip';
-		$sub2_file_md5 = md5_file($directory . 'fastqc/'.$ngs_samples.'/'.$ngs_samples.'_fastqc.zip');
+		$sub2_file_md5 = getMD5sum($directory . 'fastqc/'.$ngs_samples.'/'.$ngs_samples.'_fastqc.zip');
 	}
 	$sub2_file_type = 'fastqc';
 	
 	//	3.
 	if(count(explode(",",$sub1_file_name)) > 1){
 		$sub3_file_name = 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz,seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz';
-		$sub3_file_md5_1 = md5_file($directory . 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz');
-		$sub3_file_md5_2 = md5_file($directory . 'seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz');
-		$sub3_file_md5 = $sub2_file_md5_1 . "," . $sub2_file_md5_2;
+		$sub3_file_md5_1 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz');
+		$sub3_file_md5_2 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz');
+		$sub3_file_md5 = $sub3_file_md5_1 . "," . $sub3_file_md5_2;
 	}else{
 		$sub3_file_name = 'fastqc/'.$ngs_samples.'/'.$ngs_samples.'_fastqc.zip';
-		$sub3_file_md5 = md5_file($directory . 'seqmapping/snrna/'.$ngs_samples.'.fastq.gz');
+		$sub3_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.fastq.gz');
 	}
 	$sub3_file_type = 'fastq';
 	
 	//	4.
 	$sub4_file_name = 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam';
-	$sub4_file_md5 = md5_file($directory . 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam');
+	$sub4_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam');
 	$sub4_file_type = 'bam';
 	
 	//	5. (4 files)
 	//	rRNA
 	$sub5_file_name_1 = 'counts/'.$ngs_samples.'_rRNA_summary.tsv';
 	$sub5_file_type_1 = 'tsv';
+	$sub5_file_md5_1 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_1, $directory . 'counts/rRNA.summary.tsv');
 	//	miRNA
 	$sub5_file_name_2 = 'counts/'.$ngs_samples.'_miRNA_summary.tsv';
 	$sub5_file_type_2 = 'tsv';
+	$sub5_file_md5_2 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_2, $directory . 'counts/miRNA.summary.tsv');
 	//	tRNA
 	$sub5_file_name_3 = 'counts/'.$ngs_samples.'_tRNA_summary.tsv';
 	$sub5_file_type_3 = 'tsv';
+	$sub5_file_md5_3 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_3, $directory . 'counts/tRNA.summary.tsv');
 	//	snRNA
 	$sub5_file_name_4 = 'counts/'.$ngs_samples.'_snRNA_summary.tsv';
 	$sub5_file_type_4 = 'tsv';
+	$sub5_file_md5_4 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_4, $directory . 'counts/snRNA.summary.tsv');
 	
 	//	6.
 	$sub6_file_name = 'tdf_Tophat/'.$ngs_samples.'.bam';
-	$sub6_file_md5 = md5_file($directory . 'tdf_Tophat/'.$ngs_samples.'.bam');
+	$sub6_file_md5 = getMD5sum($directory . 'tdf_Tophat/'.$ngs_samples.'.bam');
 	$sub6_file_type = 'bam';
 	
 	//	7.
 	$sub7_file_name = 'ucsc_Tophat/'.$ngs_samples.'.bw';
-	$sub7_file_md5 = md5_file($directory . 'ucsc_Tophat/'.$ngs_samples.'.bw');
+	$sub7_file_md5 = getMD5sum($directory . 'ucsc_Tophat/'.$ngs_samples.'.bw');
 	$sub7_file_type = 'bigwig';
 	
 	//	8. (4 files)
 	//	iso_exp
 	$sub8_file_name_1 = 'rsem/'.$ngs_samples.'_iso_exp.tsv';
 	$sub8_file_type_1 = 'tsv';
+	$sub8_file_md5_1 = createTSVFile($ngs_samples, $directory . $sub8_file_name_1, $directory . 'rsem/isoforms_expression_expected_count.tsv');
 	//	iso_tpm
 	$sub8_file_name_2 = 'rsem/'.$ngs_samples.'_iso_tpm.tsv';
 	$sub8_file_type_2 = 'tsv';
+	$sub8_file_md5_2 = createTSVFile($ngs_samples, $directory . $sub8_file_name_2, $directory . 'rsem/isoforms_expression_tpm.tsv');
 	//	gene_exp
 	$sub8_file_name_3 = 'rsem/'.$ngs_samples.'_gene_exp.tsv';
 	$sub8_file_type_3 = 'tsv';
+	$sub8_file_md5_3 = createTSVFile($ngs_samples, $directory . $sub8_file_name_3, $directory . 'rsem/genes_expression_tpm.tsv');
 	//	gene_tmp
 	$sub8_file_name_4 = 'rsem/'.$ngs_samples.'_gene_tpm.tsv';
 	$sub8_file_type_4 = 'tsv';
+	$sub8_file_md5_4 = createTSVFile($ngs_samples, $directory . $sub8_file_name_4, $directory . 'rsem/genes_expression_expected_count.tsv');
 	
 	//	9.
 	$sub9_file_name = 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv';
-	$sub9_file_md5 = md5_file($directory . 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv');
+	$sub9_file_md5 = getMD5sum($directory . 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv');
 	$sub9_file_type = 'tsv';
 	
 	//	10.
 	$sub10_file_name = 'RSeQC_Tophat/RSqQC.rsem.out.'.$ngs_samples.'.genome.out';
-	$sub10_file_md5 = md5_file($directory . 'RSeQC_RSEM/RSqQC.rsem.out.'.$ngs_samples.'.genome.out');
+	$sub10_file_md5 = getMD5sum($directory . 'RSeQC_RSEM/RSqQC.rsem.out.'.$ngs_samples.'.genome.out');
 	$sub10_file_type = 'tsv';
 	
 	//	Insertion into Database
@@ -212,45 +220,82 @@ foreach($sample_id_array as $sia){
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub2_file_name', '$sub2_file_type', '$sub2_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub3_file_name', '$sub3_file_type', '$sub3_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub4_file_name', '$sub4_file_type', '$sub4_file_md5'),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_1', '$sub5_file_type_1', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_2', '$sub5_file_type_2', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_3', '$sub5_file_type_3', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_4', '$sub5_file_type_4', NULL),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_1', '$sub5_file_type_1', '$sub5_file_md5_1'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_2', '$sub5_file_type_2', '$sub5_file_md5_2'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_3', '$sub5_file_type_3', '$sub5_file_md5_3'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_4', '$sub5_file_type_4', '$sub5_file_md5_4'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub6_file_name', '$sub6_file_type', '$sub6_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub7_file_name', '$sub7_file_type', '$sub7_file_md5'),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_1', '$sub8_file_type_1', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_2', '$sub8_file_type_2', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_3', '$sub8_file_type_3', NULL),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_4', '$sub8_file_type_4', NULL),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_1', '$sub8_file_type_1', '$sub8_file_md5_1'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_2', '$sub8_file_type_2', '$sub8_file_md5_2'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_3', '$sub8_file_type_3', '$sub8_file_md5_3'),
+		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub8_file_name_4', '$sub8_file_type_4', '$sub8_file_md5_4'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub9_file_name', '$sub9_file_type', '$sub9_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub10_file_name', '$sub10_file_type', '$sub10_file_md5')
 		");
-	
-	var_dump("insertion sub1:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub1_file_name, $sub1_file_type, $sub1_file_md5");
-	var_dump("insertion sub2:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub2_file_name, $sub2_file_type, $sub2_file_md5");
-	var_dump("insertion sub3:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub3_file_name, $sub3_file_type, $sub3_file_md5");
-	var_dump("insertion sub4.1:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub4_file_name_1, $sub4_file_type_1, NULL");
-	var_dump("insertion sub4.2:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub4_file_name_2, $sub4_file_type_2, NULL");
-	var_dump("insertion sub4.3:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub4_file_name_3, $sub4_file_type_3, NULL");
-	var_dump("insertion sub4.4:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub4_file_name_4, $sub4_file_type_4, NULL");
-	var_dump("insertion sub5:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub5_file_name, $sub5_file_type, $sub5_file_md5");
-	var_dump("insertion sub6:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub6_file_name, $sub6_file_type, $sub6_file_md5");
-	var_dump("insertion sub7:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub7_file_name, $sub7_file_type, $sub7_file_md5");
-	var_dump("insertion sub8.1:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub8_file_name_1, $sub8_file_type_1, NULL");
-	var_dump("insertion sub8.2:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub8_file_name_2, $sub8_file_type_2, NULL");
-	var_dump("insertion sub8.3:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub8_file_name_3, $sub8_file_type_3, NULL");
-	var_dump("insertion sub8.4:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub8_file_name_4, $sub8_file_type_4, NULL");
-	var_dump("insertion sub9:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub9_file_name, $sub9_file_type, $sub9_file_md5");
-	var_dump("insertion sub10:  ".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, $sub10_file_name, $sub10_file_type, $sub10_file_md5");
+	var_dump($sub1_file_md5);
+	var_dump("$sub2_file_md5");
+	var_dump("$sub3_file_md5");
+	var_dump("$sub4_file_md5");
+	var_dump("$sub5_file_md5_1");
+	var_dump("$sub5_file_md5_2");
+	var_dump("$sub5_file_md5_3");
+	var_dump("$sub5_file_md5_4");
+	var_dump("$sub6_file_md5");
+	var_dump("$sub7_file_md5");
+	var_dump("$sub8_file_md5_1");
+	var_dump("$sub8_file_md5_2");
+	var_dump("$sub8_file_md5_3");
+	var_dump("$sub8_file_md5_4");
+	var_dump("$sub9_file_md5");
+	var_dump("$sub10_file_md5");
 	var_dump("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 }
 
-$data = "EOF";
+function createTSVFile($sample_name, $tsvfile, $source){
+	$com = "head -1 ".$source." | awk '{ n=split($0,a,\"\\t\"); for (i=1;i<=n;i++) { if(a[i] == \"".$sample_name."\"){ print \"$\"i; } } }'";
+	$OPEN = popen( $com, "r" );
+	$OPEN_OUT =fread($OPEN, 2096);
+	pclose($OPEN);
+	
+	$com = "awk '{ print $1\"\t\"$2\"\t\"" . preg_replace( "/\r|\n/", "", $OPEN_OUT ) . " }' ". $source . " > ". $tsvfile;
+	$OPEN = popen( $com, "r" );
+	pclose($OPEN);
+	
+	$com = "md5sum " . $tsvfile . " | awk '{ print $1 }'";
+	$OPEN = popen( $com, "r" );
+	$OPEN_OUT = fread($OPEN, 2096);
+	pclose($OPEN);
+	
+	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
+}
+
+function createTSVFileReverse($sample_name, $tsvfile, $source){
+	
+	$com = "grep 'Total Reads' " . $source. " > " . $tsvfile . " ; grep '" . $sample_name . "' " . $source . " >> ". $tsvfile;
+	$OPEN = popen( $com, "r" );
+	pclose($OPEN);
+	
+	$com = "md5sum " . $tsvfile . " | awk '{ print $1 }'";
+	$OPEN = popen( $com, "r" );
+	$OPEN_OUT = fread($OPEN, 2096);
+	pclose($OPEN);
+	
+	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
+}
+
+function getMD5sum($file){
+	$com = "md5sum " . $file . " | awk '{ print $1 }'";
+	$OPEN = popen($com, "r");
+	$OPEN_OUT = fread($OPEN, 1000);
+	pclose($OPEN);
+	
+	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
+}
 
 //footer
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: application/json');
-echo $data;
 exit;
 ?>

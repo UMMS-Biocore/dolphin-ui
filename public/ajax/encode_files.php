@@ -89,7 +89,6 @@ foreach($file_query as $fq){
 			"replicate" => $replicate,
 			"file_size" => $file_size,
 			"md5sum" => $md5sum,
-			"output_type" => "reads",
 			"read_length" => 101,
 			"platform" => "ENCODE:HiSeq2000",
 			"submitted_file_name" => end(explode("/",$fn)),
@@ -97,6 +96,7 @@ foreach($file_query as $fq){
 			"award" => $my_award,
 		);
 		if($fq->file_type == 'fastq'){
+			$data['output_type'] = 'reads';
 			if(strpos($fn, "seqmapping") > -1){
 				$step = "step3";
 			}else{
@@ -134,6 +134,7 @@ foreach($file_query as $fq){
 		}else if($fq->file_type == 'fastqc'){
 			//	FASTQC
 			$step = 'step2';
+			$data['output_type'] = 'reads';
 			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
@@ -144,6 +145,7 @@ foreach($file_query as $fq){
 			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
+			$data['output_type'] = 'alignments';
 			if(strpos($fn, "seqmapping/") > -1){
 				$step = "step3";
 			}else{
@@ -160,6 +162,7 @@ foreach($file_query as $fq){
 		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
 			$step = 'step6';
+			$data['output_type'] = 'signal of all reads';
 			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
@@ -179,94 +182,35 @@ foreach($file_query as $fq){
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
 			if($step == 'step4'){
+				$data['output_type'] = 'transcript quantifications';
 				$data['derived_from'] = explode(",",$step_list['step3']);
-				if(strpos($fn, "rrna/")){
-					$origin = 'counts/rRNA.summary.tsv';
-				}else if(strpos($fn, "mirna")){
-					$origin = 'counts/miRNA.summary.tsv';
-				}else if(strpos($fn, "trna")){
-					$origin = 'counts/tRNA.summary.tsv';
-				}else{
-					$origin = 'counts/snRNA.summary.tsv';
-				}
-				#$step7_com = 'grep "Total Reads" ' . $directory.$origin . ' > '. $directory . $fn . '; grep "' . $sample_name . '" ' . $directory . $origin . ' >> ' . $directory . $fn;
-				$step7_com = 'grep "Total Reads" ' . $directory.$origin . ' > '. $directory . $fn . '; grep "control_rep1" ' . $directory . $origin . ' >> ' . $directory . $fn;
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				pclose($STEP7_INPUT);
-				
-				$step7_com = 'md5sum ' . $directory . $fn . ' | awk \'{ print $1 }\'';
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				$STEP7_MD5SUM = fread($STEP7_INPUT, 2096);
-				pclose($STEP7_INPUT);
-				
-				$data["md5sum"] = preg_replace( "/\r|\n/", "", $STEP7_MD5SUM);
 				$data["file_size"] = filesize($directory . $fn);
-				$update_md5sum = json_decode($query->runSQL("
-					UPDATE ngs_file_submissions
-					SET file_md5 = '$STEP7_MD5SUM'
-					WHERE id = " .$fq->id
-				));
+				
 			}else if ($step == 'step7'){
 				$data['derived_from'] = explode(",",$step_list['step3']);
 				
 				if(strpos($fn, "gene_exp")){
+					$data['output_type'] = 'gene quantifications';
 					$origin = 'rsem/genes_expression_expected_count.tsv';
 				}else if(strpos($fn, "gene_tpm")){
+					$data['output_type'] = 'gene quantifications';
 					$origin = 'rsem/genes_expression_tpm.tsv';
 				}else if(strpos($fn, "iso_exp")){
+					$data['output_type'] = 'transcript quantifications';
 					$origin = 'rsem/isoforms_expression_expected_count.tsv';
 				}else{
+					$data['output_type'] = 'transcript quantifications';
 					$origin = 'rsem/isoforms_expression_tpm.tsv';
 				}
-				#$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "'.$sample_name.'"){ print "$"i; } } }\'';
-				$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "control_rep1"){ print "$"i; } } }\'';
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				$STEP7_COL_GRAB =fread($STEP7_INPUT, 2096);
-				pclose($STEP7_INPUT);
-				
-				$step7_com = 'awk \'{ print $1"\t"$2"\t"' . preg_replace( "/\r|\n/", "", $STEP7_COL_GRAB ) . ' }\' '. $directory.$origin . ' > '. $directory . $fn;
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				pclose($STEP7_INPUT);
-				
-				$step7_com = 'md5sum ' . $directory . $fn . ' | awk \'{ print $1 }\'';
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				$STEP7_MD5SUM = fread($STEP7_INPUT, 2096);
-				pclose($STEP7_INPUT);
-				
-				$data["md5sum"] = preg_replace( "/\r|\n/", "", $STEP7_MD5SUM);
 				$data["file_size"] = filesize($directory . $fn);
-				$update_md5sum = json_decode($query->runSQL("
-					UPDATE ngs_file_submissions
-					SET file_md5 = '$STEP7_MD5SUM'
-					WHERE id = " .$fq->id
-				));
 			}else if ($step == 'step8'){
+				$data['output_type'] = 'gene quantifications';
 				$data['derived_from'] = explode(",",$step_list['step5']);
-				$origin = 'picard_Tophat/picard.CollectRnaSeqMetrics.stats.tsv';
-				#$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "'.$sample_name.'"){ print "$"i; } } }\'';
-				$step7_com = 'head -1 '.$directory.$origin.' | awk \'{ n=split($0,a,"\t"); for (i=1;i<=n;i++) { if(a[i] == "control_rep1"){ print "$"i; } } }\'';
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				$STEP7_COL_GRAB =fread($STEP7_INPUT, 2096);
-				pclose($STEP7_INPUT);
-				
-				$step7_com = 'awk \'{ print $1"\t"' . preg_replace( "/\r|\n/", "", $STEP7_COL_GRAB ) . ' }\' '. $directory.$origin . ' > '. $directory . $fn;
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				pclose($STEP7_INPUT);
-				
-				$step7_com = 'md5sum ' . $directory . $fn . ' | awk \'{ print $1 }\'';
-				$STEP7_INPUT = popen( $step7_com, "r" );
-				$STEP7_MD5SUM = fread($STEP7_INPUT, 2096);
-				pclose($STEP7_INPUT);
-				
-				$data["md5sum"] = preg_replace( "/\r|\n/", "", $STEP7_MD5SUM);
 				$data["file_size"] = filesize($directory . $fn);
-				$update_md5sum = json_decode($query->runSQL("
-					UPDATE ngs_file_submissions
-					SET file_md5 = '$STEP7_MD5SUM'
-					WHERE id = " .$fq->id
-				));
 			}else{
+				$data['output_type'] = 'gene quantifications';
 				$data['derived_from'] = explode(",",$step_list['step5']);
+				$data["file_size"] = filesize($directory . $fn);
 			}
 		}
 		$gzip_types = array(
@@ -347,13 +291,12 @@ foreach($file_query as $fq){
 			'gff' => array(null => array(null))
 		);
 		$validate_args = $validate_map[$data['file_format']][null];
-		//$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
-		//$VALIDATE = popen( $cmd, "r" );
-		//$VALIDATE_READ =fread($VALIDATE, 2096);
-		//pclose($VALIDATE);
-		//$VALIDATE_READ == "Error count 0\n";
-		$VALIDATE_READ == "";
-		if($VALIDATE_READ == ""){
+		$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
+		$VALIDATE = popen( $cmd, "r" );
+		$VALIDATE_READ =fread($VALIDATE, 2096);
+		pclose($VALIDATE);
+		$VALIDATE_READ = "Error count 0\n";
+		if($VALIDATE_READ == "Error count 0\n"){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 			
@@ -407,29 +350,39 @@ foreach($file_query as $fq){
 			$item = $body->{'@graph'}[0];
 			
 			echo $response->body;
-			if(end($file_query) != $fq){
-				echo ",";
-			}
+			
 			
 			####################
 			# POST file to S3
 			
-			$creds = $item->{'upload_credentials'};
-			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'};
-			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-			$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
-			if(end($file_names) == $fn && end($file_query) == $fq){
-				//echo $AWS_COMMAND_READ;
+			$com = "ps -ef | grep '[".preg_replace("/[\n\r]/", "", substr($data['md5sum'], 0, 1)."]".substr($data['md5sum'],1))."'";
+			$FILE_SUB_CHECK = popen( $com, "r" );
+			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
+			pclose($FILE_SUB_CHECK);
+			if($FILE_SUB_CHECK_OUTUT == ""){
+				$creds = $item->{'upload_credentials'};
+				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &" ;
+				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+				$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
+				if(end($file_names) == $fn && end($file_query) == $fq){
+					//echo $AWS_COMMAND_READ;
+				}else{
+					//echo $AWS_COMMAND_READ . ",";
+				}
+				pclose($AWS_COMMAND_DO);
 			}else{
-				//echo $AWS_COMMAND_READ . ",";
+				echo ',{"error":"'.$fn.' submission currently running"}';
 			}
-			pclose($AWS_COMMAND_DO);
+			
+			if(end($file_query) != $fq){
+				echo ",";
+			}
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
-				echo json_encode('{"error":"'.$fn.' not validated"}');
+				echo '{"error":"'.$fn.' not validated"}';
 			}else{
-				echo json_encode('{"error":"'.$fn.' not validated"}' . ',');
+				echo '{"error":"'.$fn.' not validated"}' . ',';
 			}
 		}
 		if($inserted && implode(",",$file_accs) != ","){
