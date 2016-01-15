@@ -359,12 +359,6 @@ foreach($file_query as $fq){
 				$creds = $item->{'upload_credentials'};
 				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &" ;
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				$AWS_COMMAND_READ =fread($AWS_COMMAND_DO, 2096);
-				if(end($file_names) == $fn && end($file_query) == $fq){
-					//echo $AWS_COMMAND_READ;
-				}else{
-					//echo $AWS_COMMAND_READ . ",";
-				}
 				pclose($AWS_COMMAND_DO);
 			}else{
 				echo ',{"error":"'.$fn.' submission currently running"}';
