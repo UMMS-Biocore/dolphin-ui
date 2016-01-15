@@ -1240,6 +1240,10 @@ function encodeSubmission(name, json, subType, type, table){
 				if (response[x]['@graph'][0].uuid != undefined) {
 					submitAccessionAndUuid(item[x], table, type, "treatment", response[x]['@graph'][0].uuid);
 				}
+			}else if (type == "replicate"){
+				if (response[x]['@graph'][0].uuid != undefined) {
+					submitAccessionAndUuid(item[x], table, type, "replicate", response[x]['@graph'][0].uuid);
+				}
 			}else{
 				if (response[x]['@graph'][0].accession != undefined && response[x]['@graph'][0].uuid != undefined) {
 					submitAccessionAndUuid(item[x], table, type, response[x]['@graph'][0].accession, response[x]['@graph'][0].uuid);
