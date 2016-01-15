@@ -521,7 +521,7 @@ function getSampleJson(){
 				sample_json_patch += '"lab":"'+experiment_info[0].lab+'",';
 			}
 			//	Treatments
-			sample_json_patch += '"treatments":["' + experiment_info[0].lab + ':' + sample_info[x].source_symbol + '"],'
+			sample_json_patch += '"treatments":["manuel-garber:LPS"],'
 			//	Date Obtained
 			var lane_id_pos = -1;
 			for(var y = 0; y < lane_info.length; y++){
