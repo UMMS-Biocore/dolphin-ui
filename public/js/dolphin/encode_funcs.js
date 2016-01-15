@@ -615,7 +615,8 @@ function getLibraryJson(){
 			}
 			//	Size range
 			if (sample_info[x].read_length != null) {
-				lib_json += '"size_range":"'+sample_info[x].read_length+'",';
+				lib_json_patch += '"size_range":"50-100",';
+				//lib_json += '"size_range":"'+sample_info[x].read_length+'",';
 			}
 			//	Lab
 			if (experiment_info[0].lab != null) {
