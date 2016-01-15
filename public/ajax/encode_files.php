@@ -358,6 +358,8 @@ foreach($file_query as $fq){
 			$FILE_SUB_CHECK = popen( $com, "r" );
 			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
 			pclose($FILE_SUB_CHECK);
+			*/
+			$FILE_SUB_CHECK_OUTUT = "";
 			if($FILE_SUB_CHECK_OUTUT == ""){
 				$creds = $item->{'upload_credentials'};
 				if($step == 'step1' && end($file_names) != $fn){
@@ -372,12 +374,10 @@ foreach($file_query as $fq){
 					echo ',';
 				}
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				$AWS_COMMAND_OUTPUT = frite( $AWS_COMMAND_DO, 4000);
 				pclose($AWS_COMMAND_DO);
 			}else{
 				echo '{"error":"'.$fn.' submission currently running"},';
 			}
-		*/	
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
