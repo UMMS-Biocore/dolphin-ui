@@ -724,7 +724,6 @@ function getLibraryJson(){
 function getReplicateJson() {
 	var rep_json = '[';
 	for(var x = 0; x < sample_info.length; x++){
-		replicate_uuids.push(sample_info[x].replicate_uuid);
 		if (sample_info[x].replicate_uuid == null) {
 			//	Alias
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
@@ -848,7 +847,6 @@ function getExperimentJson(){
 	
 	var exp_json = '[';
 	for(var x = 0; x < sample_info.length; x++){
-		experiment_accs.push(sample_info[x].experiment_acc);
 		var proto_lib_type = -1;
 		for(var y = 0; y < protocol_info.length; y++){
 			if (protocol_info[y].id == sample_info[x].protocol_id) {
@@ -1241,8 +1239,14 @@ function encodeSubmission(name, json, subType, type, table){
 					submitAccessionAndUuid(item[x], table, type, "treatment", response[x]['@graph'][0].uuid);
 				}
 			}else if (type == "replicate"){
+				replicate_uuids.push(response[x]['@graph'][0].uuid);
 				if (response[x]['@graph'][0].uuid != undefined) {
 					submitAccessionAndUuid(item[x], table, type, "replicate", response[x]['@graph'][0].uuid);
+				}
+			}else if (type == "experiment"){
+				experiment_accs.push(response[x]['@graph'][0].accession);
+				if (response[x]['@graph'][0].accession != undefined && response[x]['@graph'][0].uuid != undefined) {
+					submitAccessionAndUuid(item[x], table, type, response[x]['@graph'][0].accession, response[x]['@graph'][0].uuid);
 				}
 			}else{
 				if (response[x]['@graph'][0].accession != undefined && response[x]['@graph'][0].uuid != undefined) {
@@ -1449,7 +1453,7 @@ function encodePost(subType){
 	}
 	
 	//	FILE SUBMISSION
-	encodeFilePost("post");
+	encodeFilePost();
 	
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
