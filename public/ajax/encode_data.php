@@ -85,7 +85,7 @@ else if ($p == 'submitAccessionAndUuid')
 	if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 	if (isset($_GET['uuid'])){$uuid = $_GET['uuid'];}
 	
-	if($type == 'treatment' || $type == "replicate"){
+	if($accession == 'treatment' || $accession == "replicate"){
 		$data=$query->runSQL("UPDATE `" . $table . "` " .
 							"SET `" . $type . "_uuid` = '" . $uuid . "' " .
 							"WHERE id = " . $item);
