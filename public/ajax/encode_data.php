@@ -18,7 +18,7 @@ if($p == 'getSampleDataInfo')
 							 read_length, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
 							 time, ngs_donor.id as did, donor, donor_acc, donor_uuid, biosample_type, series_id,
-							 protocol_id, lane_id, organism, source, ngs_source.id as sid,
+							 protocol_id, lane_id, organism, source, source_symbol, ngs_source.id as sid,
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_acc, replicate_uuid,
 							 treatment_acc, treatment_uuid, experiment_acc, experiment_uuid
 							 FROM ngs_samples
