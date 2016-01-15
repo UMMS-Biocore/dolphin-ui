@@ -2,7 +2,7 @@
 import sys
 import math
 import os
-from filechunkio import FileChunkIO
+#from filechunkio import FileChunkIO
 import boto
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -28,6 +28,7 @@ source_size = os.stat(source_path).st_size
 # Create a multipart upload request
 mp = bucket.initiate_multipart_upload(upload_path)
 
+"""
 # Use a chunk size of 50 MiB
 chunk_size = 52428800
 chunk_count = int(math.ceil(source_size / float(chunk_size)))
@@ -49,7 +50,7 @@ mp.complete_upload()
 k = Key(bucket)
 k.name = upload_path
 k.set_contents_from_filename(file_path)
-"""
+
 """
 except boto.exception.S3ResponseError as e:
     print '{"passed":"no"}'
