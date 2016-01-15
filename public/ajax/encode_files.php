@@ -347,7 +347,9 @@ foreach($file_query as $fq){
 			$item = $body->{'@graph'}[0];
 			
 			echo $response->body;
-			
+			if(!end($file_query) == $fq){
+				echo ',';
+			}
 			
 			####################
 			# POST file to S3
@@ -358,14 +360,24 @@ foreach($file_query as $fq){
 			pclose($FILE_SUB_CHECK);
 			if($FILE_SUB_CHECK_OUTUT == ""){
 				$creds = $item->{'upload_credentials'};
-				$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " & ;' >> ../../tmp/encode_" . $sample_name . ".sh";
+				if($step == 'step1'){
+					$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " & ;' > ../../tmp/encode_" . $sample_name . ".sh";
+				}else{
+					$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " & ;' >> ../../tmp/encode_" . $sample_name . ".sh";
+				}
+				echo '{"command":"' . $cmd_aws_launch . '"}';
+				if(!end($file_query) == $fq){
+					echo ',';
+				}
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 				$AWS_COMMAND_OUTPUT = frite( $AWS_COMMAND_DO, 4000);
 				pclose($AWS_COMMAND_DO);
 			}else{
 				echo '{"error":"'.$fn.' submission currently running"},';
 			}
+			
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
