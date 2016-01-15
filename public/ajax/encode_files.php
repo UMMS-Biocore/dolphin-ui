@@ -353,14 +353,14 @@ foreach($file_query as $fq){
 			
 			####################
 			# POST file to S3
-			
+			/*
 			$com = "ps -ef | grep '[".preg_replace("/[\n\r]/", "", substr($data['md5sum'], 0, 1)."]".substr($data['md5sum'],1))."'";
 			$FILE_SUB_CHECK = popen( $com, "r" );
 			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
 			pclose($FILE_SUB_CHECK);
 			if($FILE_SUB_CHECK_OUTUT == ""){
 				$creds = $item->{'upload_credentials'};
-				if($step == 'step1'){
+				if($step == 'step1' && end($file_names) != $fn){
 					$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
 						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " & ;' > ../../tmp/encode_" . $sample_name . ".sh";
 				}else{
@@ -377,7 +377,7 @@ foreach($file_query as $fq){
 			}else{
 				echo '{"error":"'.$fn.' submission currently running"},';
 			}
-			
+		*/	
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
