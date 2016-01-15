@@ -454,7 +454,7 @@ function getSampleJson(){
 				sample_json += '"lab":"'+experiment_info[0].lab+'",';
 			}
 			//	Treatments
-			sample_json += '"treatments":["' + experiment_info[0].lab + ':' + sample_info[x].source + '"],'
+			sample_json += '"treatments":["' + experiment_info[0].lab + ':' + sample_info[x].source_symbol + '"],'
 			//	Date Obtained
 			var lane_id_pos = -1;
 			for(var y = 0; y < lane_info.length; y++){
@@ -521,7 +521,7 @@ function getSampleJson(){
 				sample_json_patch += '"lab":"'+experiment_info[0].lab+'",';
 			}
 			//	Treatments
-			sample_json_patch += '"treatments":["' + experiment_info[0].lab + ':' + sample_info[x].source + '"],'
+			sample_json_patch += '"treatments":["' + experiment_info[0].lab + ':' + sample_info[x].source_symbol + '"],'
 			//	Date Obtained
 			var lane_id_pos = -1;
 			for(var y = 0; y < lane_info.length; y++){
@@ -1049,7 +1049,7 @@ function getTreatmentJson(){
 		treatment_uuid.push(sample_info[0].treatment_uuid);
 		console.log(treatment_ids.indexOf(sample_info[x].sid));
 		if (sample_info[x].treatment_uuid == null && treatment_ids.indexOf(sample_info[x].sid) == -1) {
-			treat_json += '{"aliases":["' + experiment_info[0].lab + ':' + sample_info[x].source + '"],';
+			treat_json += '{"aliases":["' + experiment_info[0].lab + ':' + sample_info[x].source_symbol + '"],';
 			treat_json += '"treatment_term_name":"Lipopolysaccharide",';
 			treat_json += '"treatment_term_id":"CHEBI:16412",';
 			treat_json += '"treatment_type":"infection",';
@@ -1062,7 +1062,7 @@ function getTreatmentJson(){
 		}
 		
 		if (sample_info[x].treatment_uuid != null && treatment_ids.indexOf(sample_info[x].sid) == -1) {
-			treat_json_patch += '{"aliases":["' + experiment_info[0].lab + ':' + sample_info[x].source + '"],';
+			treat_json_patch += '{"aliases":["' + experiment_info[0].lab + ':' + sample_info[x].source_symbol + '"],';
 			treat_json_patch += '"treatment_term_name":"Lipopolysaccharide",';
 			treat_json_patch += '"treatment_term_id":"CHEBI:16412",';
 			treat_json_patch += '"treatment_type":"infection",';
