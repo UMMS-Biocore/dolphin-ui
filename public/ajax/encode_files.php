@@ -26,7 +26,8 @@ $file_query = json_decode($query->queryTable("
 	FROM ngs_file_submissions
 	LEFT JOIN ngs_runparams
 	ON ngs_runparams.id = ngs_file_submissions.run_id
-	WHERE sample_id = " . $sample_id ));
+	WHERE sample_id = " . $sample_id . "
+	ORDER BY ngs_file_submissions.id"));
 $dir_query=json_decode($query->queryTable("
 	SELECT fastq_dir, backup_dir, amazon_bucket
 	FROM ngs_dirs
