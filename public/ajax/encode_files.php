@@ -358,15 +358,13 @@ foreach($file_query as $fq){
 			pclose($FILE_SUB_CHECK);
 			if($FILE_SUB_CHECK_OUTUT == ""){
 				$creds = $item->{'upload_credentials'};
-				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &" ;
+				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " . $creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"];
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+				$AWS_COMMAND_OUTPUT = frite( $AWS_COMMAND_DO, 4000);
 				pclose($AWS_COMMAND_DO);
+				echo '{"submission_out":"' . $AWS_COMMAND_OUTPUT . '"},';
 			}else{
-				echo ',{"error":"'.$fn.' submission currently running"}';
-			}
-			
-			if(end($file_query) != $fq){
-				echo ",";
+				echo '{"error":"'.$fn.' submission currently running"},';
 			}
 		}else{
 			//	File Validation Failed
