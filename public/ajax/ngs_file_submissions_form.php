@@ -141,19 +141,19 @@ foreach($sample_id_array as $sia){
 	//	3.
 	if(count(explode(",",$sub1_file_name)) > 1){
 		$sub3_file_name = 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz,seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz';
-		$sub3_file_md5_1 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz');
-		$sub3_file_md5_2 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz');
+		$sub3_file_md5_1 = getMD5sumfile($directory . 'seqmapping/snrna/'.$ngs_samples.'.1.fastq.gz');
+		$sub3_file_md5_2 = getMD5sumfile($directory . 'seqmapping/snrna/'.$ngs_samples.'.2.fastq.gz');
 		$sub3_file_md5 = $sub3_file_md5_1 . "," . $sub3_file_md5_2;
 	}else{
 		$sub3_file_name = 'seqmapping/srna/'.$ngs_samples.'_fastq.gz';
-		$sub3_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.fastq.gz');
+		$sub3_file_md5 = getMD5sumfile($directory . 'seqmapping/snrna/'.$ngs_samples.'.fastq.gz');
 	}
 	$sub3_file_type = 'fastq';
 	
 	//	4.
-	$sub4_file_name = 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam';
-	$sub4_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam');
-	$sub4_file_type = 'bam';
+	//$sub4_file_name = 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam';
+	//$sub4_file_md5 = getMD5sum($directory . 'seqmapping/snrna/'.$ngs_samples.'.sorted.bam');
+	//$sub4_file_type = 'bam';
 	
 	//	5. (4 files)
 	//	rRNA
@@ -219,7 +219,6 @@ foreach($sample_id_array as $sia){
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub1_file_name', '$sub1_file_type', '$sub1_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub2_file_name', '$sub2_file_type', '$sub2_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub3_file_name', '$sub3_file_type', '$sub3_file_md5'),
-		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub4_file_name', '$sub4_file_type', '$sub4_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_1', '$sub5_file_type_1', '$sub5_file_md5_1'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_2', '$sub5_file_type_2', '$sub5_file_md5_2'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub5_file_name_3', '$sub5_file_type_3', '$sub5_file_md5_3'),
@@ -233,10 +232,13 @@ foreach($sample_id_array as $sia){
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub9_file_name', '$sub9_file_type', '$sub9_file_md5'),
 		(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub10_file_name', '$sub10_file_type', '$sub10_file_md5')
 		");
+	
+	//(".$ngs_dirs[0]->id.", ".$ngs_runlist[0]->run_id.", $sia, '$sub4_file_name', '$sub4_file_type', '$sub4_file_md5'),
+	
 	var_dump($sub1_file_md5);
 	var_dump("$sub2_file_md5");
 	var_dump("$sub3_file_md5");
-	var_dump("$sub4_file_md5");
+	//var_dump("$sub4_file_md5");
 	var_dump("$sub5_file_md5_1");
 	var_dump("$sub5_file_md5_2");
 	var_dump("$sub5_file_md5_3");
@@ -286,6 +288,15 @@ function createTSVFileReverse($sample_name, $tsvfile, $source){
 
 function getMD5sum($file){
 	$com = "md5sum " . $file . " | awk '{ print $1 }'";
+	$OPEN = popen($com, "r");
+	$OPEN_OUT = fread($OPEN, 1000);
+	pclose($OPEN);
+	
+	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
+}
+
+function getMD5sumfile($file){
+	$com = "cat " . $file . ".md5sum | awk '{ print $1 }'";
 	$OPEN = popen($com, "r");
 	$OPEN_OUT = fread($OPEN, 1000);
 	pclose($OPEN);
