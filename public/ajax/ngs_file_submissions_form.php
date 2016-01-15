@@ -7,7 +7,12 @@ require_once("../../includes/dbfuncs.php");
 $query = new dbfuncs();
 //header
 
-if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
+if (isset($_GET['sample_ids'])){
+	$sample_ids = $_GET['sample_ids'];
+}else{
+	$sample_ids = $argv[1];
+}
+
 $sample_id_array = explode(",", $sample_ids);
 
 foreach($sample_id_array as $sia){
@@ -175,12 +180,12 @@ foreach($sample_id_array as $sia){
 	
 	//	6.
 	$sub6_file_name = 'tdf_Tophat/'.$ngs_samples.'.bam';
-	$sub6_file_md5 = getMD5sum($directory . 'tdf_Tophat/'.$ngs_samples.'.bam');
+	$sub6_file_md5 = getMD5sumfile($directory . 'tdf_Tophat/'.$ngs_samples.'.bam');
 	$sub6_file_type = 'bam';
 	
 	//	7.
 	$sub7_file_name = 'ucsc_Tophat/'.$ngs_samples.'.bw';
-	$sub7_file_md5 = getMD5sum($directory . 'ucsc_Tophat/'.$ngs_samples.'.bw');
+	$sub7_file_md5 = getMD5sumfile($directory . 'ucsc_Tophat/'.$ngs_samples.'.bw');
 	$sub7_file_type = 'bigwig';
 	
 	//	8. (4 files)
