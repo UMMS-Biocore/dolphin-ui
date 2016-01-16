@@ -367,7 +367,7 @@ foreach($file_query as $fq){
 					$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh";
 				}
 				$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " & ;' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
+					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
 				echo '{"command":"' . $cmd_aws_launch . '"}';
 				if(!end($file_query) == $fq){
 					echo ',';
