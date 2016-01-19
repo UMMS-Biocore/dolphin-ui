@@ -136,7 +136,7 @@ foreach($file_query as $fq){
 			//	FASTQC
 			$step = 'step2';
 			$data['output_type'] = 'reads';
-			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
 			if(end($file_names) == $fn){
@@ -164,7 +164,7 @@ foreach($file_query as $fq){
 			//	BIGWIG
 			$step = 'step6';
 			$data['output_type'] = 'signal of all reads';
-			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
 			$data['derived_from'] = explode(",",$step_list['step5']);;
@@ -366,10 +366,10 @@ foreach($file_query as $fq){
 					$cmd_aws_launch = "echo '#!/bin/bash' > ../../tmp/encode_" . $sample_name . ".sh \n";
 					$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh \n";
 					$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
+						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
 				}else{
 					$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data["md5sum"] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
+						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh";
 				}
 				
 				echo '{"command":"' . $cmd_aws_launch . '"}';

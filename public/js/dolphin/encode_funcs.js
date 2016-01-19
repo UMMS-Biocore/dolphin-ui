@@ -568,7 +568,7 @@ function getLibraryJson(){
 			}
 			//	Biosample
 			if (experiment_info[0].samplename != null) {
-				lib_json += '"biosample":"'+sample_info[x].samplename+'",';
+				lib_json += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'",';
 			}
 			//	Nucleic_acid_term_name
 			var proto_lib_type = -1;
@@ -646,7 +646,7 @@ function getLibraryJson(){
 			}
 			//	Biosample
 			if (experiment_info[0].samplename != null) {
-				lib_json_patch += '"biosample":"'+sample_info[x].samplename+'",';
+				lib_json_patch += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'",';
 			}
 			//	Nucleic_acid_term_name
 			var proto_lib_type = -1;
@@ -895,17 +895,23 @@ function getExperimentJson(){
 			}
 			//	Biosample_term_id
 			if (sample_info[x].source != null) {
+				/*
 				if (sample_info[x].source.toLowerCase().indexOf('monocyte') > -1) {
 					exp_json += '"biosample_term_id":"' + biosample_term_ids[1] + '",';
-				}else if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
+				}else
+				*/
+				if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
 					exp_json += '"biosample_term_id":"' + biosample_term_ids[0] + '",';
 				}
 			}
 			//	Biosample_term_name
 			if (sample_info[x].source != null) {
+				/*
 				if (sample_info[x].source.toLowerCase().indexOf('monocyte') > -1) {
 					exp_json += '"biosample_term_name":"monocyte",';
-				}else if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
+				}else
+				*/
+				if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
 					exp_json += '"biosample_term_name":"dendritic cell",';
 				}
 			}
@@ -990,17 +996,23 @@ function getExperimentJson(){
 			}
 			//	Biosample_term_id
 			if (sample_info[x].source != null) {
+				/*
 				if (sample_info[x].source.toLowerCase().indexOf('monocyte') > -1) {
 					exp_json_patch += '"biosample_term_id":"' + biosample_term_ids[1] + '",';
-				}else if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
+				}else
+				*/
+				if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
 					exp_json_patch += '"biosample_term_id":"' + biosample_term_ids[0] + '",';
 				}
 			}
 			//	Biosample_term_name
 			if (sample_info[x].source != null) {
+				/*
 				if (sample_info[x].source.toLowerCase().indexOf('monocyte') > -1) {
 					exp_json_patch += '"biosample_term_name":"monocyte",';
-				}else if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
+				}else
+				*/
+				if(sample_info[x].source.toLowerCase().indexOf('dendritic') > -1){
 					exp_json_patch += '"biosample_term_name":"dendritic cell",';
 				}
 			}
