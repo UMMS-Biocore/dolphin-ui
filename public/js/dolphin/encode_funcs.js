@@ -416,7 +416,7 @@ function getDonorJson(){
 }
 
 function getSampleJson(){
-	var sample_json = '[';
+	var sample_json = '[';	
 	for(var x = 0; x < sample_info.length; x++){
 		biosample_accs.push(sample_info[x].biosample_acc);
 		if (sample_info[x].biosample_acc == null) {
