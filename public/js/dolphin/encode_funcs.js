@@ -567,7 +567,7 @@ function getLibraryJson(){
 				lib_json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"],';
 			}
 			//	Biosample
-			if (experiment_info[0].samplename != null) {
+			if (sample_info[0].samplename != null) {
 				lib_json += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'",';
 			}
 			//	Nucleic_acid_term_name
@@ -645,7 +645,7 @@ function getLibraryJson(){
 				lib_json_patch += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"],';
 			}
 			//	Biosample
-			if (experiment_info[0].samplename != null) {
+			if (sample_info[0].samplename != null) {
 				lib_json_patch += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'",';
 			}
 			//	Nucleic_acid_term_name
