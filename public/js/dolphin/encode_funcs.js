@@ -2,7 +2,6 @@ var sample_info = [];
 var lane_info = [];
 var protocol_info = [];
 var experiment_info = [];
-var antibody_info = [];
 
 var donor_ids = [];
 var donor_accs = [];
@@ -18,9 +17,6 @@ var biosample_accs = [];
 
 var library_ids = [];
 var library_accs = [];
-
-var antibody_ids = [];
-var antibody_accs = [];
 
 var replicate_ids = [];
 var replicate_uuids = [];
@@ -306,17 +302,6 @@ function getDataInfo(){
 		success : function(s)
 		{
 			experiment_info = s;
-		}
-	});
-	
-	//	Antibody Info
-	$.ajax({ type: "GET",
-		url: BASE_PATH + "/public/ajax/encode_data.php",
-		data: { p: 'getAntibodyDataInfo'},
-		async: false,
-		success : function(s)
-		{
-			antibody_info = s;
 		}
 	});
 }
@@ -764,9 +749,8 @@ function getReplicateJson() {
 			}
 			//	Library
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				rep_json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib",';
+				rep_json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
 			}
-			rep_json += '"antibody":"ENCAB969VGQ"'
 			rep_json += '}';
 			var comma_bool = false;
 			for(var z = x + 1; z < sample_info.length; z++){
@@ -821,9 +805,8 @@ function getReplicateJson() {
 			}
 			//	Library
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				rep_json_patch += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib",';
+				rep_json_patch += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
 			}
-			rep_json_patch += '"antibody":"ENCAB969VGQ"'
 			rep_json_patch += '}';
 			var comma_bool = false;
 			for(var z = x + 1; z < sample_info.length; z++){
@@ -1098,33 +1081,6 @@ function getTreatmentJson(){
 	return [treat_json, treat_json_patch];
 }
 
-//	Optional?
-function getAntibodyJson(){
-	var antibody_lot = "[]";
-	var antibody_lot_patch = "[]";
-
-	var abcam = '[{"aliases":["' + experiment_info[0].lab + ':' + antibody_info[0].product_id +'"],';
-	abcam += '"source":"' + antibody_info[0].source + '",';
-	abcam += '"product_id":"' + antibody_info[0].product_id +'",';
-	abcam += '"lot_id":"' + antibody_info[0].lot_id + '",';
-	abcam += '"host_organism":"' + antibody_info[0].host_organism + '",';
-	abcam += '"lab":"' + experiment_info[0].lab + '",';
-	abcam += '"award":"' + experiment_info[0].grant + '",';
-	abcam += '"targets":["' + antibody_info[0].target + '"]}]';
-	
-	if (antibody_info[0].antibody_lot_acc == null) {
-		antibody_lot = abcam
-	}
-	if (antibody_info[0].antibody_lot_acc != null) {
-		var antibody_lot_patch = abcam;
-	}
-	if (antibody_ids.indexOf(antibody_info[0].id) < 0) {
-			antibody_ids.push(antibody_info[0].id);
-			antibody_accs.push(antibody_info[0].antibody_lot_acc);
-	}
-	return [antibody_lot, antibody_lot_patch];
-}
-
 function getEncodeAccession(json_name, accession){
 	response = [];
 	$.ajax({ type: "GET",
@@ -1198,9 +1154,6 @@ function encodeSubmission(name, json, subType, type, table){
 	}else if (type == "library") {
 		item = library_ids;
 		accs = library_accs;
-	}else if (type == "antibody_lot") {
-		item = antibody_ids;
-		accs = antibody_accs;
 	}else if (type == "replicate") {
 		item = replicate_ids;
 		accs = replicate_uuids;
@@ -1313,7 +1266,7 @@ function submitAccessionAndUuid(item, table, type, accession, uuid){
 }
 
 function encodePost(subType){
-	//getEncodeAccession('antibody_lot', 'ENCAB969VGQ');
+	//getEncodeAccession('antibody_lot', 'ENCAB969VGQ');f
 	var responseOutput = '';
 	
 	//	Grab json information
@@ -1322,7 +1275,6 @@ function encodePost(subType){
 	var treatment_pre_json = getTreatmentJson();
 	var biosample_pre_json = getSampleJson();
 	var library_pre_json = getLibraryJson();
-	var antibody_lot_pre_json = getAntibodyJson();
 	var replicate_pre_json = getReplicateJson();
 	
 	console.log(donor_pre_json);
@@ -1330,7 +1282,6 @@ function encodePost(subType){
 	console.log(treatment_pre_json);
 	console.log(biosample_pre_json);
 	console.log(library_pre_json);
-	console.log(antibody_lot_pre_json);
 	console.log(replicate_pre_json);
 	
 	//	ALREADY IN ENCODE //
@@ -1396,20 +1347,6 @@ function encodePost(subType){
 			//console.log(s);
 		}
 	});
-	
-	//	ANTIBODY
-	$.ajax({ type: "GET",
-		url: "https://www.encodeproject.org/search/?type=antibody_lot&limit=all&format=json&frame=object",
-		async: false,
-		success : function(s)
-		{
-			for(var x = 0; x < s['@graph'].length; x++){
-				if (s['@graph'][x].uuid == '"2eaa0ac2-c1d1-4fd1-8422-477675c4c6ae"') {
-					console.log(s['@graph'][x]);
-				}
-			}
-		}
-	});
 	*/
 	
 	//	DONOR SUBMISSION
@@ -1443,7 +1380,6 @@ function encodePost(subType){
 	if (subType == "patch" && biosample_pre_json[1] != "[]") {
 		responseOutput += encodeSubmission('biosamples', biosample_pre_json[1], subType, "biosample", "ngs_samples");
 	}
-	
 	//	LIBRARY SUBMISSION
 	if (library_pre_json[0] != "[]") {
 		responseOutput += encodeSubmission('libraries', library_pre_json[0], "post", "library", "ngs_samples");
@@ -1451,15 +1387,6 @@ function encodePost(subType){
 	if (subType == "patch" && library_pre_json[1] != "[]") {
 		responseOutput += encodeSubmission('libraries', library_pre_json[1], subType, "library", "ngs_samples");
 	}
-	/*
-	//	ANTIBODY_LOT SUBMISSION
-	if (antibody_lot_pre_json[0] != "[]") {
-		responseOutput += encodeSubmission('antibodies', antibody_lot_pre_json[0], "post", "antibody_lot", "ngs_antibody_target");
-	}
-	if (subType == "patch" && antibody_lot_pre_json[1] != "[]") {
-		responseOutput += encodeSubmission('antibodies', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
-	}
-	*/
 	//	REPLICATE SUBMISSION
 	if (replicate_pre_json[0] != "[]") {
 		responseOutput += encodeSubmission('replicate', replicate_pre_json[0], "post", "replicate", "ngs_samples");
