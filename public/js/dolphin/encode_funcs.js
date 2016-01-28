@@ -454,7 +454,7 @@ function getSampleJson(){
 				sample_json += '"lab":"'+experiment_info[0].lab+'",';
 			}
 			//	Treatments
-			sample_json_patch += '"treatments":["manuel-garber:LPS"],'
+			sample_json_patch += '"treatments":["manuel-garber:LPS_'+parseInt(sample_info[x].time)/60+'h"],'
 			//	Date Obtained
 			var lane_id_pos = -1;
 			for(var y = 0; y < lane_info.length; y++){
@@ -521,7 +521,7 @@ function getSampleJson(){
 				sample_json_patch += '"lab":"'+experiment_info[0].lab+'",';
 			}
 			//	Treatments
-			sample_json_patch += '"treatments":["manuel-garber:LPS"],'
+			sample_json_patch += '"treatments":["manuel-garber:LPS_'+parseInt(sample_info[x].time)/60+'h"],'
 			//	Date Obtained
 			var lane_id_pos = -1;
 			for(var y = 0; y < lane_info.length; y++){
@@ -764,9 +764,9 @@ function getReplicateJson() {
 			}
 			//	Library
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				rep_json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib",';
+				rep_json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
 			}
-			rep_json += '"antibody":"ENCAB969VGQ"'
+			//rep_json += ',"antibody":"ENCAB969VGQ"'
 			rep_json += '}';
 			var comma_bool = false;
 			for(var z = x + 1; z < sample_info.length; z++){
@@ -821,9 +821,9 @@ function getReplicateJson() {
 			}
 			//	Library
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				rep_json_patch += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib",';
+				rep_json_patch += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
 			}
-			rep_json_patch += '"antibody":"ENCAB969VGQ"'
+			//rep_json_patch += '",antibody":"ENCAB969VGQ"'
 			rep_json_patch += '}';
 			var comma_bool = false;
 			for(var z = x + 1; z < sample_info.length; z++){
@@ -1061,26 +1061,36 @@ function getTreatmentJson(){
 		treatment_uuid.push(sample_info[0].treatment_uuid);
 		console.log(treatment_ids.indexOf(sample_info[x].sid));
 		if (sample_info[x].treatment_uuid == null && treatment_ids.indexOf(sample_info[x].sid) == -1) {
-			treat_json += '{"aliases":["manuel-garber:LPS"],';
+			treat_json += '{"aliases":["manuel-garber:LPS_'+parseInt(sample_info[x].time)/60+'h"],';
 			treat_json += '"treatment_term_name":"Lipopolysaccharide",';
 			treat_json += '"treatment_term_id":"CHEBI:16412",';
 			treat_json += '"treatment_type":"infection",';
-			treat_json += '"concentration":100,';
-			treat_json += '"concentration_units":"ng/mL",';
-			treat_json += '"duration":1,';
+			if ((parseInt(sample_info[x].time)/60) == 0) {
+				treat_json += '"concentration":0,';
+				treat_json += '"concentration_units":"ng/mL",';
+			}else{
+				treat_json += '"concentration":100,';
+				treat_json += '"concentration_units":"ng/mL",';
+			}
+			treat_json += '"duration":'+(parseInt(sample_info[x].time)/60)+',';
 			treat_json += '"duration_units":"hour"},';
 			
 			treatment_ids.push(sample_info[0].sid);
 		}
 		
 		if (sample_info[x].treatment_uuid != null && treatment_ids.indexOf(sample_info[x].sid) == -1) {
-			treat_json_patch += '{"aliases":["manuel-garber:LPS"],';
+			treat_json_patch += '{"aliases":["manuel-garber:LPS_'+parseInt(sample_info[x].time)/60+'h"],';
 			treat_json_patch += '"treatment_term_name":"Lipopolysaccharide",';
 			treat_json_patch += '"treatment_term_id":"CHEBI:16412",';
 			treat_json_patch += '"treatment_type":"infection",';
-			treat_json_patch += '"concentration":100,';
-			treat_json_patch += '"concentration_units":"ng/mL",';
-			treat_json_patch += '"duration":1,';
+			if ((parseInt(sample_info[x].time)/60) == 0) {
+				treat_json_patch += '"concentration":0,';
+				treat_json_patch += '"concentration_units":"ng/mL",';
+			}else{
+				treat_json_patch += '"concentration":100,';
+				treat_json_patch += '"concentration_units":"ng/mL",';
+			}
+			treat_json_patch += '"duration":'+(parseInt(sample_info[x].time)/60)+',';
 			treat_json_patch += '"duration_units":"hour"},';
 			
 			treatment_ids.push(sample_info[0].sid);
@@ -1267,9 +1277,10 @@ function encodeSubmission(name, json, subType, type, table){
 					submitAccessionAndUuid(item[x], table, type, response[x]['@graph'][0].accession, response[x]['@graph'][0].uuid);
 				}
 			}else{
-				
+				if (response[x]['@graph'][0].accession != undefined && response[x]['@graph'][0].uuid != undefined) {
+					submitAccessionAndUuid(item[x], table, type, response[x]['@graph'][0].accession, response[x]['@graph'][0].uuid);
+				}
 			}
-			
 		}else{
 			//	ERROR
 			if (response[x].status.toLowerCase() == 'error') {
@@ -1429,11 +1440,12 @@ function encodePost(subType){
 	}
 	//	TREATMENT SUBMISSION
 	if (treatment_pre_json[0] != "[]") {
-		responseOutput += encodeSubmission('treatments', treatment_pre_json[0], "post", "treatment", "ngs_source");
+		//responseOutput +=
+		encodeSubmission('treatments', treatment_pre_json[0], "post", "treatment", "ngs_samples");
 	}
 	/*
 	if (subType == "patch" && treatment_pre_json[1] != "[]") {
-		responseOutput += encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_source");
+		responseOutput += encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_samples");
 	}
 	*/
 	//	BIOSAMPLE SUBMISSION
