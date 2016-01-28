@@ -1,0 +1,91 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+language: php
+
+# list any PHP version you want to test against
+php:
+  # using major version aliases
+  # aliased to 5.2.17
+  #- 5.2
+  # aliased to 5.3.29
+  #- 5.3
+  # aliased to a recent 5.4.x version
+  - 5.4
+  # aliased to a recent 5.5.x version
+  - 5.5
+  # aliased to a recent 5.6.x version
+  - 5.6
+  # aliased to a recent hhvm version
+  #- hhvm
+
+env:
+  - mysql
+
+services:
+  - mysql
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install apache2
+  - sudo a2enmod actions
+  - sudo a2enmod rewrite
+  - echo "export PATH=/home/vagrant/.phpenv/bin:$PATH" | sudo tee -a /etc/apache2/envvars > /dev/null
+  - echo "$(curl -fsSL https://gist.github.com/roderik/16d751c979fdeb5a14e3/raw/gistfile1.txt)" | sudo tee /etc/apache2/conf.d/phpconfig > /dev/null
+  - echo "$(curl -fsSL https://gist.github.com/roderik/2eb301570ed4a1f4c33d/raw/gistfile1.txt)" | sed -e "s,PATH,`pwd`,g" | sudo tee /etc/apache2/sites-available/default > /dev/null
+  - sudo service apache2 restart
+  - mysql -u root -e "CREATE USER 'myproject'@'localhost' IDENTIFIED BY 'mypass'"
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'myproject'@'localhost' WITH GRANT OPTION;"
+  # update database
+  - gzip -d db/biocoredb.sql.gz
+  - mysql < db/biocoredb.sql
+  - mysql < db/2015_07_22_consolidated_1.sql
+  - mysql < db/2015_08_31_wkeylist.sql
+  - mysql < db/2015_10_16_ngs_createtables.sql
+  - mysql < db/2015_10_27_tablegen_sidebar.sql
+  - mysql < db/2015_11_05_user_group_requests.sql
+  - mysql -e "CREATE USER 'bioinfo'@'localhost' IDENTIFIED BY 'bioinfo2013'; GRANT ALL ON *.* TO 'bioinfo'@'localhost';" -uroot
+  - mysql -e "use biocore; UPDATE ngs_samples set samplename = name;" -uroot
+  - mysql -e "use biocore; INSERT INTO amazon_credentials ( aws_access_key_id, aws_secret_access_key, bucket ) VALUES ( 'test_access', 'test_secret', 'test_bucket' );" -uroot
+  - mysql -e "use biocore; INSERT INTO ngs_organism (organism) VALUES ('human'); UPDATE ngs_samples SET organism_id = 1;" -uroot
+  
+script:
+  - phpunit unitTesting/ngsimport_unittest.php
+  #	ajax
+  - phpunit unitTesting/ajax/tablegenerator_unittest.php
+  - phpunit unitTesting/ajax/statquerydb_unittest.php
+  - phpunit unitTesting/ajax/sessionrequests_unittest.php
+  - phpunit unitTesting/ajax/profiledb_unittest.php
+  - phpunit unitTesting/ajax/ngsquerydb_unittest.php
+  - phpunit unitTesting/ajax/ngsfastlanedb_unittest.php
+  - phpunit unitTesting/ajax/ngsalterdb_unittest.php
+  - phpunit unitTesting/ajax/ngs_tables_unittest.php
+  - phpunit unitTesting/ajax/kill_pid_unittest.php
+  - phpunit unitTesting/ajax/initialmappingdb_unittest.php
+  - phpunit unitTesting/ajax/dolphinfuncs_unittest.php
+  - phpunit unitTesting/ajax/dataservice_unittest.php
+  - phpunit unitTesting/ajax/datajobs_unittest.php
+  - phpunit unitTesting/ajax/dataerrorlogs_unittest.php
+  - phpunit unitTesting/ajax/dashboardquerydb_unittest.php
+  - phpunit unitTesting/ajax/browse_edit_unittest.php
+  - phpunit unitTesting/ajax/admindashboardquerydb_unittest.php
+  - phpunit unitTesting/ajax/adminstatquerydb_unittest.php
+  #	api
+  - phpunit unitTesting/api/funcs_unittest.php
+
+after_script:
+  - mysql -e "use biocore; SELECT * FROM ngs_samples;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_lanes;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_experiment_series;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_dirs;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_runlist;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_runparams;" -uroot
+  - mysql -e "use biocore; SELECT * FROM report_list;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_createdtables;" -uroot
+  - mysql -e "use biocore; SELECT * FROM amazon_credentials;" -uroot
+  - mysql -e "use biocore; SELECT * FROM groups;" -uroot
+  - mysql -e "use biocore; SELECT * FROM user_group_requests;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_wkeylist;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_organism;" -uroot
+  - mysql -e "use biocore; SELECT * FROM ngs_fastq_files" -uroot
+  - mysql -e "use biocore; SELECT * FROM galaxy_runs" -uroot
+  - mysql -e "use biocore; SELECT * FROM jobs" -uroot
+  - mysql -e "use biocore; SELECT * FROM services" -uroot
