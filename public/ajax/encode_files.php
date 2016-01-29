@@ -108,13 +108,13 @@ foreach($file_query as $fq){
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "paired-ended";
 				if(end($file_names) == $fn){
-					$data["aliases"] = array($my_lab.':'.$step.'_p2_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_fastq_p2_'.$sample_name);
 					$data["paired_end"] = '2';
 					$data["paired_with"] = $paired;
 				}else{
-					$data["aliases"] = array($my_lab.':'.$step.'_p1_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_fastq_p1_'.$sample_name);
 					$data["paired_end"] = '1';
-					$paired = $my_lab.':'.$step.'_p1_'.end(explode("/",$fn));
+					$paired = $my_lab.':'.$step.'_p1_'.$sample_name;
 				}
 				if($step != 'step1'){
 					if(end($file_names) == $fn){
@@ -127,7 +127,7 @@ foreach($file_query as $fq){
 				//	FASTQ SINGLE
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "single-ended";
-				$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+				$data["aliases"] = array($my_lab.':'.$step.'_fastq_'.$sample_name);
 				if($step != 'step1'){
 					$data['derived_from'] = explode(",",$step_list['step1']);
 				}
@@ -139,13 +139,13 @@ foreach($file_query as $fq){
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
 			if(end($file_names) == $fn && count($file_names) == 1){
-				$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_'.$sample_name);
 				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
 			}else if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':'.$step.'_p2_'.end(explode("/",$fn)));
+				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_p2_'.$sample_name);
 				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
 			}else{
-				$data["aliases"] = array($my_lab.':'.$step.'_p1_'.end(explode("/",$fn)));
+				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_p1_'.$sample_name);
 				$data['derived_from'] = array(explode(",",$step_list['step1'])[0]);
 			}
 		}else if($fq->file_type == 'bam'){
@@ -156,7 +156,7 @@ foreach($file_query as $fq){
 			}else{
 				$step = "step5";
 			}
-			$data["aliases"] = array($my_lab.'":"'.$step.'_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.'":"'.$step.'_bam_'.$sample_name);
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
 			if($step == 'step3'){
@@ -168,7 +168,7 @@ foreach($file_query as $fq){
 			//	BIGWIG
 			$step = 'step6';
 			$data['output_type'] = 'signal of all reads';
-			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.':'.$step.'_bigwig_'.$sample_name);
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
 			$data['derived_from'] = explode(",",$step_list['step5']);;
@@ -183,28 +183,36 @@ foreach($file_query as $fq){
 			}else{
 				$step = 'step8';
 			}
-			$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+			$data["aliases"] = array($my_lab.':'.$step.'_'.$sample_name);
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
 			if($step == 'step4'){
+				if(strpos($fn, "rRNA")){
+					$data["aliases"] = array($my_lab.':'.$step.'_rRNA_'.$sample_name);
+				}else if(strpos($fn, "miRNA")){
+					$data["aliases"] = array($my_lab.':'.$step.'_miRNA_'.$sample_name);
+				}else if(strpos($fn, "tRNA")){
+					$data["aliases"] = array($my_lab.':'.$step.'_tRNA_'.$sample_name);
+				}else if(strpos($fn, "snRNA")){
+					$data["aliases"] = array($my_lab.':'.$step.'_snRNA_'.$sample_name);
+				}
 				$data['output_type'] = 'transcript quantifications';
 				$data['derived_from'] = explode(",",$step_list['step3']);
 				$data["file_size"] = filesize($directory . $fn);
-				
 			}else if ($step == 'step7'){
 				$data['derived_from'] = explode(",",$step_list['step3']);
 				
 				if(strpos($fn, "gene_exp")){
-					$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_gene_exp_'.$sample_name);
 					$data['output_type'] = 'gene quantifications';
 				}else if(strpos($fn, "gene_tpm")){
-					$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_gene_tpm_'.$sample_name);
 					$data['output_type'] = 'gene quantifications';
 				}else if(strpos($fn, "iso_exp")){
-					$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_iso_exp_'.$sample_name);
 					$data['output_type'] = 'transcript quantifications';
 				}else{
-					$data["aliases"] = array($my_lab.':'.$step.'_'.end(explode("/",$fn)));
+					$data["aliases"] = array($my_lab.':'.$step.'_iso_tpm_'.$sample_name);
 					$data['output_type'] = 'transcript quantifications';
 				}
 				$data["file_size"] = filesize($directory . $fn);
