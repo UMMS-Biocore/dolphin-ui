@@ -330,8 +330,8 @@ function getDonorJson(){
 			donors.push(sample_info[x].donor);
 			donor_ids.push(sample_info[x].did);
 			organisms.push(sample_info[x].organism);
-			acc_checks.push(sample_info[x].donor_acc);
-			donor_accs.push(sample_info[x].donor_acc);
+			//acc_checks.push(sample_info[x].donor_acc);
+			//donor_accs.push(sample_info[x].donor_acc);
 		}
 	}
 	var donor_json = '[';
