@@ -378,15 +378,16 @@ foreach($file_query as $fq){
 			$FILE_SUB_CHECK_OUTUT = "";
 			if($FILE_SUB_CHECK_OUTUT == ""){
 				$creds = $item->{'upload_credentials'};
+				/*
 				if($step == 'step1' && end($file_names) != $fn){
 					$cmd_aws_launch = "echo '#!/bin/bash' > ../../tmp/encode_" . $sample_name . ".sh ;\n";
 					$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh ;\n";
 					$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
 						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh;";
 				}else{
-					$cmd_aws_launch = "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh;";
-				}
+				*/
+				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'];
 				
 				echo '{"command":"' . $cmd_aws_launch . '"}';
 				if(!end($file_query) == $fq){
