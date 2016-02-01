@@ -114,7 +114,7 @@ foreach($file_query as $fq){
 				}else{
 					$data["aliases"] = array($my_lab.':'.$step.'_fastq_p1_'.$sample_name);
 					$data["paired_end"] = '1';
-					$paired = $my_lab.':'.$step.'_p1_'.$sample_name;
+					$paired = $my_lab.':'.$step.'_fastq_p1_'.$sample_name;
 				}
 				if($step != 'step1'){
 					if(end($file_names) == $fn){
