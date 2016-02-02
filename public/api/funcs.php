@@ -102,7 +102,7 @@ class funcs
         $wkey       = "";
         $ret        = "";
         for ($i = 0; $i < 30; $i++) {
-            $wkey .= $characters[rand(0, strlen($characters))];
+            $wkey .= $characters[rand(0, strlen($characters) - 1)];
         }
         # If this random key exist it randomize another key
         if ($this->getWorkflowId($wkey))
@@ -266,7 +266,7 @@ class funcs
                         $rowout = $resout->fetch_assoc();
                         require_once('class.html2text.inc');
                         
-                        $h2t =& new html2text($rowout['jobout']);
+                        $h2t = new html2text($rowout['jobout']);
                         $jobout = $h2t->get_text();
                         return 'ERROR:' . $retval . "\n" . $rowout['jobname'] . " Failed\nCheck LSF output\n" . $jobout;
                       }
@@ -333,7 +333,7 @@ class funcs
             
             $sql    = "insert into " . $name . "s(`" . $name . "name`, `description`, `username`, `defaultparam`) values('" . $val . "', 'Service description', '$username', '$defaultparam')";
             $result = $this->runSQL($sql);
-            $id     = $this->getId($name, $username, $val, $key, $defaultparam);
+            $id     = $this->getId($name, $username, $val, $wkey, $defaultparam);
         }
         
         if ($name == "service") {

@@ -317,7 +317,4 @@ else if($p == 'deleteExcel')
 	sleep(2);
 	pclose(popen( "rm ..".$file, 'r'));
 }
-
-//footer
-exit;
 ?>

@@ -86,7 +86,7 @@ class Inflection
 
     public static function pluralize( $string )
     {
-		global $irregularWords;
+		$irregularWords = array();
 		
 		// save some time in the case that singular and plural are the same
         if ( in_array( strtolower( $string ), self::$uncountable ) )

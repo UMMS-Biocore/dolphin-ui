@@ -7,55 +7,60 @@ require_once("../../config/config.php");
 require_once("../../includes/dbfuncs.php");
 
 $query = new dbfuncs();
-//header
 
-function runCmd($idKey, $query, $wkey)
-{
-	$wkeystr="";
-	if ($wkey!="")
+if(!function_exists('runCmd')){
+	function runCmd($idKey, $query, $wkey)
 	{
-		$wkeystr = "-w $wkey";
+		$wkeystr="";
+		if ($wkey!="")
+		{
+			$wkeystr = "-w $wkey";
+		}
+		$cmd = "cd ../../scripts && mkdir -p ../tmp/logs/run$idKey && python dolphin_wrapper.py $wkeystr -r $idKey -c ".CONFIG.">> ../tmp/logs/run$idKey/run.$idKey.wrapper.std 2>&1 & echo $! &";
+		$PID_COMMAND = popen( $cmd, "r" );
+		$PID =fread($PID_COMMAND, 2096);
+		$data=$query->runSQL("
+			UPDATE ngs_runparams
+			SET wrapper_pid = $PID
+			WHERE id = '$idKey'
+			");
+		pclose($PID_COMMAND);
 	}
-    $cmd = "cd ../../scripts && mkdir -p ../tmp/logs/run$idKey && python dolphin_wrapper.py $wkeystr -r $idKey -c ".CONFIG.">> ../tmp/logs/run$idKey/run.$idKey.wrapper.std 2>&1 & echo $! &";
-    $PID_COMMAND = popen( $cmd, "r" );
-    $PID =fread($PID_COMMAND, 2096);
-    $data=$query->runSQL("
-        UPDATE ngs_runparams
-        SET wrapper_pid = $PID
-        WHERE id = '$idKey'
-        ");
-    pclose($PID_COMMAND);
 }
 
-function killPid($run_id, $query)
-{
-	$pids = json_decode($query->queryTable("SELECT wkey, wrapper_pid, runworkflow_pid
-							   FROM ngs_runparams
-							   WHERE id = $run_id"));
+		 
+if(!function_exists('killPid')){
+	function killPid($run_id, $query)
+	{
+		$pids = json_decode($query->queryTable("SELECT wkey, wrapper_pid, runworkflow_pid
+								   FROM ngs_runparams
+								   WHERE id = $run_id"));
+		
+		$workflow_pid = $pids[0]->runworkflow_pid;
+		$wrapper_pid = $pids[0]->wrapper_pid;
+		$wkey = $pids[0]->wkey;
 	
-	$workflow_pid = $pids[0]->runworkflow_pid;
-	$wrapper_pid = $pids[0]->wrapper_pid;
-	$wkey = $pids[0]->wkey;
-
-	if($workflow_pid != NULL && $wrapper_pid != NULL){
-        $grep_check_workflow = "ps -ef | grep '[".substr($workflow_pid, 0, 1)."]".substr($workflow_pid,1)."'";
-        $grep_check_wrapper = "ps -ef | grep '[".substr($wrapper_pid, 0, 1)."]".substr($wrapper_pid,1)."'";
-        
-        $grep_find_workflow = pclose(popen( $grep_check_workflow, "r" ) );
-        $grep_find_wrapper = pclose(popen( $grep_check_wrapper, "r" ) );
-    }else{
-        $grep_find_workflow = NULL;
-        $grep_find_wrapper = NULL;
-    }
-    
-	if($grep_find_workflow > 0 && $grep_find_workflow != NULL){
-		pclose(popen( "kill -9 $workflow_pid", "r" ) );
+		if($workflow_pid != NULL && $wrapper_pid != NULL){
+			$grep_check_workflow = "ps -ef | grep '[".substr($workflow_pid, 0, 1)."]".substr($workflow_pid,1)."'";
+			$grep_check_wrapper = "ps -ef | grep '[".substr($wrapper_pid, 0, 1)."]".substr($wrapper_pid,1)."'";
+			
+			$grep_find_workflow = pclose(popen( $grep_check_workflow, "r" ) );
+			$grep_find_wrapper = pclose(popen( $grep_check_wrapper, "r" ) );
+		}else{
+			$grep_find_workflow = NULL;
+			$grep_find_wrapper = NULL;
+		}
+		
+		if($grep_find_workflow > 0 && $grep_find_workflow != NULL){
+			pclose(popen( "kill -9 $workflow_pid", "r" ) );
+		}
+		if($grep_find_wrapper > 0 && $grep_find_wrapper != NULL){
+			pclose(popen( "kill -9 $wrapper_pid", "r" ) );
+		}
+		return $wkey;
 	}
-	if($grep_find_wrapper > 0 && $grep_find_wrapper != NULL){
-		pclose(popen( "kill -9 $wrapper_pid", "r" ) );
-	}
-	return $wkey;
 }
+
 
 if (isset($_POST['p'])){$p = $_POST['p'];}
 if (isset($_POST['start'])){$start = $_POST['start'];}
@@ -162,6 +167,7 @@ else if ($p == 'deleteRunparams')
     
 	$query->runSQL("DELETE FROM ngs_runlist WHERE run_id = $run_id");
 	$query->runSQL("DELETE FROM ngs_runparams WHERE id = $run_id");
+	$data = '';
 }
 else if ($p == 'noAddedParamsRerun')
 {
@@ -230,10 +236,13 @@ else if ($p == 'resetWKey'){
 	");
 }
 
-//footer
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
 ?>

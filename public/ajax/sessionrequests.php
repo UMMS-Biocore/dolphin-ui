@@ -9,11 +9,7 @@ require_once("../../includes/dbfuncs.php");
 if (isset($_GET['p'])){$p = $_GET['p'];}
 if (isset($_POST['p'])){$p = $_POST['p'];}
 
-if($p == "sessionTest")
-{
-	echo $_SESSION['uid'];
-}
-else if ($p == "sendBasketInfo")
+if ($p == "sendBasketInfo")
 {
 	if (isset($_POST['id'])){$id = $_POST['id'];}
 
@@ -166,6 +162,4 @@ else if ($p == 'changeRunType')
 		echo ',';
 	}
 }
-
-exit;
 ?>

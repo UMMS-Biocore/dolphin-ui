@@ -213,7 +213,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
             $laneJoin
 			WHERE ngs_lanes.id
 			IN (SELECT ngs_samples.lane_id FROM ngs_samples $innerJoin WHERE $searchQuery)
-			AND WHERE ngs_lanes.series_id = $q $andPerms $time
+			AND ngs_lanes.series_id = $q $andPerms $time
 			");
 		}
 		else if($p == "getSamples" && $r != "")
@@ -257,7 +257,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
 			FROM ngs_experiment_series
             $experimentSeriesJoin
 			WHERE ngs_experiment_series.id
-			IN (SELECT ngs_samples.series_id FROM ngs_samples WHERE $searchQuery) $andPerms $time
+			IN (SELECT ngs_samples.series_id FROM ngs_samples $innerJoin WHERE $searchQuery) $andPerms $time
 			");
 		}
 	}
@@ -410,9 +410,13 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 	}
 }
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Content-type: application/json');
+	echo $data;
+	exit;
+}else{
+	echo $data;
+}
 ?>

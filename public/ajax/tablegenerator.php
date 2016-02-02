@@ -123,9 +123,6 @@ else if ($p == 'createNewTable')
 		SET name = '$name'
 		WHERE id = $id
 		");
-		
-		$handle = popen('rm ../tmp/files/'.$file, "r");
-		pclose($handle);
 	}
 	$data = json_encode('true');
 }
@@ -138,7 +135,7 @@ else if ($p == 'deleteTable')
 		");
 	$data=json_decode($file);
 	
-	$handle = popen('rm ../tmp/files/'.$file[0]->file, "r");
+	$handle = popen('rm ../tmp/files/'.$data[0]->file, "r");
 	pclose($handle);
 	
 	$data=$query->runSQL("
@@ -293,9 +290,13 @@ else if ($p == 'createCustomTable')
 	$data=json_encode($params);
 }
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Content-type: application/json');
+	echo $data;
+	exit;
+}else{
+	echo $data;
+}
 ?>
