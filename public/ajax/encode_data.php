@@ -20,7 +20,7 @@ if($p == 'getSampleDataInfo')
 							 time, ngs_donor.id as did, donor, donor_acc, donor_uuid, biosample_type, series_id,
 							 protocol_id, lane_id, organism, source, source_symbol, ngs_source.id as sid,
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_acc, replicate_uuid,
-							 treatment_uuid, experiment_acc, experiment_uuid
+							 treatment_uuid, experiment_acc, experiment_uuid, treatment_id, antibody_lot_id
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
 							 ON ngs_donor.id = ngs_samples.donor_id
@@ -73,9 +73,15 @@ else if ($p == 'getProtocolDataInfo')
 							 ON ngs_protocols.library_strategy_id = ngs_library_strategy.id
 							 WHERE ngs_protocols.id in ( $protocols )");
 }
+else if ($p == 'getTreatmentDataInfo')
+{
+	if (isset($_GET['treatments'])){$treatments = $_GET['treatments'];}
+	$data=$query->queryTable("SELECT * FROM ngs_treatment WHERE id IN ( $treatments )");
+}
 else if ($p == 'getAntibodyDataInfo')
 {
-	$data=$query->queryTable("SELECT * FROM ngs_antibody_target");
+	if (isset($_GET['antibodies'])){$antibodies = $_GET['antibodies'];}
+	$data=$query->queryTable("SELECT * FROM ngs_antibody_target WHERE id IN ( $antibodies )");
 }
 else if ($p == 'submitAccessionAndUuid')
 {
@@ -84,7 +90,6 @@ else if ($p == 'submitAccessionAndUuid')
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 	if (isset($_GET['uuid'])){$uuid = $_GET['uuid'];}
-	
 	if($type == 'treatment' || $type == "replicate"){
 		$data=$query->runSQL("UPDATE `" . $table . "` " .
 							"SET `" . $type . "_uuid` = '" . $uuid . "' " .

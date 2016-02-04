@@ -1,32 +1,36 @@
+//	Query data array arrays
 var sample_info = [];
 var lane_info = [];
 var protocol_info = [];
 var experiment_info = [];
+var treatment_info = [];
 var antibody_info = [];
-
+//	JSON Tables
+var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
+var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_type", "biosample_type", "description", "lab", "award"];
+var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
+var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
+var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "award", "size_range", "lab"];
+var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets"];
+var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
+//	IDs/accessions/uuid arrays
 var donor_ids = [];
 var donor_accs = [];
-
 var experiment_ids = [];
 var experiment_accs = [];
-
 var treatment_ids = [];
 var treatment_uuid = [];
-
 var biosample_ids = [];
 var biosample_accs = [];
-
 var library_ids = [];
 var library_accs = [];
-
 var antibody_ids = [];
 var antibody_accs = [];
-
 var replicate_ids = [];
 var replicate_uuids = [];
 	
+//	RNA, DNA
 var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
-	//	RNA, DNA
 
 function checkForEncodeSubmission(){
 	var boolPass = true;
@@ -46,7 +50,6 @@ function checkForEncodeSubmission(){
 	}else{
 		//	Obtain key sample information
 		getDataInfo();
-		
 		//	Experiment Series checks
 		if(experiment_info.length != 1){
 			boolPass = false;
@@ -69,54 +72,33 @@ function checkForEncodeSubmission(){
 			if (sample_info[x].donor == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Donor</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].biosample_type == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Biosample type</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].source == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Source</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].organism == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Organism</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].samplename == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Samplename</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].molecule == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Molecule</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
-			
-			/*
-			if (sample_info[x].notes == undefined) {
-				boolPass = false;
-				errorMsg += '<b>Notes</b> for sample id:' + sample_info[x].id + ' is not defined';
-			}
-			if (sample_info[x].biological_replica == undefined) {
-				boolPass = false;
-				errorMsg += '<b>Biological replica</b> for sample id:' + sample_info[x].id + ' is not defined';
-			}
-			if (sample_info[x].technical_replica == undefined) {
-				boolPass = false;
-				errorMsg += '<b>Techinical replica</b> for sample id:' + sample_info[x].id + ' is not defined';
-			}
-			*/
 			if (!boolBreak) {
 				errorMsg += '<br>';
 			}
@@ -128,22 +110,18 @@ function checkForEncodeSubmission(){
 			if (lane_info[x].name == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Name</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
 			}
 			if (lane_info[x].date_submitted == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Date submitted</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
 			}
 			if (lane_info[x].date_received == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Date received</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
 			}
-			
 			if (!boolBreak) {
 				errorMsg += '<br>';
 			}
@@ -155,20 +133,62 @@ function checkForEncodeSubmission(){
 			if (protocol_info[x].extraction == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Extraction</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
 			}
 			if (protocol_info[x].library_strategy == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				
 				errorMsg += '<b>Library strategy</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
 			}
-			
 			if (!boolBreak) {
 				errorMsg += '<br>';
 			}
 		}
+		
+		//	Treatment Checks
+		for (var x = 0; x < treatment_info.length; x++){
+			var boolBreak = true;
+			if (treatment_info[x].treatment_term_name == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Treatment term name</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].treatment_term_id == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Treatment term id</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].treatment_type == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Treatment type</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].concentration == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Concentration</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].concentration_units == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Concentration units</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].duration == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Duration</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (treatment_info[x].duration_units == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Duration units</b> for <b>treatment id: ' + treatment_info[x].id + '</b> is not defined.<br>';
+			}
+			if (!boolBreak) {
+				errorMsg += '<br>';
+			}
+		}
+		//	Antibody Checks
+		//	
 		
 		if (boolPass) {
 			$('#deleteModal').modal({
@@ -188,7 +208,6 @@ function checkForEncodeSubmission(){
 			document.getElementById('confirmPatchButton').setAttribute('data-dismiss', '');
 		}else{
 			errorMsg += '<b>Database checks did not pass inspection, submission to ENCODE has been halted.  See errors above for more details.</b>'
-			
 			$('#deleteModal').modal({
 				show: true
 			});
@@ -227,17 +246,13 @@ function encodeCheckForPatch(){
 	if (boolPass) {
 		document.getElementById('myModalLabel').innerHTML = 'Encode Patch';
 		document.getElementById('deleteLabel').innerHTML = 'Some encode information has already been entered.';
-		document.getElementById('deleteAreas').innerHTML = 'Would you like to request to patch the current information?<br><br>'+
-					'Submission/Patching may take a minute to fully submit to ENCODE';
-			
+		document.getElementById('deleteAreas').innerHTML = 'Would you like to request to patch the current information?<br><br>Submission/Patching may take a minute to fully submit to ENCODE';
 		document.getElementById('cancelDeleteButton').innerHTML = "Cancel";
-		
 		document.getElementById('confirmDeleteButton').innerHTML = "No";
 		document.getElementById('confirmDeleteButton').setAttribute('onclick', 'encodePost(\'post\')');
 		document.getElementById('confirmDeleteButton').setAttribute('data-dismiss', '');
 		document.getElementById('confirmDeleteButton').setAttribute('class', 'btn btn-success');
 		document.getElementById('confirmDeleteButton').setAttribute('style', 'display:show');
-		
 		document.getElementById('confirmPatchButton').setAttribute('style', 'display:show');
 		document.getElementById('confirmPatchButton').setAttribute('onclick', 'encodePost(\'patch\')');
 	}else{
@@ -258,21 +273,25 @@ function getDataInfo(){
 		}
 	});
 	
-	//	Lane, Protocol, and Experiment ids
+	//	Lane, Protocol, Experiment, Treatment, and Antibody ids
 	var lane_ids = [];
+	var protocol_ids = [];
+	var treatment_ids = [];
+	var antibody_lot_ids = [];
 	for (var x = 0; x < sample_info.length; x++) {
 		if (lane_ids.indexOf(sample_info[x].lane_id) < 0 ){
 			lane_ids.push(sample_info[x].lane_id);
 		}
-	}
-	var protocol_ids = [];
-	for (var x = 0; x < sample_info.length; x++) {
 		if (protocol_ids.indexOf(sample_info[x].protocol_id) < 0 ){
-			console.log('test');
 			protocol_ids.push(sample_info[x].protocol_id);
 		}
+		if (treatment_ids.indexOf(sample_info[x].treatment_id) < 0 ){
+			treatment_ids.push(sample_info[x].treatment_id);
+		}
+		if (antibody_lot_ids.indexOf(sample_info[x].antibody_lot_id) < 0 ){
+			antibody_lot_ids.push(sample_info[x].antibody_lot_id);
+		}
 	}
-	var experiment_id = sample_info[0].series_id;
 	
 	//	Lane Info
 	$.ajax({ type: "GET",
@@ -284,41 +303,266 @@ function getDataInfo(){
 			lane_info = s;
 		}
 	});
-	
 	//	Protocol Info
-	//	Lane Info
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_data.php",
 		data: { p: 'getProtocolDataInfo', protocols: protocol_ids.toString() },
 		async: false,
 		success : function(s)
 		{
-			console.log(s);
 			protocol_info = s;
 		}
 	});
-	
 	//	Experiment Info
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_data.php",
-		data: { p: 'getSeriesDataInfo', series: experiment_id },
+		data: { p: 'getSeriesDataInfo', series: sample_info[0].series_id },
 		async: false,
 		success : function(s)
 		{
 			experiment_info = s;
 		}
 	});
-	
-	//	Antibody Info
+	//	Treatment Info
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_data.php",
-		data: { p: 'getAntibodyDataInfo'},
+		data: { p: 'getTreatmentDataInfo', treatments: treatment_ids.toString()},
 		async: false,
 		success : function(s)
 		{
+			treatment_info = s;
+		}
+	});
+	//	Antibody Info
+	$.ajax({ type: "GET",
+		url: BASE_PATH + "/public/ajax/encode_data.php",
+		data: { p: 'getAntibodyDataInfo', antibodies: antibody_lot_ids.toString()},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
 			antibody_info = s;
 		}
 	});
+}
+
+function createEncodeJson(json_type){
+	//	Initiate needed variables
+	var terms = [];
+	var json = '';
+	
+	for(var x = 0; x < sample_info.length; x++){
+		//	Grab correct ids
+		var proto_lib_type = null;
+		for(var y = 0; y < protocol_info.length; y++){
+			if (protocol_info[y].id == sample_info[x].protocol_id) {
+				proto_lib_type = y;
+			}
+		}
+		var treatment_lib_type = null;
+		for(var y = 0; y < treatment_info.length; y++){
+			if (treatment_info[y].id == sample_info[x].treatment_id) {
+				treatment_lib_type = y;
+			}
+		}
+		console.log(treatment_info);
+		var antibody_lib_type = null;
+		for(var y = 0; y < antibody_info.length; y++){
+			if (antibody_info[y].id == sample_info[x].antibody_lot_id) {
+				antibody_lib_type = y;
+			}
+		}
+		
+		//	link correct terms, gather aliases
+		if (json_type == 'donor') {
+			terms = donor_terms;
+			json += '{"aliases":["'+experiment_info[0].lab+':'+sample_info[x].donor+'"],';
+		}else if (json_type == 'experiment') {
+			terms = experiment_terms;
+			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
+				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
+					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq"],';
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
+					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq"],';
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
+					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq"],';
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
+					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_MNase-seq"],';
+				}
+			}
+		}else if (json_type == 'treatment') {
+			terms = treatment_terms;
+			json += '{"aliases":["'+experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units + '"],';
+		}else if (json_type == 'biosample') {
+			terms = biosample_terms;
+			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'"],';
+		}else if (json_type == 'library') {
+			terms = library_terms;
+			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"],';
+		}else if (json_type == 'antibody') {
+			terms = antibody_terms;
+			json = '{"aliases":["' + experiment_info[0].lab + ':' + antibody_info[antibody_lib_type].product_id +'"],';
+		}else if (json_type == 'replicate') {
+			terms = replicate_terms;
+			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_replica"],';
+		}
+		
+		//	Use term array to generate rest
+		for (var y = 0; y < terms.length; y++) {
+			if (terms[y] == "award") {
+				json += '"award":"'+experiment_info[0].grant+'"';
+			}else if (terms[y] == "lab") {
+				json += '"lab":"'+experiment_info[0].lab+'"';
+			}else if (terms[y] == "organism") {
+				json += '"organism":"'+sample_info[x].organism+'"';
+			}else if (terms[y] == "life_stage") {
+				json += '"life_stage":"unknown"';
+			}else if (terms[y] == "age") {
+				json += '"age":"unknown"';
+			}else if (terms[y] == "sex") {
+				json += '"sex":"unknown"';
+			}else if (terms[y] == "assay_term_name") {
+				if (protocol_info[proto_lib_type].library_strategy != null) {
+					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
+						json += '"assay_term_name":"RNA-seq",';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
+						json += '"assay_term_name":"ChIP-seq",';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
+						json += '"assay_term_name":"ATAC-seq",';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
+						json += '"assay_term_name":"MNase-seq",';
+					}
+				}
+			}else if (terms[y] == "assay_term_id") {
+				if (protocol_info[proto_lib_type].library_strategy != null) {
+					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
+						json += '"assay_term_id":"OBI:0001271"';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
+						json += '"assay_term_id":"OBI:0000716"';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
+						json += '"assay_term_id":"OBI:0002039"';
+					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
+						json += '"assay_term_id":"OBI:0001924"';
+					}
+				}
+			}else if (terms[y] == "biosample_term_name") {
+				json += '"biosample_term_name":"dendritic cell"';
+			}else if (terms[y] == "biosample_term_id") {
+				json += '"biosample_term_id":"CL:0000451"';
+			}else if (terms[y] == "biosample_type") {
+				json += '"biosample_type":"in vitro differentiated cells"';
+			}else if (terms[y] == "description") {
+				json += '"description":"' + sample_info[x].notes + '"';
+			}else if (terms[y] == "treatment_term_name") {
+				json += '"treatment_term_name":"' + treatment_info[treatment_lib_type].treatment_term_name + '"';
+			}else if (terms[y] == "treatment_term_id") {
+				json += '"treatment_term_id":"' + treatment_info[treatment_lib_type].treatment_term_id + '"';
+			}else if (terms[y] == "treatment_type") {
+				json += '"treatment_type":"' + treatment_info[treatment_lib_type].treatment_type + '"';
+			}else if (terms[y] == "concentration") {
+				json += '"concentration":"' + treatment_info[treatment_lib_type].concentration + '"';
+			}else if (terms[y] == "concentration_units") {
+				json += '"concentration_units":"' + treatment_info[treatment_lib_type].concentration_units + '"';
+			}else if (terms[y] == "duration") {
+				json += '"duration":"' + treatment_info[treatment_lib_type].duration + '"';
+			}else if (terms[y] == "duration_units") {
+				json += '"duration_units":"' + treatment_info[treatment_lib_type].duration_units + '"';
+			}else if (terms[y] == "donor") {
+				json += '"donor":"'+experiment_info[0].lab +':'+sample_info[x].donor+'"';
+			}else if (terms[y] == "source" && json_type == "antibody") {
+				json += '"source":"' + antibody_info[x].source + '"';
+			}else if (terms[y] == "source") {
+				json += '"source":"unknown"';
+			}else if (terms[y] == "treatments") {
+				json += '"treatments":["'+experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units + '"]';
+			}else if (terms[y] == "date_obtained") {
+				var lane_id_pos = -1;
+				for(var z = 0; z < lane_info.length; z++){
+					if (lane_info[z].id == sample_info[x].lane_id) {
+						lane_id_pos = z;
+					}
+				}
+				json += '"date_obtained":"'+lane_info[lane_id_pos].date_received.split(' ')[0]+'"';
+			}else if (terms[y] == "biosample") {
+				json += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'"';
+			}else if (terms[y] == "nucleic_acid_term_name") {
+				if (sample_info[x].molecule != null) {
+					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
+						json += '"nucleic_acid_term_name":"RNA"';
+					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
+						json += '"nucleic_acid_term_name":"DNA"';
+					}
+				}
+			}else if (terms[y] == "nucleic_acid_term_id") {
+				if (sample_info[x].molecule != null) {
+					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
+						json += '"nucleic_acid_term_id":"SO:0000356"';
+					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
+						json += '"nucleic_acid_term_id":"SO:0000352"';
+					}
+				}
+			}else if (terms[y] == "extraction_method") {
+				if (protocol_info[proto_lib_type].extraction != null) {
+					json += '"extraction_method":"' + protocol_info[proto_lib_type].extraction + '"'
+				}
+			}else if (terms[y] == "size_range") {
+				json += '"size_range":"50-'+sample_info[x].read_length+'"';
+			}else if (terms[y] == "product_id") {
+				json += '"product_id":"' + antibody_info[x].product_id +'"';
+			}else if (terms[y] == "lot_id") {
+				json += '"lot_id":"' + antibody_info[x].lot_id + '"';
+			}else if (terms[y] == "host_organism") {
+				json += '"host_organism":"' + antibody_info[x].host_organism + '"';
+			}else if (terms[y] == "targets") {
+				json += '"targets":["' + antibody_info[x].target + '"]';
+			}else if (terms[y] == "experiment") {
+				if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
+					if (protocol_info[proto_lib_type].library_strategy != null) {
+						if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
+							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq"';
+						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
+							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq"';
+						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
+							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq"';
+						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rnase') > -1){
+							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNase-seq"';
+						}
+					}
+				}
+			}else if (terms[y] == "biological_replicate_number") {
+				if (sample_info[x].biological_replica == null || sample_info[x].biological_replica == '' || sample_info[x].biological_replica < 1) {
+					json += '"biological_replicate_number":1';
+				}else{
+					json += '"biological_replicate_number":'+sample_info[x].biological_replica;
+				}
+			}else if (terms[y] == "technical_replicate_number") {
+				if (sample_info[x].technical_replica == null || sample_info[x].technical_replica == '' || sample_info[x].technical_replica < 1) {
+					json += '"technical_replicate_number":1';
+				}else{
+					json += '"technical_replicate_number":'+sample_info[x].technical_replica;
+				}
+			}else if (terms[y] == "library") {
+				json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
+			}else if (terms[y] == "antibody") {
+				if (sample_info[x].antibody_lot_id != null) {
+					json += '"antibody":"' + antibody_info[0].antibody_lot_acc + '"';
+				}
+			}
+			
+			if (y == terms.length - 1) {
+				json += '}';
+			}else{
+				json += ',';
+			}
+		}
+	}
+	/*
+	if (sample_info[x].molecule.toLowerCase().indexOf('rrna') > -1) {
+		lib_json += '"depleted_in_term_name":["rRNA"],';
+		lib_json += '"depleted_in_term_id":"SO:0000252",';
+	}
+	*/
+	return json;
 }
 
 function getDonorJson(){
@@ -1326,7 +1570,7 @@ function submitAccessionAndUuid(item, table, type, accession, uuid){
 function encodePost(subType){
 	//getEncodeAccession('antibody_lot', 'ENCAB969VGQ');
 	var responseOutput = '';
-	
+	/*
 	//	Grab json information
 	var donor_pre_json = getDonorJson();
 	var experiment_pre_json = getExperimentJson();
@@ -1346,7 +1590,7 @@ function encodePost(subType){
 	
 	//	ALREADY IN ENCODE //
 	//	EXPERIMENTS
-	/*
+	
 	$.ajax({ type: "GET",
 		url: "https://www.encodeproject.org/search/?type=experiment&limit=all&format=json&frame=object",
 		async: false,
@@ -1421,7 +1665,7 @@ function encodePost(subType){
 			}
 		}
 	});
-	*/
+	
 	
 	//	DONOR SUBMISSION
 	if (donor_pre_json[0] != "[]") {
@@ -1448,6 +1692,7 @@ function encodePost(subType){
 		responseOutput += encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_samples");
 	}
 	*/
+	/*
 	//	BIOSAMPLE SUBMISSION
 	if (biosample_pre_json[0] != "[]") {
 		responseOutput += encodeSubmission('biosamples', biosample_pre_json[0], "post", "biosample", "ngs_samples");
@@ -1472,6 +1717,7 @@ function encodePost(subType){
 		responseOutput += encodeSubmission('antibodies', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
 	}
 	*/
+	/*
 	//	REPLICATE SUBMISSION
 	if (replicate_pre_json[0] != "[]") {
 		responseOutput += encodeSubmission('replicate', replicate_pre_json[0], "post", "replicate", "ngs_samples");
@@ -1479,10 +1725,18 @@ function encodePost(subType){
 	if (subType == "patch" && replicate_pre_json[1] != "[]") {
 		responseOutput += encodeSubmission('replicate', replicate_pre_json[1], subType, "replicate", "ngs_samples");
 	}
-	
+	/*
 	//	FILE SUBMISSION
 	encodeFilePost();
-	
+	*/
+	console.log(createEncodeJson("donor"));
+	console.log(createEncodeJson("experiment"));
+	console.log(createEncodeJson("treatment"));
+	console.log(createEncodeJson("biosample"));
+	console.log(createEncodeJson("library"));
+	console.log(createEncodeJson("antibody"));
+	console.log(createEncodeJson("replicate"));
+
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
 	document.getElementById('deleteLabel').innerHTML = 'Response from ENCODE servers:';
