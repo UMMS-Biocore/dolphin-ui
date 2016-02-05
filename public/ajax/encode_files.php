@@ -174,11 +174,11 @@ foreach($file_query as $fq){
 			$data['derived_from'] = explode(",",$step_list['step5']);;
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
-			if(strpos($fn, "counts/") > -1){
+			if(strpos($fn, "RNA_summary") > -1){
 				$step = 'step4';
-			}elseif(strpos($fn, "RSeQC_RSEM/") > -1){
+			}elseif(strpos($fn, "RNASeqMetrics") > -1){
 				$step = 'step9';
-			}elseif(strpos($fn, 'rsem/') > -1){
+			}elseif(strpos($fn, 'gene_exp') > -1 || strpos($fn, 'gene_tpm') > -1 || strpos($fn, 'iso_exp') > -1 || strpos($fn, 'iso_tpm') > -1){
 				$step = 'step7';
 			}else{
 				$step = 'step8';
