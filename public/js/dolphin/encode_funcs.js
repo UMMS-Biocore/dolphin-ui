@@ -705,7 +705,6 @@ function encodeSubmission(name, json, subType, type, table){
 		});
 	}
 	console.log(subType);
-	
 	output += '<b>' + name + ' ' + subType + ' Submission:</b></br>';
 	
 	for(var x = 0; x < response.length; x++){
@@ -815,11 +814,11 @@ function encodePost(subType){
 	//	TREATMENT SUBMISSION
 	if (treatment_pre_json[0].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('treatments', treatment_pre_json[0], "post", "treatment", "ngs_samples");
+		encodeSubmission('treatment', treatment_pre_json[0], "post", "treatment", "ngs_treatment");
 	}
 	if (subType == "patch" && treatment_pre_json[1].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_samples");
+		encodeSubmission('treatment', treatment_pre_json[1], subType, "treatment", "ngs_treatment");
 	}
 	
 	//	BIOSAMPLE SUBMISSION
@@ -841,11 +840,11 @@ function encodePost(subType){
 	//	ANTIBODY_LOT SUBMISSION
 	if (antibody_lot_pre_json[0].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('antibodies', antibody_lot_pre_json[0], "post", "antibody_lot", "ngs_antibody_target");
+		encodeSubmission('antibody_lot', antibody_lot_pre_json[0], "post", "antibody_lot", "ngs_antibody_target");
 	}
 	if (subType == "patch" && antibody_lot_pre_json[1].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('antibodies', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
+		encodeSubmission('antibody_lot', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
 	}
 	
 	//	REPLICATE SUBMISSION

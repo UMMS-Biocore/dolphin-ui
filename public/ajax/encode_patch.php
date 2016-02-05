@@ -29,11 +29,11 @@ $json = $json_passed;
 $count = 0;
 foreach ($accs as $acc) {
 	if($acc != null){
-		if(isset($json_object['concentration'])){
-			$json_object['concentration'] = intval($json_object['concentration']);
+		if(isset($json[$count]['concentration'])){
+			$json[$count]['concentration'] = intval($json[$count]['concentration']);
 		}
-		if(isset($json_object['duration'])){
-			$json_object['duration'] = intval($json_object['duration']);
+		if(isset($json[$count]['duration'])){
+			$json[$count]['duration'] = intval($json[$count]['duration']);
 		}
 		if(isset($json[$count]['biological_replicate_number'])){
 			$json[$count]['biological_replicate_number'] = intval($json[$count]['biological_replicate_number']);
