@@ -79,11 +79,6 @@ function checkForEncodeSubmission(){
 				boolBreak = false;
 				errorMsg += '<b>Biosample id</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
-			if (sample_info[x].source == undefined) {
-				boolPass = false;
-				boolBreak = false;
-				errorMsg += '<b>Source</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
-			}
 			if (sample_info[x].organism == undefined) {
 				boolPass = false;
 				boolBreak = false;
