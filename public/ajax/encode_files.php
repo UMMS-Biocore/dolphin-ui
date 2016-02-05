@@ -218,11 +218,11 @@ foreach($file_query as $fq){
 				}
 				$data["file_size"] = filesize($directory . $fn);
 			}else if ($step == 'step8'){
-				$directory = substr(getcwd(), 0, getcwd() - 11);
 				$data['output_type'] = 'gene quantifications';
 				$data['derived_from'] = explode(",",$step_list['step5']);
 				$data["file_size"] = filesize($directory . $fn);
 			}else{
+				$directory = substr(getcwd(), 0, getcwd() - 11);
 				$data['output_type'] = 'gene quantifications';
 				$data['derived_from'] = explode(",",$step_list['step5']);
 				$data["file_size"] = filesize($directory . $fn);
