@@ -23,13 +23,24 @@ $authid = "SU45FB2Q"; // <-Replace this with your access_key
 $authpw = "rae76sr5bntlz5c6"; // <-Replace this with your secret_access_key
 $auth = array('auth' => array($authid, $authpw));
 
-$json = json_decode($json_passed);
-#var_dump($json);
+$json = $json_passed;
 
 #Cycle through array and post objects
 $count = 0;
 foreach ($accs as $acc) {
 	if($acc != null){
+		if(isset($json_object['concentration'])){
+			$json_object['concentration'] = intval($json_object['concentration']);
+		}
+		if(isset($json_object['duration'])){
+			$json_object['duration'] = intval($json_object['duration']);
+		}
+		if(isset($json[$count]['biological_replicate_number'])){
+			$json[$count]['biological_replicate_number'] = intval($json[$count]['biological_replicate_number']);
+		}
+		if(isset($json[$count]['technical_replicate_number'])){
+			$json[$count]['technical_replicate_number'] = intval($json[$count]['technical_replicate_number']);
+		}
 		# The URL is now the collection itself
 		$url = $server_start . $json_name . "/" . $acc . $server_end;
 		$response = Requests::patch($url, $headers, json_encode($json[$count]), $auth);

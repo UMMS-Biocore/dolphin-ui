@@ -37,6 +37,13 @@ CREATE TABLE `biocore`.`ngs_antibody_target` (
   `url` VARCHAR(255) NULL DEFAULT NULL,
   `uuid` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`));
+  
+CREATE TABLE `biocore`.`ngs_biosample_term` (
+`id` INT NOT NULL,
+`biosample_term_name` VARCHAR(100) NULL DEFAULT NULL,
+`biosample_term_id` VARCHAR(100) NULL DEFAULT NULL,
+`biosample_type` VARCHAR(100) NULL DEFAULT NULL,
+PRIMARY KEY (`id`));
 
 ALTER TABLE `biocore`.`ngs_donor` 
 ADD COLUMN `donor_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `donor`,
@@ -52,4 +59,5 @@ ADD COLUMN `experiment_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `experiment_ac
 ADD COLUMN `replicate_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `experiment_uuid `,
 ADD COLUMN `replicate_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `replicate_acc`,
 ADD COLUMN `treatment_id` INT NULL DEFAULT NULL AFTER `replicate_uuid`,
-ADD COLUMN `antibody_lot_id` INT NULL DEFAULT NULL AFTER `treatment_id`;
+ADD COLUMN `antibody_lot_id` INT NULL DEFAULT NULL AFTER `treatment_id`,
+ADD COLUMN `biosample_id` INT NULL DEFAULT NULL AFTER `antibody_lot_id`;

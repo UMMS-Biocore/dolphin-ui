@@ -74,10 +74,10 @@ function checkForEncodeSubmission(){
 				boolBreak = false;
 				errorMsg += '<b>Donor</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
-			if (sample_info[x].biosample_type == undefined) {
+			if (sample_info[x].biosample_id == undefined) {
 				boolPass = false;
 				boolBreak = false;
-				errorMsg += '<b>Biosample type</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+				errorMsg += '<b>Biosample id</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
 			if (sample_info[x].source == undefined) {
 				boolPass = false;
@@ -350,14 +350,14 @@ function createEncodeJson(json_type){
 	var terms = [];
 	var donors = [];
 	var organism = [];
-	var donor_acc = [];
 	var array_info;
 	if (json_type == 'donor'){
 		for(var x = 0; x < sample_info.length; x++){
 			if (donors.indexOf(sample_info[x].donor) < 0 ){
 				donors.push(sample_info[x].donor);
 				organism.push(sample_info[x].organism);
-				donor_acc.push(sample_info[x].donor_acc);
+				donor_ids.push(sample_info[x].did);
+				donor_accs.push(sample_info[x].donor_acc);
 			}
 		}
 		array_info = donors;
@@ -373,7 +373,7 @@ function createEncodeJson(json_type){
 	var patch = [];
 	var post_bool = true;
 	for(var x = 0; x < array_info.length; x++){
-		var json = '';
+		var json = {};
 		
 		//	Grab correct ids
 		var proto_lib_type = null;
@@ -401,53 +401,65 @@ function createEncodeJson(json_type){
 		//	link correct terms, gather aliases
 		if (json_type == 'donor') {
 			terms = donor_terms;
-			json += '{"aliases":["'+experiment_info[0].lab+':'+donors[x]+'"],';
-			if (donor_acc[x] != null) {
+			json['aliases'] = [experiment_info[0].lab+':'+donors[x]];
+			if (donor_accs[x] != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'experiment') {
 			terms = experiment_terms;
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
 				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq"],';
+					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq'];
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq"],';
+					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq'];
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq"],';
+					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq'];
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-					json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_MNase-seq"],';
+					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_MNase-seq'];
 				}
 			}
+			experiment_ids.push(sample_info[x].id);
+			experiment_accs.push(sample_info[x].experiment_acc);
 			if (sample_info[x].experiment_acc != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'treatment') {
 			terms = treatment_terms;
-			json += '{"aliases":["'+experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units + '"],';
-			if (treatment_info[x].uuid != null) {
+			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
+			treatment_ids.push(treatment_info[x].id);
+			treatment_uuid.push(treatment_info[x].treatment_uuid);
+			if (treatment_info[x].treatment_uuid != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'biosample') {
 			terms = biosample_terms;
-			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'"],';
+			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
+			biosample_ids.push(sample_info[x].id);
+			biosample_accs.push(sample_info[x].biosample_acc);
 			if (sample_info[x].experiment_acc != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'library') {
 			terms = library_terms;
-			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"],';
+			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_lib'];
+			library_ids.push(sample_info[x].id);
+			library_accs.push(sample_info[x].library_acc);
 			if (sample_info[x].library_acc != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'antibody') {
 			terms = antibody_terms;
-			json += '{"aliases":["' + experiment_info[0].lab + ':' + antibody_info[antibody_lib_type].product_id +'"],';
-			if (antibody_info[x].antibody_acc != null) {
+			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_lib_type].product_id];
+			antibody_ids.push(antibody_info[x].id);
+			antibody_accs.push(antibody_info[x].antibody_lot_uuid);
+			if (antibody_info[x].antibody_lot_uuid != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'replicate') {
 			terms = replicate_terms;
-			json += '{"aliases":["'+experiment_info[0].lab +':'+sample_info[x].samplename+'_replica"],';
+			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_replica'];
+			replicate_ids.push(sample_info[x].id);
+			replicate_uuids.push(sample_info[x].replicate_uuid);
 			if (sample_info[x].replicate_uuid != null) {
 				post_bool = false;
 			}
@@ -456,73 +468,73 @@ function createEncodeJson(json_type){
 		//	Use term array to generate rest
 		for (var y = 0; y < terms.length; y++) {
 			if (terms[y] == "award") {
-				json += '"award":"'+experiment_info[0].grant+'"';
+				json['award'] = experiment_info[0].grant;
 			}else if (terms[y] == "lab") {
-				json += '"lab":"'+experiment_info[0].lab+'"';
+				json['lab'] = experiment_info[0].lab;
 			}else if (terms[y] == "organism" && json_type == 'donor') {
-				json += '"organism":"'+organism[x]+'"';
+				json['organism'] = organism[x];
 			}else if (terms[y] == "organism") {
-				json += '"organism":"'+sample_info[x].organism+'"';
+				json['organism'] = sample_info[x].organism;
 			}else if (terms[y] == "life_stage") {
-				json += '"life_stage":"unknown"';
+				json['life_stage'] = "unknown";
 			}else if (terms[y] == "age") {
-				json += '"age":"unknown"';
+				json['age'] = "unknown";
 			}else if (terms[y] == "sex") {
-				json += '"sex":"unknown"';
+				json['sex'] = "unknown";
 			}else if (terms[y] == "assay_term_name") {
 				if (protocol_info[proto_lib_type].library_strategy != null) {
 					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-						json += '"assay_term_name":"RNA-seq"';
+						json['assay_term_name'] = "RNA-seq";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-						json += '"assay_term_name":"ChIP-seq"';
+						json['assay_term_name'] = "ChIP-seq";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-						json += '"assay_term_name":"ATAC-seq"';
+						json['assay_term_name'] = "ATAC-seq";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-						json += '"assay_term_name":"MNase-seq"';
+						json['assay_term_name'] = "MNase-seq";
 					}
 				}
 			}else if (terms[y] == "assay_term_id") {
 				if (protocol_info[proto_lib_type].library_strategy != null) {
 					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-						json += '"assay_term_id":"OBI:0001271"';
+						json['assay_term_id'] = "OBI:0001271";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-						json += '"assay_term_id":"OBI:0000716"';
+						json['assay_term_id'] = "OBI:0000716";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-						json += '"assay_term_id":"OBI:0002039"';
+						json['assay_term_id'] = "OBI:0002039";
 					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-						json += '"assay_term_id":"OBI:0001924"';
+						json['assay_term_id'] = "OBI:0001924";
 					}
 				}
 			}else if (terms[y] == "biosample_term_name") {
-				json += '"biosample_term_name":"dendritic cell"';
+				json['biosample_term_name'] = sample_info[x].biosample_term_name;
 			}else if (terms[y] == "biosample_term_id") {
-				json += '"biosample_term_id":"CL:0000451"';
+				json['biosample_term_id'] = sample_info[x].biosample_term_id;
 			}else if (terms[y] == "biosample_type") {
-				json += '"biosample_type":"in vitro differentiated cells"';
+				json['biosample_type'] = sample_info[x].biosample_type;
 			}else if (terms[y] == "description") {
-				json += '"description":"' + sample_info[x].notes + '"';
+				json['description'] = sample_info[x].notes;
 			}else if (terms[y] == "treatment_term_name") {
-				json += '"treatment_term_name":"' + treatment_info[treatment_lib_type].treatment_term_name + '"';
+				json['treatment_term_name'] = treatment_info[treatment_lib_type].treatment_term_name;
 			}else if (terms[y] == "treatment_term_id") {
-				json += '"treatment_term_id":"' + treatment_info[treatment_lib_type].treatment_term_id + '"';
+				json['treatment_term_id'] = treatment_info[treatment_lib_type].treatment_term_id;
 			}else if (terms[y] == "treatment_type") {
-				json += '"treatment_type":"' + treatment_info[treatment_lib_type].treatment_type + '"';
+				json['treatment_type'] = treatment_info[treatment_lib_type].treatment_type;
 			}else if (terms[y] == "concentration") {
-				json += '"concentration":"' + treatment_info[treatment_lib_type].concentration + '"';
+				json['concentration'] = parseInt(treatment_info[treatment_lib_type].concentration);
 			}else if (terms[y] == "concentration_units") {
-				json += '"concentration_units":"' + treatment_info[treatment_lib_type].concentration_units + '"';
+				json['concentration_units'] = treatment_info[treatment_lib_type].concentration_units;
 			}else if (terms[y] == "duration") {
-				json += '"duration":"' + treatment_info[treatment_lib_type].duration + '"';
+				json['duration'] = parseInt(treatment_info[treatment_lib_type].duration);
 			}else if (terms[y] == "duration_units") {
-				json += '"duration_units":"' + treatment_info[treatment_lib_type].duration_units + '"';
+				json['duration_units'] = treatment_info[treatment_lib_type].duration_units;
 			}else if (terms[y] == "donor") {
-				json += '"donor":"'+experiment_info[0].lab +':'+sample_info[x].donor+'"';
+				json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
 			}else if (terms[y] == "source" && json_type == "antibody") {
-				json += '"source":"' + antibody_info[x].source + '"';
+				json['source'] = antibody_info[x].source;
 			}else if (terms[y] == "source") {
-				json += '"source":"unknown"';
+				json['source'] = "unknown";
 			}else if (terms[y] == "treatments") {
-				json += '"treatments":["'+experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units + '"]';
+				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
 			}else if (terms[y] == "date_obtained") {
 				var lane_id_pos = -1;
 				for(var z = 0; z < lane_info.length; z++){
@@ -530,87 +542,79 @@ function createEncodeJson(json_type){
 						lane_id_pos = z;
 					}
 				}
-				json += '"date_obtained":"'+lane_info[lane_id_pos].date_received.split(' ')[0]+'"';
+				json['date_obtained'] = lane_info[lane_id_pos].date_received.split(' ')[0];
 			}else if (terms[y] == "biosample") {
-				json += '"biosample":"'+experiment_info[0].lab + ':' + sample_info[x].samplename+'"';
+				json['biosample'] = experiment_info[0].lab + ':' + sample_info[x].samplename;
 			}else if (terms[y] == "nucleic_acid_term_name") {
 				if (sample_info[x].molecule != null) {
 					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
-						json += '"nucleic_acid_term_name":"RNA"';
+						json['nucleic_acid_term_name'] = "RNA";
 					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
-						json += '"nucleic_acid_term_name":"DNA"';
+						json['nucleic_acid_term_name'] = "DNA";
 					}
 				}
 			}else if (terms[y] == "nucleic_acid_term_id") {
 				if (sample_info[x].molecule != null) {
 					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
-						json += '"nucleic_acid_term_id":"SO:0000356"';
+						json['nucleic_acid_term_id'] = "SO:0000356";
 					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
-						json += '"nucleic_acid_term_id":"SO:0000352"';
+						json['nucleic_acid_term_id'] = "SO:0000352";
 					}
 				}
 			}else if (terms[y] == "extraction_method") {
 				if (protocol_info[proto_lib_type].extraction != null) {
-					json += '"extraction_method":"' + protocol_info[proto_lib_type].extraction + '"'
+					json['extraction_method'] = protocol_info[proto_lib_type].extraction;
 				}
 			}else if (terms[y] == "size_range") {
-				json += '"size_range":"50-'+sample_info[x].read_length+'"';
+				json['size_range'] = sample_info[x].read_length;
 			}else if (terms[y] == "product_id") {
-				json += '"product_id":"' + antibody_info[x].product_id +'"';
+				json['product_id'] = antibody_info[x].product_id;
 			}else if (terms[y] == "lot_id") {
-				json += '"lot_id":"' + antibody_info[x].lot_id + '"';
+				json['lot_id'] = antibody_info[x].lot_id;
 			}else if (terms[y] == "host_organism") {
-				json += '"host_organism":"' + antibody_info[x].host_organism + '"';
+				json['host_organism'] = antibody_info[x].host_organism;
 			}else if (terms[y] == "targets") {
-				json += '"targets":["' + antibody_info[x].target + '"]';
+				json['targets'] = [antibody_info[x].target];
 			}else if (terms[y] == "experiment") {
 				if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
 					if (protocol_info[proto_lib_type].library_strategy != null) {
 						if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq"';
+							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq';
 						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq"';
+							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq';
 						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq"';
+							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq';
 						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rnase') > -1){
-							json += '"experiment":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_RNase-seq"';
+							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_RNase-seq';
 						}
 					}
 				}
 			}else if (terms[y] == "biological_replicate_number") {
 				if (sample_info[x].biological_replica == null || sample_info[x].biological_replica == '' || sample_info[x].biological_replica < 1) {
-					json += '"biological_replicate_number":1';
+					json['biological_replicate_number'] = 1;
 				}else{
-					json += '"biological_replicate_number":'+sample_info[x].biological_replica;
+					json['biological_replicate_number'] = parseInt(sample_info[x].biological_replica);
 				}
 			}else if (terms[y] == "technical_replicate_number") {
 				if (sample_info[x].technical_replica == null || sample_info[x].technical_replica == '' || sample_info[x].technical_replica < 1) {
-					json += '"technical_replicate_number":1';
+					json['technical_replicate_number'] = 1;
 				}else{
-					json += '"technical_replicate_number":'+sample_info[x].technical_replica;
+					json['technical_replicate_number'] = parseInt(sample_info[x].technical_replica);
 				}
 			}else if (terms[y] == "library") {
-				json += '"library":"'+experiment_info[0].lab +':'+sample_info[x].samplename+'_lib"';
+				json['library'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_lib';
 			}else if (terms[y] == "antibody") {
 				if (sample_info[x].antibody_lot_id != null) {
-					json += '"antibody":"' + antibody_info[x].antibody_lot_acc + '"';
-				}else{
-					json = json.substring(0, json.length - 1);
+					json['antibody'] = antibody_info[antibody_lib_type].antibody_lot_acc;
 				}
-			}
-			
-			if (y == terms.length - 1) {
-				json += '}';
-			}else{
-				json += ',';
 			}
 		}
 		if (post_bool) {
 			//	Post
-			post.push(JSON.parse(json));
+			post.push(json);
 		}else{
 			//	Patch
-			patch.push(JSON.parse(json));
+			patch.push(json);
 		}
 	}
 	/*
@@ -619,40 +623,7 @@ function createEncodeJson(json_type){
 		lib_json += '"depleted_in_term_id":"SO:0000252",';
 	}
 	*/
-	console.log(json);
 	return [post, patch];
-}
-
-function getEncodeAccession(json_name, accession){
-	response = [];
-	$.ajax({ type: "GET",
-		url: BASE_PATH + "/public/ajax/encode_get.php",
-		data: { json_name: json_name, accession: accession },
-		async: false,
-		success : function(s)
-		{
-			var string_array_json = "[" + s + "]";
-			response = JSON.parse(string_array_json);
-		}
-	});
-	return response;
-}
-
-function getEncodeUUID(json_name, uuid){
-	response = [];
-	$.ajax({ type: "GET",
-		url: "https://www.encodeproject.org/search/?type=" + json_name + "&limit=all&format=json&frame=object",
-		async: false,
-		success : function(s)
-		{
-			for(var x = 0; x < s['@graph'].length; x++){
-				if (s['@graph'][x].uuid == uuid) {
-					console.log(s['@graph'][x]);
-				}
-			}
-		}
-	});
-	return response;
 }
 
 function encodeFilePost(){
@@ -703,8 +674,9 @@ function encodeSubmission(name, json, subType, type, table){
 		item = replicate_ids;
 		accs = replicate_uuids;
 	}
-	
 	console.log(name);
+	console.log(item);
+	console.log(accs);
 	console.log(json);
 	if (subType == "post") {
 		$.ajax({ type: "GET",
@@ -812,7 +784,7 @@ function submitAccessionAndUuid(item, table, type, accession, uuid){
 }
 
 function encodePost(subType){
-	//getEncodeAccession('antibody_lot', 'ENCAB969VGQ');
+	//	output response string initiation
 	var responseOutput = '';
 	
 	//	Grab json information
@@ -826,64 +798,66 @@ function encodePost(subType){
 	
 	
 	//	DONOR SUBMISSION
-	if (donor_pre_json[0] != "[]") {
+	if (donor_pre_json[0].toString() != "") {
 		responseOutput += encodeSubmission('human_donor', donor_pre_json[0], "post", "donor", "ngs_donor");
 	}
-	if (subType == "patch" && donor_pre_json[1] != "[]") {
+	if (subType == "patch" && donor_pre_json[1].toString() != "") {
 		responseOutput += encodeSubmission('human_donor', donor_pre_json[1], subType, "donor", "ngs_donor");
 	}
-	
 	//	EXPERIMENT SUBMISSION
-	if (experiment_pre_json[0] != "[]") {
+	console.log(experiment_pre_json[0].toString());
+	if (experiment_pre_json[0].toString() != "") {
 		responseOutput += encodeSubmission('experiments', experiment_pre_json[0], "post", "experiment", "ngs_samples");
 	}
-	if (subType == "patch" && experiment_pre_json[1] != "[]") {
+	if (subType == "patch" && experiment_pre_json[1].toString() != "") {
 		responseOutput += encodeSubmission('experiments', experiment_pre_json[1], subType, "experiment", "ngs_samples");
 	}
 	//	TREATMENT SUBMISSION
-	if (treatment_pre_json[0] != "[]") {
+	if (treatment_pre_json[0].toString() != "") {
 		//responseOutput +=
 		encodeSubmission('treatments', treatment_pre_json[0], "post", "treatment", "ngs_samples");
 	}
-	if (subType == "patch" && treatment_pre_json[1] != "[]") {
-		responseOutput += encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_samples");
+	if (subType == "patch" && treatment_pre_json[1].toString() != "") {
+		//responseOutput +=
+		encodeSubmission('treatments', treatment_pre_json[1], subType, "treatment", "ngs_samples");
 	}
 	
 	//	BIOSAMPLE SUBMISSION
-	if (biosample_pre_json[0] != "[]") {
+	if (biosample_pre_json[0].toString() != "") {
 		responseOutput += encodeSubmission('biosamples', biosample_pre_json[0], "post", "biosample", "ngs_samples");
 	}
-	if (subType == "patch" && biosample_pre_json[1] != "[]") {
+	if (subType == "patch" && biosample_pre_json[1].toString() != "") {
 		responseOutput += encodeSubmission('biosamples', biosample_pre_json[1], subType, "biosample", "ngs_samples");
 	}
 	
 	//	LIBRARY SUBMISSION
-	if (library_pre_json[0] != "[]") {
+	if (library_pre_json[0].toString() != "") {
 		responseOutput += encodeSubmission('libraries', library_pre_json[0], "post", "library", "ngs_samples");
 	}
-	if (subType == "patch" && library_pre_json[1] != "[]") {
+	if (subType == "patch" && library_pre_json[1].toString() != "") {
 		responseOutput += encodeSubmission('libraries', library_pre_json[1], subType, "library", "ngs_samples");
 	}
 	
 	//	ANTIBODY_LOT SUBMISSION
-	if (antibody_lot_pre_json[0] != "[]") {
-		responseOutput += encodeSubmission('antibodies', antibody_lot_pre_json[0], "post", "antibody_lot", "ngs_antibody_target");
+	if (antibody_lot_pre_json[0].toString() != "") {
+		//responseOutput +=
+		encodeSubmission('antibodies', antibody_lot_pre_json[0], "post", "antibody_lot", "ngs_antibody_target");
 	}
-	if (subType == "patch" && antibody_lot_pre_json[1] != "[]") {
-		responseOutput += encodeSubmission('antibodies', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
+	if (subType == "patch" && antibody_lot_pre_json[1].toString() != "") {
+		//responseOutput +=
+		encodeSubmission('antibodies', antibody_lot_pre_json[1], subType, "antibody_lot", "ngs_antibody_target");
 	}
 	
 	//	REPLICATE SUBMISSION
-	if (replicate_pre_json[0] != "[]") {
+	if (replicate_pre_json[0].toString() != "") {
 		responseOutput += encodeSubmission('replicate', replicate_pre_json[0], "post", "replicate", "ngs_samples");
 	}
-	if (subType == "patch" && replicate_pre_json[1] != "[]") {
+	if (subType == "patch" && replicate_pre_json[1].toString() != "") {
 		responseOutput += encodeSubmission('replicate', replicate_pre_json[1], subType, "replicate", "ngs_samples");
 	}
-	/*
+	
 	//	FILE SUBMISSION
 	encodeFilePost();
-	*/
 
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';

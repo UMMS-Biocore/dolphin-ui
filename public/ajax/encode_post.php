@@ -23,10 +23,22 @@ $auth = array('auth' => array($authid, $authpw));
 # The URL is now the collection itself
 $url = $server_start. $json_name . $server_end; // <-Replace this with appropriate server
 
-$json = json_decode($json_passed);
+$json = $json_passed;
 
 #Cycle through array and post objects
 foreach ($json as $json_object) {
+	if(isset($json_object['concentration'])){
+		$json_object['concentration'] = intval($json_object['concentration']);
+	}
+	if(isset($json_object['duration'])){
+		$json_object['duration'] = intval($json_object['duration']);
+	}
+	if(isset($json[$count]['biological_replicate_number'])){
+		$json[$count]['biological_replicate_number'] = intval($json[$count]['biological_replicate_number']);
+	}
+	if(isset($json[$count]['technical_replicate_number'])){
+		$json[$count]['technical_replicate_number'] = intval($json[$count]['technical_replicate_number']);
+	}
 	#POST the JSON and get back response
 	$response = Requests::post($url, $headers, json_encode($json_object), $auth);
 	# If the POST succeeds, the response is the new object in JSON format

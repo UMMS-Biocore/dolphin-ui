@@ -17,15 +17,16 @@ if($p == 'getSampleDataInfo')
 	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
 							 read_length, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
-							 time, ngs_donor.id as did, donor, donor_acc, donor_uuid, biosample_type, series_id,
+							 time, ngs_donor.id as did, donor, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism, source, source_symbol, ngs_source.id as sid,
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_acc, replicate_uuid,
-							 treatment_uuid, experiment_acc, experiment_uuid, treatment_id, antibody_lot_id
+							 treatment_uuid, experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
+							 biosample_term_name, biosample_term_id, biosample_type
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
 							 ON ngs_donor.id = ngs_samples.donor_id
-							 LEFT JOIN ngs_biosample_type
-							 ON ngs_biosample_type.id = ngs_samples.biosample_type_id
+							 LEFT JOIN ngs_biosample_term
+							 ON ngs_biosample_term.id = ngs_samples.biosample_id
 							 LEFT JOIN ngs_organism
 							 ON ngs_organism.id = ngs_samples.organism_id
 							 LEFT JOIN ngs_molecule
