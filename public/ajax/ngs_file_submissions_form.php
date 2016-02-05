@@ -266,7 +266,7 @@ function createTSVFile($sample_name, $tsvfile, $source){
 	$OPEN_OUT =fread($OPEN, 2096);
 	pclose($OPEN);
 	var_dump($OPEN_OUT);
-	$com = 'awk \'{ print $1"\t"$2"\t\"' . preg_replace( "/\r|\n/", "", $OPEN_OUT ) . ' }\' '. $source . ' > '. $tsvfile;
+	$com = 'awk \'{ print $1"\t"$2"\t"' . preg_replace( "/\r|\n/", "", $OPEN_OUT ) . ' }\' '. $source . ' > '. $tsvfile;
 	var_dump($com);
 	$OPEN = popen( $com, "r" );
 	pclose($OPEN);
