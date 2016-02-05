@@ -78,6 +78,13 @@ class Ngsimport extends VanillaModel {
         return rtrim($group_str, ",");
     }
 	
+	function directoryCheck($directory){
+		if(substr($directory, 0, 1) != '/' && strpos($directory, '/') > -1){
+ 			$directory = "/" . $directory;
+ 		}
+		return $directory;
+	}
+	
 	function createSampleName($sample){
 		$samplename = '';
 		$underscore_mark = true;
@@ -284,44 +291,44 @@ class Ngsimport extends VanillaModel {
 		 */
 		for ($i=1;$i<=$this->worksheet['totalRows'];$i++)
 		{
-			if($this->sheetData[$i]["A"]=="title"){$this->experiment_name=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="summary"){$this->summary=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="overall design"){$this->design=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="organization"){$this->organization=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="lab"){$this->lab=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="grant"){$this->grant=$this->esc($this->sheetData[$i]["B"]);}
-			if($this->sheetData[$i]["A"]=="contributor"){array_push($this->conts, $this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="title"){$this->experiment_name=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="summary"){$this->summary=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="overall design"){$this->design=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="organization"){$this->organization=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="lab"){$this->lab=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="grant"){$this->grant=trim($this->esc($this->sheetData[$i]["B"]));}
+			if($this->sheetData[$i]["A"]=="contributor"){array_push($this->conts, trim($this->esc($this->sheetData[$i]["B"])));}
 			if($this->sheetData[$i]["A"]=="fastq directory"){
-				$this->fastq_dir=$this->esc($this->sheetData[$i]["B"]);
+				$this->fastq_dir=$this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"])));
 			}elseif($this->sheetData[$i]["A"]=="input directory"){
-				$this->fastq_dir=$this->esc($this->sheetData[$i]["B"]);
+				$this->fastq_dir=$this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"])));
 			}
 			if($this->sheetData[$i]["A"]=="backup directory"){
-				$this->backup_dir=$this->esc($this->sheetData[$i]["B"]);
+				$this->backup_dir=$this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"])));
 			}elseif($this->sheetData[$i]["A"]=="processed directory"){
-				$this->backup_dir=$this->esc($this->sheetData[$i]["B"]);
+				$this->backup_dir=$this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"])));
 			}elseif($this->sheetData[$i]["A"]=="process directory"){
-				$this->backup_dir=$this->esc($this->sheetData[$i]["B"]);
+				$this->backup_dir=$this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"])));
 			}
-			if($this->sheetData[$i]["A"]=="amazon bucket"){$this->amazon_bucket=$this->esc($this->sheetData[$i]["B"]);}
+			if($this->sheetData[$i]["A"]=="amazon bucket"){$this->amazon_bucket=trim($this->esc($this->sheetData[$i]["B"]));}
 			
 			if($this->sheetData[$i]["A"]=="title"){
-				array_push($this->initialSubmission, $this->esc($this->sheetData[$i]["B"]));
+				array_push($this->initialSubmission, trim($this->esc($this->sheetData[$i]["B"])));
 			}
 			if($this->sheetData[$i]["A"]=="backup directory" || $this->sheetData[$i]["A"]=="processed directory" || $this->sheetData[$i]["A"]=="process directory"){
-				array_push($this->initialSubmission, $this->esc($this->sheetData[$i]["B"]));
+				array_push($this->initialSubmission, $this->directoryCheck(trim($this->esc($this->sheetData[$i]["B"]))));
 			}
 			
 			//	Fastq Directory
 			if($this->fastq_dir == null && $this->sheetData[$i]["A"]=="fastq directory"){
-				$text.= $this->errorText("fastq directory is required for submission");
+				$text.= $this->errorText("Fastq directory is required for submission");
 				$this->final_check = false;
 				$meta_check = false;
 			}
 			
 			//	Backup Directory
-			if($this->backup_dir == null && ($this->sheetData[$i]["A"]=="backup directory" || $this->sheetData[$i]["A"]=="temporary directory")){
-				$text.= $this->errorText("backup directory is required for submission");
+			if($this->backup_dir == null && ($this->sheetData[$i]["A"]=="backup directory" || $this->sheetData[$i]["A"]=="temporary directory" || $this->sheetData[$i]["A"]=="processed directory" || $this->sheetData[$i]["A"]=="process directory")){
+				$text.= $this->errorText("Processed directory is required for submission");
 				$this->final_check = false;
 				$meta_check = false;
 			}
@@ -349,7 +356,7 @@ class Ngsimport extends VanillaModel {
 				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername;
 				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
 				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Process Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
+					$text.= $this->errorText("Processed Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
 					$this->final_check = false;
 					$meta_check = false;
 				}
@@ -358,7 +365,7 @@ class Ngsimport extends VanillaModel {
 				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername.'&outdir='.$this->backup_dir;
 				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
 				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Process Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
+					$text.= $this->errorText("Processed Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
 					$this->final_check = false;
 					$meta_check = false;
 				}
@@ -370,7 +377,7 @@ class Ngsimport extends VanillaModel {
 		 */
 		//	Experiment Name
 		if(isset($this->experiment_name)){
-			if(!$this->checkAlphaNumWithAddChars(' ', $this->experiment_name)){
+			if(!$this->checkAlphaNumWithAddChars('\s\_\-', $this->experiment_name)){
 				$text.= $this->errorText("title does not contain proper characters, please use alpha-numeric characters and spaces");
 				$this->final_check = false;
 				$meta_check = false;
@@ -458,25 +465,25 @@ class Ngsimport extends VanillaModel {
 			for ($j='A';$j<=$this->worksheet['lastColumnLetter'];$j++)
 			{
 				if($this->sheetData[3][$j]=="Import name"){
-					$lane->name=$this->esc($this->sheetData[$i][$j]);
+					$lane->name=trim($this->esc($this->sheetData[$i][$j]));
 				}elseif($this->sheetData[3][$j]=="Lane name"){
-					$lane->name=$this->esc($this->sheetData[$i][$j]);
+					$lane->name=trim($this->esc($this->sheetData[$i][$j]));
 				}
 				if($this->sheetData[3][$j]=="Sequencing id"){
-					$lane->lane_id=$this->esc($this->sheetData[$i][$j]);
+					$lane->lane_id=trim($this->esc($this->sheetData[$i][$j]));
 				}elseif($this->sheetData[3][$j]=="Lane id"){
-					$lane->lane_id=$this->esc($this->sheetData[$i][$j]);
+					$lane->lane_id=trim($this->esc($this->sheetData[$i][$j]));
 				}
-				if($this->sheetData[3][$j]=="Sequencing facility"){$lane->facility=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Cost"){$lane->cost=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Date submitted"){$lane->date_submitted=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Date received"){$lane->date_received=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="% PhiX requested"){$lane->phix_requested=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="% PhiX in lane"){$lane->phix_in_lane=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="# of Samples"){$lane->total_samples=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Resequenced?"){$lane->resequenced=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Notes"){$lane->notes=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Total reads"){$lane->total_reads=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="Sequencing facility"){$lane->facility=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Cost"){$lane->cost=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Date submitted"){$lane->date_submitted=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Date received"){$lane->date_received=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="% PhiX requested"){$lane->phix_requested=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="% PhiX in lane"){$lane->phix_in_lane=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="# of Samples"){$lane->total_samples=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Resequenced?"){$lane->resequenced=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Notes"){$lane->notes=trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Total reads"){$lane->total_reads=trim($this->esc($this->sheetData[$i][$j]));}
 			}
 			
 			$blank = 'true';
@@ -492,7 +499,7 @@ class Ngsimport extends VanillaModel {
 			//	Lane Name
 			if($blank == 'false'){
 				if(isset($lane->name)){
-					if($this->checkAlphaNumWithAddChars('_-', $lane->name)){
+					if($this->checkAlphaNumWithAddChars('\s\_\-', $lane->name)){
 						$this->lane_arr[$lane->name]=$lane;
 					}else{
 						$text.= $this->errorText("Import name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
@@ -547,14 +554,14 @@ class Ngsimport extends VanillaModel {
 			$prot = new prot();
 			for ($j='A';$j<=$this->worksheet['lastColumnLetter'];$j++)
 			{
-				if($this->sheetData[3][$j]=="protocol name"){$prot->name= $this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="growth protocol"){$prot->growth= $this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="extract protocol"){$prot->extraction= $this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="library construction protocol"){$prot->library_construction= $this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="crosslinking method"){$prot->crosslinking_method=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="fragmentation method"){$prot->fragmentation_method=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="strand-specific"){$prot->strand_specific=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="library strategy"){$prot->library_strategy= $this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="protocol name"){$prot->name= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="growth protocol"){$prot->growth= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="extract protocol"){$prot->extraction= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="library construction protocol"){$prot->library_construction= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="crosslinking method"){$prot->crosslinking_method= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="fragmentation method"){$prot->fragmentation_method= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="strand-specific"){$prot->strand_specific= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="library strategy"){$prot->library_strategy= trim($this->esc($this->sheetData[$i][$j]));}
 			}
 			
 			/*
@@ -622,40 +629,40 @@ class Ngsimport extends VanillaModel {
 			for ($k=0;$k!=$this->columnNumber($this->worksheet['lastColumnLetter']);$k++)
 			{
 				$j = $this->num2alpha($k);
-				if($this->sheetData[3][$j]=="Sample name"){$samp->name=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="Sample name"){$samp->name= trim($this->esc($this->sheetData[$i][$j]));}
 				if($this->sheetData[3][$j]=="Lane name"){
-					$samp->lane_name=$this->esc($this->sheetData[$i][$j]);
+					$samp->lane_name= trim($this->esc($this->sheetData[$i][$j]));
 				}elseif($this->sheetData[3][$j]=="Import name"){
-					$samp->lane_name=$this->esc($this->sheetData[$i][$j]);
+					$samp->lane_name= trim($this->esc($this->sheetData[$i][$j]));
 				}
-				if($this->sheetData[3][$j]=="Protocol name"){$samp->protocol_name=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="barcode"){$samp->barcode=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="title"){$samp->title=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="batch id"){$samp->batch=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="source symbol"){$samp->source_symbol=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="source name"){$samp->source=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="organism"){$samp->organism=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="biosample type"){$samp->biosample_type=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="molecule"){$samp->molecule=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="description"){$samp->description=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="instrument model"){$samp->instrument_model=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="average insert size"){$samp->avg_insert_size=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="read length"){$samp->read_length=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Genotype"){$samp->genotype=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Condition Symbol"){$samp->condition_symbol=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Condition"){$samp->condition=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="concentration"){$samp->concentration=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="treatment manufacturer"){$samp->treatment_manufacturer=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Donor"){$samp->donor=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Time"){$samp->time=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Biological Replica"){$samp->biological_replica=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Technical Replica"){$samp->technical_replica=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="spikeIns"){$samp->spikeins=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="3' Adapter sequence"){$samp->adapter=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Notebook reference"){$samp->notebook_ref=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Notes"){$samp->notes=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Library type"){$samp->lib_type=$this->esc($this->sheetData[$i][$j]);}
-				if($this->sheetData[3][$j]=="Antibody Target"){$samp->target=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="Protocol name"){$samp->protocol_name= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="barcode"){$samp->barcode= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="title"){$samp->title= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="batch id"){$samp->batch= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="source symbol"){$samp->source_symbol= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="source name"){$samp->source= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="organism"){$samp->organism= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="biosample type"){$samp->biosample_type= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="molecule"){$samp->molecule= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="description"){$samp->description= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="instrument model"){$samp->instrument_model= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="average insert size"){$samp->avg_insert_size= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="read length"){$samp->read_length= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Genotype"){$samp->genotype= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Condition Symbol"){$samp->condition_symbol= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Condition"){$samp->condition= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="concentration"){$samp->concentration= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="treatment manufacturer"){$samp->treatment_manufacturer= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Donor"){$samp->donor= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Time"){$samp->time= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Biological Replica"){$samp->biological_replica= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Technical Replica"){$samp->technical_replica= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="spikeIns"){$samp->spikeins= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="3' Adapter sequence"){$samp->adapter= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Notebook reference"){$samp->notebook_ref= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Notes"){$samp->notes= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Library type"){$samp->lib_type= trim($this->esc($this->sheetData[$i][$j]));}
+				if($this->sheetData[3][$j]=="Antibody Target"){$samp->target= trim($this->esc($this->sheetData[$i][$j]));}
 				
 				if($this->sheetData[3][$j]=="Sample name" && $samp->name != NULL){
 					if($this->namesList == null){
@@ -672,7 +679,7 @@ class Ngsimport extends VanillaModel {
 					}
 				}
 				if($this->sheetData[3][$j]=="organism" && $this->organismCheck == null){
-					array_push($this->initialSubmission, $this->esc($this->sheetData[$i][$j]));
+					array_push($this->initialSubmission, trim($this->esc($this->sheetData[$i][$j])));
 					$this->organismCheck = 'check';
 				}
 	
@@ -735,7 +742,7 @@ class Ngsimport extends VanillaModel {
 				
 				//	Name
 				if(isset($samp->name)){
-					if($this->checkAlphaNumWithAddChars('_-', $samp->name)){
+					if($this->checkAlphaNumWithAddChars('\s\_\-', $samp->name)){
 						//	Need to check the database for similar names as well at a later date
 						if(isset($this->sample_arr[$samp->name])){
 							$text.= $this->errorText("Sample name already exists in that Import (row " . $i . ")");
@@ -895,15 +902,15 @@ class Ngsimport extends VanillaModel {
 			$dir = new dir();
 			for ($j='A';$j<=$this->worksheet['lastColumnLetter'];$j++)
 			{
-				if($this->sheetData[3][$j]=="Directory ID"){$dir->dir_tag=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="Directory ID"){$dir->dir_tag= trim($this->esc($this->sheetData[$i][$j]));}
 				if($this->sheetData[3][$j]=="Fastq directory"){
-					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
+					$dir->fastq_dir= $this->directoryCheck(trim($this->esc($this->sheetData[$i][$j])));
 				}elseif($this->sheetData[3][$j]=="Processed directory"){
-					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
+					$dir->fastq_dir= $this->directoryCheck(trim($this->esc($this->sheetData[$i][$j])));
 				}elseif($this->sheetData[3][$j]=="Process directory"){
-					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
+					$dir->fastq_dir= $this->directoryCheck(trim($this->esc($this->sheetData[$i][$j])));
 				}elseif($this->sheetData[3][$j]=="Input directory"){
-					$dir->fastq_dir=$this->esc($this->sheetData[$i][$j]);
+					$dir->fastq_dir= $this->directoryCheck(trim($this->esc($this->sheetData[$i][$j])));
 				}
 			}
 			$blank = 'true';
@@ -986,13 +993,14 @@ class Ngsimport extends VanillaModel {
 			for ($j='A';$j<=$this->worksheet['lastColumnLetter'];$j++)
 			{
 				if($this->sheetData[3][$j]=="Sample or Lane Name (Enter same name for multiple files)"){
-					$file->name=$this->esc($this->sheetData[$i][$j]);
+					$file->name= trim($this->esc($this->sheetData[$i][$j]));
 				}elseif($this->sheetData[3][$j]=="Sample or Import Name (Enter same name for multiple files)"){
-					$file->name=$this->esc($this->sheetData[$i][$j]);
+					$file->name= trim($this->esc($this->sheetData[$i][$j]));
 				}
-				if($this->sheetData[3][$j]=="Directory ID"){$file->dir_tag=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="Directory ID"){$file->dir_tag= trim($this->esc($this->sheetData[$i][$j]));}
 				if($this->sheetData[3][$j]=="file name(comma separated for paired ends)"){
-					$file->file_name=$this->esc($this->sheetData[$i][$j]);$file->file_name=preg_replace('/\s/', '', $file->file_name);
+					$file->file_name= trim($this->esc($this->sheetData[$i][$j]));
+					$file->file_name= preg_replace('/\s/', '', $file->file_name);
 					if($j == 'B' && isset($this->sheetData[$i]['C'])){
 						$additional_files = $this->sheetData[$i]['C'];
 					}else if ($j == 'C' && isset($this->sheetData[$i]['D'])){
@@ -1011,7 +1019,7 @@ class Ngsimport extends VanillaModel {
 						unset($comma_check);
 					}
 				}
-				if($this->sheetData[3][$j]=="file checksum"){$file->checksum=$this->esc($this->sheetData[$i][$j]);}
+				if($this->sheetData[3][$j]=="file checksum"){$file->checksum= trim($this->esc($this->sheetData[$i][$j]));}
 				
 				if($this->sheetData[3][$j]=="Sample or Lane Name (Enter same name for multiple files)" || $this->sheetData[3][$j]=="Sample or Import Name (Enter same name for multiple files)"){
 					if(isset($this->lane_arr[$file->name]) && $this->laneArrayCheck == null){
@@ -1048,7 +1056,7 @@ class Ngsimport extends VanillaModel {
 			if($blank == 'false'){
 				//	Sample/Lane Name
 				if(isset($file->name)){
-					if($this->checkAlphaNumWithAddChars('_-', $file->name)){
+					if($this->checkAlphaNumWithAddChars('\s\_\-', $file->name)){
 						if(!(isset($this->sample_arr[$file->name])) & !(isset($this->lane_arr[$file->name]))){
 							$text.= $this->errorText("sample/import name does not match the samples/imports given (row " . $i . ")");
 							$this->final_check = false;

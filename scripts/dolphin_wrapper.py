@@ -19,7 +19,7 @@ import time
 
 warnings.filterwarnings('ignore', '.*the sets module is deprecated.*',
          DeprecationWarning, 'MySQLdb')
-
+        
 from workflowdefs import *
 
 class Dolphin:
@@ -31,41 +31,47 @@ class Dolphin:
         self.params_section = params_section
         
     def runSQL(self, sql):
+      try:
         db = MySQLdb.connect(
           host = self.config.get(self.params_section, "db_host"),
           user = self.config.get(self.params_section, "db_user"),
           passwd = self.config.get(self.params_section, "db_password"),
           db = self.config.get(self.params_section, "db_name"),
           port = int(self.config.get(self.params_section, "db_port")))
-        try:
-          cursor = db.cursor()
-          cursor.execute(sql)
-          #print sql
-          results = cursor.fetchall()
-          cursor.close()
-          del cursor
-    
-        except Exception, err:
-          print "ERROR DB:for help use --help"
-          db.rollback()
-          sys.stderr.write('ERROR: %s\n' % str(err))
-          sys.exit(2)
-        finally:
-          db.commit()
-          db.close()
+
+        cursor = db.cursor()
+        cursor.execute(sql)
+        #print sql
+        results = cursor.fetchall()
+        cursor.close()
+        del cursor
         return results
+        
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running runSQL\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+      finally:
+        db.commit()
+        db.close()
 
     def updatePID(self, rpid, pid):
+      try:
         sql = "UPDATE ngs_runparams SET wrapper_pid='%s',runworkflow_pid='%s' WHERE id='%s'"%(os.getpid(), pid, rpid)
         return self.runSQL(sql)
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running updatePID\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+        
     def getRunParamsID(self, rpid):
+      try:
          rpstr="";
          if (rpid > 0):
            rpstr=" AND nrp.id=%s"%str(rpid)
          sql = "SELECT DISTINCT nrl.run_id, u.username, nrp.barcode from ngs_runlist nrl, ngs_runparams nrp, users u where nrp.id=nrl.run_id and u.id=nrl.owner_id %s;"%rpstr
          return self.trySQL(sql, "getRunParamsID")
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getRunParamsID\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
 
     def trySQL(self, sql, func):
+      try:
         trials=0
         while trials<5:
            print trials
@@ -78,23 +84,31 @@ class Dolphin:
            time.sleep(15)
            trials=trials+1 
 
-        return ret 
+        return ret
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running trySQL\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
  
     def getRunParams(self, runparamsid):
+      try:
         sql = "SELECT json_parameters from ngs_runparams where id='%d'"%runparamsid
         result = self.runSQL(sql)
         for row in result:
             #print row[0]
             return json.loads(row[0])
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getRunParams\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
     
     def getAmazonCredentials(self, username):
+      try:
         sql = 'SELECT DISTINCT ac.* FROM amazon_credentials ac, group_amazon ga, users u where ac.id=ga.amazon_id and ga.group_id=u.group_id and u.username="'+username+'";'
         results = self.runSQL(sql)
     
         return results
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getAmazonCredentials\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
     
     def getDirs(self, runparamsid, isbarcode):
-    
+      try:
         tablename="ngs_fastq_files"
         fields="d.backup_dir fastq_dir, d.backup_dir, d.amazon_bucket, rp.outdir"
         idmatch="s.id=tl.sample_id"
@@ -110,15 +124,21 @@ class Dolphin:
            print sql%locals() 
            results=self.runSQL(sql%locals())
         return results[0]
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getDirs\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
    
     def checkIfAnewSampleAdded(self, runparamsid):
+      try:
         sql = "SELECT a.sample_id FROM (SELECT nr.sample_id FROM ngs_runlist nr, ngs_temp_sample_files ts where nr.sample_id=ts.sample_id and run_id="+str(runparamsid)+") a where sample_id NOT IN(SELECT nr.sample_id FROM ngs_runlist nr, ngs_fastq_files ts where nr.sample_id=ts.sample_id and run_id="+str(runparamsid)+")"
         sampleids=self.runSQL(sql%locals())
         if (sampleids != ()):
             return 1
         return 0
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running checkIfAnewSampleAdded\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
  
     def getSampleList(self, runparamsid):
+      try:
         tablename="ngs_fastq_files"
         dirfield="d.backup_dir"
         sql = "SELECT s.samplename, %(dirfield)s dir, ts.file_name FROM ngs_runparams nrp, ngs_runlist nr, ngs_samples s, %(tablename)s ts, ngs_dirs d where nr.run_id=nrp.id and nr.sample_id=s.id and s.id=ts.sample_id and d.id=ts.dir_id and nr.run_id='"+str(runparamsid)+"';"
@@ -128,8 +148,11 @@ class Dolphin:
             tablename="ngs_temp_sample_files"
             samplelist=self.runSQL(sql%locals())
         return self.getInputParams(samplelist)
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getSampleList\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
     
     def getInputParams(self, samplelist):
+      try:
         inputparams=""
         for row in samplelist:
             if (inputparams):
@@ -141,16 +164,19 @@ class Dolphin:
         if (',' in row[2]):
             spaired="paired"
         return (spaired, inputparams)
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getInputParams\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
     
     def getLaneList(self, runparamsid):
+      try:
         tablename="ngs_fastq_files"
         fields='d.backup_dir dir, tl.file_name'
-        sql = "SELECT DISTINCT %(fields)s FROM ngs_runlist nrl, ngs_runparams nrp, ngs_samples s, %(tablename)s tl where nrl.run_id=nrp.id and s.lane_id = tl.lane_id and s.id=nrl.sample_id and nrp.id='"+str(runparamsid)+"';"
-    
+        sql = "SELECT DISTINCT %(fields)s FROM ngs_runlist nrl, ngs_dirs d, ngs_runparams nrp, ngs_samples s, %(tablename)s tl where nrl.run_id=nrp.id and d.id=tl.dir_id and s.lane_id = tl.lane_id and s.id=nrl.sample_id and nrp.id='"+str(runparamsid)+"';"
         result=self.runSQL(sql%locals())
         if (not result):
             tablename="ngs_temp_lane_files"
             fields='d.fastq_dir dir, tl.file_name'
+            print sql%locals()
             result=self.runSQL(sql%locals())
     
         inputparams=""
@@ -169,69 +195,84 @@ class Dolphin:
         if (not result):
             tablename="ngs_fastq_files"
             result=self.runSQL(sql%locals())
-    
-        barcode="Distance,1:Format,5"
+        barcode="" 
         for row in result:
             barcode=barcode+":"+row[0]+","+row[1]
         return (spaired, inputparams, barcode)
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running getLaneList\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
 
-    def write_input(self,  input_fn, data_dir, content,genomebuild,spaired,barcodes,adapter, quality, trim,trimpaired, split, commonind, advparams, customind, pipeline) :
-    
-       gb=genomebuild.split(',')
+    def writeInputParamLine(self, fp, jsonobj, input_str, input_object, itself, previous_str=None):
+      try:
+       previous = ( previous_str if previous_str!=None else "NONE" )
+       if (input_object in jsonobj and jsonobj[input_object].lower() != 'none' and jsonobj[input_object]!=''):
+         print >>fp, '%s=%s'%(input_str, self.parse_content(jsonobj[input_object]))
+         if (previous_str):
+            print >>fp, '%s=%s'%("@PREVIOUS"+itself, previous_str)
+         previous=itself
+       else:
+         print >>fp, '%s=NONE'%(input_str)
+       return previous
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running writeInputParamLine\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+       
+         
+    def writeInput(self,  input_fn, data_dir, content, runparams, barcodes) :
+      try:
+       commonind=''
+       if ('commonind' in runparams and runparams['commonind'].lower() != "none"):
+          commonind = re.sub('test', '', runparams['commonind'])
+          gb=runparams['genomebuild'].split(',')
+          commonind = re.sub('genome', str(gb[1]), commonind)
+       print 'COMMONIND:'+commonind       
+       gb=runparams['genomebuild'].split(',')
        previous="NONE"
        fp = open( input_fn, 'w' )
        print >>fp, '@CONFIG=%s'%self.params_section
        print >>fp, '@GENOME=%s'%gb[0]
+
        gb[1] = re.sub('test', '', gb[1])
        genomeindex=gb[1]
     
        print >>fp, '@VERSION=%s'%gb[1]
+       
        print >>fp, '@INPUT=%s'%content
        print >>fp, '@DATADIR=%s'%data_dir
        print >>fp, '@OUTFILE=%s'%input_fn
        print >>fp, '@GENOMEBUILD=%s,%s'%(gb[0],gb[1])
-       print >>fp, '@SPAIRED=%s'%spaired
-       barcodeflag=0
-    
-       if (barcodes and barcodes.lower() != 'none'):
-         print >>fp, '@BARCODES=%s'%self.parse_content(barcodes)
-         barcodeflag=1
-         previous="BARCODE"
+       print >>fp, '@SPAIRED=%s'%runparams['spaired']
+       previous="NONE" 
+       #u'barcodes': [{u'distance': u'1', u'format': u'5 end read 1'}]
+       if ('barcodes' in runparams and barcodes):
+          pipe=runparams['barcodes'][0]
+          barcode="Distance,%s:Format,%s%s"%(str(pipe['distance']), str(pipe['format'][0]),barcodes)
+          print >>fp, '@BARCODES=%s'%barcode
+          previous="BARCODES"
        else:
-         print >>fp, '@BARCODES=NONE'
-    
-       if (adapter and adapter.lower() != 'none'):
-         print >>fp, '@ADAPTER=%s'%self.parse_content(adapter)
-         print >>fp, '@PREVIOUSADAPTER=%s'%previous
-         previous="ADAPTER"
-       else:
-         print >>fp, '@ADAPTER=NONE'
-    
-       if (quality and quality.lower() != 'none'):
-         print >>fp, '@QUALITY=%s'%self.parse_content(quality)
-         print >>fp, '@PREVIOUSQUALITY=%s'%previous
-         previous="QUALITY"
-       else:
-         print >>fp, '@QUALITY=NONE'
-    
-       if (trim and trim.lower() != 'none'):
-         print >>fp, '@TRIM=%s'%trim
-         print >>fp, '@TRIMPAIRED=%s'%trimpaired
-         print >>fp, '@PREVIOUSTRIM=%s'%previous
-         previous="TRIM"
-       else:
-         print >>fp, '@TRIM=NONE'
-    
-       if(split and split.lower() != 'none'):
-         print >>fp, '@PREVIOUSSPLIT=%s'%previous
-         previous="SPLIT"
-       else:
-         print >>fp, '@PREVIOUSSPLIT=NONE'
-
-       if (commonind and commonind.lower() != 'none'):
+          print >>fp, '@BARCODES=NONE'
+       previous=self.writeInputParamLine(fp, runparams, "@ADAPTER", 'adapters', "ADAPTER", previous )
+       
+       if ( 'quality' in runparams and type(runparams['quality']) is list):
+            pipe=runparams['quality'][0]
+            runparams['quality']="%s:%s:%s:%s:%s"%(pipe['windowSize'],pipe['requiredQuality'],pipe['leading'],pipe['trailing'],pipe['minlen'])
+       
+       previous=self.writeInputParamLine(fp, runparams, "@QUALITY", 'quality', "QUALITY", previous)
+       
+       if ( 'trim' in runparams and type(runparams['trim']) is list):
+          pipe=runparams['trim'][0]
+          if (pipe["5len1"]>0 and pipe["3len1"]>0):
+            self.writeInputParamLine(fp, pipe, "@TRIMPAIRED", 'trimpaired', "TRIM")
+            if ('trimpaired' in pipe and pipe['trimpaired']=="paired"):
+               if (pipe["5len2"]>0 and pipe["3len2"]>0):
+                  runparams['trim']="%s:%s:%s:%s"%(pipe["5len1"],pipe["3len1"],pipe["5len2"],pipe["3len2"])
+            else:
+               runparams['trim']="%s:%s"%(str(pipe["5len1"]),str(pipe["3len1"]))
+       previous=self.writeInputParamLine(fp, runparams, "@TRIM", 'trim', "TRIM", previous)
+       
+       if ('commonind' in runparams and  runparams['commonind'].lower() != "none"):
          arr=re.split(r'[,:]+', self.parse_content(commonind))
-    
          for i in arr:
+           print i
            if(len(i)>1):
               default_bowtie_params="@DEFBOWTIE2PARAM"
               default_description="@DEFDESCRIPTION"
@@ -239,23 +280,17 @@ class Dolphin:
            if (i != "ucsc" and i != gb[1]):
               previous=i
     
-         if (advparams):
-            print >>fp, '@ADVPARAMS=%s'%(self.parse_content(advparams))
-         else:
-            print >>fp, '@ADVPARAMS=NONE'
+         print >>fp, '@ADVPARAMS=' + ('%s'%(self.parse_content(runparams['advparams'])) if ('advparams' in runparams) else 'NONE')
     
-       mapnames=commonind
-       if (not mapnames or mapnames.lower() == 'none'):
-          mapnames="";
-       if (customind):
-          for i in customind:
-            arr=re.split(r'[:]', self.parse_content(i))
-            index=self.parse_content(arr[0])
-            name=self.parse_content(self.replace_space(arr[1]))
-            if (mapnames!=""):
-               mapnames=mapnames+","+name+":"+index
-            else:
-               mapnames=name+":"+index
+       mapnames = (runparams['commonind'] if ('commonind' in runparams and runparams['commonind'].lower()!="none") else "")
+   
+       if ('customind' in runparams and runparams['customind'].lower()!="none"):
+          for vals in runparams['customind']:
+            index=self.parse_content(vals['FullPath'] + "/" + vals['IndexPrefix'])
+            name=self.parse_content(self.replace_space(vals['IndexPrefix']))
+            
+            mapnames = (mapnames + "," + name + ":" + index if mapnames!="" else name + ":" + index)
+            
             bowtie_params=self.parse_content(self.replace_space(arr[2]))
             description=self.parse_content(self.replace_space(arr[3]))
             filter_out=arr[4]
@@ -263,279 +298,234 @@ class Dolphin:
             print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name,index,name,bowtie_params,description,filter_out,previous)
             if (str(filter_out)=="1"):
                previous=name
-    
-       if (pipeline):
-           deseq_count=1
-           for i in pipeline:
-             arr=i.split(':')
-             pipename=arr[0]
-             if (pipename=="RNASeqRSEM"):
-               paramsrsem=arr[1];
-               if (not paramsrsem):
-                  paramsrsem="NONE"
+       previoussplit=previous
+       previous=self.writeInputParamLine(fp, runparams, "@SPLIT", 'split', "SPLIT", previous )
+              
+       if ('pipeline' in runparams):
+           for pipe in runparams['pipeline']:
+             if (pipe['Type']=="RNASeqRSEM"):
+               paramsrsem=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@PARAMSRSEM=%s'%(self.parse_content(paramsrsem))
                print >>fp, '@TSIZE=50';
-               print >>fp, '@PREVIOUSPIPE=%s'%(previous)
+               print >>fp, '@PREVIOUSRSEM=%s'%(previoussplit)
     
-             if (pipename=="Tophat"):
-               paramstophat=arr[1];
-               if (not paramstophat):
-                  paramstophat="NONE"
+             if (pipe['Type']=="Tophat"):
+               paramstophat=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+               print >>fp, '@TSIZE=50';
                print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(paramstophat))
-             if (pipename=="DESeq"):
-               print >>fp, '@COLS%s=%s'%(str(deseq_count), self.remove_space(arr[1]));
-               print >>fp, '@CONDS%s=%s'%(str(deseq_count), self.remove_space(arr[2]));
-               print >>fp, '@FITTYPE%s=%s'%(str(deseq_count), arr[3]);
-               print >>fp, '@HEATMAP%s=%s'%(str(deseq_count), arr[4]);
-               print >>fp, '@PADJ%s=%s'%(str(deseq_count), arr[5]);
-               print >>fp, '@FOLDCHANGE%s=%s'%(str(deseq_count), arr[6]);
-               print >>fp, '@DATASET%s=%s'%(str(deseq_count), arr[7]);
-               deseq_count+=1
+               
+             
+             if (pipe['Type']=="DESeq"):
+               name = ( pipe['Name'] if ('Name' in pipe) else  "")
+               print >>fp, '@COLS%s=%s'%(name, self.remove_space(pipe['Columns']))
+               print >>fp, '@CONDS%s=%s'%(name, self.remove_space(pipe['Conditions']))
+               print >>fp, '@FITTYPE%s=%s'%(name, pipe['FitType'])
+               print >>fp, '@HEATMAP%s=%s'%(name, pipe['HeatMap'])
+               print >>fp, '@PADJ%s=%s'%(name, pipe['padj'])
+               print >>fp, '@FOLDCHANGE%s=%s'%(name, pipe['foldChange'])
+               print >>fp, '@DATASET%s=%s'%(name, pipe['DataType'])
     
-             if (pipename=="ChipSeq"):
-               chipinput=self.parse_content(str(arr[1]))
-               bowtie_params=self.remove_space("-k_%s"%(str(arr[2])))
+             if (pipe['Type']=="ChipSeq"):
+               chipinput=self.parse_content(str(pipe['ChipInput']))
+               bowtie_params=self.remove_space("-k_%s"%(str(pipe['MultiMapper'])))
                description="Chip_Mapping"
                filter_out="0"
                print >>fp, '@ADVPARAMS=NONE'
                print >>fp, '@CHIPINPUT=%s'%(chipinput)
                print >>fp, '@PARAMChip=@GCOMMONDB/%s/%s,Chip,%s,%s,%s,%s'%(gb[1],gb[1],bowtie_params,description,filter_out,previous)
-    
-               print >>fp, '@GENOMEINDEX=%s'%(genomeindex);
-               print >>fp, '@TSIZE=%s'%(self.remove_space(str(arr[3])));
-               print >>fp, '@BWIDTH=%s'%(self.remove_space(str(arr[4])));
-               print >>fp, '@GSIZE=%s'%(self.remove_space(str(arr[5])));
+               print >>fp, '@GENOMEINDEX=%s'%(genomeindex)
+               print >>fp, '@TSIZE=%s'%(self.remove_space(str(pipe['TagSize'])))
+               print >>fp, '@BWIDTH=%s'%(self.remove_space(str(pipe['BandWith'])))
+               print >>fp, '@GSIZE=%s'%(self.remove_space(str(pipe['EffectiveGenome'])))
 
-             if (pipename=="BisulphiteMapping"):
-               if (arr[1] == "1"):
-                 print >>fp, '@BSMAPPARAM=%s'%(self.remove_space(arr[3]));
-               if (arr[4] == "1"):
-                 print >>fp, '@MCONDS=%s'%(self.remove_space(arr[5]+":"+arr[6]));
-                 print >>fp, '@MCALLPARAM=%s'%(self.remove_space(arr[7]));
-               if (arr[8] == "1"):
-                 print >>fp, '@MCOMPPARAM=%s'%(self.remove_space(arr[9]));
-    
-    
+             if (pipe['Type']=="BisulphiteMapping"):
+               if (pipe['BSMapStep'] == "yes"):
+                 print >>fp, '@DIGESTION=%s'%(  str(pipe['Digestion']) if ('Digestion' in pipe) else 'NONE' )
+                 self.writeInputParamLine(fp, pipe, "@BSMAPPARAM", 'BSMapParams', "BSMapStep")
+               if (pipe['MCallStep']== "yes"):
+                 self.writeInputParamLine(fp, pipe, "@MCALLPARAM", 'MCallParams', "MCallStep")
+                 
+             if (pipe['Type']=="DiffMeth"):
+               name = ( pipe['Name'] if ('Name' in pipe) else  "")
+               print >>fp, '@COLS%s=%s'%(name, self.remove_space(pipe['Columns']))
+               print >>fp, '@CONDS%s=%s'%(name, self.remove_space(pipe['Conditions']))
+               print >>fp, '@TILE_SIZE%s=%s'%(name, pipe['TileSize'])
+               print >>fp, '@STEP_SIZE%s=%s'%(name, pipe['StepSize'])
+               print >>fp, '@STRAND%s=%s'%(name, pipe['StrandSpecific'])
+               print >>fp, '@TOPN%s=%s'%(name, pipe['TopN'])
+               print >>fp, '@MAXCOVERAGE%s=%s'%(name, pipe['MaxCoverage'])
+               print >>fp, '@GBUILD%s=%s'%(name, gb[1])
+
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
-    
+       
        fp.close()
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running writeInput\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
     
-    def write_workflow(self,  resume, gettotalreads, amazonupload, backupS3, runparamsid, customind, commonind, pipeline, barcodes, fastqc, adapter, quality, trim, split, file, clean ):
+    def prf(self, fp, text):
+        print "HERE:"+str(text)
+        if (str!=None and str(text).lower()!="none"):
+           print >>fp, text
+           
+    def writeVisualizationStr(self, fp, type, pipe, sep):
+      try:
+        print pipe
+        if ('IGVTDF' in pipe and pipe['IGVTDF'].lower()=="yes"):
+            paramExtFactor = ( " -e " + str(pipe['ExtFactor']) if ('ExtFactor' in pipe and pipe['ExtFactor'] > 1) else '')
+            self.prf( fp, stepIGVTDF % locals() )
+        if ('BAM2BW' in pipe and pipe['BAM2BW'].lower()=="yes"):
+            self.prf( fp, stepBam2BW % locals() )
+            
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running writeVisualizationStr\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+    
+    def writeRSeQC ( self, fp, type, pipe, sep):
+      try:
+        if ('RSeQC' in pipe and pipe['RSeQC'].lower()=="yes" and type.lower().find("chip")<0):
+            self.prf( fp, stepRSEQC % locals() )
+            self.prf( fp, stepMergeRSEQC % locals() )
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running writeRSeQC\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+            
+    def writePicard (self, fp, type, pipe, sep):
+      initialtype=type
+      try:
+        metrics = ("MarkDuplicates", "CollectRnaSeqMetrics", "CollectMultipleMetrics") 
+        for metric in metrics:
+          if( (metric=="CollectRnaSeqMetrics" and (type.lower().find("tophat")>1 or type.lower().find("rsem")>1  )) or metric != "CollectRnaSeqMetrics" ):
+            self.prf( fp, stepPicard % locals() if ((metric in pipe and pipe[metric].lower()=="yes")) else None )
+            if ("MarkDuplicates" in pipe):
+                type = "dup"+initialtype
+        
+        self.prf( fp, stepMergePicard % locals() if (('CollectRnaSeqMetrics' in pipe and pipe['CollectRnaSeqMetrics'].lower()=="yes") or ('CollectMultipleMetrics' in pipe and pipe['CollectMultipleMetrics'].lower()=="yes")) else None )
+     
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running wrwritePicarditeWorkflow\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+
+    
+    def writeWorkflow(self,  file, gettotalreads, amazonupload, backupS3, runparamsid, runparams ):
+      try:
+        commonind=''
+        if ('commonind' in runparams and  runparams['commonind'].lower() != "none"):
+          commonind = re.sub('test', '', runparams['commonind'])
+          gb=runparams['genomebuild'].split(',')
+          commonind = re.sub('genome', str(gb[1]), commonind)
         fp = open ( file, 'w')
-        sep='\t'
-     
-        stepline=stepCheck % locals()
-        print >>fp, '%s'%stepline
-        if (barcodes and barcodes.lower() != 'none'):
-            stepline=stepBarcode % locals()
-            print >>fp, '%s'%stepline
-     
-        if (gettotalreads and gettotalreads.lower() != 'none'):
-            stepline=stepGetTotalReads % locals()
-            print >> fp, '%s'%stepline
-     
-        if (backupS3 and backupS3.lower() != 'none'):
-            stepline=stepBackupS3 % locals()
-            print >> fp, '%s'%stepline
-     
-        if (fastqc and fastqc.lower() == 'yes'):
-           stepline=stepFastQC % locals()
-           print >>fp, '%s'%stepline
-           stepline=stepMergeFastQC % locals()
-           print >>fp, '%s'%stepline
-     
-        if (adapter and adapter.lower() != 'none'):
-           stepline=stepAdapter % locals()
-           print >>fp, '%s'%stepline
-     
-        if (quality and quality.lower() != 'none'):
-           stepline=stepQuality % locals()
-           print >>fp, '%s'%stepline
-     
-        if (trim and trim.lower() != 'none'):
-           stepline=stepTrim % locals()
-           print >>fp, '%s'%stepline
-     
+        sep='\t'          
+        resume = (runparams['resume'] if ('resume' in runparams) else "yes")
+        self.prf(fp, stepCheck % locals() )
+        self.prf(fp, stepBarcode % locals() if ('barcodes' in runparams and str(runparams['barcodes']).lower()!="none") else None )
+        self.prf(fp, stepGetTotalReads % locals() if (gettotalreads and gettotalreads.lower()!="none") else None )
+        self.prf(fp, stepBackupS3 % locals() if (backupS3 and backupS3.lower()!="none") else None )
+        self.prf(fp, stepFastQC % locals() + "\n" + stepMergeFastQC % locals() if ('fastqc' in runparams and runparams['fastqc'].lower()=="yes") else None )
+        self.prf(fp, stepAdapter % locals() if ('adapters' in runparams and runparams['adapters'].lower()!="none") else None )
+        self.prf(fp, stepQuality % locals() if ('quality' in runparams and runparams['quality'].lower()!="none") else None )
+        self.prf(fp, stepTrim % locals() if ('trim' in runparams and runparams['trim'].lower()!="none") else None  )
+       
         countstep = False
-        if (commonind and commonind.lower() != 'none'):
-     
+        if ('commonind' in runparams and  runparams['commonind'].lower() != 'none'):
            arr=re.split(r'[,:]+', self.parse_content(commonind))
-     
            for i in arr:
               countstep = True
               if(len(i)>1):
                 indexname=i
-              stepline=stepSeqMapping % locals()
-              print >>fp, '%s'%stepline
-     
-     
-        if (customind):
+              self.prf(fp, stepSeqMapping % locals() )
+        
+        if ('customind' in runparams and runparams['customind'].lower() != 'none'):
            for i in customind:
               countstep = True
               arr=i.split(':')
-              indexname=arr[1]
-              stepline=stepSeqMapping % locals()
-              print >>fp, '%s'%stepline
-     
+              indexname = runparams['customind']['FullPath'] + "/" + runparams['customind']['IndexPrefix'] 
+              self.prf( fp, stepSeqMapping % locals() )
+       
         if (countstep):
-           stepline=stepCounts % locals()
-           print >>fp, '%s'%stepline
-     
-        if (split and split.lower() != 'none'):
-           thenumberofreads=str(split)
-           stepline=stepSplit % locals()
-           print >>fp, '%s'%stepline
-     
-        if (pipeline):
-           deseq_count=1
-           for i in pipeline:
-              print i
-              arr=i.split(':')
-              pipename=arr[0]
-              if (pipename == "RNASeqRSEM"):
-                 stepline=stepRSEM % locals()
-                 print >>fp, '%s'%stepline
-                 g_i = "genes"
-                 t_e = "tpm"
-                 stepline=stepRSEMCount % locals()
-                 print >>fp, '%s'%stepline
-                 g_i = "genes"
-                 t_e = "expected_count"
-                 stepline=stepRSEMCount % locals()
-                 print >>fp, '%s'%stepline
-                 g_i = "isoforms"
-                 t_e = "tpm"
-                 stepline=stepRSEMCount % locals()
-                 print >>fp, '%s'%stepline
-                 g_i = "isoforms"
-                 t_e = "expected_count"
-                 stepline=stepRSEMCount % locals()
-                 print >>fp, '%s'%stepline
-                 type="RSEM"
-                 igv=arr[2]
-                 if (igv.lower()=="yes"):
-                    stepline=stepIGVTDF % locals()
-                    print >>fp, '%s'%stepline
-                 bam2bw=arr[3]
-                 if (bam2bw.lower()=="yes"):
-                    stepline=stepBam2BW % locals()
-                    print >>fp, '%s'%stepline
-                 if (len(arr)>4):
-                    rseqc=arr[4]
-                    if(rseqc=="1"):
-                       stepline=stepRSEQC % locals()
-                       print >>fp, '%s'%stepline
-                       stepline=stepMergeRSEQC % locals()
-                       print >>fp, '%s'%stepline
+           self.prf( fp, stepCounts % locals() )
+        if ('split' in runparams and runparams['split'].lower() != 'none'):
+           thenumberofreads=str(runparams['split'])
+           self.prf( fp, stepSplit % locals() )
+           
+        if ('pipeline' in runparams):
+           for pipe in runparams['pipeline']:
+              if (pipe['Type']=="RNASeqRSEM"):
+                 self.prf( fp, stepRSEM % locals() )
+                 gis = ("genes","isoforms")
+                 tes = ("expected_count", "tpm") 
+
+                 for g_i in gis:
+                   for t_e in tes:
+                     self.prf( fp, stepRSEMCount % locals() )
+
+                 self.writeVisualizationStr( fp, "RSEM", pipe, sep )
+                 self.writeRSeQC ( fp, "RSEM", pipe, sep )
+              
+              if (pipe['Type']=="Tophat"):
+                 self.prf( fp, stepTophat % locals() )
+                 type="tophat"
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergetophat"
+
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dup"+type
+
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 self.writeRSeQC ( fp, type, pipe, sep )
+
                     
-              if (pipename == "Tophat"):
-                 stepline=stepTophat % locals()
-                 print >>fp, '%s'%stepline
-                 igv=arr[2]
-                 type="Tophat"
-                 if (igv.lower()=="yes"):
-                    stepline=stepIGVTDF % locals()
-                    print >>fp, '%s'%stepline
-                 bam2bw=arr[3]
-                 if (bam2bw.lower()=="yes"):
-                    stepline=stepBam2BW % locals()
-                    print >>fp, '%s'%stepline
-                 if (len(arr)>4):
-                    rseqc=arr[4]   
-                    if(rseqc=="1"):
-                       stepline=stepRSEQC % locals()
-                       print >>fp, '%s'%stepline
-                       stepline=stepMergeRSEQC % locals()
-                       print >>fp, '%s'%stepline
-                 picRNA=0
-                 mulMet=0
-                 print len(arr)
-                 if (len(arr)>5):
-                    picRNA=arr[5]   
-                    if(picRNA=="1"): 
-                       metric="CollectRnaSeqMetrics"
-                       stepline=stepPicard % locals()
-                       print >>fp, '%s'%stepline
-                 if (len(arr)>6):
-                    mulMet=arr[6] 
-                    if(mulMet=="1"):    
-                        metric="CollectMultipleMetrics"
-                        stepline=stepPicard % locals()
-                        print >>fp, '%s'%stepline
-                 if (len(arr)>7):
-                    markDup=arr[7]
-                    if(markDup=="1"):  
-                        metric="MarkDuplicates"
-                        stepline=stepPicard % locals()
-                        print >>fp, '%s'%stepline
-                 if (picRNA=="1" or mulMet=="1"):
-                    stepline=stepMergePicard % locals()
-                    print >>fp, '%s'%stepline
-     
-              if (pipename == "DESeq"):
-                 stepline=stepDESeq2 % locals()
-                 print >>fp, '%s'%stepline
-                 deseq_count += 1
-     
-              if (pipename == "ChipSeq"):
+              if (pipe['Type'] == "DESeq"):
+                 deseq_name =( pipe['Name'] if ('Name' in pipe) else '' )
+                 self.prf( fp, '%s'%(stepDESeq2 % locals()) )
+
+              if (pipe['Type'] == "ChipSeq"):
                  #Arrange ChipSeq mapping step
                  indexname='Chip'
-                 stepline=stepSeqMapping % locals()
-                 print >>fp, '%s'%stepline
-                 if (split and split.lower() != 'none'):
-                     stepline=stepMergeChip % locals()
-                     print >>fp, '%s'%stepline
-                 #Set running macs step
-                 stepline=stepMACS % locals()
-                 print >>fp, '%s'%stepline
-                 stepline=stepAggregation % locals()
-                 print >>fp, '%s'%stepline
-     
-                 type="chip"
-                 if (split and split.lower() != 'none'):
-                     type="mergechip"
-                 igv=str(arr[6])
-                 if (igv.lower()=="yes"):
-                     stepline=stepIGVTDF % locals()
-                     print >>fp, '%s'%stepline
-     
-                 bam2bw=str(arr[7])
-                 if (bam2bw.lower()=="yes"):
-                     stepline=stepBam2BW % locals()
-                     print >>fp, '%s'%stepline
-                 metric="CollectRnaSeqMetrics"
-                 stepline=stepPicard % locals()
-                 print >>fp, '%s'%stepline
-                 metric="CollectMultipleMetrics"
-                 stepline=stepPicard % locals()
-                 print >>fp, '%s'%stepline
-                 metric="MarkDuplicates"
-                 stepline=stepPicard % locals()
-                 print >>fp, '%s'%stepline
-                 stepline=stepMergePicard % locals()
-                 print >>fp, '%s'%stepline
+                 self.prf( fp, '%s'%(stepSeqMapping % locals()) )
 
-              if (pipename == "BisulphiteMapping"):
-                 if (arr[1] == "1"):
-                    digestion=arr[2]
-                    stepline=stepBSMap % locals()
-                    print >>fp, '%s'%stepline
-                 if (arr[4] == "1"):
-                    stepline=stepMCall % locals()
-                    print >>fp, '%s'%stepline
-                 if (arr[8] == "1"):
-                    stepline=stepMComp % locals()
-                    print >>fp, '%s'%stepline
+                 type="chip"
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                     type="mergechip"
+
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dup"+type
+
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                                  
                  #Set running macs step
-        
-        level=0
-        if (clean):
-           level=1
-        stepline=stepClean % locals()
-        print >>fp, '%s'%stepline
+                 self.prf( fp, '%s'%(stepMACS % locals()) )
+                 self.prf( fp, '%s'%(stepAggregation % locals()) )
      
+
+              if (pipe['Type'] == "BisulphiteMapping"):
+                 self.prf( fp, '%s'% ( stepBSMap % locals() if ('BSMapStep' in pipe and pipe['BSMapStep'].lower()=="yes") else None ) )
+                 
+                 type="bsmap"
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergebsmap"
+                    
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dup"+type 
+                 
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 
+                 self.prf( fp, '%s'% ( stepMCall % locals() if ('MCallStep' in pipe and pipe['MCallStep'].lower()=="yes") else None ) )
+             
+              if (pipe['Type'] == "DiffMeth"):
+                 methylkit_name =( pipe['Name'] if ('Name' in pipe) else '' )
+                 self.prf( fp, '%s'%(stepMethylKit % locals()) )             
+
+        level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
+        print >>fp, '%s'%(stepClean % locals())
+
         fp.close()
+      except Exception, ex:
+        self.stop_err('Error (line:%s)running writeWorkflow\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
+
 
     def replace_space(self, content) :
         content = re.sub('[\s\t,]+', '_', content)
@@ -606,8 +596,7 @@ def main():
         runidstr=" -r "+str(rpid)
         
         dolphin.config.read("../config/config.ini")
-
-                
+    
         print dolphin.params_section
         logging.info(dolphin.params_section)
         runparamsids=dolphin.getRunParamsID(rpid)
@@ -634,7 +623,7 @@ def main():
 
            print "%s %s %s %s"%(inputdir, backup_dir, amazon_bucket, outdir)
            logging.info("%s %s %s %s"%(inputdir, backup_dir, amazon_bucket, outdir))
-
+           
            if (isbarcode):
                spaired, inputparams, barcodes=dolphin.getLaneList(runparamsid)
            else:
@@ -643,58 +632,20 @@ def main():
 
            runparams = dolphin.getRunParams(runparamsid)
            logging.info(runparams)
-           
+    
            input_fn      = logdir+'/run'+str(rpid)+'/input.'+str(rpid)+'.'+str(os.getpid())+'.txt'
-
-           fastqc      = runparams.get('fastqc')
-           adapter     = runparams.get('adapter')
-           quality     = runparams.get('quality')
-           trim        = runparams.get('trim')
-           clean       = runparams.get('clean')
-           trimpaired  = runparams.get('trimpaired')
-           split       = runparams.get('split')
-           commonind   = runparams.get('commonind')
-           advparams   = runparams.get('advparams')
-           resume      = runparams.get('resume')
-           customind   = runparams.get('custom')
-           pipeline    = runparams.get('pipeline')
-           genomebuild = runparams.get('genomebuild')
-
-           logging.info("######## INPUTS #########")
-           logging.info("inputparams:"+inputparams)
-           logging.info("barcodes:%s"%barcodes)
-           logging.info("paired:%s"%spaired)
-           logging.info("adapter:%s"%adapter)
-           logging.info("quality:%s"%quality)
-           logging.info("trim:%s"%trim)
-           logging.info("resume:%s"%resume)
-           logging.info("pipeline:%s"%pipeline)
-           logging.info("customind:%s"%customind)
-           logging.info("genomebuild:%s"%genomebuild)
-           logging.info("######## INPUTS END #########")
-
-           if customind:
-              customind    = [i for i in customind]
-
-           if pipeline:
-              pipeline     = [i for i in pipeline]
-           #print pipeline
+           
            if not outdir :
               print >>stderr, 'Error: Output dir is NULL.'
               exit( 128 )
 
            content = dolphin.parse_content( inputparams )
-           if commonind:
-              commonind = re.sub('test', '', commonind)
-              gb=genomebuild.split(',')
-              commonind = re.sub('genome', str(gb[1]), commonind)
-
-           dolphin.write_input(input_fn, inputdir, content, genomebuild, spaired, barcodes, adapter, quality, trim, trimpaired, split, commonind, advparams, customind, pipeline )
+          
+           dolphin.writeInput(input_fn, inputdir, content, runparams, barcodes)
 
            workflow = logdir+'/run'+str(rpid)+'/seqmapping_workflow.'+str(rpid)+'.'+str(os.getpid())+'.txt'
 
-           dolphin.write_workflow(resume, gettotalreads, amazonupload, backupS3, runparamsid, customind, commonind, pipeline, barcodes, fastqc, adapter, quality, trim, split, workflow, clean)
-
+           dolphin.writeWorkflow(workflow, gettotalreads, amazonupload, backupS3, runparamsid, runparams)
            dolphin_tools_dir=dolphin.config.get(dolphin.params_section, "dolphin_tools_src_path") 
            dolphin_default_params=dolphin.config.get(dolphin.params_section, "dolphin_default_params_path")
            wkeystr=''
@@ -714,7 +665,7 @@ def main():
                  logging.info("failed")
                  dolphin.stop_err("failed")
    except Exception, ex:
-        dolphin.stop_err('Error running dolphin_wrapper.py\n' + str(ex))
+        dolphin.stop_err('Error (line:%s)running dolphin_wrapper.py\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
 
    sys.exit(0)
 

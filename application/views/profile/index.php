@@ -21,6 +21,48 @@
 					  </div>
 					</div>
 				</div><!-- End Group modal -->
+				<div class="modal fade" id="awsModal" tabindex="-1" role="dialog" aria-labelledby="myAWSModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myAWSModalLabel">Add New Amazon Keys</h4>
+						</div>
+						<form name="editAWSForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<label id="awsLabel"></label>
+									<div id="awsModalDiv" class="form-group"></div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmAWSButton" class="btn btn-primary" data-dismiss="modal" onclick="awsButton()">Submit</button>
+							  <button type="button" id="cancelAWSButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End aws modal -->
+				<div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="mySubmitModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="mySubmitModalLabel">Submission:</h4>
+						</div>
+						<form name="editAWSForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<label id="submitLabel"></label>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button id="finalAWSButton" type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.reload()">OK</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End aws modal -->
 				<section class="content-header">
 					<h1>
 						Profile
@@ -93,10 +135,11 @@
 									</div>
 									<div class="tab-pane" id="bucket">
 										<div id="amazon_keys" class="margin">
-											<?php echo $html->getRespBoxTableStreamNoExpand("Update your Amazon Buckets", "amazon", ['Bucket', 'Access Key', 'Secret Key'], ['bucket','access_key','secret_key']); ?>
+											<?php echo $html->getRespBoxTableStreamNoExpand("Update your Amazon Buckets", "amazon", ['Group','Access Key', 'Secret Key'], ['group','access_key','secret_key']); ?>
 										</div>
 										<div class="box-footer margin">
-											<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Update</button>
+											<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Submit</button>
+											<button type="button" id="addAWS" class="btn btn-primary" onclick="addAWSButton()">Add Amazon</button>
 										</div>
 									</div>
 								</div>

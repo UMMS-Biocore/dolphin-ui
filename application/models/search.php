@@ -111,15 +111,15 @@ class Search extends VanillaModel {
         return rtrim($group_str, ",");
     }
     function getSampleFileLocation($value){
-        $result = $this->query("select ngs_temp_sample_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir from ngs_temp_sample_files left join ngs_dirs on ngs_temp_sample_files.dir_id = ngs_dirs.id where sample_id = $value");
+        $result = $this->query("select ngs_temp_sample_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_temp_sample_files left join ngs_dirs on ngs_temp_sample_files.dir_id = ngs_dirs.id where sample_id = $value");
 		return json_decode($result, true);
     }
     function getSampleFastqFileLocation($value){
-        $result = $this->query("select ngs_fastq_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir from ngs_fastq_files left join ngs_dirs on ngs_fastq_files.dir_id = ngs_dirs.id where sample_id = $value");
+        $result = $this->query("select ngs_fastq_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_fastq_files left join ngs_dirs on ngs_fastq_files.dir_id = ngs_dirs.id where sample_id = $value");
 		return json_decode($result, true);
     }
 	function getLaneFileLocation($value){
-        $result = $this->query("select ngs_temp_lane_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir from ngs_temp_lane_files left join ngs_dirs on ngs_temp_lane_files.dir_id = ngs_dirs.id where lane_id = $value");
+        $result = $this->query("select ngs_temp_lane_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_temp_lane_files left join ngs_dirs on ngs_temp_lane_files.dir_id = ngs_dirs.id where lane_id = $value");
 		return json_decode($result, true);
     }
 }

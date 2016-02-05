@@ -18,7 +18,15 @@ function sendToPlot(id){
 }
 
 function sendToAdvancedStatus(run_id){
-	window.location.href = BASE_PATH+'/stat/advstatus/' + run_id;
+	$.ajax({ type: "GET",
+		url: BASE_PATH +"/ajax/sessionrequests.php",
+		data: { p: 'setAdvStatusRunID', adv_status_id: run_id },
+		async: false,
+		success : function(s)
+		{
+			window.location.href = BASE_PATH+'/stat/advstatus';
+		}
+	});
 }
 
 function getWKey(run_id){
@@ -44,7 +52,7 @@ function selectService(id){
 			 success : function(s)
 			 {
 				runparams.fnClearTable();
-				var parsed = JSON.parse(s);
+				var parsed = s;
 				for(var i = 0; i < parsed.length; i++) {
 					runparams.fnAddData([
 						parsed[i].title,
@@ -69,7 +77,7 @@ function selectJob(id){
 			async: false,
 			success : function(s)
 			{
-				var parsed = JSON.parse(s);
+				var parsed = s;
 				joboutDataModal(parsed[0].jobname, parsed[0].jobout);
 			}
 		});

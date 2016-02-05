@@ -50,6 +50,7 @@
 										<div class="box-header">
 											<h3 class="box-title">Report Selection
 											</h3>
+											<?php echo $html->getInfoBox('report_selected') ?>
 										</div>
 										<div class= "box-body">
 											<select id="report_multi_box" class="form-control" size="31" multiple>

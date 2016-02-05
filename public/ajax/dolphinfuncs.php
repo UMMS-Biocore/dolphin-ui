@@ -27,7 +27,8 @@ else if($p == "updateHashBackup")
    print $input."<br>";
    print $dirname."<br>";
    print $hashstr."<br>";
-   $data=$query->queryTable(" 
+   $data=$query->queryTable("
+   SET SQL_SAFE_UPDATES = 0;
    UPDATE  ngs_fastq_files nff, 
    (SELECT nff.id FROM ngs_fastq_files nff, ngs_dirs nd
    where nff.dir_id = nd.id AND 
@@ -38,9 +39,13 @@ else if($p == "updateHashBackup")
    ");
 }
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
 ?>

@@ -7,7 +7,6 @@ require_once("../../config/config.php");
 require_once("../../includes/dbfuncs.php");
 
 $query = new dbfuncs();
-//header
 
 $data = '';
 
@@ -156,10 +155,13 @@ if ($p == 'experimentSeriesCheck'){
 	");
 }
 
-//footer
-//header('Cache-Control: no-cache, must-revalidate');
-//header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-//header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
 ?>

@@ -23,7 +23,7 @@ function checkFastlaneInput(info_array){
 		async:	false,
 		success: function(s)
 		{
-			username = JSON.parse(s)[0];
+			username = s[0];
 		}
 	});
 	
@@ -99,16 +99,9 @@ function checkFastlaneInput(info_array){
 			}
 			if (input_bool_check) {
 				console.log(input_array);
-				var end = 0;
-				if (info_array[1] == 'yes') {
-					end = -1;
-				}else{
-					end = 0;
-				}
-				console.log(input_array);
 				console.log(info_array);
 				for(var z = 0; z < input_array.length; z++){
-					for(var y = input_array[z].length - 1; y > end; y--){
+					for(var y = input_array[z].length - 1; y > 0; y--){
 						console.log(info_array[x-1]+"/"+input_array[z][y]);
 						$.ajax({
 							type: 	'GET',
@@ -149,6 +142,9 @@ function checkFastlaneInput(info_array){
 					}
 				});
 				var dir_check_2;
+				if (info_array[x].substring(0,1) != '/'  && info_array[x].indexOf('/') > -1) {
+					info_array[x] = '/' + info_array[x];
+				}
 				$.ajax({
 					type: 	'GET',
 					url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&outdir=' + info_array[x],

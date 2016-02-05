@@ -75,10 +75,13 @@
 																			<option>no</option>", 4)?>
 						<?php echo $html->getStaticSelectionBox("Permissions", "perms", "<option value='3'>only me</option>
 																			<option value='15'>only my group</option>
-																			<option value='32'>everyone</option>", 6)?>
-						<?php echo $html->getStaticSelectionBox("Group Selection", "groups", $html->groupSelectionOptions($groups), 6)?>
+																			<option value='32'>everyone</option>", 4)?>
+						<?php echo $html->getStaticSelectionBox("Group Selection", "groups", $html->groupSelectionOptions($groups), 4)?>
+						<?php echo $html->getStaticSelectionBox("Submission", "submission", "<option value='0'>None</option>
+																			<option value='1'>Encode</option>
+																			<option value='2'>Geo</option>", 4)?>
 					<?php echo $html->startExpandingSelectionBox(6)?>
-						<?php echo $html->getExpandingSelectionBox("Adapter Removal", "adapter", 1, 12, ["adapter"], [["TEXTBOX"]])?>
+						<?php echo $html->getExpandingSelectionBox("Adapter Removal", "adapters", 1, 12, ["adapters"], [["TEXTBOX"]])?>
 						<?php echo $html->getExpandingSelectionBox("Split FastQ", "split", 1, 12, ["number of reads per file"], [["TEXT","5000000"]])?>
 						<?php echo $html->getExpandingSelectionBox("Custom Sequence Set", "custom", 1, 12, ["Add new Custom Sequence Set"], [["BUTTON"]])?>
 						<?php echo $html->getExpandingSelectionBox("Additional Pipelines", "pipeline", 1, 12, ["Add a Pipeline"], [["BUTTON"]])?>

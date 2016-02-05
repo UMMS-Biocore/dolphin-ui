@@ -155,6 +155,7 @@ else if($p == 'deleteSelected')
 		$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
 		$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
 	}
+	$data = '';
 }
 else if ($p == 'intialRunCheck')
 {
@@ -162,9 +163,13 @@ else if ($p == 'intialRunCheck')
 	$data=$query->queryTable("SELECT sample_id FROM ngs_fastq_files WHERE sample_id IN ($samples) AND total_reads > 0");
 }
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
 ?>

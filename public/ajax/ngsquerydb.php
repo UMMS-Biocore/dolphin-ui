@@ -71,7 +71,7 @@ else if ($p == 'grabReload')
 	if (isset($_GET['groupID'])){$groupID = $_GET['groupID'];}
 
 	$data=$query->queryTable("
-	SELECT outdir, json_parameters, run_name, run_description
+	SELECT outdir, json_parameters, run_name, run_description, group_id, perms
 	FROM ngs_runparams
 	WHERE ngs_runparams.id = $groupID $andPerms
 	");
@@ -464,9 +464,13 @@ else if ($p == "changeOwnerExperiment")
 	$data=json_encode('passed');
 }
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Content-type: application/json');
+	echo $data;
+	exit;
+}else{
+	echo $data;
+}
 ?>

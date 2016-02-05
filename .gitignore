@@ -1,8 +1,7 @@
 config/config.php
-tmp/files/a.xlsx
-tmp/run.log
+tmp/files/*
 public/pub
-public/tmp/files/*.json2
+public/tmp/files/*
 .DS_Store
 .com.greenworldsoft.syncfolderspro
 scripts/seqmapping_workflow.txt

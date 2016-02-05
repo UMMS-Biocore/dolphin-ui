@@ -4,7 +4,7 @@
  *Ascription:
  */
 
-function postInsertRunparams(json, outputdir, name, description, perms, group){
+function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, group){
 
    var successCheck = false;
    var runlistCheck = "";
@@ -28,7 +28,7 @@ function postInsertRunparams(json, outputdir, name, description, perms, group){
 			outdir_check = r;
 		}
 	});
-   if(window.location.href.split("/")[window.location.href.split("/").length - 2] == 'fastlane'){
+   if(window.location.href.split("/").indexOf('fastlane') > -1){
 		//if from fastlane
        runGroupID = 'new';
    }else if (outdir_check != 0) {
@@ -38,10 +38,10 @@ function postInsertRunparams(json, outputdir, name, description, perms, group){
        runGroupID = 'new';
    }
 
-   if (json.indexOf('"barcodes":"none"') != -1) {
+   if (JSON_OBJECT.barcodes == 'none') {
       barcode = 0;
    }
-   
+   json = JSON.stringify(JSON_OBJECT);
    $.ajax({
            type: 	'POST',
            url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',
@@ -109,6 +109,19 @@ function resumeSelected(run_id, groupID){
     location.reload();
 }
 
+function resetSelected(run_id, groupID){
+	$.ajax({ type: "POST",
+		url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+		data: { p: "resetWKey", id: run_id },
+		async: false,
+		success : function(s)
+		{
+		}
+	});
+    
+    //   UPDATE THE PAGE
+    location.reload();
+}
 
 function confirmDeleteRunparams(run_id){
    $.ajax({

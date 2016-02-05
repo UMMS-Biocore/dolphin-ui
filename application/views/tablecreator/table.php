@@ -13,6 +13,27 @@
 				<!-- Main content -->
 				<?php echo $html->sendJScript("generated", "", "", "", $uid, $gids); ?>
 				<section class="content">
+					<div class="row margin">
+						<div class="col-md-2">
+							<div id="downloadOptions" class="btn-group">
+								<button id="generated_button" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Download Type  <span class="fa fa-caret-down"></span></button>
+							</div>
+						</div>
+						<div class="col-md-8">
+							<form class="form-horizontal">
+								<div id="save_table" class="form-group">
+									<label class='col-sm-2 control-label'>Save Table As:</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" id="input_table_name">
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-md-2">
+							<button id="save_table_button" class="btn btn-primary pull-right" type="button" onclick="saveTable()">Save Table</button>
+							<button class="btn btn-primary pull-right" type="button" onclick="toTableListing()">Tables List</button>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div id="generated_table" class="margin col-md-12">
@@ -23,18 +44,16 @@
 								?>
 							</div>
 						</div>
-						<div class="col-md-12">
-							<div id="text_table" class="margin col-md-12">
-								<?php echo $html->getExpandingAnalysisBox('Export Table', "table_export", false); ?>
-							</div>
-							<div id="name_run_box" class="margin col-md-12">
-								<?php echo $html->getStaticSelectionBox("Save Table As:", "input_table_name", "TEXT", 12)?>
-							</div>
-							<div class="margin col-md-12">
-								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="saveTable()">Save Table</button>
-								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="backToTableIndex()">Back</button>
-							</div>
-						</div><!-- /.col (LEFT) -->
 					</div><!-- /.row -->
+					<div class="row">
+						<div class="col-md-12">
+							<div id='permissions_group' class="margin col-md-12">
+								<?php echo $html->getStaticSelectionBox("Group Selection", "groups", $html->groupSelectionOptions($groups), 6)?>
+								<?php echo $html->getStaticSelectionBox("Permissions", "perms", "<option value='3'>only me</option>
+																		<option value='15'>only my group</option>
+																		<option value='32'>everyone</option>", 6)?>
+							</div>
+						</div>
+					</div>
 				</section><!-- /.content -->
 

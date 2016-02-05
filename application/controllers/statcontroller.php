@@ -21,12 +21,11 @@ class StatController extends VanillaController {
         $this->set('gids', $gids);
 	}
 
-    function advstatus($run_id){
+    function advstatus(){
         $this->set('uid', $_SESSION['uid']);
         $gids = $this->Stat->getGroup($_SESSION['user']);
         $this->set('gids', $gids);
         
-        $this->set('run_id', $run_id);
         $this->set('field', 'Status');
     }
 	

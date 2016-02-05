@@ -23,26 +23,30 @@ function updateProfile(){
 
 	if (access_key_change.length > 0) {
 		for(var x = 0; x < access_key_change.length; x++){
-			$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/profiledb.php",
-				data: { p: 'alterAccessKey', id: access_key_change[x].split("_")[0], a_key: document.getElementById(access_key_change).value},
-				async: false,
-				success : function(s)
-				{
-				}
-			});
+			if (access_key_change[x] != 'new_access_key') {
+				$.ajax({ type: "GET",
+					url: BASE_PATH+"/public/ajax/profiledb.php",
+					data: { p: 'alterAccessKey', id: access_key_change[x].split("_")[0], a_key: document.getElementById(access_key_change[x]).value},
+					async: false,
+					success : function(s)
+					{
+					}
+				});
+			}
 		}
 	}
 	if (secret_key_change.length > 0) {
 		for(var x = 0; x < secret_key_change.length; x++){
-			$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/profiledb.php",
-				data: { p: 'alterSecretKey', id: secret_key_change[x].split("_")[0], s_key: document.getElementById(secret_key_change).value},
-				async: false,
-				success : function(s)
-				{
-				}
-			});
+			if (secret_key_change[x] != 'new_secret_key') {
+				$.ajax({ type: "GET",
+					url: BASE_PATH+"/public/ajax/profiledb.php",
+					data: { p: 'alterSecretKey', id: secret_key_change[x].split("_")[0], s_key: document.getElementById(secret_key_change[x]).value},
+					async: false,
+					success : function(s)
+					{
+					}
+				});
+			}
 		}
 	}
 	
@@ -67,6 +71,7 @@ function obtainPermissions(id){
 			async: false,
 			success : function(s)
 			{
+				console.log(s);
 				if (s.length > 0) {
 					verdict = true;
 				}
@@ -83,6 +88,61 @@ function credentials_change(id){
 	}
 }
 
+function addAWSButton(){
+	$('#awsModal').modal({
+		show: true
+	});
+	document.getElementById('myAWSModalLabel').innerHTML = 'Groups you have Permissions to add keys to:';
+	document.getElementById('awsModalDiv').innerHTML = '<label id="awsLabelGroup">Group:</label>';
+	document.getElementById('awsModalDiv').innerHTML += '<select id="viewAWS" class="form-control">';
+	document.getElementById('awsModalDiv').innerHTML += '<label id="awsLabelAccess">Access Key:</label>';
+	document.getElementById('awsModalDiv').innerHTML += '<input id="new_access_key" class="form-control">';
+	document.getElementById('awsModalDiv').innerHTML += '<label id="awsLabelSecret">Secret Key:</label>';
+	document.getElementById('awsModalDiv').innerHTML += '<input id="new_secret_key" class="form-control">';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'viewAmazonGroupCreation' },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for (var x = 0; x < s.length; x++) {
+				document.getElementById('viewAWS').innerHTML += '<option value="'+s[x].id+'">'+s[x].name+'</option>';
+			}
+		}
+	});
+}
+
+function awsButton(){
+	var confirmPassed;
+	var group = document.getElementById('viewAWS').value;
+	if (group > 0) {
+		var a_key = document.getElementById('new_access_key').value;
+		var s_key = document.getElementById('new_secret_key').value;
+		console.log(a_key);
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/profiledb.php",
+			data: { p: 'createAWSKeys', group: group, a_key: a_key, s_key: s_key },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				confirmPassed = s;
+			}
+		});
+		if (confirmPassed == 0) {
+			document.getElementById('submitLabel').innerHTML ='New AWS keys have been submitted for that group!';
+		}else{
+			document.getElementById('submitLabel').innerHTML ='An error has occured, please try to add keys again.';
+		}
+	}else{
+		document.getElementById('submitLabel').innerHTML ='You are not the owner of any groups.';
+	}
+	$('#submitModal').modal({
+		show: true
+	});
+}
+
 function obtainKeys(){
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/profiledb.php",
@@ -91,15 +151,15 @@ function obtainKeys(){
 			success : function(s)
 			{
 				var new_json_array = [];
-				for(var i = 0; i < s.length; i++) {
+				for(var i = 0; i < s.length; i++ ){
 					if (obtainPermissions(s[i].id)) {
 						new_json_array.push(
-						{"bucket":s[i].bucket,
+						{"group":s[i].name,
 						"access_key":'<input id="'+s[i].id+'_access" type="textbox" class="input-group col-md-12" value="'+s[i].aws_access_key_id+'" onchange="credentials_change(this.id)">',
 						"secret_key":'<input id="'+s[i].id+'_secret" type="textbox" class="input-group col-md-12" value="'+s[i].aws_secret_access_key+'" onchange="credentials_change(this.id)">'});
 					}else{
 						new_json_array.push(
-						{"bucket":s[i].bucket,
+						{"group":s[i].name,
 						"access_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(17).join('*') + s[i].aws_access_key_id.substring(16, 20)+'" disabled>',
 						"secret_key":'<input type="textbox" class="input-group col-md-12" value="'+Array(37).join('*') + s[i].aws_secret_access_key.substring(36,40)+'" disabled>'});
 					}

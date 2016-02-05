@@ -19,6 +19,10 @@ if (!empty($_SERVER["HTTP_HOST"])){
    {
       $param_section="Localhost";
    }
+   else if  ( preg_match("/dolphin.umassmed.edu/", $http_host) )
+   {
+      $param_section="DolphinDev";
+   }
    ###########################################
 }
  

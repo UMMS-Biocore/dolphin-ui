@@ -541,6 +541,10 @@ e range"><i class="fa fa-calendar"></i></button>
 				foreach ($fastq_files as $ff){
 						$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $ff['id'].', \'file_name\', \'ngs_fastq_files\', this)">'.$ff['file_name'].'</td></tr>';
 				}
+				$html.='<thead><tr><th>Amazon Backup:</th></tr></thead>
+						<tbody>';
+				$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $fastq_files[0]['dir_id'].', \'amazon_bucket\', \'ngs_dirs\', this)">'.$fastq_files[0]['amazon_bucket'].'</td></tr>
+						</tbody>';
 				$html .= '</tbody></table>
 						</div>';
 		}
@@ -947,7 +951,7 @@ e range"><i class="fa fa-calendar"></i></button>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">
-										<h4 style="text-align: center" class="margin">Info</h3>
+										<h3 style="text-align: center" class="margin">Info</h3>
 								</li>
                                 <li>
 										<div id="'.$id.'_info" class="slimScrollDiv margin" style="position: relative; overflow: hidden; width: '.$width.'; height: auto;">

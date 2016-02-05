@@ -8,7 +8,7 @@ $menuhtml='                    <ul class="sidebar-menu">
 foreach ($parentMenus as $parentitem):
     $menuhtml.=($parentitem->{'treeview'})?'<li class="treeview">':'<li>';
     if($parentitem->{'link'} == 'readthedocs'){
-        $menuhtml.='<a href="http://dolphin.readthedocs.org/en/develop/index.html"><i class="fa '.$parentitem->{'iconname'}.'"></i> <span>'.$parentitem->{'name'}.'</span>';
+        $menuhtml.='<a href="http://dolphin.readthedocs.org"><i class="fa '.$parentitem->{'iconname'}.'"></i> <span>'.$parentitem->{'name'}.'</span>';
     }else{
         $menuhtml.='<a href="'.BASE_PATH.$parentitem->{'link'}.'"><i class="fa '.$parentitem->{'iconname'}.'"></i> <span>'.$parentitem->{'name'}.'</span>';
     }

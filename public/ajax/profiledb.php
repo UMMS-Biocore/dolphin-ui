@@ -20,6 +20,17 @@ if ($p == 'alterAccessKey')
     WHERE id = $id
     ");
 }
+else if ($p == 'newAmazonKeys')
+{
+	if (isset($_GET['a_key'])){$a_key = $_GET['a_key'];}
+	if (isset($_GET['s_key'])){$s_key = $_GET['s_key'];}
+    $data=$query->runSQL("
+	INSERT INTO amazon_credentials
+    (`aws_access_key_id`, `aws_secret_access_key`)
+	VALUES
+	('$a_key', '$s_key')
+    ");
+}
 else if ($p == 'alterSecretKey')
 {
     if (isset($_GET['id'])){$id = $_GET['id'];}
@@ -48,14 +59,62 @@ else if ($p == 'checkAmazonPermissions')
     SELECT DISTINCT id FROM amazon_credentials where id = $a_id));
     ");
 }
+else if ($p == 'viewAmazonGroupCreation')
+{
+	$data=$query->queryTable("
+	SELECT id, name
+	FROM groups
+	WHERE owner_id = ".$_SESSION['uid']."
+	AND id NOT IN (
+		SELECT groups.id
+		FROM amazon_credentials
+		LEFT JOIN group_amazon
+		ON amazon_credentials.id = group_amazon.amazon_id
+		LEFT JOIN groups
+		ON groups.id = group_amazon.group_id
+		LEFT JOIN user_group
+		ON user_group.g_id = groups.id
+		WHERE user_group.u_id = ".$_SESSION['uid']."
+	)
+	");
+}
 else if ($p == 'obtainAmazonKeys')
 {
     $data=$query->queryTable("
-    SELECT * FROM amazon_credentials WHERE id IN(
-        SELECT amazon_id FROM group_amazon WHERE id IN(
-            SELECT id FROM groups WHERE id IN(
-                SELECT g_id FROM user_group WHERE u_id = ".$_SESSION['uid'].")))
+    SELECT amazon_credentials.id, name, aws_access_key_id, aws_secret_access_key
+	FROM amazon_credentials
+	LEFT JOIN group_amazon
+	ON amazon_credentials.id = group_amazon.amazon_id
+	LEFT JOIN groups
+	ON groups.id = group_amazon.group_id
+	LEFT JOIN user_group
+	ON user_group.g_id = groups.id
+	WHERE user_group.u_id = ".$_SESSION['uid']."
     ");
+}
+else if ($p == 'createAWSKeys')
+{
+	if (isset($_GET['group'])){$group = $_GET['group'];}
+	if (isset($_GET['a_key'])){$a_key = $_GET['a_key'];}
+	if (isset($_GET['s_key'])){$s_key = $_GET['s_key'];}
+	$data=$query->runSQL("
+	INSERT INTO amazon_credentials
+	(`aws_access_key_id`, `aws_secret_access_key`)
+	VALUES
+	('$a_key', '$s_key')
+	");
+	$aws_id=$query->queryAVal("
+	SELECT id
+	FROM amazon_credentials
+	WHERE aws_access_key_id = '$a_key'
+	AND aws_secret_access_key = '$s_key'
+	");
+	$data=$query->runSQL("
+	INSERT INTO group_amazon
+	(`group_id`, `amazon_id`)
+	VALUES
+	($group, $aws_id)
+	");
 }
 else if ($p == 'profileLoad')
 {
@@ -239,9 +298,13 @@ else if ($p == 'getUID')
 
 
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json');
-echo $data;
-exit;
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
 ?>

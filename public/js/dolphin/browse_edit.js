@@ -11,7 +11,6 @@ var element_highlighted_uid;
 var element_highlighted_id;
 var element_highlighted_type;
 var element_highlighted_onclick;
-
 var experimentPerms = [];
 var lanePerms = [];
 var samplePerms = [];

@@ -32,14 +32,20 @@ class FastlaneController extends VanillaController {
 		if(isset($_SESSION['pass_fail_values'])){$pass_fail_values = $_SESSION['pass_fail_values'];}
 		if(isset($_SESSION['bad_files'])){$bad_files = $_SESSION['bad_files'];}
 		if(isset($_SESSION['bad_samples'])){$bad_samples = $_SESSION['bad_samples'];}
-		if(isset($_SESSION['group_selected'])){$group_selected = $_SESSION['group_selected'];}
-		
 		if(isset($_SESSION['fastlane_values'])){
-			$fastlane_array = explode(",",$fastlane_values);
-			$pass_fail_array = explode(",",$pass_fail_values);
-			$bad_samples_array = explode(",",$bad_samples);
-			$bad_files_array = explode(",", $bad_files);
-			$fastlane_values = str_replace("\n", ":", $fastlane_values);
+			if(isset($fastlane_values)){
+				$fastlane_values = str_replace("\n", ":", $fastlane_values);
+				$fastlane_array = explode(",",$fastlane_values);
+			}
+			if(isset($barcode_array)){
+				$pass_fail_array = explode(",",$pass_fail_values);
+			}
+			if(isset($pass_fail_values)){
+				$bad_samples_array = explode(",",$bad_samples);
+			}
+			if(isset($bad_files)){
+				$bad_files_array = explode(",", $bad_files);
+			}
 		}
 		if($pass_fail_array != []){
 			if($pass_fail_array[0] == "true" || $pass_fail_array == "false"){

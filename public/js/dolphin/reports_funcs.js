@@ -31,7 +31,6 @@ function parseTSV(jsonName, url_path){
 
 function parseMoreTSV(jsonNameArray, url_path){
 	var parsedArray = [];
-	console.log(BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path);
 	$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
 			async: false,
@@ -67,9 +66,25 @@ function createSummary(fastqc_summary) {
 
 function createDetails(libraries) {
 	var masterDiv = document.getElementById('details_exp_body');
-	var hrefSplit = window.location.href.split("/");
-	var runId = hrefSplit[hrefSplit.length - 2];
-	var pairCheck = findIfMatePaired(runId);
+	var run_id = '0';
+	$.ajax({ type: "GET",
+		url: BASE_PATH +"/ajax/sessionrequests.php",
+		data: { p: 'getReportsRunID' },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			var returnedSamples = s.split(',');
+			console.log(returnedSamples);
+			for(var x = 0; x < s.length; x++){
+				if (x == 0) {
+					run_id = returnedSamples[x];
+				}
+			}
+		}
+	});
+	var wkey = getReportWKey(run_id);
+	var pairCheck = findIfMatePaired(run_id);
 	
 	for(var x = 0; x < libraries.length; x++){
 		if (pairCheck) {
@@ -183,8 +198,18 @@ function showTable(type){
 				objList = s;
 			}
 	});
+	for(var d = 0; d < objList.length; d++){
+		var keys = obtainObjectKeys(objList[d]);
+		var newObj = {};
+		for(var c = 0; c < keys.length; c++){
+			if(!isNaN(parseFloat(keys[c][0])) && isFinite(keys[c][0])){
+				keys[c] = "_" + keys[c];
+			}
+			newObj[keys[c].replace(/\./g, "_")] = objList[d][keys[c]];
+		}
+		objList[d] = newObj
+	}
 	var keys = obtainObjectKeys(objList[0]);
-	console.log(keys);
 	
 	if(currentResultSelection.split(".")[currentResultSelection.split(".").length - 1] == "tsv" || type_dictionary.indexOf(currentResultSelection) > -1){
 		var masterDiv = document.getElementById(type+'_exp_body');
@@ -467,11 +492,25 @@ function numberWithCommas(x) {
 $(function() {
 	"use strict";
 	if (phpGrab.theSegment == 'report') {
-		var hrefSplit = window.location.href.split("/");
-		var runId = hrefSplit[hrefSplit.length - 2];
-		wkey = getReportWKey(runId);
-		var samples = hrefSplit[hrefSplit.length - 1].substring(0, hrefSplit[hrefSplit.length - 1].length - 1).split(",");
-		
+		var run_id = '0';
+		var samples = [];
+		$.ajax({ type: "GET",
+			url: BASE_PATH +"/ajax/sessionrequests.php",
+			data: { p: 'getReportsRunID' },
+			async: false,
+			success : function(s)
+			{
+				var returnedSamples = s.split(',');
+				for(var x = 0; x < returnedSamples.length; x++){
+					if (x == 0) {
+						run_id = returnedSamples[x];
+					}else{
+						samples.push(returnedSamples[x]);
+					}
+				}
+			}
+		});
+		wkey = getReportWKey(run_id);
 		var summary_files = [];
 		var count_files = [];
 		var RSEM_files = [];
@@ -614,12 +653,14 @@ $(function() {
 				}
 			}
 		}else{
+			document.getElementById('empty_div').innerHTML = '<h3 class="text-center">Your results have not been generated yet.  If your run has errored out, please contact your Dolphin Admin.' +
+					'  If your run is currently running or queued, please be patient as the data is being generated.</h3>';
 			document.getElementById('send_to_plots').disabled = true;
 			document.getElementById('initial_mapping_exp').remove();
 		}
 		
 		//Create a check for FASTQC output????
-		if (getFastQCBool(runId)) {
+		if (getFastQCBool(run_id)) {
 			createSummary(true);
 			createDetails(libraries);
 		}else{

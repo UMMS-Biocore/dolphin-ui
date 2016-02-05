@@ -9,6 +9,7 @@ CREATE TABLE `biocore`.`ngs_file_submissions` (
   `file_uuid` VARCHAR(100) NULL DEFAULT NULL,
   `file_acc` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`));
+<<<<<<< HEAD
 
 CREATE TABLE `biocore`.`ngs_treatment` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -60,3 +61,5 @@ ADD COLUMN `replicate_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `experiment_uui
 ADD COLUMN `treatment_id` INT NULL DEFAULT NULL AFTER `replicate_uuid`,
 ADD COLUMN `antibody_lot_id` INT NULL DEFAULT NULL AFTER `treatment_id`,
 ADD COLUMN `biosample_id` INT NULL DEFAULT NULL AFTER `antibody_lot_id`;
+=======
+>>>>>>> develop

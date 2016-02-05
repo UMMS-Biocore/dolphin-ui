@@ -9,11 +9,7 @@ require_once("../../includes/dbfuncs.php");
 if (isset($_GET['p'])){$p = $_GET['p'];}
 if (isset($_POST['p'])){$p = $_POST['p'];}
 
-if($p == "sessionTest")
-{
-	echo $_SESSION['uid'];
-}
-else if ($p == "sendBasketInfo")
+if ($p == "sendBasketInfo")
 {
 	if (isset($_POST['id'])){$id = $_POST['id'];}
 
@@ -135,7 +131,35 @@ else if ($p == 'changeRunType')
 	}else{
 		$_SESSION['run_type'] = 0;
 	}
+}else if ($p == 'setAdvStatusRunID'){
+	if (isset($_GET['adv_status_id'])){$adv_status_id = $_GET['adv_status_id'];}
+	if(isset($adv_status_id)){
+		$_SESSION['adv_status_id'] = $adv_status_id;
+	}else{
+		$_SESSION['adv_status_id'] = '0';
+	}
+}else if ($p == 'setReportsRunID'){
+	if (isset($_GET['reports_id'])){$reports_id = $_GET['reports_id'];}
+	if (isset($_GET['reports_selection'])){$report_selection = $_GET['reports_selection'];}
+	if(isset($reports_id)){
+		$_SESSION['reports_id'] = $reports_id;
+		$_SESSION['reports_selection'] = $report_selection;
+	}else{
+		$_SESSION['reports_id'] = '';
+		$_SESSION['reports_selection'] = '';
+	}
+}else if ($p == 'getAdvStatusRunID'){
+	if(isset($_SESSION['adv_status_id'])){
+		echo $_SESSION['adv_status_id'];
+	}else{
+		echo '';
+	}
+}else if ($p == 'getReportsRunID'){
+	if(isset($_SESSION['reports_id'])){
+		echo $_SESSION['reports_id'];
+		echo ','.$_SESSION['reports_selection'];
+	}else{
+		echo ',';
+	}
 }
-
-exit;
 ?>

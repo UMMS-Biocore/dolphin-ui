@@ -34,7 +34,15 @@ function reportSelected(runID, groupID){
 			}
 		}
 	});
-	window.location.href = BASE_PATH+"/pipeline/report/" + runID + '/' + ids + "$";
+	$.ajax({ type: "GET",
+		url: BASE_PATH +"/ajax/sessionrequests.php",
+		data: { p: 'setReportsRunID', reports_id: runID, reports_selection: ids.toString() },
+		async: false,
+		success : function(s)
+		{
+			window.location.href = BASE_PATH+"/pipeline/report";
+		}
+	});
 }
 
 function getSampleIDs(search){
@@ -81,6 +89,8 @@ function grabReload(groupID){
 			jsonArray.push(s[0].outdir);
 			jsonArray.push(s[0].run_name);
 			jsonArray.push(s[0].run_description);
+			jsonArray.push(s[0].group_id);
+			jsonArray.push(s[0].perms);
 		}
 	});
 	return jsonArray

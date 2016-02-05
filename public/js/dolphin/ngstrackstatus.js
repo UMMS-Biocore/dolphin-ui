@@ -62,8 +62,7 @@ $(function() {
 						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Cancel</a></li>';
 					}else if (s[i].run_status == 1) {
 						runstat = '<button id="'+s[i].id+'" class="btn btn-success btn-xs"  onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-check">\tComplete!</i></button>';
-						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="reportSelected(this.id, this.name)">Report Details</a></li>' +
-									'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="sendToPlot(this.id)">Generate Plots</a></li>';
+						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="sendToPlot(this.id)">Generate Plots</a></li>';
 					}else if (s[i].run_status == 2){
 						runstat = '<button id="'+s[i].id+'" class="btn btn-warning btn-xs" onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-refresh">\tRunning...</i></button>';
 						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Stop</a></li>';
@@ -92,8 +91,11 @@ $(function() {
 						'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options <span class="fa fa-caret-down"></span></button>' +
 						'</button>' +
 						'<ul class="dropdown-menu" role="menu">' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="reportSelected(this.id, this.name)">Report Details</a></li>' +
+							'<li class="divider"></li>' +
 							disabled +
 							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="resumeSelected(this.id, this.name)">Resume</a></li>' +
+							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="resetSelected(this.id, this.name)">Reset</a></li>' +
 							'<li class="divider"></li>' +
 							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="deleteRunparams(\''+s[i].id+'\')">Delete</a></li>' +
 						'</ul>' +
@@ -104,91 +106,22 @@ $(function() {
 			}
 		});
 
-	$('.daterange_status').daterangepicker(
-		{
-			ranges: {
-			'Today': [moment().subtract('days', 1), moment()],
-			'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
-			'Last 7 Days': [moment().subtract('days', 6), moment()],
-			'Last 30 Days': [moment().subtract('days', 29), moment()],
-			'This Month': [moment().startOf('month'), moment().endOf('month')],
-			'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
-			'This Year': [moment().startOf('year'), moment().endOf('year')],
-			},
-			startDate: moment().subtract('days', 29),
-			endDate: moment()
-		},
-	function(start, end) {
-		$.ajax({ type: "GET",
-			 url: BASE_PATH+"/public/ajax/ngs_tables.php",
-			 data: { p: "getStatus", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids, start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
-			 async: false,
-			 success : function(s)
-			 {
-				runparams.fnClearTable();
-				for(var i = 0; i < s.length; i++) {
-					var runstat = "";
-					var disabled = '';
-					
-					if (s[i].run_status == 0 || s[i].run_status == 2) {
-						s[i].run_status = runningErrorCheck(s[i].id);
-					}
-					
-					if (s[i].run_status == 0) {
-						runstat = '<button id="'+s[i].id+'" class="btn btn-xs disabled" onclick="queueCheck(this.id)"><i class="fa fa-refresh">\tQueued</i></button>';
-						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Cancel</a></li>';
-					}else if (s[i].run_status == 1) {
-						runstat = '<button id="'+s[i].id+'" class="btn btn-success btn-xs"  onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-check">\tComplete!</i></button>';
-						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="reportSelected(this.id, this.name)">Report Details</a></li>' +
-									'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="sendToPlot(this.id)">Generate Plots</a></li>';
-					}else if (s[i].run_status == 2){
-						runstat = '<button id="'+s[i].id+'" class="btn btn-warning btn-xs" onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-refresh">\tRunning...</i></button>';
-						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Stop</a></li>';
-					}else if (s[i].run_status == 3){
-						runstat = '<button id="'+s[i].id+'" class="btn btn-danger btn-xs" onclick="errorOutModal(this.id, \''+ s[i].wkey + '\')"><i class="fa fa-warning">\tError</i></button>';
-					}else if (s[i].run_status == 4){
-						runstat = '<button id="'+s[i].id+'" class="btn btn-danger btn-xs" onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-warning">\tStopped</i></button>';
-					}
-					if (s[i].owner_id == uid) {
-						disabled += '<li><a href="#" id="perms_'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>' +
-							'<li class="divider"></li>';
-					}
-					if (s[i].outdir.split("/")[s[i].outdir.split("/").length - 1] != 'initial_run' || s[i].run_status == 1) {
-						disabled = disabled + '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Rerun</a></li>';
-					}
-					
-					if (runstat != "") {
-						runparams.fnAddData([
-						s[i].id,
-						s[i].run_name,
-						s[i].outdir,
-						s[i].run_description,
-						runstat,
-						'<div class="btn-group pull-right">' +
-						'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options <span class="fa fa-caret-down"></span></button>' +
-						'</button>' +
-						'<ul class="dropdown-menu" role="menu">' +
-							disabled +
-							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Re-run</a></li>' +
-							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="resumeSelected(this.id, this.name)">Resume</a></li>' +
-							'<li class="divider"></li>' +
-							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="deleteRunparams(\''+s[i].id+'\')">Delete</a></li>' +
-						'</ul>' +
-						'</div>',
-						]);
-					}
-				} // End For
-			 }
-		});
-
-	});
-
 	runparams.fnSort( [ [0,'des'] ] );
 	//runparams.fnAdjustColumnSizing(true);
 	
 	}else if (segment == 'advstatus') {
-	
-	var wkey = getWKey(window.location.href.split("/")[window.location.href.split("/").length - 1]);
+	var run_id = '0';
+		$.ajax({ type: "GET",
+			url: BASE_PATH +"/ajax/sessionrequests.php",
+			data: { p: 'getAdvStatusRunID' },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				run_id = s;
+			}
+		});
+	var wkey = getWKey(run_id);
 	var runparams = $('#jsontable_services').dataTable();
 	console.log(wkey);
 	
@@ -198,7 +131,7 @@ $(function() {
 			 success : function(s)
 			 {
 				runparams.fnClearTable();
-				var parsed = JSON.parse(s);
+				var parsed = s;
 				for(var i = 0; i < parsed.length; i++) {
 					if (parsed[i].result == 1) {
 						var bartype = 'success';
@@ -262,8 +195,7 @@ $(function() {
 							disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Cancel</a></li>';
 						}else if (s[i].run_status == 1) {
 							runstat = '<button id="'+s[i].id+'" class="btn btn-success btn-xs"  onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-check">\tComplete!</i></button>';
-							disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="reportSelected(this.id, this.name)">Report Details</a></li>' +
-										'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="sendToPlot(this.id)">Generate Plots</a></li>';
+							disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="sendToPlot(this.id)">Generate Plots</a></li>';
 						}else if (s[i].run_status == 2){
 							runstat = '<button id="'+s[i].id+'" class="btn btn-warning btn-xs" onclick="sendToAdvancedStatus(this.id)"><i class="fa fa-refresh">\tRunning...</i></button>';
 							disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Stop</a></li>';
@@ -291,8 +223,11 @@ $(function() {
 							'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options <span class="fa fa-caret-down"></span></button>' +
 							'</button>' +
 							'<ul class="dropdown-menu" role="menu">' +
+								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="reportSelected(this.id, this.name)">Report Details</a></li>' +
+								'<li class="divider"></li>' +
 								disabled +
 								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="resumeSelected(this.id, this.name)">Resume</a></li>' +
+								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="resetSelected(this.id, this.name)">Reset</a></li>' +
 								'<li class="divider"></li>' +
 								'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="deleteRunparams(\''+s[i].id+'\')">Delete</a></li>' +
 							'</ul>' +
@@ -305,16 +240,15 @@ $(function() {
 			
 			$('#jsontable_runparams').DataTable().page(page_mark_runparams).draw(false);
 		}else if (segment == 'advstatus') {
-			var wkey = getWKey(window.location.href.split("/")[window.location.href.split("/").length - 1]);
 			var runparams = $('#jsontable_services').dataTable();
-	
+			
 			$.ajax({ type: "GET",
 					 url: BASE_PATH + "/public/ajax/dataservice.php?wkey=" + wkey,
 					 async: false,
 					 success : function(s)
 					 {
 						runparams.fnClearTable();
-						var parsed = JSON.parse(s);
+						var parsed = s;
 						for(var i = 0; i < parsed.length; i++) {
 							if (parsed[i].result == 1) {
 								var bartype = 'success';
@@ -346,7 +280,7 @@ $(function() {
 						 success : function(s)
 						 {
 							runjob.fnClearTable();
-							var parsed = JSON.parse(s);
+							var parsed = s;
 							for(var i = 0; i < parsed.length; i++) {
 								runjob.fnAddData([
 									parsed[i].title,

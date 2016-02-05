@@ -20,23 +20,6 @@ class PipelineController extends VanillaController {
 		$this->set('field', "Selected");
 		$this->set('selection', $selection);
 	}
-
-	function status(){
-		$this->set('uid', $_SESSION['uid']);
-        $gids = $this->Pipeline->getGroup($_SESSION['user']);
-        $this->set('gids', $gids);
-        
-        $this->set('field', 'Status');
-	}
-
-    function advstatus($run_id){
-        $this->set('uid', $_SESSION['uid']);
-        $gids = $this->Pipeline->getGroup($_SESSION['user']);
-        $this->set('gids', $gids);
-        
-        $this->set('run_id', $run_id);
-        $this->set('field', 'Status');
-    }
     
 	function rerun($run_id, $selection){
 		$this->set('uid', $_SESSION['uid']);
@@ -49,13 +32,11 @@ class PipelineController extends VanillaController {
 		$this->set('field', 'Status');
 	}
 
-	function report($run_id, $selection){
+	function report(){
 		$this->set('uid', $_SESSION['uid']);
         $gids = $this->Pipeline->getGroup($_SESSION['user']);
 		$this->set('gids', $gids);
         
-        $this->set('run_id', $run_id);
-		$this->set('selection', $selection);
 		$this->set('field', 'Status');
 	}
 

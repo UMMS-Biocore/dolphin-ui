@@ -80,13 +80,16 @@ class funcs
     function checkPermissions($params)
     {
          $this->username=$params['username'];
-         $this->readINI();         
-         $com = "mkdir -p  ".$params['outdir']." ; \
-            cd ".$params['outdir']." ; \
-            touch permstest.txt ; \
-            rm permstest.txt";
+         $this->readINI();
+         if ($params['outdir']!="")
+         {
+           $com = "mkdir -p ".$params['outdir'].";cd ".$params['outdir'].";touch permstest.txt;rm permstest.txt";
+         }
+         else
+         {
+           $com = "ls";
+         }
          $retval = $this->syscall($this->getCMDs($com));
-
          if (preg_match('/Permission denied/', $retval)) {
               return "{\"ERROR\": \"Permission denied: ".$params['outdir']."\"}";
          }
@@ -99,7 +102,7 @@ class funcs
         $wkey       = "";
         $ret        = "";
         for ($i = 0; $i < 30; $i++) {
-            $wkey .= $characters[rand(0, strlen($characters))];
+            $wkey .= $characters[rand(0, strlen($characters) - 1)];
         }
         # If this random key exist it randomize another key
         if ($this->getWorkflowId($wkey))
@@ -175,17 +178,17 @@ class funcs
     }
     function getSSH()
     {
-       #sleep(1);
+       sleep(1);
        return "ssh -o ConnectTimeout=30  ". $this->username. "@" . $this->remotehost . " ";
     }
 
-    function checkJobInCluster($wkey, $job_num, $username)
+    function isJobRunning($wkey, $job_num, $username)
     {
         $this->job_num = $job_num; 
         $this->username = $username;
         $this->readINI();
         $retval = $this->syscall($this->checkjob_cmd);
-
+        
         if ($retval == "") {
             $ret = $this->checkJobInDB($wkey, $job_num, $username);
             if ($ret == 0) {
@@ -213,30 +216,27 @@ class funcs
         }
         return 0;
     }
+
     function rerunJob($servicename, $jobname, $jobnum, $wkey)
     {
-       $sql="select max(wkey) wkey from jobs where jobname='$jobname' and wkey like '$wkey-%'";
-       $wkey_trial=$this->queryAVal($sql);
-       $trial=1;
-       if (strlen($wkey_trial) > 10)
+       $sql="select count(wkey) count, run_script from jobs where jobname='$jobname' and wkey = '$wkey' group by run_script";
+
+       $res=$this->queryTable($sql);
+       
+       if (isset($res[0]))
        {
-         $tarr=explode('-', $wkey_trial, 2);
-         $trial=$tarr[1]+1;
-       }
-       if ($trial<4)
-       {
-         $sql="update jobs set wkey='$wkey-$trial' where job_num='$jobnum' and jobname='$jobname' and wkey='$wkey'";
-         $this->runSQL($sql);
-         if ($servicename!=$jobname)
+         $count=$res[0]['count'];
+         $run_script=$res[0]['run_script'];
+         if ($count < 4) 
          {
-           $sql="update jobs set wkey='$wkey-$trial' where jobname='$servicename' and wkey='$wkey'";
-           $this->runSQL($sql);
+            $com = $this->getCMDs( $this->python . " " . $run_script); 
+            $retval = $this->sysback($com);
+            return 1;
          }
-         return 1;
        }
        return 0;
     }
-    
+ 
     function checkStatus($params)
     {
         $servicename = $params['servicename'];
@@ -244,9 +244,9 @@ class funcs
         $sql      = "select j.service_id from jobs j, services s where s.service_id=j.service_id and s.servicename='$servicename' and j.wkey='$wkey'";
         #return $sql;
         $service_id   = $this->queryAVal($sql);
-        sleep(1); 
+        #sleep(1); 
         if ($service_id > 0) {
-            $sql        = "select DISTINCT j.job_num job_num, j.jobname jobname, j.result jresult, s.username username from jobs j, services s where s.service_id=j.service_id and s.servicename='$servicename' and wkey='$wkey' and result<3";
+            $sql        = "select DISTINCT j.job_num job_num, j.jobname jobname, j.result jresult, s.username username from jobs j, services s where s.service_id=j.service_id and s.servicename='$servicename' and wkey='$wkey' and result<3 and jobstatus=1";
             $res      = $this->runSQL($sql);
             $num_rows = $res->num_rows;
             
@@ -255,40 +255,34 @@ class funcs
                 while ($row = $res->fetch_assoc()) {
                     # If job is running, it turns 1 otherwise 0 and it needs to be restarted
                     # If it doesn't turn Error and if job is working it turns wkey to che
-                    $retval = $this->checkJobInCluster($wkey, $row['job_num'], $row['username']);
-                    if ($retval != "")
-                    {
-                        $this->checkStartTime($wkey, $row['job_num'], $row['username']);
-                    }
+                    $retval = $this->isJobRunning($wkey, $row['job_num'], $row['username']);
+                    $this->checkStartTime($wkey, $row['job_num'], $row['username']);
+
                     if (preg_match('/^EXIT/', $retval)) {
                       if (!$sqlstr=$this->rerunJob( $servicename, $row['jobname'], $row['job_num'], $wkey ) )
                       {
-                        $sql    = "SELECT j.jobname, jo.jobout FROM jobs j, jobsout jo where j.wkey=jo.wkey and j.job_num=jo.jobnum and j.job_num=" . $row['job_num'] . " and jo.wkey='$wkey'";
+                        $sql    = "SELECT j.jobname, jo.jobout FROM jobs j, jobsout jo where j.wkey=jo.wkey and j.job_num=jo.jobnum and j.job_num=" . $row['job_num'] . " and jo.wkey='$wkey' and jobstatus=1";
                         $resout = $this->runSQL($sql);
                         $rowout = $resout->fetch_assoc();
                         require_once('class.html2text.inc');
                         
-                        $h2t =& new html2text($rowout['jobout']);
+                        $h2t = new html2text($rowout['jobout']);
                         $jobout = $h2t->get_text();
                         return 'ERROR:' . $retval . "\n" . $rowout['jobname'] . " Failed\nCheck LSF output\n" . $jobout;
                       }
                     }
                     if (preg_match('/DONE/', $retval)) {
                         $jn     = rtrim(substr($retval, 5));
-                        $sql    = "select * from jobs where result=3 and job_num='" . $jn . "' and wkey='$wkey'";
+                        $sql    = "select * from jobs where result=3 and job_num='" . $jn . "' and wkey='$wkey' and jobstatus=1";
                         $result = $this->runSQL($sql);
                         if (is_object($result)) {
                             $sql    = "UPDATE jobs set result='3', end_time=now() where job_num='" . $jn . "' and wkey='$wkey'";
                             $result = $this->runSQL($sql);
-                        } else {
-                            $sql = "insert into jobs(`username`, `wkey`, `jobname`, `service_id`, `result`, `submit_time`, `start_time`,`end_time`,`job_num`) values ('" . $row['username'] . "', '$wkey', '$servicename', '$service_id', '3', now(), now(), now(),  '$jn' )";
-                            
-                            $result = $this->runSQL($sql);
-                        }
+                        } 
                     }
                 }
             } else {
-                    return "Service ended successfully ($servicename)!!!";
+                 return "DONE: Service ended successfully ($servicename)!!!";
             }
             return "RUNNING(1):[retval=$retval]:SERVICENAME:$servicename";
         }
@@ -339,7 +333,7 @@ class funcs
             
             $sql    = "insert into " . $name . "s(`" . $name . "name`, `description`, `username`, `defaultparam`) values('" . $val . "', 'Service description', '$username', '$defaultparam')";
             $result = $this->runSQL($sql);
-            $id     = $this->getId($name, $username, $val, $key, $defaultparam);
+            $id     = $this->getId($name, $username, $val, $wkey, $defaultparam);
         }
         
         if ($name == "service") {
@@ -450,6 +444,7 @@ class funcs
      $servicename  = $params['servicename'];
      $wkey         = $params['wkey'];
      $inputcommand = $params['command'];
+     
 
      $result_stat = $this->checkStatus($params);
      if ( preg_match('/START/', $result_stat)) # Job hasn't started yet 
@@ -473,22 +468,34 @@ class funcs
                 $sql = "INSERT INTO `service_run` (`service_id`, `wkey`, `input`,`result`, `start_time`) VALUES ('$service_id', '$wkey', '', '0', now())";
                 $this->runSQL($sql); 
              }
-             $command = $this->getCommand($servicename, $username, $inputcommand, $defaultparam);
-             $ipf = "";
-             if ($inputparam != "" && $inputparam != "None") 
-                 $ipf = "-i \"$inputparam\"";
-             $dpf = "";
-             if ($defaultparam != "" && $defaultparam != "None")
-                 $dpf = "-p $defaultparam";
+             
+             $sql = "SELECT max(job_id) FROM jobs where wkey='$wkey' and service_id='$service_id' and (result=1 or result=2);";
+             #If a job is still running for this service, the system won't start this service until all the jobs are finished or killed
+             $ajobisrunning = $this->queryAVal($sql);
+             
+             if ($ajobisrunning==0) {
+                $command = $this->getCommand($servicename, $username, $inputcommand, $defaultparam);
+                $ipf = "";
+                if ($inputparam != "" && $inputparam != "None") 
+                    $ipf = "-i \"$inputparam\"";
+                $dpf = "";
+                if ($defaultparam != "" && $defaultparam != "None")
+                    $dpf = "-p $defaultparam";
                     
-             $edir = $this->tool_path;
-             $com = $this->python . " " . $edir . "/runService.py -f ".$this->config." -d " . $this->dbhost . " $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
-             $retval = $this->sysback($this->getCMDs($com));
-                  
+                $edir = $this->tool_path;
+                $command=str_replace("\"", "\\\"", $command);
+                if($this->schedular == "LSF" || $this->schedular == "SGE")
+                {
+                   $command=str_replace("\\\"", "\\\\\"", $command);
+                }
+                $com = $this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
+                $com=$this->getCMDs($com);
+                $retval = $this->sysback($com);
+             }
              if (preg_match('/Error/', $retval)) {
                  return "ERROR: $retval";
              }
-             return "RUNNING(2):$inputcommand";
+             return "RUNNING(2):$inputcommand:$com";
         } else {
              return $wf;
         }
@@ -507,7 +514,7 @@ class funcs
             while ($row = $result->fetch_row()) {
                 $username = $row[0];
                 $jobnum   = $row[1];
-                $retval   = $this->checkJobInCluster($wkey, $jobnum, $username);
+                $retval   = $this->isJobRunning($wkey, $jobnum, $username);
                 if (preg_match('/^EXIT/', $retval)) {
                     $ret = 0;
                 }
@@ -522,36 +529,9 @@ class funcs
         $result = $this->runSQL($sql);
         $sql    = "update ngs_runparams set run_status='1' where wkey='$wkey'";
         $result = $this->runSQL($sql);
-        #return $sql;
         return "Success!!!";
-        $sql1    = "SELECT sum(w.result) from (SELECT result from workflow_services ws left join service_run s on ws.service_id=s.service_id where ws.workflow_id=(SELECT workflow_id FROM workflow_run wr where wkey='$wkey') and wkey='$wkey') w";
-        $result1 = $this->runSQL($sql1);
-        #Get how many service successfuly finished
-        if (is_object($result1) && $row1 = $result1->fetch_row()) {
-            #Get how many services exist in the workflow
-            $sql2    = "SELECT count(*) from workflow_services ws where workflow_id=(SELECT workflow_id FROM workflow_run wr where wkey='$wkey')";
-            $result2 = $this->runSQL($sql2);
-            if (is_object($result2) && $row2 = $result2->fetch_row()) {
-                
-                if ($row1[0] >= $row2[0]) {
-                    $sql    = "update workflow_run set result='1', end_time=now() where wkey='$wkey'";
-                    $result = $this->runSQL($sql);
-                    #return $sql;
-                    return "Success!!!";
-                } else {
-                    # if non of the last service jobs are running in the cluster.
-                    # exit and give an error
-                    if (!$this->checkLastServiceJobs($wkey)) {
-                        return "ERROR: Workflow couldn't sucessfully completed. Please check the results!!!\n";
-                    }
-                }
-            }
-            
-        }
-        #return "$sql1 :::: $sql2";
-        return "WRUNNING";
-        
     }
+    
     #Insert a job to the database
     function insertJob($params)
     {
@@ -562,13 +542,26 @@ class funcs
         $servicename=$params['servicename']; 
         $jobnum=$params['jobnum'];
         $result=$params['result'];
+        $resources=$params['resources'];
  
         $workflow_id = $this->getWorkflowId($wkey);
         $service_id  = $this->getId("service", $username, $servicename, $wkey, "");
-        
-        $sql = "insert into jobs(`username`, `wkey`, `run_script`, `jobname`, `workflow_id`, `service_id`, `result`, `submit_time`, `job_num`) values ('$username','$wkey','$com','$jobname','$workflow_id','$service_id', '$result', now(), '$jobnum')";
-        
+        $sql="select job_id from jobs where `wkey`='$wkey' and `jobname`='$jobname' and jobstatus=1";
+        $previous_jobs = $this->queryTable($sql);
+
+        $job_ids="";
+        foreach($previous_jobs as $job){
+           $job_ids.=$job['job_id'].",";
+        }
+        $job_ids=rtrim($job_ids, ",");
+        $sql = "insert into jobs(`username`, `wkey`, `run_script`, `jobname`, `workflow_id`, `service_id`, `resources`, `result`, `submit_time`, `job_num`) values ('$username','$wkey','$com','$jobname','$workflow_id','$service_id', '$resources', '$result', now(), '$jobnum')";
+
         $res = $this->runSQL($sql);
+        if ($res && $job_ids!="")
+        {
+            $sql="update jobs set jobstatus=0 where job_id in ($job_ids)";
+            $res = $this->runSQL($sql);
+        }
         
         return $res;
     }
@@ -589,11 +582,15 @@ class funcs
         }
         $workflow_id = $this->getWorkflowId($wkey);
         $service_id  = $this->getId("service", $username, $servicename, $wkey, "");
+        if ($field=="end_time")
+        {
+               $this->checkStartTime($wkey, $job_num, $username);
+        }
         
         $sql = "update jobs set `$field`=now(), `result`='$result' where `wkey`='$wkey' and `job_num`='$jobnum'";
         
         $res = $this->runSQL($sql);
-        return $res . ":" . $sql;
+        return $res;
     }
     
     #Check if all jobs are finished or not for a service
@@ -606,7 +603,7 @@ class funcs
         $workflow_id = $this->getWorkflowId($wkey);
         $service_id  = $this->getId("service", $username, $servicename, $wkey, "");
         $select      = "select count(job_id) c from jobs ";
-        $where1      = " where `username`= '$username' and `wkey`='$wkey' and `workflow_id`='$workflow_id' and `service_id`='$service_id'";
+        $where1      = " where `username`= '$username' and `wkey`='$wkey' and `workflow_id`='$workflow_id' and `service_id`='$service_id' and `jobstatus`=1";
         $where2      = " and `result`=3";
         $sql         = "select s1.c, s2.c from ( $select  $where1) s1,  ($select  $where1 $where2) s2";
         $result      = $this->runSQL($sql);
@@ -721,18 +718,33 @@ class funcs
      function checkJob($params)
      {
           $jobname=$params['jobname'];
-          $wkey=$params['wkey']; 
+          $wkey=$params['wkey'];
          
-          $res="DONE"; 
-          $sql = "select job_num from jobs where wkey='$wkey' and jobname='$jobname'";
-          $jobnum = $this->queryAVal($sql);
-          if ($jobnum == 0) # This job is most likely running. Just check if it is real running or not.
+          $result="DONE"; 
+          $sql = "select job_num, result, username from jobs where wkey='$wkey' and jobname='$jobname' and jobstatus=1";
+          $res = $this->queryTable($sql); 
+          if (isset($res[0]))
           {
-             $res="START";
+            $jobnum=$res[0]['job_num'];
+            $jobres=$res[0]['result'];
+            $username=$res[0]['username'];
+            
+            if($jobres<3)
+            {
+              $retval   = $this->isJobRunning($wkey, $jobnum, $username);
+              #$result=$retval;
+              if (preg_match('/^EXIT/', $retval)) {
+                 $result="START";
+              }
+            }
+          }
+          else
+          {
+             $result="START";
           }
 
-          $res = '{"Result":"'.$res.'"}'; 
-          return $res;
+          $result = '{"Result":"'.$result.'"}'; 
+          return $result;
      
      }
 
@@ -781,6 +793,118 @@ class funcs
           }
           return "cputime\":\"240\",\"maxmemory\":\"4096";
       }
+      
+      //For stepBackupS3 ######################
+      function getSampleList($params)
+      {
+          $runparamsid=$params['runparamsid'];
+          $barcode=$params['barcode'];
+
+          if (strtolower($barcode) != "none")
+          {
+             $sql = "SELECT DISTINCT ns.id sample_id, sf.id file_id, d.id dir_id, ns.lane_id, ns.samplename, sf.file_name, d.fastq_dir, d.backup_dir, d.amazon_bucket, ns.owner_id, ns.group_id, ns.perms FROM ngs_runlist nr, ngs_samples ns, ngs_temp_lane_files sf, ngs_dirs d where sf.lane_id=ns.lane_id and d.id=sf.dir_id and ns.id=nr.sample_id and nr.run_id='$runparamsid'";
+          }
+          else
+          {
+             $sql = "SELECT DISTINCT ns.id sample_id, sf.id file_id, d.id dir_id, ns.lane_id, ns.samplename, sf.file_name, d.fastq_dir, d.backup_dir, d.amazon_bucket, ns.owner_id, ns.group_id, ns.perms FROM ngs_runlist nr, ngs_samples ns, ngs_temp_sample_files sf, ngs_dirs d where sf.sample_id=ns.id and d.id=sf.dir_id and ns.id=nr.sample_id and nr.run_id='$runparamsid'";
+          }
+
+          return $this->queryTable($sql);
+      }
+      
+      function getAmazonCredentials($params)
+      {
+         $username=$params['username'];
+         $sql = "SELECT DISTINCT ac.* FROM amazon_credentials ac, group_amazon ga, users u where ac.id=ga.amazon_id and ga.group_id=u.group_id and (u.clusteruser='$username' or u.username='$username')";
+         return $this->queryTable($sql);
+      }
+      function updateInitialFileCounts($params)
+      {
+        $tablename=$params['tablename'];
+        $total_reads=$params['total_reads'];
+        $file_id=$params['file_id'];
+        $res=0;
+        if ($file_id>0)
+        {
+           $sql = "UPDATE $tablename set total_reads=$total_reads where id=$file_id";
+           $res = $this->runSQL($sql);
+        }
+
+         return $res;        
+      }
+      
+      function getFastqFileId($params)
+      {
+         $sample_id=$params['sample_id'];
+         $res=0;
+         if ($sample_id>0)
+         {
+           $sql="select sample_id from ngs_fastq_files where sample_id=$sample_id";
+           $res = $this->queryTable($sql);
+         }
+         return $res;  
+       }
+       
+       function upadateFastqFile($params)
+       {
+         $sample_id=$params['sample_id'];
+         $md5sum=$params['md5sum'];
+         $total_reads=$params['total_reads'];
+         $owner_id=$params['owner_id'];
+
+         $res=0;
+         if ($sample_id>0)
+         {
+            $sql="update ngs_fastq_files set checksum='$md5sum', total_reads=$total_reads, date_modified=now(), last_modified_user=$owner_id where sample_id=$sample_id ";
+            $res = $this->runSQL($sql);
+         }
+         return $res;
+       }
+       
+      function insertFastqFile($params)
+      {
+         $filename=$params['filename'];
+         $total_reads=$params['total_reads'];
+         $checksum=$params['checksum'];
+         $sample_id=$params['sample_id'];
+         $lane_id=$params['lane_id'];
+         $dir_id=$params['dir_id'];  
+         $owner_id=$params['owner_id'];
+         $group_id=$params['group_id'];
+         $perms=$params['perms'];
+         
+         $res=0;
+         if ($sample_id>0)
+         {
+            $sql="INSERT INTO ngs_fastq_files ( `file_name`, `total_reads`, `checksum`, `sample_id`, `lane_id`,`dir_id`,`owner_id`, `group_id`,`perms`,`date_created`,`date_modified`,`last_modified_user`) VALUES('$filename', '$total_reads','$checksum','$sample_id','$lane_id','$dir_id','$owner_id', '$group_id', '$perms', now(), now(), '$owner_id')";
+            $res = $this->runSQL($sql);
+         }
+         return $res; 
+         
+      }
+      
+      function checkReadCounts($params)
+      {
+        $sample_id=$params['sample_id'];
+        $tablename=$params['tablename'];
+        
+        $sql="SELECT sum(total_reads) FROM $tablename where sample_id=$sample_id";
+        $temp_count=$this->queryAVal($sql);
+
+        $sql="SELECT total_reads FROM ngs_fastq_files where sample_id=$sample_id";
+        $merged_count=$this->queryAVal($sql);
+        
+        $res=0;
+        if ($temp_count==$merged_count)
+        {
+           $res=1;
+        }
+        
+        return "{'Result':$res, 'temp_count':$temp_count, 'merged_count':$merged_count}";
+      }
+
+
+      //#######################################
 
 }
 ?>

@@ -27,13 +27,13 @@
                                 <!-- Menu Body -->
                                 <li class="user-body">
                                     <div class="col-xs-4 text-center">
-                                        <a href="<?php echo BASE_PATH?>/tables/index/ngs_experiment_series?>">Experiments</a>
+                                        <a href="<?php echo BASE_PATH?>/ngsimport">Import</a>
                                     </div>
                                     <div class="col-xs-4 text-center">
-                                        <a href="<?php echo BASE_PATH?>/tables/index/ngs_lanes?>">Lanes</a>
+                                        <a href="<?php echo BASE_PATH?>/search">Browser</a>
                                     </div>
                                     <div class="col-xs-4 text-center">
-                                        <a href="<?php echo BASE_PATH?>/tables/index/ngs_samples?>">Samples</a>
+                                        <a href="<?php echo BASE_PATH?>/stat/status">Status</a>
                                     </div>
                                 </li>
                                 <!-- Menu Footer-->
