@@ -279,6 +279,26 @@ function createTSVFile($sample_name, $tsvfile, $source){
 	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
 }
 
+function createRNAMetricsTSVFile($sample_name, $tsvfile, $source){
+	var_dump($source);
+	$com = "head -1 ".$source." | awk '{ n=split($0,a,\"\\t\"); for (i=1;i<=n;i++) { if(a[i] == \"".$sample_name."\"){ print \"$\"i; } } }'";
+	$OPEN = popen( $com, "r" );
+	$OPEN_OUT =fread($OPEN, 2096);
+	pclose($OPEN);
+	var_dump($OPEN_OUT);
+	$com = 'awk \'{ print $1"\t"' . preg_replace( "/\r|\n/", "", $OPEN_OUT ) . ' }\' '. $source . ' > '. $tsvfile;
+	var_dump($com);
+	$OPEN = popen( $com, "r" );
+	pclose($OPEN);
+	$com = "md5sum " . $tsvfile . " | awk '{ print $1 }'";
+	$OPEN = popen( $com, "r" );
+	$OPEN_OUT = fread($OPEN, 2096);
+	var_dump($OPEN_OUT);
+	pclose($OPEN);
+	
+	return preg_replace("/[\n\r]/", "", $OPEN_OUT);
+}
+
 function createTSVFileReverse($sample_name, $tsvfile, $source){
 	
 	$com = "grep 'Total Reads' " . $source. " > " . $tsvfile . " ; grep '" . $sample_name . "' " . $source . " >> ". $tsvfile;
