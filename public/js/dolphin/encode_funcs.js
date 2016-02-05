@@ -431,7 +431,8 @@ function createEncodeJson(json_type){
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
 			biosample_ids.push(sample_info[x].id);
 			biosample_accs.push(sample_info[x].biosample_acc);
-			if (sample_info[x].experiment_acc != null) {
+			console.log(sample_info[x].biosample_acc);
+			if (sample_info[x].biosample_acc != null) {
 				post_bool = false;
 			}
 		}else if (json_type == 'library') {
