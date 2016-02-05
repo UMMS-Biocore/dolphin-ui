@@ -586,13 +586,13 @@ function createEncodeJson(json_type){
 					}
 				}
 			}else if (terms[y] == "biological_replicate_number") {
-				if (sample_info[x].biological_replica == null || sample_info[x].biological_replica == '' || sample_info[x].biological_replica < 1) {
+				if (sample_info[x].biological_replica == null || sample_info[x].biological_replica == '' || parseInt(sample_info[x].biological_replica) <= 1) {
 					json['biological_replicate_number'] = 1;
 				}else{
 					json['biological_replicate_number'] = parseInt(sample_info[x].biological_replica);
 				}
 			}else if (terms[y] == "technical_replicate_number") {
-				if (sample_info[x].technical_replica == null || sample_info[x].technical_replica == '' || sample_info[x].technical_replica < 1) {
+				if (sample_info[x].technical_replica == null || sample_info[x].technical_replica == '' || parseInt(sample_info[x].technical_replica) <= 1) {
 					json['technical_replicate_number'] = 1;
 				}else{
 					json['technical_replicate_number'] = parseInt(sample_info[x].technical_replica);
