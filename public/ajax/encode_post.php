@@ -33,10 +33,10 @@ foreach ($json as $json_object) {
 	if(isset($json_object['duration'])){
 		$json_object['duration'] = intval($json_object['duration']);
 	}
-	if(isset($json[$count]['biological_replicate_number'])){
+	if(isset($json_object['biological_replicate_number'])){
 		$json_object['biological_replicate_number'] = intval($json_object['biological_replicate_number']);
 	}
-	if(isset($json[$count]['technical_replicate_number'])){
+	if(isset($json_object['technical_replicate_number'])){
 		$json_object['technical_replicate_number'] = intval($json_object['technical_replicate_number']);
 	}
 	#POST the JSON and get back response
