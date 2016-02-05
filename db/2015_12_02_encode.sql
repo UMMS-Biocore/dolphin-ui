@@ -55,9 +55,8 @@ ADD COLUMN `biosample_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `biosample_acc`
 ADD COLUMN `library_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `biosample_uuid`,
 ADD COLUMN `library_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `library_acc`,
 ADD COLUMN `experiment_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `library_uuid `,
-ADD COLUMN `experiment_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `experiment_acc`;
-ADD COLUMN `replicate_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `experiment_uuid `,
-ADD COLUMN `replicate_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `replicate_acc`,
+ADD COLUMN `experiment_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `experiment_acc`,
+ADD COLUMN `replicate_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `experiment_uuid`,
 ADD COLUMN `treatment_id` INT NULL DEFAULT NULL AFTER `replicate_uuid`,
 ADD COLUMN `antibody_lot_id` INT NULL DEFAULT NULL AFTER `treatment_id`,
 ADD COLUMN `biosample_id` INT NULL DEFAULT NULL AFTER `antibody_lot_id`;

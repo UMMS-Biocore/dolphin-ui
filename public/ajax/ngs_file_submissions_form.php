@@ -162,21 +162,21 @@ foreach($sample_id_array as $sia){
 	
 	//	5. (4 files)
 	//	rRNA
-	$sub5_file_name_1 = 'counts/'.$ngs_samples.'_rRNA_summary.tsv';
+	$sub5_file_name_1 = 'tmp/encode/'.$ngs_samples.'_rRNA_summary.tsv';
 	$sub5_file_type_1 = 'tsv';
-	$sub5_file_md5_1 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_1, $directory . 'counts/rRNA.summary.tsv');
+	$sub5_file_md5_1 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_1, BASE_PATH . 'tmp/encode/rRNA.summary.tsv');
 	//	miRNA
-	$sub5_file_name_2 = 'counts/'.$ngs_samples.'_miRNA_summary.tsv';
+	$sub5_file_name_2 = 'tmp/encode/'.$ngs_samples.'_miRNA_summary.tsv';
 	$sub5_file_type_2 = 'tsv';
-	$sub5_file_md5_2 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_2, $directory . 'counts/miRNA.summary.tsv');
+	$sub5_file_md5_2 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_2, BASE_PATH . 'tmp/encode/miRNA.summary.tsv');
 	//	tRNA
-	$sub5_file_name_3 = 'counts/'.$ngs_samples.'_tRNA_summary.tsv';
+	$sub5_file_name_3 = 'tmp/encode/'.$ngs_samples.'_tRNA_summary.tsv';
 	$sub5_file_type_3 = 'tsv';
-	$sub5_file_md5_3 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_3, $directory . 'counts/tRNA.summary.tsv');
+	$sub5_file_md5_3 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_3, BASE_PATH . 'tmp/encode/tRNA.summary.tsv');
 	//	snRNA
-	$sub5_file_name_4 = 'counts/'.$ngs_samples.'_snRNA_summary.tsv';
+	$sub5_file_name_4 = 'tmp/encode/'.$ngs_samples.'_snRNA_summary.tsv';
 	$sub5_file_type_4 = 'tsv';
-	$sub5_file_md5_4 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_4, $directory . 'counts/snRNA.summary.tsv');
+	$sub5_file_md5_4 = createTSVFileReverse($ngs_samples, $directory . $sub5_file_name_4, BASE_PATH . 'tmp/encode/snRNA.summary.tsv');
 	
 	//	6.
 	$sub6_file_name = 'tdf_Tophat/'.$ngs_samples.'.bam';
@@ -190,21 +190,21 @@ foreach($sample_id_array as $sia){
 	
 	//	8. (4 files)
 	//	iso_exp
-	$sub8_file_name_1 = 'rsem/'.$ngs_samples.'_iso_exp.tsv';
+	$sub8_file_name_1 = 'tmp/encode/'.$ngs_samples.'_iso_exp.tsv';
 	$sub8_file_type_1 = 'tsv';
-	$sub8_file_md5_1 = createTSVFile($ngs_samples, $directory . $sub8_file_name_1, $directory . 'rsem/isoforms_expression_expected_count.tsv');
+	$sub8_file_md5_1 = createTSVFile($ngs_samples, $directory . $sub8_file_name_1, BASE_PATH . 'tmp/encode/isoforms_expression_expected_count.tsv');
 	//	iso_tpm
-	$sub8_file_name_2 = 'rsem/'.$ngs_samples.'_iso_tpm.tsv';
+	$sub8_file_name_2 = 'tmp/encode/'.$ngs_samples.'_iso_tpm.tsv';
 	$sub8_file_type_2 = 'tsv';
-	$sub8_file_md5_2 = createTSVFile($ngs_samples, $directory . $sub8_file_name_2, $directory . 'rsem/isoforms_expression_tpm.tsv');
+	$sub8_file_md5_2 = createTSVFile($ngs_samples, $directory . $sub8_file_name_2, BASE_PATH . 'tmp/encode/isoforms_expression_tpm.tsv');
 	//	gene_exp
-	$sub8_file_name_3 = 'rsem/'.$ngs_samples.'_gene_exp.tsv';
+	$sub8_file_name_3 = 'tmp/encode/'.$ngs_samples.'_gene_exp.tsv';
 	$sub8_file_type_3 = 'tsv';
-	$sub8_file_md5_3 = createTSVFile($ngs_samples, $directory . $sub8_file_name_3, $directory . 'rsem/genes_expression_tpm.tsv');
+	$sub8_file_md5_3 = createTSVFile($ngs_samples, $directory . $sub8_file_name_3, BASE_PATH . 'tmp/encode/genes_expression_tpm.tsv');
 	//	gene_tmp
-	$sub8_file_name_4 = 'rsem/'.$ngs_samples.'_gene_tpm.tsv';
+	$sub8_file_name_4 = 'tmp/encode/'.$ngs_samples.'_gene_tpm.tsv';
 	$sub8_file_type_4 = 'tsv';
-	$sub8_file_md5_4 = createTSVFile($ngs_samples, $directory . $sub8_file_name_4, $directory . 'rsem/genes_expression_expected_count.tsv');
+	$sub8_file_md5_4 = createTSVFile($ngs_samples, $directory . $sub8_file_name_4, BASE_PATH . 'tmp/encode/genes_expression_expected_count.tsv');
 	
 	//	9.
 	$sub9_file_name = 'picard_Tophat/'.$ngs_samples.'_RNASeqMetrics.tsv';
