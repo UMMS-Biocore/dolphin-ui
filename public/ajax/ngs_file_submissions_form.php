@@ -260,6 +260,7 @@ foreach($sample_id_array as $sia){
 }
 
 function createTSVFile($sample_name, $tsvfile, $source){
+	var_dump(getcwd());
 	var_dump($source);
 	$com = "head -1 ".$source." | awk '{ n=split($0,a,\"\\t\"); for (i=1;i<=n;i++) { if(a[i] == \"".$sample_name."\"){ print \"$\"i; } } }'";
 	$OPEN = popen( $com, "r" );
