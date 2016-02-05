@@ -12,7 +12,7 @@ if (isset($_GET['sample_ids'])){
 }else{
 	$sample_ids = $argv[1];
 }
-
+$galaxy_path = '/var/www/html/dolphin-ui/';
 $sample_id_array = explode(",", $sample_ids);
 
 foreach($sample_id_array as $sia){
@@ -164,19 +164,19 @@ foreach($sample_id_array as $sia){
 	//	rRNA
 	$sub5_file_name_1 = 'tmp/encode/'.$ngs_samples.'_rRNA_summary.tsv';
 	$sub5_file_type_1 = 'tsv';
-	$sub5_file_md5_1 = createTSVFileReverse($ngs_samples, BASE_PATH . $sub5_file_name_1, $directory . 'counts/rRNA.summary.tsv');
+	$sub5_file_md5_1 = createTSVFileReverse($ngs_samples, $galaxy_path . $sub5_file_name_1, $directory . 'counts/rRNA.summary.tsv');
 	//	miRNA
 	$sub5_file_name_2 = 'tmp/encode/'.$ngs_samples.'_miRNA_summary.tsv';
 	$sub5_file_type_2 = 'tsv';
-	$sub5_file_md5_2 = createTSVFileReverse($ngs_samples, BASE_PATH . $sub5_file_name_2, $directory . 'counts/miRNA.summary.tsv');
+	$sub5_file_md5_2 = createTSVFileReverse($ngs_samples, $galaxy_path . $sub5_file_name_2, $directory . 'counts/miRNA.summary.tsv');
 	//	tRNA
 	$sub5_file_name_3 = 'tmp/encode/'.$ngs_samples.'_tRNA_summary.tsv';
 	$sub5_file_type_3 = 'tsv';
-	$sub5_file_md5_3 = createTSVFileReverse($ngs_samples, BASE_PATH . $sub5_file_name_3, $directory . 'counts/tRNA.summary.tsv');
+	$sub5_file_md5_3 = createTSVFileReverse($ngs_samples, $galaxy_path . $sub5_file_name_3, $directory . 'counts/tRNA.summary.tsv');
 	//	snRNA
 	$sub5_file_name_4 = 'tmp/encode/'.$ngs_samples.'_snRNA_summary.tsv';
 	$sub5_file_type_4 = 'tsv';
-	$sub5_file_md5_4 = createTSVFileReverse($ngs_samples, BASE_PATH . $sub5_file_name_4, $directory . 'counts/snRNA.summary.tsv');
+	$sub5_file_md5_4 = createTSVFileReverse($ngs_samples, $galaxy_path . $sub5_file_name_4, $directory . 'counts/snRNA.summary.tsv');
 	
 	//	6.
 	$sub6_file_name = 'tdf_Tophat/'.$ngs_samples.'.bam';
@@ -192,23 +192,23 @@ foreach($sample_id_array as $sia){
 	//	iso_exp
 	$sub8_file_name_1 = 'tmp/encode/'.$ngs_samples.'_iso_exp.tsv';
 	$sub8_file_type_1 = 'tsv';
-	$sub8_file_md5_1 = createTSVFile($ngs_samples, BASE_PATH . $sub8_file_name_1, $directory . 'rsem/isoforms_expression_expected_count.tsv');
+	$sub8_file_md5_1 = createTSVFile($ngs_samples, $galaxy_path . $sub8_file_name_1, $directory . 'rsem/isoforms_expression_expected_count.tsv');
 	//	iso_tpm
 	$sub8_file_name_2 = 'tmp/encode/'.$ngs_samples.'_iso_tpm.tsv';
 	$sub8_file_type_2 = 'tsv';
-	$sub8_file_md5_2 = createTSVFile($ngs_samples, BASE_PATH . $sub8_file_name_2, $directory . 'rsem/isoforms_expression_tpm.tsv');
+	$sub8_file_md5_2 = createTSVFile($ngs_samples, $galaxy_path . $sub8_file_name_2, $directory . 'rsem/isoforms_expression_tpm.tsv');
 	//	gene_exp
 	$sub8_file_name_3 = 'tmp/encode/'.$ngs_samples.'_gene_exp.tsv';
 	$sub8_file_type_3 = 'tsv';
-	$sub8_file_md5_3 = createTSVFile($ngs_samples, BASE_PATH . $sub8_file_name_3, $directory . 'rsem/genes_expression_tpm.tsv');
+	$sub8_file_md5_3 = createTSVFile($ngs_samples, $galaxy_path . $sub8_file_name_3, $directory . 'rsem/genes_expression_tpm.tsv');
 	//	gene_tmp
 	$sub8_file_name_4 = 'tmp/encode/'.$ngs_samples.'_gene_tpm.tsv';
 	$sub8_file_type_4 = 'tsv';
-	$sub8_file_md5_4 = createTSVFile($ngs_samples, BASE_PATH . $sub8_file_name_4, $directory . 'rsem/genes_expression_expected_count.tsv');
+	$sub8_file_md5_4 = createTSVFile($ngs_samples, $galaxy_path . $sub8_file_name_4, $directory . 'rsem/genes_expression_expected_count.tsv');
 	
 	//	9.
 	$sub9_file_name = 'tmp/encode/'.$ngs_samples.'_RNASeqMetrics.tsv';
-	$sub9_file_md5 = createTSVFile($ngs_samples, BASE_PATH . $sub9_file_name, $directory . 'picard_Tophat/picard.CollectRnaSeqMetrics.stats.tsv');
+	$sub9_file_md5 = createTSVFile($ngs_samples, $galaxy_path . $sub9_file_name, $directory . 'picard_Tophat/picard.CollectRnaSeqMetrics.stats.tsv');
 	$sub9_file_type = 'tsv';
 	
 	//	10.
@@ -264,12 +264,9 @@ function createTSVFile($sample_name, $tsvfile, $source){
 	$OPEN = popen( $com, "r" );
 	$OPEN_OUT =fread($OPEN, 2096);
 	pclose($OPEN);
-	var_dump($OPEN_OUT);
 	$com = 'awk \'{ print $1"\t"$2"\t\"' . preg_replace( "/\r|\n/", "", $OPEN_OUT ) . ' }\' '. $source . ' > '. $tsvfile;
 	$OPEN = popen( $com, "r" );
 	pclose($OPEN);
-	var_dump($source);
-	var_dump($tsvfile);
 	$com = "md5sum " . $tsvfile . " | awk '{ print $1 }'";
 	$OPEN = popen( $com, "r" );
 	$OPEN_OUT = fread($OPEN, 2096);
