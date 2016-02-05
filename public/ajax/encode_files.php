@@ -187,7 +187,7 @@ foreach($file_query as $fq){
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
 			if($step == 'step4'){
-				$directory = substr(getcwd(), 0, getcwd() - 11) . 'tmp/encode/';
+				$directory = substr(getcwd(), 0, getcwd() - 11);
 				if(strpos($fn, "rRNA")){
 					$data["aliases"] = array($my_lab.':'.$step.'_rRNA_'.$sample_name);
 				}else if(strpos($fn, "miRNA")){
@@ -201,7 +201,7 @@ foreach($file_query as $fq){
 				$data['derived_from'] = explode(",",$step_list['step3']);
 				$data["file_size"] = filesize($directory . $fn);
 			}else if ($step == 'step7'){
-				$directory = substr(getcwd(), 0, getcwd() - 11) . 'tmp/encode/';
+				$directory = substr(getcwd(), 0, getcwd() - 11);
 				$data['derived_from'] = explode(",",$step_list['step3']);
 				if(strpos($fn, "gene_exp")){
 					$data["aliases"] = array($my_lab.':'.$step.'_gene_exp_'.$sample_name);
@@ -218,7 +218,7 @@ foreach($file_query as $fq){
 				}
 				$data["file_size"] = filesize($directory . $fn);
 			}else if ($step == 'step8'){
-				$directory = substr(getcwd(), 0, getcwd() - 11) . 'tmp/encode/';
+				$directory = substr(getcwd(), 0, getcwd() - 11);
 				$data['output_type'] = 'gene quantifications';
 				$data['derived_from'] = explode(",",$step_list['step5']);
 				$data["file_size"] = filesize($directory . $fn);

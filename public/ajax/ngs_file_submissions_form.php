@@ -12,7 +12,7 @@ if (isset($_GET['sample_ids'])){
 }else{
 	$sample_ids = $argv[1];
 }
-$galaxy_path = '/var/www/html/dolphin-ui/';
+$galaxy_path = substr(getcwd(), 0, getcwd() - 11);
 $sample_id_array = explode(",", $sample_ids);
 
 foreach($sample_id_array as $sia){
@@ -260,7 +260,6 @@ foreach($sample_id_array as $sia){
 }
 
 function createTSVFile($sample_name, $tsvfile, $source){
-	var_dump(substr(getcwd(), 0, getcwd() - 11) . 'tmp/encode/');
 	var_dump($source);
 	$com = "head -1 ".$source." | awk '{ n=split($0,a,\"\\t\"); for (i=1;i<=n;i++) { if(a[i] == \"".$sample_name."\"){ print \"$\"i; } } }'";
 	$OPEN = popen( $com, "r" );
