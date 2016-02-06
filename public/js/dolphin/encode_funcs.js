@@ -7,7 +7,7 @@ var treatment_info = [];
 var antibody_info = [];
 //	JSON Tables
 var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
-var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_type", "biosample_type", "description", "lab", "award"];
+var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
 var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
 var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
 var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "award", "size_range", "lab"];
