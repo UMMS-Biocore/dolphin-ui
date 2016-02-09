@@ -360,10 +360,12 @@ foreach($file_query as $fq){
 			
 			$item = $body->{'@graph'}[0];
 			
-			echo $response->body;
+			echo $response->body . ",";
+			/*
 			if(end($file_query) != $fq){
 				echo ',';
 			}
+			*/
 			
 			####################
 			# POST file to S3
