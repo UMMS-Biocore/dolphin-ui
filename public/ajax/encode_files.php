@@ -360,12 +360,10 @@ foreach($file_query as $fq){
 			
 			$item = $body->{'@graph'}[0];
 			
-			/*
-			echo $response->body . ",";
+			echo $response->body;
 			if(end($file_query) != $fq){
 				echo ',';
 			}
-			*/
 			
 			####################
 			# POST file to S3
@@ -388,9 +386,8 @@ foreach($file_query as $fq){
 				*/
 				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
 					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
-				//$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				//pclose($AWS_COMMAND_DO);
-				echo $cmd_aws_launch . "@@@";
+				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+				pclose($AWS_COMMAND_DO);
 			}else{
 				echo '{"error":"'.$fn.' submission currently running"},';
 			}
