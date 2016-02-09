@@ -14,12 +14,13 @@ secret_key = sys.argv[3]
 upload = sys.argv[4]
 upload_path = upload[23:]
 session_token = sys.argv[5]
+bucket = sys.argv[6]
 
 #try:
         
 #connect
 conn = S3Connection(access_key, secret_key, security_token=session_token)
-bucket = conn.get_bucket('encoded-files-dev', validate=False)
+bucket = conn.get_bucket(bucket, validate=False)
 
 # Get file info
 source_path = file_path

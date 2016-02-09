@@ -7,8 +7,7 @@ if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 
 $accs = explode(",", $accession);
 
-$server_start = "https://ggr-test.demo.encodedcc.org/";
-//$server_start = "https://test.encodedcc.org/";
+$server_start = ENCODE_URL;
 $server_end = "/";
 
 #Uses Requests library from https://github.com/rmccue/Requests
@@ -19,8 +18,8 @@ Requests::register_autoloader();
 $headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 
 # Authentication is always required to POST ENCODE objects
-$authid = "SU45FB2Q"; // <-Replace this with your access_key
-$authpw = "rae76sr5bntlz5c6"; // <-Replace this with your secret_access_key
+$authid = ENCODE_ACCESS; // <-Replace this with your access_key
+$authpw = ENCODE_SECRET; // <-Replace this with your secret_access_key
 $auth = array('auth' => array($authid, $authpw));
 
 $json = $json_passed;

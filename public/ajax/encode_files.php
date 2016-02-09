@@ -37,12 +37,10 @@ $sample_name = $query->queryAVal("
 	FROM ngs_samples
 	WHERE id = " . $sample_id
 	);
-//Needed?
-$host = 'http://localhost:6543';
 
 //Encoded access information
-$encoded_access_key = 'SU45FB2Q';
-$encoded_secret_access_key = 'rae76sr5bntlz5c6';
+$encoded_access_key = ENCODE_ACCESS;
+$encoded_secret_access_key = ENCODE_SECRET;
 
 //Experiment Accession number
 $dataset_acc = $experiment;
@@ -315,8 +313,7 @@ foreach($file_query as $fq){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 			
-			$server_start = "https://ggr-test.demo.encodedcc.org/";
-			//$server_start = "https://www.encodeproject.org/";
+			$server_start = ENCODE_URL;
 			$server_end = "/";	
 			
 			$auth = array('auth' => array($encoded_access_key, $encoded_secret_access_key));
@@ -388,7 +385,7 @@ foreach($file_query as $fq){
 				}else{
 				*/
 				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'];
+					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 				pclose($AWS_COMMAND_DO);
 			}else{
