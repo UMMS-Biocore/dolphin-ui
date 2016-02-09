@@ -22,6 +22,7 @@ bucket = sys.argv[6]
 conn = S3Connection(access_key, secret_key, security_token=session_token)
 bucket = conn.get_bucket(bucket, validate=False)
 
+"""
 # Get file info
 source_path = file_path
 source_size = os.stat(source_path).st_size
@@ -29,7 +30,6 @@ source_size = os.stat(source_path).st_size
 # Create a multipart upload request
 mp = bucket.initiate_multipart_upload(upload_path)
 
-"""
 # Use a chunk size of 50 MiB
 chunk_size = 52428800
 chunk_count = int(math.ceil(source_size / float(chunk_size)))
