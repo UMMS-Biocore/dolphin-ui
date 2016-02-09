@@ -55,7 +55,4 @@ k.set_contents_from_filename(file_path)
 """
 except boto.exception.S3ResponseError as e:
     print '{"passed":"no"}'
-else:
-    print '{"passed":"yes"}'
-    sys.exit(0)
 """

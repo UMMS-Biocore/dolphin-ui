@@ -1,6 +1,6 @@
 <?php
 # PATCH an object to an ENCODE server
-
+require_once("../../config/config.php");
 if (isset($_GET['json_name'])){$json_name = $_GET['json_name'];}
 if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 
@@ -15,8 +15,8 @@ Requests::register_autoloader();
 $headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 
 # Authentication is always required to POST ENCODE objects
-$authid = ENCODE_ACCESS; // <-Replace this with your access_key
-$authpw = ENCODE_SECRET; // <-Replace this with your secret_access_key
+$authid = ENCODE_ACCESS;
+$authpw = ENCODE_SECRET;
 $auth = array('auth' => array($authid, $authpw));
 
 # Arguments at comand line, file to post and object
