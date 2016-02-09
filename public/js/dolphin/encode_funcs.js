@@ -634,8 +634,9 @@ function encodeFilePost(){
 			success : function(s)
 			{
 				var file_post_string = "[" + s + "]";
-				var file_response = JSON.parse(file_post_string);
-				console.log(file_response);
+				console.log(file_post_string);
+				//var file_response = JSON.parse(file_post_string);
+				//console.log(file_response);
 			}
 		});
 	}
