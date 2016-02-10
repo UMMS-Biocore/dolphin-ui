@@ -177,7 +177,7 @@ function rerunLoad() {
 									IGVTDFSelection('select_1_'+i);
 									document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
 								}
-								if (splt1[i].RSeQC == 'yes' || (splt1[i].RSeQC == '1') {
+								if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
 									document.getElementById('checkbox_1_'+i).checked = true;
 								}
 								if (splt1[i].CollectRnaSeqMetrics == 'yes' || splt1[i].CollectRnaSeqMetrics == '1') {
