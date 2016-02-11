@@ -647,6 +647,7 @@ function submitPipeline(type) {
 		var adapter = findAdditionalInfoValues(doAdapter, ["adapters"]);
 
 		var adapterCheck = false;
+		var number_error = false;
 		if (adapter[0].match(/[bd-fh-sv-zBD-FH-SV-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\-\=\\\|\[\]\{\}\;\'\:\"\,\.\/\<\>\?\`\~]+/g)) {
 			adapterCheck = true;
 		}
@@ -695,6 +696,11 @@ function submitPipeline(type) {
 		//quality
 		var JSON_ARRAY_QUALITY = {};
 		if (doQuality == "yes") {
+			for(var nc in quality){
+				if (isNaN(quality[nc].substring(0,1))) {
+					number_error = true;
+				}
+			}
 			JSON_ARRAY_QUALITY['windowSize'] = quality[0];
 			JSON_ARRAY_QUALITY['requiredQuality'] = quality[1];
 			JSON_ARRAY_QUALITY['leading'] = quality[2];
@@ -708,6 +714,12 @@ function submitPipeline(type) {
 		//trim
 		var JSON_ARRAY_TRIMMING = {};
 		if (doTrimming == "yes") {
+			for(var nc in trimming){
+				if (isNaN(trimming[nc].substring(0,1)) && nc != 0) {
+					console.log(trimming[nc].substring(0,1))
+					number_error = true;
+				}
+			}
 			JSON_ARRAY_TRIMMING['5len1'] = trimming[1];
 			JSON_ARRAY_TRIMMING['3len1'] = trimming[2];
 			previous = 'trim';
@@ -715,6 +727,11 @@ function submitPipeline(type) {
 			JSON_OBJECT['trim'] = 'none';
 		}
 		if (trimming[0] == 'paired-end' && doTrimming == 'yes') {
+			for(var nc in trimming){
+				if (isNaN(trimming[nc].substring(0,1)) && nc != 0) {
+					number_error = true;
+				}
+			}
 			JSON_ARRAY_TRIMMING['5len2'] = trimming[3];
 			JSON_ARRAY_TRIMMING['3len2'] = trimming[4];
 			JSON_ARRAY_TRIMMING['trimpaired'] = 'paired';
@@ -725,7 +742,11 @@ function submitPipeline(type) {
 		//split
 		if (doSplit == "yes") {
 			previous = 'split';
+			if (isNaN(split[0].substring(0,1))) {
+				number_error = true;
+			}
 		}
+			
 		JSON_OBJECT['split'] = split[0]
 	
 		//expanding multiple queries
@@ -813,6 +834,42 @@ function submitPipeline(type) {
 				}
 			}
 		}
+		
+		//DESeq/DiffMeth naming check
+		var name_error = false;
+		var name_index = [];
+		for(var z = 0; z < currentPipelineVal.length; z++){
+			if (currentPipelineVal[z] == 'DESeq' || currentPipelineVal[z] == 'DiffMeth') {
+				name = document.getElementById('text_1_'+currentPipelineID[z]).value;
+				if (name.match(/[\!\@\#\$\%\^\&\*\(\)\+\-\=\\\|\[\]\{\}\;\'\:\"\,\.\/\<\>\?\`\~\s]+/g)) {
+					name_error = true;
+					name_index.push(z);
+				}
+			}
+		}
+		
+		//0.xx pipeline check
+		for(var z = 0; z < currentPipelineVal.length; z++){
+			if (currentPipelineVal[z] == 'DESeq') {
+				if (isNaN(document.getElementById('text_2_'+currentPipelineID[z]).value.substring(0,1)) || isNaN(document.getElementById('text_3_'+currentPipelineID[z]).value.substring(0,1))) {
+					number_error = true;
+				}
+			}else if (currentPipelineVal[z] == 'ChipSeq') {
+				if (isNaN(document.getElementById('text_1_'+currentPipelineID[z]).value.substring(0,1)) || isNaN(document.getElementById('text_2_'+currentPipelineID[z]).value.substring(0,1))) {
+					number_error = true;
+				}
+				if (isNaN(document.getElementById('select_1_'+currentPipelineID[z]).value.substring(0,1)) || isNaN(document.getElementById('select_2_'+currentPipelineID[z]).value.substring(0,1))) {
+					number_error = true;
+				}
+			}else if (currentPipelineVal[z] == 'DiffMeth') {
+				if (isNaN(document.getElementById('text_2_'+currentPipelineID[z]).value.substring(0,1)) || isNaN(document.getElementById('text_3_'+currentPipelineID[z]).value.substring(0,1))) {
+					number_error = true;
+				}
+				if (isNaN(document.getElementById('text_4_'+currentPipelineID[z]).value.substring(0,1)) || isNaN(document.getElementById('text_5_'+currentPipelineID[z]).value.substring(0,1))) {
+					number_error = true;
+				}
+			}
+		}
 	
 		if (adapterCheck && doAdapter == 'yes') {
 			$('#errorModal').modal({
@@ -850,6 +907,18 @@ function submitPipeline(type) {
 				show: true
 			});
 			document.getElementById('errorLabel').innerHTML ='DiffMeth is missing selected conditions.<br><br>';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else if (name_error) {
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML ='Naming scheme needs to be alpha-numeric with underscores only in pipeline number(s): ' + name_index.toString() + '<br><br>';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else if (number_error) {
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML ='Decimal values must have a leading digit for submission.<br><br>';
 			document.getElementById('errorAreas').innerHTML = '';
 		}else{
 			//insert new values into ngs_runparams

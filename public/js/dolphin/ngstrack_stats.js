@@ -384,7 +384,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	newlabel.innerHTML = "entries per page";
 	document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
 	
-	num_search.setAttribute('class',"st_per_page margin pull-left input-sm");
+	num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
 	
 	document.getElementById('st_pagination').id = 'st_pagination_' + type;
 	var pagination = document.getElementById('st_pagination_'+type);
