@@ -51,6 +51,7 @@ mp.complete_upload()
 try:
     k = Key(bucket)
     k.name = upload_path
+    print k.name
     k.set_contents_from_filename(file_path)
     print '{"message":"passed"}'
 except boto.exception.S3ResponseError as e:
