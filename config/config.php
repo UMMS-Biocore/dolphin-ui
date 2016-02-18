@@ -11,15 +11,15 @@ if (!empty($_SERVER["HTTP_HOST"])){
    {
       $param_section="Biocore";
    }
-   else if  ( preg_match("/galaxy/", $http_host) )
+   else if  ( preg_match("/dolphin.umassmed.edu/", $http_host) )
    {
-      $param_section="Galaxy";
+      $param_section="Dolphin";
    }
    else if  ( preg_match("/localhost/", $http_host) )
    {
       $param_section="Localhost";
    }
-   else if  ( preg_match("/dolphin.umassmed.edu/", $http_host) )
+   else if  ( preg_match("/galaxyweb.umassmed.edu/", $http_host) )
    {
       $param_section="DolphinDev";
    }

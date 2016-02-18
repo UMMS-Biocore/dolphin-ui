@@ -90,6 +90,9 @@
 										<a href="#photo" data-toggle="tab" aria-expanded="true">Photo</a>
 									</li>
 									<li class>
+										<a href="#email" data-toggle="tab" aria-expanded="true">Email</a>
+									</li>
+									<li class>
 										<a href="#bucket" data-toggle="tab" aria-expanded="true">Amazon Information</a>
 									</li>
 								</ul>
@@ -132,6 +135,23 @@
 												<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Update</button>
 											</div>
 										</form>
+									</div>
+									<div class="tab-pane" id="email">
+										<div id="email_box" class="margin">
+											<div class="form-group" ">
+												<div class="margin">
+													<label><h3>Update your email settings</h3></label>
+												</div>
+												<div class="margin">
+													<?php echo $html->getStaticSelectionBox("Email address", "email_address", "TEXT", 6)?>
+													<?php echo $html->getStaticSelectionBox("Send email for runs?", "email_check", "<option value='0'>No</option>
+																			<option value='1'>Yes</option>", 6)?>
+												</div>
+											</div>
+										</div>
+										<div class="box-footer margin">
+											<button type="button" id="changeEmail" class="btn btn-primary" onclick="updateEmail()">Update</button>
+										</div>
 									</div>
 									<div class="tab-pane" id="bucket">
 										<div id="amazon_keys" class="margin">

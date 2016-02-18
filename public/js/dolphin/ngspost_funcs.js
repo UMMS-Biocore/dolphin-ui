@@ -4,7 +4,7 @@
  *Ascription:
  */
 
-function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, group){
+function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, group, ids){
 
    var successCheck = false;
    var runlistCheck = "";
@@ -45,10 +45,11 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
    $.ajax({
            type: 	'POST',
            url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',
-           data:  	{ p: "submitPipeline", json: json, outdir: outputdir, name: name, desc: description, runGroupID: runGroupID, barcode: barcode, uid: uid, group: group, perms: perms},
+           data:  	{ p: "submitPipeline", json: json, outdir: outputdir, name: name, desc: description, runGroupID: runGroupID, barcode: barcode, uid: uid, group: group, perms: perms, ids: ids},
            async:	false,
            success: function(r)
            {
+				console.log(r);
                successCheck = true;
                if (runGroupID == 'new') {
                    runlistCheck = 'insertRunlist';

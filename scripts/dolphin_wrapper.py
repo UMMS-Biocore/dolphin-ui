@@ -245,7 +245,7 @@ class Dolphin:
        #u'barcodes': [{u'distance': u'1', u'format': u'5 end read 1'}]
        if ('barcodes' in runparams and barcodes):
           pipe=runparams['barcodes'][0]
-          barcode="Distance,%s:Format,%s%s"%(str(pipe['distance']), str(pipe['format'][0]),barcodes)
+          barcode="Distance,%s:Format,%s%s"%(str(int(pipe['distance'])+1), str(pipe['format'][0]),barcodes)
           print >>fp, '@BARCODES=%s'%barcode
           previous="BARCODES"
        else:
@@ -353,7 +353,7 @@ class Dolphin:
                print >>fp, '@STEP_SIZE%s=%s'%(name, pipe['StepSize'])
                print >>fp, '@STRAND%s=%s'%(name, pipe['StrandSpecific'])
                print >>fp, '@TOPN%s=%s'%(name, pipe['TopN'])
-               print >>fp, '@MAXCOVERAGE%s=%s'%(name, pipe['MaxCoverage'])
+               print >>fp, '@MINCOVERAGE%s=%s'%(name, pipe['MinCoverage'])
                print >>fp, '@GBUILD%s=%s'%(name, gb[1])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
@@ -460,6 +460,8 @@ class Dolphin:
                  self.writeRSeQC ( fp, "RSEM", pipe, sep )
               
               if (pipe['Type']=="Tophat"):
+                 gtf = (pipe['CustomGenomeAnnotation'] if ('CustomGenomeAnnotation' in pipe and pipe['CustomGenomeAnnotation'].lower()!="none") else "@GTF" )
+                 bowtie2index = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@BOWTIE2INDEX" )
                  self.prf( fp, stepTophat % locals() )
                  type="tophat"
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
@@ -559,6 +561,30 @@ class Dolphin:
     def stop_err(self, msg ):
         sys.stderr.write( "%s\n" % msg )
         sys.exit(2)
+        
+    # email
+    def send_email(self, username, run_id, config_type):
+        email_sender=self.config.get(self.params_section, "email_sender")
+        email_err_receiver=self.config.get(self.params_section, "email_err_receiver")
+        run_sql = "SELECT run_status FROM ngs_runparams where id = %s;"%run_id
+        end_email_check=self.runSQL(run_sql%locals())
+        user_sql = "SELECT name, email, email_toggle FROM users where username = '%s';"%username
+        email_check=self.runSQL(user_sql%locals())
+        if (end_email_check[0][0] == 1 and email_check[0][2] == 1):
+            receiver = email_check[0][1]
+            subject = 'Your Dolphin run has completed!'
+            body = 'Your Dolphin run #%s has completed successfully!' % run_id
+        elif (end_email_check[0][0] != 1):
+            receiver =  email_err_receiver
+            subject = 'There has been an error in run: %s' % run_id
+            body = 'Run %s has ended with an error in: %s' % (run_id, config_type);
+        p = os.popen("%s -t" % "/usr/sbin/sendmail", "w")
+        p.write("From: %s\n" % email_sender)
+        p.write("To: %s\n" % receiver)
+        p.write("Subject: %s\n" % subject)
+        p.write("\n") # blank line separating headers from body
+        p.write("%s" % body)
+        status = p.close()
 
 # main
 def main():
@@ -568,7 +594,7 @@ def main():
    try:
         tmpdir = '../tmp/files'
         logdir = '../tmp/logs'
-
+        
         if not os.path.exists(tmpdir):
            os.makedirs(tmpdir)
         if not os.path.exists(logdir):
@@ -588,7 +614,6 @@ def main():
         params_section = options.config        
         
         dolphin=Dolphin(params_section)
-
         logging.basicConfig(filename=logdir+'/run'+str(rpid)+'/run.'+str(rpid)+'.'+str(os.getpid())+'.log', filemode='w',format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG)
 
         if (not rpid):
@@ -596,11 +621,9 @@ def main():
         runidstr=" -r "+str(rpid)
         
         dolphin.config.read("../config/config.ini")
-    
         print dolphin.params_section
         logging.info(dolphin.params_section)
         runparamsids=dolphin.getRunParamsID(rpid)
-        
         for runparams_arr in runparamsids:
            runparamsid=runparams_arr[0]
            username=runparams_arr[1]
@@ -663,12 +686,12 @@ def main():
               p.stdout.flush()
               if (re.search('failed\n', line) or re.search('Err\n', line) ):
                  logging.info("failed")
+                 dolphin.send_email(runparamsids[0][1], runparamsids[0][0], dolphin.params_section);
                  dolphin.stop_err("failed")
+        #Send email when finished
+        dolphin.send_email(runparamsids[0][1], runparamsids[0][0], dolphin.params_section);
    except Exception, ex:
         dolphin.stop_err('Error (line:%s)running dolphin_wrapper.py\n%s'%(format(sys.exc_info()[-1].tb_lineno), str(ex)))
-
-   sys.exit(0)
-
 
 
 if __name__ == "__main__":

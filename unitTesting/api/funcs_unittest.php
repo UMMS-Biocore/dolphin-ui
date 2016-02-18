@@ -66,7 +66,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($funcs->checkFile($params),"{\"Result\":\"Ok\"}");
 		$params['username'] = 'root';
 		$params['file'] = 'does_not_exist.php';
-		$this->assertEquals($funcs->checkFile($params),"{\"ERROR\": \"No such file or directory: ".$params['file']."\"}");
+		$this->assertEquals($funcs->checkFile($params),"{\"ERROR\": \"ls: cannot access ".$params['file'].": No such file or directory\"}");
 		ob_end_clean();
 	}
 	
@@ -157,6 +157,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		ob_start();
 		$funcs  = new funcs();
 		$params['servicename'] = 'stepCheck';
+		$params['username'] = 'ak97w';
         $params['wkey'] = 'Od1HnRuJ0BJAeMpHOTwsH9rqxBDiD';
 		$this->assertEquals($funcs->checkStatus($params), 'DONE: Service ended successfully (stepCheck)!!!');
 		ob_end_clean();
@@ -247,8 +248,9 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 	public function testStartService(){
 		ob_start();
 		$funcs  = new funcs();
-        $params['servicename'] = 'stepCheck';
-        $params['wkey'] = '3pl8cmzYJ4ezgX2a9RevZxHmihpOA';
+                $params['username'] = 'ak97w';
+                $params['servicename'] = 'stepCheck';
+                $params['wkey'] = '3pl8cmzYJ4ezgX2a9RevZxHmihpOA';
 		$params['command'] = '@RUNCLEAN -c @CONFIG -l 0 -u @USERNAME -p @PUBDIR -w @WKEY -d @DBCOMMCMD  -o @OUTDIR';
 		$this->assertEquals($funcs->startService($params), 'DONE: Service ended successfully (stepCheck)!!!');
 		ob_end_clean();

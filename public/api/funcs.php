@@ -64,36 +64,37 @@ class funcs
 
     function checkFile($params)
     {
-         $this->username=$params['username'];
-         $this->readINI();         
-         $com = "ls ".$params['file'];
-         $retval = $this->syscall($this->getCMDs($com));
-         
-         if (preg_match('/No such file or directory/', $retval)) {
-              return "{\"ERROR\": \"No such file or directory: ".$params['file']."\"}";
-         }
-         if (preg_match('/Permission denied/', $retval)) {
-              return "{\"ERROR\": \"Permission denied: ".$params['file']."\"}";
-         }
-         return "{\"Result\":\"Ok\"}";
+        $this->username=$params['username'];
+        $this->readINI();
+        $file_array = explode(",",$params['file']);
+        $com = 'ls ';
+        foreach($file_array as $fa){
+            $com .= $fa . " ";
+        }
+        $com .= " | grep XXXXXXXXXXX";
+        $retval = $this->syscall($this->getCMDs($com));
+        if (preg_match('/No such file or directory/', $retval)) {
+             return "{\"ERROR\": \"".trim($retval)."\"}";
+        }
+        if (preg_match('/Permission denied/', $retval)) {
+             return "{\"ERROR\": \"".trim($retval)."\"}";
+        }
+        return "{\"Result\":\"Ok\"}";
     }
     function checkPermissions($params)
     {
-         $this->username=$params['username'];
-         $this->readINI();
-         if ($params['outdir']!="")
-         {
-           $com = "mkdir -p ".$params['outdir'].";cd ".$params['outdir'].";touch permstest.txt;rm permstest.txt";
-         }
-         else
-         {
-           $com = "ls";
-         }
-         $retval = $this->syscall($this->getCMDs($com));
-         if (preg_match('/Permission denied/', $retval)) {
-              return "{\"ERROR\": \"Permission denied: ".$params['outdir']."\"}";
-         }
-         return "{\"Result\":\"Ok\"}";
+        $this->username=$params['username'];
+        $this->readINI();
+        if (isset($params['outdir'])){
+          $com = "mkdir -p ".$params['outdir'].";cd ".$params['outdir'].";touch permstest.txt;rm permstest.txt";
+        }else{
+          $com = "ls";
+        }
+        $retval = $this->syscall($this->getCMDs($com));
+        if (preg_match('/Permission denied/', $retval)) {
+             return "{\"ERROR\": \"Permission denied: ".$params['outdir']."\"}";
+        }
+        return "{\"Result\":\"Ok\"}";
     }
      
     function getKey()
@@ -199,6 +200,15 @@ class funcs
         }
         return $retval;
     }
+
+
+    function updateStartTime($wkey)
+    {
+        $sql = "update jobs set start_time=submit_time where wkey='$wkey' and start_time=0 ";
+        $this->runSQL($sql);
+    }
+
+
     function checkStartTime($wkey, $job_num,$username)
     {
         $sql = "update jobs set start_time=now() where wkey='$wkey' and job_num='$job_num'  and start_time=0 and username='$username'";
@@ -241,7 +251,7 @@ class funcs
     {
         $servicename = $params['servicename'];
         $wkey        = $params['wkey'];
-        $sql      = "select j.service_id from jobs j, services s where s.service_id=j.service_id and s.servicename='$servicename' and j.wkey='$wkey'";
+        $sql      = "select DISTINCT j.service_id from jobs j, services s where s.service_id=j.service_id and j.jobname='$servicename' and j.wkey='$wkey'";
         #return $sql;
         $service_id   = $this->queryAVal($sql);
         #sleep(1); 
@@ -282,7 +292,10 @@ class funcs
                     }
                 }
             } else {
-                 return "DONE: Service ended successfully ($servicename)!!!";
+                 if ($this->checkAllJobsFinished($params)){
+                    $this->updateStartTime($wkey);
+                    return "DONE: Service ended successfully ($servicename)!!!";
+                 }
             }
             return "RUNNING(1):[retval=$retval]:SERVICENAME:$servicename";
         }
@@ -493,7 +506,7 @@ class funcs
                 $retval = $this->sysback($com);
              }
              if (preg_match('/Error/', $retval)) {
-                 return "ERROR: $retval";
+                 return "ERROR: $retval: : $com";
              }
              return "RUNNING(2):$inputcommand:$com";
         } else {
@@ -584,7 +597,7 @@ class funcs
         $service_id  = $this->getId("service", $username, $servicename, $wkey, "");
         if ($field=="end_time")
         {
-               $this->checkStartTime($wkey, $job_num, $username);
+               $this->checkStartTime($wkey, $jobnum, $username);
         }
         
         $sql = "update jobs set `$field`=now(), `result`='$result' where `wkey`='$wkey' and `job_num`='$jobnum'";
@@ -614,17 +627,20 @@ class funcs
             
             if ($s1 == $s2) {
                 $res = $this->updateService($wkey, $service_id, 1);
+                $res=1;
             } else {
-                $res = "Should be still running 1 [$s1:$s2]\n[$sql]";
+                $res = "Should be still running 1 [$s1:$s2]\n";
+                $res=0;           
             }
         } else {
-            $res = "Should be still running 2 \n [$sql]";
+            $res = "Should be still running 2 \n ";
+            $res=0;
         }
         return $res;
     }
     function updateService($wkey, $service_id, $result)
     {
-        $sql = "update service_run set `end_time`=now(), `result`='$result' where `wkey`='$wkey' and `service_id`='$service_id'";
+        $sql = "update service_run set `end_time`=now(), `result`='$result' where `wkey`='$wkey' and `service_id`='$service_id' and end_time=0";
         $res = $this->runSQL($sql);
         
         return $res;

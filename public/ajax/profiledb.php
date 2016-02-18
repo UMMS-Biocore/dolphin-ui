@@ -295,7 +295,24 @@ else if ($p == 'getUID')
 {
     $data=json_encode($_SESSION['uid']);
 }
-
+else if ($p == 'obtainEmail')
+{
+	$data=$query->queryTable("
+       SELECT email, email_toggle
+       FROM users
+       WHERE id = " . $_SESSION['uid']
+       );
+}
+else if ($p == 'changeEmail')
+{
+	if (isset($_GET['email'])){$email = $_GET['email'];}
+	if (isset($_GET['email_toggle'])){$email_toggle = $_GET['email_toggle'];}
+	$data=$query->runSQL("
+       UPDATE users
+       SET email = '$email', email_toggle = $email_toggle
+       WHERE id = " . $_SESSION['uid']
+       );
+}
 
 
 if (!headers_sent()) {

@@ -133,28 +133,25 @@ else if($p == 'deleteSelected')
 	foreach($workflow_pids as $wp){
 		$cmd = "ps -ef | grep '[".substr($wp->runworkflow_pid, 0, 1)."]".substr($wp->runworkflow_pid, 1)."'";
 		$pid_check = pclose(popen( $cmd, "r" ) );
-		if($pid_check > 0){
+		if($pid_check > 0 && $pid_check != NULL){
 			pclose(popen( "kill -9 ".$wp->runworkflow_pid, "r" ) );
-			$query->runSQL("UPDATE ngs_runparams SET run_status = 4 WHERE runworkflow_pid = ".$wp->runworkflow_pid);
 		}
 	}
 	foreach($wrapper_pids as $wp){
 		$cmd = "ps -ef | grep '[".substr($wp->wrapper_pid, 0, 1)."]".substr($wp->wrapper_pid, 1)."'";
 		$pid_check = pclose(popen( $cmd, "r" ) );
-		if($pid_check > 0){
+		if($pid_check > 0 && $pid_check != NULL){
 			pclose(popen( "kill -9 ".$wp->wrapper_pid, "r" ) );
-			$query->runSQL("UPDATE ngs_runparams SET run_status = 4 WHERE wrapper_pid = ".$wp->wrapper_pid);
 		}
 	}
 	
 	//	RUNS
-	$query->runSQL("UPDATE ngs_runparams SET run_status = 5 WHERE id IN (".implode(",", $all_run_ids).")");
+	//	$query->runSQL("UPDATE ngs_runparams SET run_status = 5 WHERE id IN (".implode(",", $all_run_ids).")");
 	//	For now, status is set to 5 to hide runs that no longer have proper imports/samples
-	//	If experiment series is deleted, delete all run information
-	if ($experiments != ""){
-		$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
-		$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
-	}
+	
+	//	If sample is deleted, delete all run information
+	$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
+	$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
 	$data = '';
 }
 else if ($p == 'intialRunCheck')

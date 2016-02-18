@@ -440,6 +440,33 @@ function obtainProfileInfo(){
 	});
 }
 
+function obtainEmail(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'obtainEmail' },
+		async: false,
+		success : function(s)
+		{
+			document.getElementById('email_address').value = s[0].email
+			document.getElementById('email_check').value = s[0].email_toggle;
+		}
+	});
+}
+
+function updateEmail(){
+	var email = document.getElementById('email_address').value
+	var email_toggle = document.getElementById('email_check').value
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'changeEmail', email: email, email_toggle: email_toggle },
+		async: false,
+		success : function(s)
+		{
+			window.location.reload();
+		}
+	});
+}
+
 function requestNewGroup(){
 	$('#groupModal').modal({
 		show: true
@@ -554,6 +581,8 @@ $(function() {
 	obtainProfileInfo();
 	//	GROUPS
 	obtainGroups();
+	//	EMAIL
+	obtainEmail();
 	//	AMAZON KEYS
 	obtainKeys();
 });

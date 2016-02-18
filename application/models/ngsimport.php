@@ -47,7 +47,11 @@ class Ngsimport extends VanillaModel {
 	
 	//	FILES
 	public $file_arr = array();
+<<<<<<< HEAD
 	public $file_names = array();
+=======
+	public $file_name_arr = array();
+>>>>>>> develop
 	
 	//	Sheet Check bools
 	public $final_check;
@@ -55,6 +59,14 @@ class Ngsimport extends VanillaModel {
 	//	Cluster name
 	public $clustername;
 	
+	/*
+	* num2alpha
+	*
+	* Converts a number to an alphabetical representation used in excel
+	*
+	* @param int $n number to convert
+	* @return string
+	*/
 	function num2alpha($n){
 		for($r = ""; $n >= 0; $n = intval($n / 26) - 1){
 			$r = chr($n%26 + 0x41) . $r;
@@ -62,6 +74,14 @@ class Ngsimport extends VanillaModel {
 		return $r;
 	}
 	
+	/*
+	* columnNumber
+	*
+	* Converts a string column letter into 
+	*
+	* @param int $n number to convert
+	* @return string
+	*/
 	function columnNumber($col){
 		$col = str_pad($col,2,'0',STR_PAD_LEFT);
 		$i = ($col{0} == '0') ? 0 : (ord($col{0}) - 64) * 26;
@@ -78,13 +98,33 @@ class Ngsimport extends VanillaModel {
         return rtrim($group_str, ",");
     }
 	
+	/*
+	* directoryCheck
+	*
+	* Makes sure a given directory is of the right format
+	*
+	* @param string $directory directory string to check
+	* @return string
+	*/
 	function directoryCheck($directory){
 		if(substr($directory, 0, 1) != '/' && strpos($directory, '/') > -1){
  			$directory = "/" . $directory;
  		}
+		if(substr($directory, strlen($directory)-1, strlen($directory)) != '/' && strpos($directory, '/') > -1){
+ 			$directory = $directory . "/";
+ 		}
 		return $directory;
 	}
 	
+	/*
+	* createSampleName
+	*
+	* Returns a specifically formatted samplename based on donor, source symbol, antibody target, condition symbol, time, and replicas
+	* Otherwise just returns the samples given name
+	*
+	* @param sample $sample sample object containing the correct information
+	* @return string
+	*/
 	function createSampleName($sample){
 		$samplename = '';
 		$underscore_mark = true;
@@ -104,6 +144,18 @@ class Ngsimport extends VanillaModel {
 					$samplename.="_";
 				}
 				$samplename.= $sample->source_symbol;
+				if($underscore_mark){
+					$underscore_mark = false;
+				}
+			}
+		}
+		//	Antibody Target
+		if(isset($sample->target)){
+			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
+				if(!$underscore_mark){
+					$samplename.="_";
+				}
+				$samplename.= $sample->target;
 				if($underscore_mark){
 					$underscore_mark = false;
 				}
@@ -130,19 +182,11 @@ class Ngsimport extends VanillaModel {
 				if(!$underscore_mark){
 					$samplename.="_";
 				}
-				$samplename.= floor($sample->time/60)."h";
-				if($underscore_mark){
-					$underscore_mark = false;
+				if($sample->time < 60 && $sample->time > 0){
+					$samplename.= $sample->time."m";
+				}else{
+					$samplename.= floor($sample->time/60)."h";
 				}
-			}
-		}
-		//	Antibody Targets
-		if(isset($sample->target)){
-			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
-				if(!$underscore_mark){
-					$samplename.="_";
-				}
-				$samplename.= $sample->target;
 				if($underscore_mark){
 					$underscore_mark = false;
 				}
@@ -267,20 +311,127 @@ class Ngsimport extends VanillaModel {
 		return $text;
 	}
 	
+	/*
+	* errorText
+	*
+	* Returns the html version for the error color
+	*
+	* @param string $text text to paint with error color
+	* @return string
+	*/
 	function errorText($text){
 		return "<font color='red'>" . $text . "</font><BR>";
 	}
 	
+	/*
+	* warningText
+	*
+	* Returns the html version for the warning color
+	*
+	* @param string $text text to paint with warning color
+	* @return string
+	*/
 	function warningText($text){
 		return "<font color='#B45F04'>" . $text . "</font><BR>";
 	}
 	
+	/*
+	* successText
+	*
+	* Returns the html version for the success color
+	*
+	* @param string $text text to paint with success color
+	* @return string
+	*/
 	function successText($text){
 		return "<font color='green'>" . $text . "</font><BR>";
 	}
 	
+	/*
+	* checkAlphaNumWithAddChars
+	*
+	* Checks string for alpha-numeric characters and any other extra characters specified
+	*
+	* @param string $extraChars extra characters to allow within the match
+	* @param string $data string to check matching characters against
+	* @return bool
+	*/
 	function checkAlphaNumWithAddChars($extraChars, $data){
 		return preg_match('/^[a-zA-Z0-9' . $extraChars . ']+$/', $data);
+	}
+	
+	/*
+	* checkNumeric
+	*
+	* Checks string for numeric characters only
+	*
+	* @param string $data string to check
+	* @return bool
+	*/
+	function checkNumeric($data){
+		return preg_match('/^[0-9]+$/', $data);
+	}
+	
+	
+	/*
+	* checkUserPermissions
+	*
+	* Runs the service api to find if use has permissions
+	*
+	* @param string $clustername cluster username
+	* @return string
+	*/
+	function checkUserPermissions($clustername){
+		$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$clustername;
+		$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
+		if(isset($valid_fastq[0]->ERROR)){
+			$this->final_check = false;
+			return $valid_fastq[0]->ERROR;
+		}
+		return 'pass';
+	}
+	
+	/*
+	* checkDirPermissions
+	*
+	* Runs the service api to find if use has permissions over a directory
+	*
+	* @param string $dir the directory to check
+	* @param string $clustername cluster username
+	* @return string
+	*/
+	function checkDirPermissions($dir, $clustername){
+		$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$clustername.'&outdir='.$this->directoryCheck($dir);
+		$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
+		if(isset($valid_fastq[0]->ERROR)){
+			$this->final_check = false;
+			return $valid_fastq[0]->ERROR;
+		}
+		return 'pass';
+	}
+	
+	/*
+	* checkFilePermissions
+	*
+	* Runs the service api to find if use has permissions over a specific file
+	*
+	* @param string dir directory of the file
+	* @param string $file the file to check
+	* @param string $clustername cluster username
+	* @return string
+	*/
+	function checkFilePermissions($clustername){
+		$request = API_PATH.'/api/service.php?func=checkFile&username='.$clustername.'&file=';
+		foreach($this->file_name_arr as $fna){
+			$request .= $fna . ',';
+		}
+		$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
+		if(isset($valid_fastq[0]->ERROR)){
+			$this->final_check = false;
+			$error_array = explode("ls: ",$valid_fastq[0]->ERROR);
+			return implode("<br>", array_splice($error_array, 1));
+		}
+		return 'pass';
 	}
 	
 	function getMeta() {
@@ -335,38 +486,27 @@ class Ngsimport extends VanillaModel {
 			
 			//	Directory validity tests
 			if(isset($this->fastq_dir) && ( $this->sheetData[$i]["A"]=="fastq directory" || $this->sheetData[$i]["A"]=="input directory")){
-				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername;
-				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Fastq Directory error (".$this->fastq_dir."). ".$valid_fastq[0]->ERROR);
-					$this->final_check = false;
+				$permCheck = $this->checkUserPermissions($this->clustername);
+				$dirCheck = $this->checkDirPermissions($this->fastq_dir, $this->clustername);
+				if($permCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$this->fastq_dir."). ".$permCheck);
+					$meta_check = false;
+				}
+				if($dirCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$this->fastq_dir."). ".$dirCheck);
 					$meta_check = false;
 				}
 			}
-			if(isset($this->fastq_dir) && ( $this->sheetData[$i]["A"]=="fastq directory" || $this->sheetData[$i]["A"]=="input directory")){
-				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername.'&outdir='.$this->fastq_dir;
-				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Fastq Directory error (".$this->fastq_dir."). ".$valid_fastq[0]->ERROR);
-					$this->final_check = false;
-					$meta_check = false;
-				}
-			}
+			
 			if(isset($this->backup_dir) && ( $this->sheetData[$i]["A"]=="backup directory" || $this->sheetData[$i]["A"]=="processed directory" || $this->sheetData[$i]["A"]=="process directory" )){
-				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername;
-				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Processed Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
-					$this->final_check = false;
+				$permCheck = $this->checkUserPermissions($this->clustername);
+				$dirCheck = $this->checkDirPermissions($this->backup_dir, $this->clustername);
+				if($permCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$this->backup_dir."). ".$permCheck);
 					$meta_check = false;
 				}
-			}
-			if(isset($this->backup_dir) && ( $this->sheetData[$i]["A"]=="backup directory" || $this->sheetData[$i]["A"]=="processed directory" || $this->sheetData[$i]["A"]=="process directory" )){
-				$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername.'&outdir='.$this->backup_dir;
-				$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-				if(isset($valid_fastq[0]->ERROR)){
-					$text.= $this->errorText("Processed Directory error (".$this->backup_dir."). ".$valid_fastq[0]->ERROR);
-					$this->final_check = false;
+				if($dirCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$this->backup_dir."). ".$dirCheck);
 					$meta_check = false;
 				}
 			}
@@ -486,37 +626,28 @@ class Ngsimport extends VanillaModel {
 				if($this->sheetData[3][$j]=="Total reads"){$lane->total_reads=trim($this->esc($this->sheetData[$i][$j]));}
 			}
 			
-			$blank = 'true';
-			foreach($lane as $l){
-				if(preg_replace('/\s+/', '', $l) != ''){
-					$blank = 'false';
-				}
-			}
-			
 			/*
 			 *	Check for proper data input
 			 */
 			//	Lane Name
-			if($blank == 'false'){
-				if(isset($lane->name)){
-					if($this->checkAlphaNumWithAddChars('\s\_\-', $lane->name)){
-						$this->lane_arr[$lane->name]=$lane;
-					}else{
-						$text.= $this->errorText("Import name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
-						$this->final_check = false;
-						$lane_check = false;
-					}
+			if(isset($lane->name)){
+				if($this->checkAlphaNumWithAddChars('\s\_\-', $lane->name)){
+					$this->lane_arr[$lane->name]=$lane;
 				}else{
-					$text.= $this->errorText("Import name is required for submission (row " . $i . ")");
+					$text.= $this->errorText("Import name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
 					$this->final_check = false;
 					$lane_check = false;
 				}
-				if(!isset($lane->lane_id)){
-					$lane->lane_id = NULL;
-				}
-				if(!isset($lane->total_reads)){
-					$lane->total_reads = NULL;
-				}
+			}else{
+				$text.= $this->errorText("Import name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$lane_check = false;
+			}
+			if(!isset($lane->lane_id)){
+				$lane->lane_id = NULL;
+			}
+			if(!isset($lane->total_reads)){
+				$lane->total_reads = NULL;
 			}
 		}
 		
@@ -567,36 +698,28 @@ class Ngsimport extends VanillaModel {
 			/*
 			 *	Check for proper data input
 			 */
-			$blank = 'true';
-			foreach($prot as $p){
-				if(preg_replace('/\s+/', '', $p) != ''){
-					$blank = 'false';
-				}
+			//	Protocol Name
+			if(isset($prot->name)){
+				$this->prot_arr[$prot->name]=$prot;	
+			}else{
+				$text.= $this->errorText("protocol name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$prot_check = false;
 			}
-			if($blank == 'false'){
-				//	Protocol Name
-				if(isset($prot->name)){
-					$this->prot_arr[$prot->name]=$prot;	
-				}else{
-					$text.= $this->errorText("protocol name is required for submission (row " . $i . ")");
-					$this->final_check = false;
-					$prot_check = false;
-				}
-				
-				//	Crosslinking Method
-				if(!isset($prot->crosslinking_method)){
-					$prot->crosslinking_method = NULL;
-				}
-				
-				//	Fragmentation Method
-				if(!isset($prot->fragmentation_method)){
-					$prot->fragmentation_method = NULL;
-				}
-				
-				//	Strand Specific
-				if(!isset($prot->strand_specific)){
-					$prot->strand_specific = NULL;
-				}
+			
+			//	Crosslinking Method
+			if(!isset($prot->crosslinking_method)){
+				$prot->crosslinking_method = NULL;
+			}
+			
+			//	Fragmentation Method
+			if(!isset($prot->fragmentation_method)){
+				$prot->fragmentation_method = NULL;
+			}
+			
+			//	Strand Specific
+			if(!isset($prot->strand_specific)){
+				$prot->strand_specific = NULL;
 			}
 		}
 		if($prot_check){
@@ -700,169 +823,210 @@ class Ngsimport extends VanillaModel {
 			/*
 			 *	Check for proper data input
 			 */
-			$blank = 'true';
-			foreach($samp as $s){
-				if(preg_replace('/\s+/', '', $s) != ''){
-					$blank = 'false';
+			//	Samplename
+			//$all_samplenames = json_decode($this->query("SELECT samplename FROM ngs_samples"));
+			if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
+				$samp->samplename = $this->createSampleName($samp);
+			}else{
+				$samp->samplename = $samp->name;
+			}
+			
+			$samplename_bool = true;
+			
+			if(isset($this->sample_arr)){
+				if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
+					foreach($this->sample_arr as $sa){
+						if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
+							$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . "). <br>
+													 DC project sample naming scheme = Donor_Source_Conditions_Time_Bio-rep_Tech-rep.");
+							$this->final_check = false;
+							$samp_check = false;
+							$samplename_bool = false;
+						}
+					}
+				}else{
+					foreach($this->sample_arr as $sa){
+						if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
+							$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . ")");
+							$this->final_check = false;
+							$samp_check = false;
+							$samplename_bool = false;
+						}
+					}
 				}
 			}
-			if($blank == 'false'){
-				//	Samplename
-				//$all_samplenames = json_decode($this->query("SELECT samplename FROM ngs_samples"));
-				if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
-					$samp->samplename = $this->createSampleName($samp);
-				}else{
-					$samp->samplename = $samp->name;
-				}
-				
-				$samplename_bool = true;
-				
-				if(isset($this->sample_arr)){
-					if($this->experiment_name == 'Dendritic Cell Transcriptional Landscape'){
-						foreach($this->sample_arr as $sa){
-							if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
-								$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . "). <br>
-														 DC project sample naming scheme = Donor_Source_Conditions_Time_Bio-rep_Tech-rep.");
-								$this->final_check = false;
-								$samp_check = false;
-								$samplename_bool = false;
-							}
-						}
-					}else{
-						foreach($this->sample_arr as $sa){
-							if($samp->samplename == $sa->samplename && $samp->samplename != '' && $samplename_bool){
-								$text.= $this->errorText("samplename naming scheme already exists for another sample (row " . $i . ")");
-								$this->final_check = false;
-								$samp_check = false;
-								$samplename_bool = false;
-							}
-						}
-					}
-				}
-				
-				//	Name
-				if(isset($samp->name)){
-					if($this->checkAlphaNumWithAddChars('\s\_\-', $samp->name)){
-						//	Need to check the database for similar names as well at a later date
-						if(isset($this->sample_arr[$samp->name])){
-							$text.= $this->errorText("Sample name already exists in that Import (row " . $i . ")");
-							$this->final_check = false;
-							$samp_check = false;
-						}elseif(ctype_digit($samp->name[0])){
-							$text.= $this->errorText("Sample name cannot not start with a number (row " . $i . ")");
-							$this->final_check = false;
-							$samp_check = false;
-						}else{
-							$this->sample_arr[$samp->name]=$samp;
-						}
-					}else{
-						$text.= $this->errorText("Sample name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
+			
+			//	Name
+			if(isset($samp->samplename)){
+				if($this->checkAlphaNumWithAddChars('\s\_\-', $samp->samplename)){
+					//	Need to check the database for similar names as well at a later date
+					if(isset($this->sample_arr[$samp->name])){
+						$text.= $this->errorText("Sample name already exists in that Import (row " . $i . ")");
 						$this->final_check = false;
 						$samp_check = false;
+					}elseif(ctype_digit($samp->name[0])){
+						$text.= $this->errorText("Sample name cannot not start with a number (row " . $i . ")");
+						$this->final_check = false;
+						$samp_check = false;
+					}else{
+						$this->sample_arr[$samp->name]=$samp;
 					}
 				}else{
-					$text.= $this->errorText("Sample name is required for submission (row " . $i . ")");
+					$text.= $this->errorText("Sample name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
 					$this->final_check = false;
 					$samp_check = false;
 				}
-				
-				//	Lane Name
-				//	For now, it's just checking the Lane given in the excel file, possible to check the database later
-				if(isset($samp->lane_name)){
-					if(!isset($this->lane_arr[$samp->lane_name])){
-						$text.= $this->errorText("Import name does not match any import given in the excel file (row " . $i . ")");
-						$this->final_check = false;
-						$samp_check = false;
-					}else if($samp->lane_name == $samp->name){
-						$text.= $this->errorText("Import name and Sample name cannot be identical (row " . $i . ")");
-						$this->final_check = false;
-						$samp_check = false;
-					}else{
-						foreach($this->lane_arr as $key => $value){
-							if($samp->name == $key){
-								$text.= $this->errorText("Sample name cannot match a different Import name (row " . $i . ")");
-								$this->final_check = false;
-								$samp_check = false;
-							}
+			}else{
+				$text.= $this->errorText("Sample name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$samp_check = false;
+			}
+			
+			//	Lane Name
+			//	For now, it's just checking the Lane given in the excel file, possible to check the database later
+			if(isset($samp->lane_name)){
+				if(!isset($this->lane_arr[$samp->lane_name])){
+					$text.= $this->errorText("Import name does not match any import given in the excel file (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
+				}else if($samp->lane_name == $samp->name){
+					$text.= $this->errorText("Import name and Sample name cannot be identical (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
+				}else{
+					foreach($this->lane_arr as $key => $value){
+						if($samp->name == $key){
+							$text.= $this->errorText("Sample name cannot match a different Import name (row " . $i . ")");
+							$this->final_check = false;
+							$samp_check = false;
 						}
 					}
-				}else{
-					$text.= $this->errorText("Import name is required for submission (row " . $i . ")");
+				}
+			}else{
+				$text.= $this->errorText("Import name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$samp_check = false;
+			}
+			
+			//	Protocol Name
+			if(!isset($this->prot_arr[$samp->protocol_name])){
+				$text.= $this->errorText("Protocol name does not match any protocol given in the excel file (row " . $i . ")");
+				$this->final_check = false;
+				$samp_check = false;
+			}
+			
+			//	Batch ID
+			if(!isset($samp->batch)){
+				$samp->batch = NULL;
+			}
+			
+			//	Source Symbol
+			if(!isset($samp->source_symbol)){
+				$samp->source_symbol = NULL;
+			}else{
+				if(!$this->checkAlphaNumWithAddChars('\s\_\-\,', $samp->source_symbol) && $samp->source_symbol != NULL){
+					$text.= $this->errorText("Source symbol does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
 					$this->final_check = false;
 					$samp_check = false;
 				}
-				
-				//	Protocol Name
-				if(!isset($this->prot_arr[$samp->protocol_name])){
-					$text.= $this->errorText("Protocol name does not match any protocol given in the excel file (row " . $i . ")");
-						$this->final_check = false;
-						$samp_check = false;
+			}
+			
+			//	Condition Symbol
+			if(!isset($samp->condition_symbol)){
+				$samp->condition_symbol = NULL;
+			}else{
+				if(!$this->checkAlphaNumWithAddChars('\s\_\-\,', $samp->condition_symbol) && $samp->condition_symbol != NULL){
+					$text.= $this->errorText("Condition symbol does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
 				}
-				
-				//	Batch ID
-				if(!isset($samp->batch)){
-					$samp->batch = NULL;
+			}
+			
+			//	Condition
+			if(!isset($samp->condition)){
+				$samp->condition = NULL;
+			}else{
+				if(!$this->checkAlphaNumWithAddChars('\s\_\-\,', $samp->condition) && $samp->condition != NULL){
+					$text.= $this->errorText("Condition does not contain proper characters, please use alpha-numeric characters and underscores and separate multiple conditions with , (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
 				}
-				
-				//	Source Symbol
-				if(!isset($samp->source_symbol)){
-					$samp->source_symbol = NULL;
+			}
+			
+			//	Concentration
+			if(!isset($samp->concentration)){
+				$samp->concentration = NULL;
+			}
+			
+			//	Treatment Manufacturer
+			if(!isset($samp->treatment_manufacturer)){
+				$samp->treatment_manufacturer = NULL;
+			}
+			
+			//	Biosample Type
+			if(!isset($samp->biosample_type)){
+				$samp->biosample_type = NULL;
+			}
+			
+			//	Donor
+			if(!isset($samp->donor)){
+				$samp->donor = NULL;
+			}elseif(!$this->checkAlphaNumWithAddChars('\s\_\-\,', $samp->donor) && $samp->donor != NULL){
+				$text.= $this->errorText("Donor does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
+				$this->final_check = false;
+				$samp_check = false;
+			}
+			
+			//	Time
+			if(!isset($samp->time)){
+				$samp->time = NULL;
+			}else{
+				if(!$this->checkNumeric($samp->time) && $samp->time != NULL){
+					$text.= $this->errorText("Time bust me an integer expressed in minutes (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
 				}
-				
-				//	Condition Symbol
-				if(!isset($samp->condition_symbol)){
-					$samp->condition_symbol = NULL;
+			}
+			
+			//	Biological Replica
+			if(!isset($samp->biological_replica)){
+				$samp->biological_replica = NULL;
+			}else{
+				if(!$this->checkNumeric($samp->biological_replica) && $samp->biological_replica != NULL){
+					$text.= $this->errorText("Biological Replica bust me an integer expressed in minutes (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
 				}
-				
-				//	Concentration
-				if(!isset($samp->concentration)){
-					$samp->concentration = NULL;
+			}
+			
+			//	Technical Replica
+			if(!isset($samp->technical_replica)){
+				$samp->technical_replica = NULL;
+			}else{
+				if(!$this->checkNumeric($samp->technical_replica) && $samp->technical_replica != NULL){
+					$text.= $this->errorText("Technical Replica bust me an integer (row " . $i . ")");
+					$this->final_check = false;
+					$samp_check = false;
 				}
-				
-				//	Treatment Manufacturer
-				if(!isset($samp->treatment_manufacturer)){
-					$samp->treatment_manufacturer = NULL;
-				}
-				
-				//	Biosample Type
-				if(!isset($samp->biosample_type)){
-					$samp->biosample_type = NULL;
-				}
-				
-				//	Donor
-				if(!isset($samp->donor)){
-					$samp->donor = NULL;
-				}
-				
-				//	Time
-				if(!isset($samp->time)){
-					$samp->time = NULL;
-				}
-				
-				//	Biological Replica
-				if(!isset($samp->biological_replica)){
-					$samp->biological_replica = NULL;
-				}
-				
-				//	Technical Replica
-				if(!isset($samp->technical_replica)){
-					$samp->technical_replica = NULL;
-				}
-				
-				//	Spikeins
-				if(!isset($samp->spikeins)){
-					$samp->spikeins = NULL;
-				}
-				
-				//	Library Type
-				if(!isset($samp->lib_type)){
-					$samp->lib_type = NULL;
-				}
-				
-				//	Antibody Target
-				if(!isset($samp->target)){
-					$samp->target = NULL;
-				}
+			}
+			
+			//	Spikeins
+			if(!isset($samp->spikeins)){
+				$samp->spikeins = NULL;
+			}
+			
+			//	Library Type
+			if(!isset($samp->lib_type)){
+				$samp->lib_type = NULL;
+			}
+			
+			//	Antibody Target
+			if(!isset($samp->target)){
+				$samp->target = NULL;
+			}elseif(!$this->checkAlphaNumWithAddChars('\s\_\-\,', $samp->target) && $samp->target != NULL){
+				$text.= $this->errorText("Target does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
+				$this->final_check = false;
+				$samp_check = false;
 			}
 		}
 		if($samp_check){
@@ -913,50 +1077,37 @@ class Ngsimport extends VanillaModel {
 					$dir->fastq_dir= $this->directoryCheck(trim($this->esc($this->sheetData[$i][$j])));
 				}
 			}
-			$blank = 'true';
-			foreach($dir as $d){
-				if(preg_replace('/\s+/', '', $d) != ''){
-					$blank = 'false';
+			if(!isset($dir->dir_tag) || $dir->dir_tag == ''){
+				$text.= $this->errorText("Dir ID required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$dir_check = false;
+			}else{
+				array_push($this->dir_tags, $dir->dir_tag);
+			}
+			
+			if(!isset($dir->fastq_dir) || $dir->fastq_dir == ''){
+				$text.= $this->errorText("Fastq directory required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$dir_check = false;
+			}else{
+				array_push($this->dir_fastq, $dir->fastq_dir);
+			}
+			//	Directory validity tests
+			if(isset($this->fastq_dir) && ( $this->sheetData[$i]["A"]=="fastq directory" || $this->sheetData[$i]["A"]=="input directory")){
+				$permCheck = $this->checkUserPermissions($this->clustername);
+				$dirCheck = $this->checkDirPermissions($dir->fastq_dir, $this->clustername);
+				if($permCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$dir->fastq_dir."). ".$permCheck);
+					$dir_check = false;
+				}
+				if($dirCheck != 'pass'){
+					$text.= $this->errorText("Fastq Directory error (".$dir->fastq_dir."). ".$dirCheck);
+					$dir_check = false;
 				}
 			}
-			if($blank == 'false'){
-				if(!isset($dir->dir_tag) || $dir->dir_tag == ''){
-					$text.= $this->errorText("Dir ID required for submission (row " . $i . ")");
-					$this->final_check = false;
-					$dir_check = false;
-				}else{
-					array_push($this->dir_tags, $dir->dir_tag);
-				}
-				
-				if(!isset($dir->fastq_dir) || $dir->fastq_dir == ''){
-					$text.= $this->errorText("Fastq directory required for submission (row " . $i . ")");
-					$this->final_check = false;
-					$dir_check = false;
-				}else{
-					array_push($this->dir_fastq, $dir->fastq_dir);
-				}
-				if(isset($dir->fastq_dir)){
-					$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername.'&outdir='.$dir->fastq_dir;
-					$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-					if(isset($valid_fastq[0]->ERROR)){
-						$text.= $this->errorText("Fastq dir error (".$dir->fastq_dir."). ".$valid_fastq[0]->ERROR);
-						$this->final_check = false;
-						$dir_check = false;
-					}
-				}
-				if(isset($dir->fastq_dir)){
-					$request = API_PATH.'/api/service.php?func=checkPermissions&username='.$this->clustername;
-					$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-					if(isset($valid_fastq[0]->ERROR)){
-						$text.= $this->errorText("Fastq dir error (".$dir->fastq_dir."). ".$valid_fastq[0]->ERROR);
-						$this->final_check = false;
-						$dir_check = false;
-					}
-				}
-				
-				if($dir_check){
-					$this->dir_arr[$dir->dir_tag]=$dir;
-				}
+			
+			if($dir_check){
+				$this->dir_arr[$dir->dir_tag]=$dir;
 			}
 		}
 		if($dir_check){
@@ -1047,82 +1198,62 @@ class Ngsimport extends VanillaModel {
 			/*
 			 *	Check for proper data input
 			 */
-			$blank = 'true';
-			foreach($file as $f){
-				if(preg_replace('/\s+/', '', $f) != ''){
-					$blank = 'false';
-				}
-			}
-			if($blank == 'false'){
-				//	Sample/Lane Name
-				if(isset($file->name)){
-					if($this->checkAlphaNumWithAddChars('\s\_\-', $file->name)){
-						if(!(isset($this->sample_arr[$file->name])) & !(isset($this->lane_arr[$file->name]))){
-							$text.= $this->errorText("sample/import name does not match the samples/imports given (row " . $i . ")");
-							$this->final_check = false;
-							$file_check = false;
-						}
-					}else{
-						$text.= $this->errorText("sample/import name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
+			//	Sample/Lane Name
+			if(isset($file->name)){
+				if($this->checkAlphaNumWithAddChars('\s\_\-', $file->name)){
+					if(!(isset($this->sample_arr[$file->name])) & !(isset($this->lane_arr[$file->name]))){
+						$text.= $this->errorText("sample/import name does not match the samples/imports given (row " . $i . ")");
 						$this->final_check = false;
 						$file_check = false;
 					}
 				}else{
-					$text.= $this->errorText("sample/import name is required for submission (row " . $i . ")");
+					$text.= $this->errorText("sample/import name does not contain proper characters, please use alpha-numeric characters and underscores (row " . $i . ")");
 					$this->final_check = false;
 					$file_check = false;
 				}
-				
-				//	File Name
-				if(isset($file->file_name)){
-					$this->file_arr[$file->file_name]=$file;
-					array_push($this->file_names, $file->file_name);
+			}else{
+				$text.= $this->errorText("sample/import name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$file_check = false;
+			}
+			
+			//	File Name
+			if(isset($file->file_name)){
+				$this->file_arr[$file->file_name]=$file;
+			}else{
+				$text.= $this->errorText("file name is required for submission (row " . $i . ")");
+				$this->final_check = false;
+				$file_check = false;
+			}
+			
+			//	File Directory
+			if(!isset($file->fastq_dir) && isset($file->dir_tag)){
+				$text.= $this->errorText("Directory information is incorrect (row " . $i . ")");
+				$this->final_check = false;
+				$file_check = false;
+			}elseif($this->fastq_dir != null){
+				$file->dir_tag="old_import_template";
+				$file->fastq_dir = $this->fastq_dir;
+				$file->backup_dir = $this->backup_dir;
+			}
+			
+			//	File Validity Check
+			if(isset($file->fastq_dir)){
+				if($this->pairedEndCheck == 'paired'){
+					array_push($this->file_name_arr, $file->fastq_dir . explode(",",$file->file_name)[0]);
+					array_push($this->file_name_arr, $file->fastq_dir . explode(",",$file->file_name)[1]);
 				}else{
-					$text.= $this->errorText("file name is required for submission (row " . $i . ")");
-					$this->final_check = false;
-					$file_check = false;
-				}
-				
-				//	File Directory
-				if(!isset($file->fastq_dir) && isset($file->dir_tag)){
-					$text.= $this->errorText("Directory information is incorrect (row " . $i . ")");
-					$this->final_check = false;
-					$file_check = false;
-				}elseif($this->fastq_dir != null){
-					$file->dir_tag="old_import_template";
-					$file->fastq_dir = $this->fastq_dir;
-					$file->backup_dir = $this->backup_dir;
-				}
-				
-				//	File Validity Check
-				if(isset($file->fastq_dir)){
-					if($this->pairedEndCheck == 'paired'){
-						$request = API_PATH.'/api/service.php?func=checkFile&username='.$this->clustername.'&file=' . $file->fastq_dir . '/' . explode(",",$file->file_name)[0];
-						$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-						if(isset($valid_fastq[0]->ERROR)){
-							$text.= $this->errorText("Fastq error (".$file->file_name."). ".$valid_fastq[0]->ERROR);
-							$this->final_check = false;
-							$file_check = false;
-						}
-						$request = API_PATH.'/api/service.php?func=checkFile&username='.$this->clustername.'&file=' . $file->fastq_dir . '/' . explode(",",$file->file_name)[1];
-						$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-						if(isset($valid_fastq[0]->ERROR)){
-							$text.= $this->errorText("Fastq error (row ". $i ." ). ".$valid_fastq[0]->ERROR);
-							$this->final_check = false;
-							$file_check = false;
-						}
-					}else{
-						$request = API_PATH.'/api/service.php?func=checkFile&username='.$this->clustername.'&file=' . $file->fastq_dir . '/' . $file->file_name;
-						$valid_fastq = json_decode('['.json_decode(file_get_contents($request)).']');
-						if(isset($valid_fastq[0]->ERROR)){
-							$text.= $this->errorText("Fastq error (row ". $i ." ). ".$valid_fastq[0]->ERROR);
-							$this->final_check = false;
-							$file_check = false;
-						}
-					}
+					array_push($this->file_name_arr, $file->fastq_dir . $file->file_name);
 				}
 			}
 		}
+		//	Check All Files for Validity
+		$single_file_check = $this->checkFilePermissions($this->clustername);
+		if($single_file_check != 'pass'){
+			$text.= $this->errorText($single_file_check);
+			$file_check = false;
+		}
+		
 		if($file_check){
 			$text.= $this->successText('Formatting passed inspection!<BR>');
 		}
@@ -1807,18 +1938,18 @@ class samples extends main{
 		//	Antibody Target
 		if($sample->target != NULL){
 			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
-				$check = "SELECT `id`, `target_symbol`
+				$check = "SELECT `id`, `target`
 							FROM ngs_antibody_target
-							WHERE `target_symbol` = '".$sample->target."'";
+							WHERE `target` = '".$sample->target."'";
 				$check_result = json_decode($this->model->query($check));
 				if($check_result == array()){
 					//	Empty
-					$this->model->query("INSERT INTO `ngs_antibody_target` (`target_symbol`) VALUES ('".$sample->target."')");
-					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target_symbol = '".$sample->target."'"));
+					$this->model->query("INSERT INTO `ngs_antibody_target` (`target`) VALUES ('".$sample->target."')");
+					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target = '".$sample->target."'"));
 					$this->model->query("UPDATE `ngs_samples` SET `target_id` = ".$id[0]->id." WHERE `id` = $sample_id");
 				}else{
 					//	Exists
-					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target_symbol = '".$sample->target."'"));
+					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target = '".$sample->target."'"));
 					$this->model->query("UPDATE `ngs_samples` SET `target_id` = ".$id[0]->id." WHERE `id` = $sample_id");
 				}
 			}
@@ -1966,18 +2097,18 @@ class samples extends main{
 		//	Antibody Target
 		if($sample->target != NULL){
 			if($sample->target != NULL && $sample->target != '' && $sample->target != null && $sample->target != 'null'){
-				$check = "SELECT `id`, `target_symbol`
+				$check = "SELECT `id`, `target`
 							FROM ngs_antibody_target
-							WHERE `target_symbol` = '".$sample->target."'";
+							WHERE `target` = '".$sample->target."'";
 				$check_result = json_decode($this->model->query($check));
 				if($check_result == array()){
 					//	Empty
-					$this->model->query("INSERT INTO `ngs_antibody_target` (`target_symbol`) VALUES ('".$sample->target."')");
-					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target_symbol = '".$sample->target."'"));
+					$this->model->query("INSERT INTO `ngs_antibody_target` (`target`) VALUES ('".$sample->target."')");
+					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target = '".$sample->target."'"));
 					$this->model->query("UPDATE `ngs_samples` SET `target_id` = ".$id[0]->id." WHERE `id` = $sample_id");
 				}else{
 					//	Exists
-					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target_symbol = '".$sample->target."'"));
+					$id = json_decode($this->model->query("SELECT `id` FROM `ngs_antibody_target` WHERE target = '".$sample->target."'"));
 					$this->model->query("UPDATE `ngs_samples` SET `target_id` = ".$id[0]->id." WHERE `id` = $sample_id");
 				}
 			}

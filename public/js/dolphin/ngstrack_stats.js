@@ -208,19 +208,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 			}
 		}
 		
-		var initialRunWarning = "<button id=\"perms_"+record.id+"\" class=\"btn btn-default btn-xs\" value=\"initialRunWarning\" onclick=\"initialRunButton('"+type+"', "+record.id+", this)\"><span class=\"fa fa-warning\"></span></button>";
 		var sample_name = '';
-		
-		if (type == 'lanes') {
-			for(var y = 0; y < lanes_with_good_samples.length; y++){
-				if (lanes_with_good_samples[y].id == record.id) {
-					initialRunWarning = '';
-				}
-			}
-		}
-		if (record.total_reads != '' && type == 'samples'){
-			initialRunWarning = '';
-		}
 		if (record.samplename == 'null' || record.samplename == 'NULL' || record.samplename == '' || record.samplename == null || record.samplename == undefined) {
 			sample_name = record.name;
 		}else{
@@ -230,13 +218,16 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		if (basket_info != undefined) {
 			basketSamples = basket_info.split(",");
 		}
+		var initialRunWarning = "<button id=\"perms_"+record.id+"\" class=\"btn btn-default btn-xs\" value=\"initialRunWarning\" onclick=\"initialRunButton('"+type+"', "+record.id+", this)\"><span class=\"fa fa-warning\"></span></button>";
 		var checked = '';
 		if (queryType == 'table_create') {
 			if (basketSamples.indexOf(record.id) > -1) {
 				checked = 'checked';
 			}
 		}
-		
+		if (record.total_reads != '' && type == 'samples'){		
+ 			initialRunWarning = '';		
+ 		}
 		if (type == 'generated') {
 			var row = '<tr>';
 			for(var key in keys){
@@ -290,7 +281,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this)\">"+record.total_reads+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this)\">"+record.total_samples+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'cost', 'ngs_lanes', this)\">"+record.cost+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'phix_requested', 'ngs_lanes', this)\">"+record.phix_requested+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_in_lane', 'ngs_lanes', this)\">"+record.phix_in_lane+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'notes', 'ngs_lanes', this)\">"+record.notes+"</td>"+
-					"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
 					
 			}else if(type == 'experiments'){
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiment_series/"+record.id+'/'+theSearch+"\">"+record.experiment_name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this)\">"+record.summary+
@@ -317,7 +308,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 			}else if (type == 'lanes') {
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiments/"+record.id+'/'+theSearch+"\">"+record.name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'facility', 'ngs_lanes', this)\">"+record.facility+
 					"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this)\">"+record.total_reads+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this)\">"+record.total_samples+"</td><td>"+
-					""+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
+					"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\">"+"</td></tr>";
 					
 			}else if(type == 'experiments'){
 				return "<tr><td>"+record.id+"</td><td>"+"<a href=\""+BASE_PATH+"/search/details/experiment_series/"+record.id+'/'+theSearch+"\">"+record.experiment_name+"</a>"+"</td><td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this)\">"+record.summary+
@@ -384,7 +375,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	newlabel.innerHTML = "entries per page";
 	document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
 	
-	num_search.setAttribute('class',"st_per_page margin pull-left input-sm");
+	num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
 	
 	document.getElementById('st_pagination').id = 'st_pagination_' + type;
 	var pagination = document.getElementById('st_pagination_'+type);
@@ -453,6 +444,76 @@ function exportExcel(){
 								{
 								}
 						});
+					}else{
+						$('#deleteModal').modal({
+							show: true
+						});
+						document.getElementById('myModalLabel').innerHTML = 'More than one Experiment Series';
+						document.getElementById('deleteLabel').innerHTML ='You must select Imports/Samples within the same experiment series.';
+						document.getElementById('deleteAreas').innerHTML = '';
+							
+						document.getElementById('cancelDeleteButton').innerHTML = "OK";
+						document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
+					}
+				}
+		});
+	}
+}
+
+function exportGeo() {
+	if (checklist_lanes.length == 0 && checklist_samples.length == 0) {
+		$('#deleteModal').modal({
+			show: true
+		});
+		document.getElementById('myModalLabel').innerHTML = 'No Import/Sample Selection';
+		document.getElementById('deleteLabel').innerHTML ='You must select at least one Import/Sample to export.';
+		document.getElementById('deleteAreas').innerHTML = '';
+			
+		document.getElementById('cancelDeleteButton').innerHTML = "OK";
+		document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
+	}else{
+		$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/export_excel.php",
+				data: { p: "checkExperimentSeries", samples: checklist_samples },
+				async: false,
+				success : function(s)
+				{
+					var ES = JSON.parse(s);
+					console.log(ES);
+					if (ES.length == 1) {
+						var file_path;
+						$.ajax({ type: "GET",
+								url: BASE_PATH+"/public/ajax/export_geo.php",
+								data: { p: "exportGeo", samples: checklist_samples.toString() },
+								async: false,
+								success : function(q)
+								{
+									console.log(q);
+									json_out = JSON.parse(q);
+									file_path = json_out[0];
+									window.open(BASE_PATH + "/public" + file_path, '_blank');
+									
+								}
+						});
+						$.ajax({ type: "GET",
+								url: BASE_PATH+"/public/ajax/export_excel.php",
+								data: { p: "deleteExcel", file: file_path },
+								async: false,
+								success : function(r)
+								{
+								}
+						});
+						$('#deleteModal').modal({
+							show: true
+						});
+						document.getElementById('myModalLabel').innerHTML = 'Files to submit to GEO';
+						document.getElementById('deleteLabel').innerHTML = 'You must submit the following files to geo manually:';
+						for(var x = 0; x < json_out[1].length; x++){
+							document.getElementById('deleteAreas').innerHTML += json_out[1][x] + '<br>';
+						}
+							
+						document.getElementById('cancelDeleteButton').innerHTML = "OK";
+						document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
 					}else{
 						$('#deleteModal').modal({
 							show: true

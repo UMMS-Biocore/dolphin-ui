@@ -194,13 +194,13 @@ $(function() {
 								}
 							});
 						}
-							var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group);
+							var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
 							console.log(runparamsInsert);
 					}
 				}
 			}else{
 				//insert new values into ngs_runparams
-				var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group);
+				var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
 				console.log(runparamsInsert);
 				console.log(names_to_ids);
 				if (window.location.href.split("/").indexOf('fastlane') == -1) {

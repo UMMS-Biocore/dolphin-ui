@@ -19,6 +19,7 @@ class ngsalterdb_unittest extends PHPUnit_Framework_TestCase
 		$_POST['uid'] = '1';
 		$_POST['group'] = '1';
 		$_POST['perms'] = '32';
+		$_POST['ids'] = '';
 		include("ngsalterdb.php");
 		$this->assertEquals(json_decode($data),'4');
 		ob_end_clean();
@@ -36,6 +37,7 @@ class ngsalterdb_unittest extends PHPUnit_Framework_TestCase
 		$_POST['uid'] = '1';
 		$_POST['group'] = '1';
 		$_POST['perms'] = '32';
+		$_POST['ids'] = '1';
 		include("ngsalterdb.php");
 		$this->assertEquals(json_decode($data),'4');
 		ob_end_clean();
