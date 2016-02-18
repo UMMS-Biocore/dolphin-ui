@@ -386,8 +386,11 @@ foreach($file_query as $fq){
 				*/
 				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
 					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
+				echo '{"command":"'. $cmd_aws_launch. '"}';
+				if(end($file_query) != $fq){
+					echo ',';
+				}
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
 				pclose($AWS_COMMAND_DO);
 				echo $AWS_COMMAND_OUT;
 			}else{
