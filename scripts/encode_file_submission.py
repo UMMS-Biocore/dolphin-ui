@@ -22,7 +22,6 @@ bucket = sys.argv[6]
 conn = S3Connection(access_key, secret_key, security_token=session_token)
 bucket = conn.get_bucket(bucket, validate=False)
 
-"""
 # Get file info
 source_path = file_path
 source_size = os.stat(source_path).st_size
@@ -55,3 +54,4 @@ try:
     print '{"message":"passed"}'
 except boto.exception.S3ResponseError as e:
     print '{"message":"'+e+'"}'
+"""
