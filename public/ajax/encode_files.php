@@ -355,7 +355,6 @@ foreach($file_query as $fq){
 					}
 				}
 				$response = Requests::patch($url, $headers, json_encode($data), $auth);
-				$response = Requests::get($url."@@upload", $headers, $auth);
 				$body = json_decode($response->body);
 			}
 			
