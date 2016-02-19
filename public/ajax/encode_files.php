@@ -364,35 +364,17 @@ foreach($file_query as $fq){
 			
 			####################
 			# POST file to S3
-			/*
-			$com = "ps -ef | grep '[".preg_replace("/[\n\r]/", "", substr($data['md5sum'], 0, 1)."]".substr($data['md5sum'],1))."'";
-			$FILE_SUB_CHECK = popen( $com, "r" );
-			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
-			pclose($FILE_SUB_CHECK);
-			*/
-			$FILE_SUB_CHECK_OUTUT = "";
-			if($FILE_SUB_CHECK_OUTUT == ""){
-				$creds = $item->{'upload_credentials'};
-				/*
-				if($step == 'step1' && end($file_names) != $fn){
-					$cmd_aws_launch = "echo '#!/bin/bash' > ../../tmp/encode_" . $sample_name . ".sh ;\n";
-					$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh ;\n";
-					$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh;";
-				}else{
-				*/
-				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
-				echo '{"command":"'. $cmd_aws_launch. '"}';
-				if(end($file_query) != $fq){
-					echo ',';
-				}
-				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				pclose($AWS_COMMAND_DO);
-				echo $AWS_COMMAND_OUT;
-			}else{
-				echo '{"error":"'.$fn.' submission currently running"},';
+			####################
+			$creds = $item->{'upload_credentials'};
+			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+				$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
+			echo '{"command":"'. $cmd_aws_launch. '"}';
+			if(end($file_query) != $fq){
+				echo ',';
 			}
+			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+			pclose($AWS_COMMAND_DO);
+			echo $AWS_COMMAND_OUT;
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
