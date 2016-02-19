@@ -47,11 +47,8 @@ class Ngsimport extends VanillaModel {
 	
 	//	FILES
 	public $file_arr = array();
-<<<<<<< HEAD
 	public $file_names = array();
-=======
 	public $file_name_arr = array();
->>>>>>> develop
 	
 	//	Sheet Check bools
 	public $final_check;
