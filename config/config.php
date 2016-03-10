@@ -58,3 +58,8 @@ if (isset($_SESSION['user']))
 
 define('BASE_PATH', $ini_array['BASE_PATH']);
 define('API_PATH', $ini_array['API_PATH']);
+
+define('ENCODE_URL', $ini_array['ENCODE_URL']);
+define('ENCODE_BUCKET', $ini_array['ENCODE_BUCKET']);
+define('ENCODE_ACCESS', $ini_array['ENCODE_ACCESS']);
+define('ENCODE_SECRET', $ini_array['ENCODE_SECRET']);

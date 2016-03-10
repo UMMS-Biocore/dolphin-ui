@@ -202,20 +202,6 @@ ADD COLUMN `target_id` INT NULL DEFAULT NULL AFTER `notebook_ref`;
 
 UPDATE `biocore`.`sidebar` SET `link`='stat/status' WHERE `id`='12';
 
-CREATE TABLE `biocore`.`ngs_antibody_target` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `target` VARCHAR(100) NULL DEFAULT NULL,
-  `target_symbol` VARCHAR(45) NULL DEFAULT NULL,
-  `source` VARCHAR(45) NULL DEFAULT NULL,
-  `product_id` VARCHAR(45) NULL DEFAULT NULL,
-  `lot_id` VARCHAR(45) NULL DEFAULT NULL,
-  `host_organism` VARCHAR(45) NULL DEFAULT NULL,
-  `clonality` VARCHAR(45) NULL DEFAULT NULL,
-  `isotype` VARCHAR(45) NULL DEFAULT NULL,
-  `purifications` VARCHAR(45) NULL DEFAULT NULL,
-  `url` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`));
-
 ALTER TABLE `biocore`.`ngs_runparams` 
 ADD COLUMN `wrapper_pid` INT NULL DEFAULT NULL AFTER `run_status`,
 ADD COLUMN `runworkflow_pid` INT NULL DEFAULT NULL AFTER `wrapper_pid`;
