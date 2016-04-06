@@ -1006,7 +1006,7 @@ function manageChecklistsBulk(names){
 	var remove_bool = false;
 	//sample checkbox
 	for(var j = 0; j < names.length; j++){
-		var name = names[j];
+		var name = parseInt(names[j]);
 		console.log(name);
 		var sample_search = searchIDDictionary(name);
 		if (sample_search == undefined) {
@@ -1083,6 +1083,8 @@ function manageChecklistsBulk(names){
 				}
 			}
 			if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
+				console.log(checklist_samples)
+				console.log(lane_samples)
 				for(var x = 0; x < lane_samples.length; x++){
 					if (lane_samples[x] == undefined) {
 						lanes_bool = false;
@@ -1095,6 +1097,7 @@ function manageChecklistsBulk(names){
 				if (lanes_bool) {
 					if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
 						var check = document.getElementById('lane_checkbox_' + lane_check);
+						console.log(check);
 						check.checked = !check.checked;
 					}
 					checklist_lanes.push(parseInt(lane_check));
@@ -1114,6 +1117,7 @@ function manageChecklistsBulk(names){
 				if (experiment_bool) {
 					if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
 						var check = document.getElementById('experiment_checkbox_' + experiment_check);
+						console.log(check);
 						check.checked = !check.checked;
 					}
 					checklist_experiment_series.push(parseInt(experiment_check));
@@ -1215,6 +1219,8 @@ function manageChecklists(name, type){
 					if (lane_samples[x] == undefined) {
 						lanes_bool = false;
 					}else{
+						console.log(checklist_samples);
+						console.log(lane_samples);
 						if (checklist_samples.indexOf(lane_samples[x]) == -1 && lanes_bool) {
 							lanes_bool = false;
 						}
@@ -1260,7 +1266,6 @@ function manageChecklists(name, type){
 					experiment_series_to_remove.push(experiment_samples[y]);
 				}
 			}
-			console.log(experiment_series_to_remove);
 			manageChecklistsBulk(experiment_series_to_remove);
 		}else{
 			//add
@@ -1272,7 +1277,6 @@ function manageChecklists(name, type){
 					experiment_series_to_add.push(experiment_samples[y]);
 				}
 			}
-			console.log(experiment_series_to_add);
 			manageChecklistsBulk(experiment_series_to_add);
 		}
 	}else{
@@ -1287,7 +1291,6 @@ function manageChecklists(name, type){
 					lane_samples_to_remove.push(lane_samples[x]);
 				}
 			}
-			console.log(lane_samples_to_remove);
 			manageChecklistsBulk(lane_samples_to_remove);
 		}
 		else
@@ -1301,7 +1304,6 @@ function manageChecklists(name, type){
 					lane_samples_to_add.push(lane_samples[x]);
 				}
 			}
-			console.log(lane_samples_to_add);
 			manageChecklistsBulk(lane_samples_to_add);
 		}
 	}
@@ -1464,43 +1466,8 @@ function removeFromDolphinBasketBulk(ids) {
 }
 
 function clearBasket(){
-	for(var x = (checklist_samples.length - 1); x >= 0; x = x - 1){
-		manageChecklists(checklist_samples[x], 'sample_checkbox');
-	}
+	manageChecklistsBulk(checklist_samples);
 	flushBasketInfo();
-}
-
-function checkOffAllSamples(){
-	var hrefSplit = window.location.href.split("/");
-	var searchLoc = $.inArray('search', hrefSplit);
-	var samplesCheck = $.inArray('samples', hrefSplit);
-
-	if (searchLoc != -1 && samplesCheck == -1) {
-		var pagination = document.getElementById('st_pagination_samples');
-		var pagination_ul = pagination.childNodes;
-		var pagination_li = pagination_ul[0].childNodes;
-		for(var y = 0; y < pagination_li.length; y++){
-			pagination_li[y].setAttribute('onClick', 'checkCheckedList()');
-		}
-	}
-}
-
-function checkOffAllLanes(){
-	var hrefSplit = window.location.href.split("/");
-	var searchLoc = $.inArray('search', hrefSplit);
-	var experimentsCheck = $.inArray('experiments', hrefSplit);
-	var samplesCheck = $.inArray('samples', hrefSplit);
-	
-
-	if (searchLoc != -1 && experimentsCheck == -1 && samplesCheck == -1) {
-		var pagination = document.getElementById('st_pagination_lanes');
-		var pagination_ul = pagination.childNodes;
-		pagination_ul[0].setAttribute('onClick', 'checkCheckedLanes()');
-		var pagination_li = pagination_ul[0].childNodes;
-		for(var y = 0; y < pagination_li.length; y++){
-			pagination_li[y].setAttribute('onClick', 'checkCheckedLanes()');
-		}
-	}
 }
 
 function getValidSamples(lane_samples){

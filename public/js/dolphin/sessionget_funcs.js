@@ -60,7 +60,7 @@ function sendBasketInfo(id){
 function sendBasketInfoBulk(ids){
 	$.ajax({ type: "POST",
 		url: BASE_PATH+"/public/ajax/sessionrequests.php",
-		data: { p:"sendBasketInfoBulk", ids:ids },
+		data: { p:"sendBasketInfoBulk", ids:ids.toString() },
 		async: false,
 		success : function(s)
 		{
@@ -147,7 +147,7 @@ function removeBasketInfo(id){
 function removeBasketInfoBulk(ids){
 	$.ajax({ type: "POST",
 		url: BASE_PATH+"/public/ajax/sessionrequests.php",
-		data: { p:"removeBasketInfoBulk", ids:ids },
+		data: { p:"removeBasketInfoBulk", ids:ids.toString() },
 		async: false,
 		success : function(s)
 		{

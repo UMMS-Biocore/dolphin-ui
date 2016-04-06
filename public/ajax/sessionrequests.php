@@ -28,18 +28,21 @@ else if ($p == "sendBasketInfoBulk")
 	if (isset($_POST['ids'])){$ids = $_POST['ids'];}
 	$id_array = explode(",",$ids);
 	
-	$current_basket = $_SESSION['basket'];
-	$basket_array = explode(",", $current_basket);
-	foreach($ids as $id){
-		$id = intval($id);
+	if($_SESSION['basket'] != null){
+		$current_basket = $_SESSION['basket'];
+		$basket_array = explode(",", $current_basket);
+	}else{
+		$basket_array = array();
+	}
+	
+	foreach($id_array as $id){
 		if (isset($_SESSION['basket']) && !(array_search($id, $basket_array) > -1)){
 			array_push($basket_array, $id);
-			$_SESSION['basket'] = implode(",", $basket_array);
 		}else if(!(array_search($id, $basket_array) > -1)){
 			array_push($basket_array, $id);
-			$_SESSION['basket'] = $id;
 		}
 	}
+	$_SESSION['basket'] = implode(",", $basket_array);
 }
 else if ($p == "getBasketInfo")
 {
