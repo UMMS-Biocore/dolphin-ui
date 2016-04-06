@@ -23,6 +23,24 @@ if ($p == "sendBasketInfo")
 		$_SESSION['basket'] = $id;
 	}
 }
+else if ($p == "sendBasketInfoBulk")
+{
+	if (isset($_POST['ids'])){$ids = $_POST['ids'];}
+	$id_array = explode(",",$ids);
+	
+	$current_basket = $_SESSION['basket'];
+	$basket_array = explode(",", $current_basket);
+	foreach($ids as $id){
+		$id = intval($id);
+		if (isset($_SESSION['basket']) && !(array_search($id, $basket_array) > -1)){
+			array_push($basket_array, $id);
+			$_SESSION['basket'] = implode(",", $basket_array);
+		}else if(!(array_search($id, $basket_array) > -1)){
+			array_push($basket_array, $id);
+			$_SESSION['basket'] = $id;
+		}
+	}
+}
 else if ($p == "getBasketInfo")
 {
 	if (isset($_SESSION['basket'])){
@@ -39,6 +57,25 @@ else if ($p == "removeBasketInfo")
 		$basket_array = explode(",", $current_basket);
 		$key = array_search($id, $basket_array);
 		unset($basket_array[$key]);
+		if(!empty($basket_array)){
+			$_SESSION['basket'] = implode(",", $basket_array);
+		}else{
+			unset($_SESSION['basket']);
+		}
+	}
+}
+else if ($p == "removeBasketInfoBulk")
+{
+	if (isset($_POST['ids'])){$ids = $_POST['ids'];}
+	if (isset($_SESSION['basket'])){
+		$id_array = explode(",",$ids);
+		
+		$current_basket = $_SESSION['basket'];
+		$basket_array = explode(",", $current_basket);
+		foreach($id_array as $id){
+			$key = array_search(intval($id), $basket_array);
+			unset($basket_array[$key]);
+		}
 		if(!empty($basket_array)){
 			$_SESSION['basket'] = implode(",", $basket_array);
 		}else{
