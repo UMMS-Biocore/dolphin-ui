@@ -1400,11 +1400,7 @@ function reloadBasket(){
 	if (lastBasket != undefined) {
 		var basketArray = lastBasket.split(",");
 		console.log(basketArray);
-		for (var x = 0; x < basketArray.length; x++) {
-			if (basketArray != '0') {
-				manageChecklists(basketArray[x], 'sample_checkbox');
-			}
-		}
+		manageChecklistsBulk(basketArray);
 	}
 }
 
