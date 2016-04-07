@@ -88,9 +88,9 @@ class FastlaneController extends VanillaController {
 								$text.="<font color=\"red\">".$bfa."</font><br>";
 							}
 							$text.="<br>";
-							$text.="<font color=\"red\">If the files given are not in the proper fastlane format, please use alpha-numerics, underscores, and periods only.</font><br><br>";
+							$text.="<font color=\"red\">If the files given are not in the proper fastlane format, please use alpha-numerics, underscores, and dashes only.</font><br><br>";
 						}else{
-							$text.="<font color=\"red\">The files given are not in the proper fastlane format.  Please use alpha-numerics, underscores, dashes, and periods only.</font><br><br>";
+							$text.="<font color=\"red\">The files given are not in the proper fastlane format.  Please use alpha-numerics, underscores, and dashes only.</font><br><br>";
 						}
 					}else if($key == 7){
 						$text.="<h3>Process Directory</h3>";
