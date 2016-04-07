@@ -42,6 +42,7 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
       barcode = 0;
    }
    json = JSON.stringify(JSON_OBJECT);
+   console.log(runGroupID);
    $.ajax({
            type: 	'POST',
            url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',

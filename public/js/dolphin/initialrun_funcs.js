@@ -140,6 +140,7 @@ $(function() {
 					
 					returned_info = s;
 					console.log(s);
+					console.log(returned_info[1][0]);
 					if (returned_info[1][0] != undefined) {
 						for(var k = 0; 0 < returned_info[1].length; k++){
 							//	get variables for previoius run
