@@ -22,7 +22,7 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 	 $.ajax({
 		  type: 	'GET',
 		  url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
-		  data:  	{ p: "checkOutputDir", outdir: outputdir},
+		  data:  	{ p: "checkOutputDir", outdir: outputdir.toString()},
 		  async:	false,
 		  success: function(r)
 		  {
@@ -94,6 +94,7 @@ function postInsertRunlist(runlistCheck, sample_ids, runID){
                    successCheck = true;
                }
            });
+		   console.log('inserted');
        }else if (runlistCheck == 'old') {
 			successCheck = true;
 	   }
