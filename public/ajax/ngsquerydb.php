@@ -326,6 +326,15 @@ else if ($p == 'checkOutputDir')
     where outdir = '$outdir'
     ");
 }
+else if ($p == 'checkRunID')
+{
+	if (isset($_GET['outdir'])){$outdir = $_GET['outdir'];}
+	$data=$query->queryAVal("
+    SELECT run_group_id
+    FROM ngs_runparams
+    where outdir = '$outdir'
+    ");
+}
 else if ($p == 'changeDataGroupNames')
 {
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}

@@ -32,7 +32,16 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 		//if from fastlane
        runGroupID = 'new';
    }else if (outdir_check != 0) {
-       runGroupID = hrefSplit[rerunLoc+1];
+       $.ajax({
+		  type: 	'GET',
+		  url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
+		  data:  	{ p: "checkOutputDir", outdir: outputdir},
+		  async:	false,
+		  success: function(r)
+		  {
+			  runGroupID = r;
+		  }
+	  });
    }else{
        //if not a rerun
        runGroupID = 'new';
