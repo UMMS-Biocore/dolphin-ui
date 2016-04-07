@@ -168,17 +168,6 @@ $(function() {
 					}else{
 						//insert new values into ngs_runparams
 						var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
-						if (window.location.href.split("/").indexOf('fastlane') == -1) {
-							$.ajax({
-								type: 	'GET',
-								url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
-								data:  	{ p: 'removeRunlistSamples', run_id: runparamsInsert[1], sample_ids: returned_info[3].toString()},
-								async:	false,
-								success: function(s)
-								{
-								}
-							});
-						}
 						//insert new values into ngs_runlist
 						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3], runparamsInsert[1]);
 						console.log(submitted);
