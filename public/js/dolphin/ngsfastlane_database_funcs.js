@@ -127,6 +127,7 @@ function checkFastlaneInput(info_array){
 					}
 				}
 				//	use file check list and check permissions
+				console.log(file_check)
 				$.ajax({
 					type: 	'GET',
 					url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+file_check,
