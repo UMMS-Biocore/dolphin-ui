@@ -25,7 +25,8 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 		  async:	false,
 		  success: function(r)
 		  {
-			  outdir_check = r;
+			   console.log(r);
+			   outdir_check = r;
 		  }
 	 });
 	 console.log(outdir_check);
