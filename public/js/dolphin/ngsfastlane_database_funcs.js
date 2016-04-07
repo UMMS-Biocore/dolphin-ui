@@ -134,7 +134,7 @@ function checkFastlaneInput(info_array){
 					async:	false,
 					success: function(s)
 					{
-						var file_check = s;
+						var file_check = JSON.parse(s);
 						console.log(file_check);
 						if (file_check.Result != 'Ok' ){
 							input_bool_check = false;
