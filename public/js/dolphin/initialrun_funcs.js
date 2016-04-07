@@ -154,7 +154,7 @@ $(function() {
 								type: 	'GET',
 								url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
 								data:  	{ p: 'removeRunlistSamples', run_id: init_run_id, sample_ids: returned_info[3].toString()},
-								async:	true,
+								async:	false,
 								success: function(s)
 								{
 								}
@@ -170,7 +170,7 @@ $(function() {
 								type: 	'GET',
 								url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
 								data:  	{ p: 'removeRunlistSamples', run_id: runparamsInsert[1], sample_ids: returned_info[3].toString()},
-								async:	true,
+								async:	false,
 								success: function(s)
 								{
 								}

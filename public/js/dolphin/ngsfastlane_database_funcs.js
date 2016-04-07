@@ -392,7 +392,7 @@ function obtainGroupFromName(name){
 			type: 	'GET',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'obtainGroupFromName', name: name },
-			async:	true,
+			async:	false,
 			success: function(s)
 			{
 				group_id = s;
@@ -570,7 +570,7 @@ function sendProcessData(info_array, post_name){
 			type: 	'GET',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'sendProcessData', info_array: info_array, post: post_name},
-			async:	true,
+			async:	false,
 			success: function(s)
 			{
 			}
