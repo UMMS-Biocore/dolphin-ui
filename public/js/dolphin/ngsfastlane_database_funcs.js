@@ -134,11 +134,11 @@ function checkFastlaneInput(info_array){
 					async:	false,
 					success: function(s)
 					{
-						var file_check = JSON.parse(s);
+						var file_check = s;
 						console.log(file_check);
 						if (file_check.Result != 'Ok' ){
 							input_bool_check = false;
-							bad_files.push("<font color=\"black\">One or more of your files either doesn't exist or you don't have permissions for.  Please make sure the correct files/permissions are given.</font>");
+							bad_files.push("One or more of your files either doesn't exist or you don't have permissions for.  Please make sure the correct files/permissions are given.");
 						}
 					}
 				});
