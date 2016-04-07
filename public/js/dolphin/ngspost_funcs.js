@@ -35,7 +35,7 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
        $.ajax({
 		  type: 	'GET',
 		  url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
-		  data:  	{ p: "checkOutputDir", outdir: outputdir},
+		  data:  	{ p: "checkRunID", outdir: outputdir},
 		  async:	false,
 		  success: function(r)
 		  {
