@@ -108,6 +108,12 @@ class FastlaneController extends VanillaController {
 					$text.= "Sample created with id #".$index."<br><br>";
 				}
 			}
+			if($database_sample_bool == true){
+				$text.="Samples given are already contained within the database:<br>";
+				foreach($bad_samples_array as $bad){
+					$text.="Sample with name: <font color=\"red\">".$bad."</font><br>";
+				}
+			}
 			if($failed_test){
 				$text.="If you're not sure if you have cluster access, visit <a href='http://umassmed.edu/biocore/resources/galaxy-group/'>this website</a> for more help.<br><br>";
 				$text.="For all additional questions about fastlane, please see our <a href=\"http://dolphin.readthedocs.org/en/master/dolphin-ui/fastlane.html\">documentation</a><br><br>";
@@ -115,13 +121,6 @@ class FastlaneController extends VanillaController {
 			if($index != 'true' && $index != 'false'){
 				$text.='<div class="callout callout-info lead"><h4>We are currently processing your samples to obtain read counts and additional information.<br><br>
 						You can check the status of these initial runs on your NGS Status page.</h4></div>';
-			}
-			
-			if($database_sample_bool == true){
-				$text.="Samples given are already contained within the database:<br>";
-				foreach($bad_samples_array as $bad){
-					$text.="Sample with name: ".$bad."<br>";
-				}
 			}
 		}
 		$text.="<br><br>";
