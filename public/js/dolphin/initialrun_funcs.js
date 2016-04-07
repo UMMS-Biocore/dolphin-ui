@@ -164,6 +164,7 @@ $(function() {
 						//insert new values into ngs_runparams
 						var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
 						console.log(runparamsInsert);
+						console.log(returned_info[3].toString());
 						if (window.location.href.split("/").indexOf('fastlane') == -1) {
 							removeRunlist(runparamsInsert[1], returned_info[3].toString());
 						}
