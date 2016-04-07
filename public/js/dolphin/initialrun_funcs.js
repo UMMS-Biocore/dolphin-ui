@@ -117,6 +117,9 @@ $(function() {
 			//	Check to see if runparams has already launched
 			var returned_info = [];
 			//	Gather up information about the run
+			console.log(names_list.toString());
+			console.log(sample_lane);
+			console.log(experiment_series);
 			$.ajax({
 				type: 	'GET',
 				url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
