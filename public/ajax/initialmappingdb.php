@@ -134,6 +134,7 @@ else if ($p == 'removeRunlistSamples')
 {
 	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
 	if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
+	$sample_ids_array = explode(",",$sample_ids);
 	$ids=json_decode($query->queryTable("
 	SELECT sample_id
 	FROM ngs_runlist

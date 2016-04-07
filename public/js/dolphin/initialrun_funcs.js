@@ -151,12 +151,12 @@ $(function() {
 							var init_run_id = returned_info[2][k];
 							console.log(init_run_id);
 							
-							//	Remove samples not in runlist
-							removeRunlist(init_run_id, returned_info[3].toString());
-							
 							//	insert into runlist
 							var submitted = postInsertRunlist('insertRunlist', added_samples, init_run_id);
 							console.log(submitted);
+							
+							//	Remove samples not in runlist
+							removeRunlist(init_run_id, returned_info[0][k].toString());
 							
 							//	Insert into run params
 							var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
