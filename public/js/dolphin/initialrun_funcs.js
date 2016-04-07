@@ -99,7 +99,7 @@ $(function() {
 			JSON_OBJECT['submission'] = '0';
 			
 			var names_list = initialNameList.split(",");
-			for(var y = 5; y < initial_split.length; y++ ){
+			for(var y = 5; y < initial_split.length - 2; y++ ){
 				if (y == 5){
 					sample_lane = "'" + initial_split[y] + "'";
 				}else{

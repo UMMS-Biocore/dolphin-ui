@@ -1227,7 +1227,7 @@ class Ngsimport extends VanillaModel {
 						unset($additional_files);
 						unset($comma_check);
 					}
-					if (strpos($file->file_name, ',') !== false){
+					if (strpos($file->file_name, ',') !== false && $this->pairedEndCheck == null){
 						array_push($this->initialSubmission, 'paired');
 						$this->pairedEndCheck = 'paired';
 					}
