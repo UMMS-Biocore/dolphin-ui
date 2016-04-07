@@ -34,7 +34,7 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 	 if(window.location.href.split("/").indexOf('fastlane') > -1){
 			   //if from fastlane
 			  runGroupID = 'new';
-	 }else if (outdir_check != undefined) {
+	 }else if (outdir_check != undefined && outdir_check != 0) {
 		  $.ajax({
 			   type: 	'GET',
 			   url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',

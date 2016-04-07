@@ -149,7 +149,7 @@ $(function() {
 							console.log(init_run_id);
 							
 							//	insert into runlist
-							var submitted = postInsertRunlist('insertRunlist', added_samples, init_run_id);
+							var submitted = postInsertRunlist('insertRunlist', added_samples.toString(), init_run_id);
 							console.log(submitted);
 							
 							//	Remove samples not in runlist
