@@ -118,7 +118,7 @@ else if ($p == 'checkRunList')
 			//	Find added samples if any.
 			$new_samples = array();
 			foreach($sample_ids as $si){
-				if(array_search($si, $old_samples) == -1){
+				if(array_search($si, $old_samples) === FALSE){
 					array_push($new_samples, $si);
 				}
 			}
