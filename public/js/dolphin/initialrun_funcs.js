@@ -142,7 +142,7 @@ $(function() {
 					console.log(s);
 					console.log(returned_info[1][0]);
 					if (returned_info[1][0] != undefined) {
-						for(var k = 0; 0 < returned_info[1].length; k++){
+						for(var k = 0; k < returned_info[1].length; k++){
 							//	get variables for previoius run
 							var added_samples = returned_info[0][k];
 							console.log(added_samples);
