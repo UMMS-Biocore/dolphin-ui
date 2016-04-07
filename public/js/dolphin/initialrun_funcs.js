@@ -149,7 +149,7 @@ $(function() {
 							console.log(init_run_id);
 							
 							//	insert into runlist
-							var submitted = postInsertRunlist('insertRunlist', added_samples.toString(), init_run_id);
+							var submitted = postInsertRunlist('insertRunlist', added_samples, init_run_id);
 							console.log(submitted);
 							
 							//	Remove samples not in runlist
@@ -168,7 +168,7 @@ $(function() {
 							removeRunlist(runparamsInsert[1], returned_info[3].toString());
 						}
 						//insert new values into ngs_runlist
-						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3].toString(), runparamsInsert[1]);
+						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3], runparamsInsert[1]);
 						console.log(submitted);
 					}
 				}

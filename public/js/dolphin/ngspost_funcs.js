@@ -97,9 +97,9 @@ function postInsertRunlist(runlistCheck, sample_ids, runID){
                success: function(r)
                {
                    successCheck = true;
+				   console.log('inserted');
                }
            });
-		   console.log('inserted');
        }else if (runlistCheck == 'old') {
 			successCheck = true;
 	   }
