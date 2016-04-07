@@ -6,6 +6,7 @@
 
 function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, group, ids){
 
+	 console.log(outputdir);
 	 var successCheck = false;
 	 var runlistCheck = "";
 	 var runID = "";

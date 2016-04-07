@@ -168,7 +168,7 @@ $(function() {
 							removeRunlist(runparamsInsert[1], returned_info[3].toString());
 						}
 						//insert new values into ngs_runlist
-						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3], runparamsInsert[1]);
+						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3].toString(), runparamsInsert[1]);
 						console.log(submitted);
 					}
 				}
