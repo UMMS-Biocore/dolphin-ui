@@ -62,9 +62,9 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 		  {
 			   console.log(r);
                successCheck = true;
-			   runID = r;
                if (runGroupID == 'new') {
 					runlistCheck = 'insertRunlist';
+					runID = r;
                }else{
 					runlistCheck = 'old';
 			   }
