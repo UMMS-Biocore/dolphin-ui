@@ -805,8 +805,6 @@ $(function() {
 			console.log(experiment_series_data);
 			console.log(lane_data);
 			console.log(sample_data);
-			checkOffAllSamples();
-			checkOffAllLanes();
 			generateIDDictionary(experiment_series_data, lane_data, sample_data);
 			reloadBasket();
 		}
