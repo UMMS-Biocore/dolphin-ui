@@ -154,21 +154,17 @@ $(function() {
 							console.log(submitted);
 							
 							//	Remove samples not in runlist
-							$.ajax({
-								type: 	'GET',
-								url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
-								data:  	{ p: 'removeRunlistSamples', run_id: init_run_id, sample_ids: returned_info[3].toString()},
-								async:	false,
-								success: function(s)
-								{
-								}
-							});
+							removeRunlist(init_run_id, returned_info[3].toString());
+
 							//	Insert into run params
 							var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
 						}
 					}else{
 						//insert new values into ngs_runparams
 						var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
+						if (window.location.href.split("/").indexOf('fastlane') == -1) {
+							removeRunlist(runparamsInsert[1], returned_info[3].toString());
+						}
 						//insert new values into ngs_runlist
 						var submitted = postInsertRunlist(runparamsInsert[0], returned_info[3], runparamsInsert[1]);
 						console.log(submitted);
@@ -177,5 +173,16 @@ $(function() {
 			});
 		}
 	}
-	
 });
+
+function removeRunlist(run_id, sample_ids) {
+	$.ajax({
+		type: 	'GET',
+		url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
+		data:  	{ p: 'removeRunlistSamples', run_id: run_id, sample_ids: sample_ids},
+		async:	false,
+		success: function(s)
+		{
+		}
+	});
+}
