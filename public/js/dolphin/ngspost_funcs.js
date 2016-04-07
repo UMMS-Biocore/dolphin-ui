@@ -20,10 +20,10 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 	 var outdir_check;
 	 var runGroupID;
 	 $.ajax({
-		  type: 	'GET',
-		  url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
-		  data:  	{ p: "checkOutputDir", outdir: outputdir.toString()},
-		  async:	false,
+		  type: 'GET',
+		  url: BASE_PATH+'/public/ajax/ngsquerydb.php',
+		  data: { p: "checkOutputDir", outdir: outputdir},
+		  async: false,
 		  success: function(r)
 		  {
 			   console.log(r);
@@ -36,10 +36,10 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 			  runGroupID = 'new';
 	 }else if (outdir_check != undefined && outdir_check != 0) {
 		  $.ajax({
-			   type: 	'GET',
-			   url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
-			   data:  	{ p: "checkRunID", outdir: outputdir},
-			   async:	false,
+			   type: 'GET',
+			   url: BASE_PATH+'/public/ajax/ngsquerydb.php',
+			   data: { p: "checkRunID", outdir: outputdir},
+			   async: false,
 			   success: function(r)
 			   {
 				   runGroupID = r;
