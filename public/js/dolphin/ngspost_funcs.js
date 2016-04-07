@@ -29,9 +29,10 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 			   console.log(r);
 			   outdir_check = r;
 		  },
-		  error: function(r)
+		  error: function(request, error)
 		  {
-			   console.log('error');
+			   console.log(request);
+			   console.log(error);
 		  }
 	 });
 	 console.log(outdir_check);
