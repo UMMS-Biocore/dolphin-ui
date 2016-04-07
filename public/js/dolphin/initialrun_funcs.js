@@ -140,6 +140,8 @@ $(function() {
 					
 					returned_info = s;
 					console.log(s);
+					console.log(returned_info);
+					console.log(returned_info[1]);
 					console.log(returned_info[1][0]);
 					if (returned_info[1][0] != undefined) {
 						for(var k = 0; k < returned_info[1].length; k++){
