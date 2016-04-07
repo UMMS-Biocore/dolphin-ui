@@ -17,7 +17,7 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 	 //find the run group ID
 	 var hrefSplit = window.location.href.split("/");
 	 var rerunLoc = $.inArray('rerun', hrefSplit);
-	 var outdir_check;
+	 var outdir_check = 0;
 	 var runGroupID;
 	 $.ajax({
 		  type: 'GET',
@@ -28,6 +28,10 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
 		  {
 			   console.log(r);
 			   outdir_check = r;
+		  },
+		  error: function(r)
+		  {
+			   console.log('error');
 		  }
 	 });
 	 console.log(outdir_check);
