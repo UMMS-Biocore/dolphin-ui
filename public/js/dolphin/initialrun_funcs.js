@@ -140,9 +140,6 @@ $(function() {
 					
 					returned_info = s;
 					console.log(s);
-					console.log(returned_info);
-					console.log(returned_info[1]);
-					console.log(returned_info[1][0]);
 					if (returned_info[1][0] != undefined) {
 						for(var k = 0; k < returned_info[1].length; k++){
 							//	get variables for previoius run
@@ -159,7 +156,7 @@ $(function() {
 							removeRunlist(init_run_id, returned_info[3].toString());
 							
 							//	Insert into run params
-							var runparamsInsert = postInsertRunparams(JSON_OBJECT, outdir, runname, rundesc, perms, group, '');
+							var runparamsInsert = postInsertRunparams(JSON_OBJECT, returned_info[1][k], runname, rundesc, perms, group, '');
 							console.log(runparamsInsert)
 						}
 					}else{
