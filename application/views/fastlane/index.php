@@ -41,9 +41,15 @@
 							<?php echo $html->getStaticSelectionBox("Experiment Series Name", "series_name", "TEXT", 6)?>
 							<?php echo $html->getStaticSelectionBox("Import Name", "lane_name", "TEXT", 6)?>
 						</div>
+						<div id="input_dir_div" class="col-md-12">
+							<?php echo $html->getStaticSelectionBoxWithButton("Input Directory (Full path)", "input_dir", "TEXT", "queryDirectory()", "Search Directory", 12)?>
+						</div>
 						<div id="input_files_div" class="col-md-12">
-							<?php echo $html->getStaticSelectionBox("Input Directory (Full path)", "input_dir", "TEXT", 12)?>
-							<?php echo $html->getStaticSelectionBox("Input Files", "input_files", "TEXTBOX", 12)?>
+							<?php
+							$manual = $html->fastlaneManualFileInput();
+							$directory = $html->fastlaneDirectoryFileInput();
+							echo $html->getStaticTabbedSelectionBox("Input Files", "input_files", ['Manual', 'Directory'], [$manual, $directory], 12);
+							?>
 						</div>
 						<div id="output_files" class="col-md-12">
 							<?php echo $html->getStaticSelectionBox("Process Directory (Full path)", "backup_dir", "TEXT", 12)?>

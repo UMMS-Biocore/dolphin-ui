@@ -20,19 +20,6 @@ function checkFastlaneInput(info_array){
 	var sample_ids = [];
 	var sample_file_check = [];
 	var true_sample_ids = [];
-	var username;
-	
-	//	Get cluster username for file checks
-	$.ajax({
-		type: 	'GET',
-		url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
-		data:  	{ p: 'getClusterName' },
-		async:	false,
-		success: function(s)
-		{
-			username = s[0];
-		}
-	});
 	
 	//	Non-database checks
 	//	For each input passed

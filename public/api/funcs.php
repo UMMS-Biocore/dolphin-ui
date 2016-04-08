@@ -130,6 +130,17 @@ class funcs
             return "File given is an empty string";
         }
     }
+    function directoryContents($params){
+        $this->username=$params['username'];
+        $this->readINI();
+        if (isset($params['directory'])){
+          $com = 'ls -l '.$params['directory'].'| grep ^[-l] | awk \'{print $9}\'';
+        }else{
+          $com = 'ls -l ~ | grep ^[-l] | awk \'{print $9}\'';
+        }
+        $retval = $this->syscall($this->getCMDs($com));
+        return $retval;
+    }
     function getKey()
     {
         $characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
