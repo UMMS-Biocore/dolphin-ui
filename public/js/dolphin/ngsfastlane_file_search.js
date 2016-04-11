@@ -200,17 +200,67 @@ function swapFiles(swap1, swap2) {
 }
 
 function selectName(){
-	var selected_name = document.getElementById('file_names').selectedOptions[0].value;
-	console.log(selected_name);
-	if (NAME_FILE_STORAGE[selected_name] == undefined) {
-		NAME_FILE_STORAGE[selected_name] = [];
+	var current_selection = document.getElementById('file_names').selectedOptions[0].value;
+	var select_file1 = document.getElementById('file1_select');
+	var select_file2 = document.getElementById('file2_select');
+	console.log(current_selection);
+	if (NAME_FILE_STORAGE[current_selection] == undefined) {
+		NAME_FILE_STORAGE[current_selection] = [];
+		for(var x = 0; x < select_file1.options.length; x ++){
+			select_file1.options[x].selected = false;
+		}
+		for(var x = 0; x < select_file2.options.length; x ++){
+			select_file2.options[x].selected = false;
+		}
 	}else{
-		
+		if (NAME_FILE_STORAGE[current_selection][0] != undefined) {
+			for(var x = 0; x < select_file1.options.length; x ++){
+				if (NAME_FILE_STORAGE[current_selection].indexOf(select_file1.options[x].value) != -1) {
+					select_file1.options[x].selected = true;
+				}else{
+					select_file1.options[x].selected = false;
+				}
+			}
+		}else{
+			for(var x = 0; x < select_file1.options.length; x ++){
+				select_file1.options[x].selected = false;
+			}
+		}
+		if (NAME_FILE_STORAGE[current_selection][1] != undefined) {
+			for(var x = 0; x < select_file2.options.length; x ++){
+				if (NAME_FILE_STORAGE[current_selection][1].indexOf(select_file2.options[x].value) != -1) {
+					select_file2.options[x].selected = true;
+				}else{
+					select_file2.options[x].selected = false;
+				}
+			}
+		}else{
+			for(var x = 0; x < select_file2.options.length; x ++){
+				select_file2.options[x].selected = false;
+			}
+		}
 	}
 }
 
 function selectFile(read){
-	
+	var current_selection = document.getElementById('file_names').selectedOptions[0].value;
+	var select_file1 = document.getElementById('file1_select');
+	var select_file2 = document.getElementById('file2_select');
+	var R1 = [];
+	var R2 = [];
+	if (current_selection != undefined) {
+		for(var x = 0; x < select_file1.options.length; x ++){
+			if (select_file1.options[x].selected) {
+				R1.push(select_file1.options[x].value);
+			}
+		}
+		for(var x = 0; x < select_file2.options.length; x ++){
+			if (select_file2.options[x].selected) {
+				R2.push(select_file2.options[x].value);
+			}
+		}
+	}
+	NAME_FILE_STORAGE[current_selection] = [R1, R2];
 }
 
 //	On Open of fastlane
