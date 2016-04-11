@@ -862,37 +862,40 @@ Single End Example:
 									</div>
 								</div>
 								<div class="col-md-9">
-								    <table width="%100"><tr><td>
-									<div id="input_file1">
-										<div class="col-md-12">
-											<label>Read 1</label>
-											<select id="file1_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(1)"></select>
+								    <table style="width:100%"><tr>
+									<td>
+										<div id="input_file1">
+											<div class="col-md-12">
+												<label>Read 1</label>
+												<select id="file1_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(1)"></select>
+											</div>
+											<div class="col-md-12 margin">
+												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(1)"><i class="fa fa-minus"></i></button>
+											</div>
 										</div>
-										<div class="col-md-12 margin">
-											<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(1)"><i class="fa fa-minus"></i></button>
+								    </td>
+									<td>
+										<div id="swapCol" class="margin" style="height:100%;vertical-align:center">
+											<div class="row">
+												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
+											</div>
+											<div class="row">
+												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>
+											</div>
 										</div>
-									</div>
-								    </td><td style="v-align: center">
-									<div id="swapCol" style="height:100%;vertical-align:center">
-										<div class="row">
-											<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
+									</td>
+									<td>
+										<div id="input_file2">
+											<div class="col-md-12">
+												<label>Read 2</label>
+												<select id="file2_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(2)"></select>
+											</div>
+											<div class="col-md-12 margin">
+												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(2)"><i class="fa fa-minus"></i></button>
+											</div>
 										</div>
-										<div class="row">
-											<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>
-										</div>
-									</div>
-									</td><td>
-									<div id="input_file2">
-										<div class="col-md-12">
-											<label>Read 2</label>
-											<select id="file2_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(2)"></select>
-										</div>
-										<div class="col-md-12 margin">
-											<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(2)"><i class="fa fa-minus"></i></button>
-										</div>
-									</div>
-									</td></tr>
-									</table>
+									</td>
+									</tr></table>
 								</div>
 							</form>
 						</div>
