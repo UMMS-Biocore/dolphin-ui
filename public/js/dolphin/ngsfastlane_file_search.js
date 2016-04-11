@@ -1,5 +1,21 @@
 
 var username;
+var selected_name;
+var nameEditToggle;
+var NAME_FILE_STORAGE = {};
+
+function searchDirectoryModal() {
+	if (document.getElementById('spaired').value == 'no') {
+		document.getElementById('read_2_label').setAttribute('style', 'display:none');
+		document.getElementById('read_2_input').setAttribute('style', 'display:none');
+	}else{
+		document.getElementById('read_2_label').setAttribute('style', 'display:show');
+		document.getElementById('read_2_input').setAttribute('style', 'display:show');
+	}
+	$('#regexModal').modal({
+		show: true
+	});
+}
 
 //	Function called when 'Search Directory' button is clicked
 function queryDirectory() {
@@ -7,11 +23,84 @@ function queryDirectory() {
 	var directory = document.getElementById('input_dir').value;
 	//	If not empty, search directory
 	if (directory != '') {
-		directoryGrab(directory);
+		//	Grab web variables
+		var read_1_input = document.getElementById('read_1_input').value;
+		var read_2_input = document.getElementById('read_2_input').value;
+		
+		var regexRead1 = new RegExp(read_1_input);
+		if (document.getElementById('spaired').value == 'yes') {
+				var regexRead2 = new RegExp(read_2_input);
+		}else{
+			var regexRead2 = undefined;
+		}
+		var R1 = [];
+		var R2 = [];
+		//	Grab files from directory
+		var file_list = directoryGrab(directory, regexRead1, regexRead2);;
+		
+		//	If Paired end
+		for (var x = 0; x < file_list.length; x++) {
+			if (document.getElementById('spaired').value == 'yes') {
+				//	Show R2 Options
+				document.getElementById('input_file2').setAttribute('style', 'display:show');
+				document.getElementById('send_R2_button').setAttribute('style', 'display:show');
+				//	Regex R1
+				if (regexRead1.test(file_list[x])) {
+					R1.push(file_list[x]);
+				//	Regex R2
+				}else if (regexRead2.test(file_list[x])) {
+					R2.push(file_list[x]);
+				}
+			//	Single end
+			}else{
+				//	Remove R2 Options
+				document.getElementById('input_file2').setAttribute('style', 'display:none');
+				document.getElementById('send_R2_button').setAttribute('style', 'display:none');
+				//	Regex fastq
+				if (regexRead1.test(file_list[x])) {
+					R1.push(file_list[x]);
+				}
+			}
+		}
+		
+		//	Add to Selection Boxes
+		var namingIndex = [];
+		var nameOptions = '';
+		var selectOptions1 = '';
+		var selectOptions2 = '';
+		for(var x = 0; x < R1.length; x++){
+			var name = '';
+			if (R1[x].split(read_1_input).length != 1 && read_1_input != '') {
+				name = R1[x].split(read_1_input)[0]
+			}else if (R1[x].split('.fastq').length != 1){
+				name = R1[x].split('.fastq')[0];
+			}else{
+				name = R1[x].split('.fq')[0];
+			}
+			if (namingIndex[name] == undefined) {
+				namingIndex[name] = R1[x]
+				nameOptions += '<option value="'+name+'">'+name+'</option>';
+			}
+			selectOptions1 += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
+		}
+		if (R2.length != 0) {
+			for(var x = 0; x < R2.length; x++){
+				selectOptions2 += '<option value="'+R2[x]+'">'+R2[x]+'</option>';
+			}
+		}
+		document.getElementById('file_names').innerHTML = nameOptions;
+		document.getElementById('file1_select').innerHTML = selectOptions1;
+		document.getElementById('file2_select').innerHTML = selectOptions2;
 		
 		//	After successful query
 		document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
 		$('.nav-tabs a[href="#Directory"]').tab('show')
+	}else{
+		$('#errorModal').modal({
+			show: true
+		});
+		document.getElementById('errorLabel').innerHTML = 'You cannot search through an empty directory!';
+		document.getElementById('errorAreas').innerHTML = '';
 	}
 }
 
@@ -26,12 +115,102 @@ function directoryGrab(directory){
 		{
 			console.log(s);
 			file_array = s.split('\n');
-			console.log(file_array);
 			file_array.pop();
 			console.log(file_array);
 		}
 	});
 	return file_array;
+}
+
+function editName() {
+	var edit = document.getElementById('editNameInput');
+	selected_name = document.getElementById('file_names').value;
+	nameEditToggle = true;
+	edit.setAttribute('style', 'display:show');
+	edit.value = selected_name;
+	edit.innerHTML = selected_name;
+	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:show');
+	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:show');
+}
+
+function confirmNameEdit() {
+	var new_file_name = document.getElementById('editNameInput').value;
+	if (nameEditToggle) {
+		$('#file_names option[value="'+selected_name+'"]')[0].innerHTML = new_file_name;
+		$('#file_names option[value="'+selected_name+'"]')[0].value = new_file_name;
+	}else{
+		var select = document.getElementById('file_names');
+		var option = document.createElement("option");
+		option.value = new_file_name;
+		option.innerHTML = new_file_name;
+		select.add(option);
+	}
+	selected_name = '';
+	document.getElementById('editNameInput').setAttribute('style', 'display:none');
+	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:none');
+	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:none');
+}
+
+function cancelNameEdit(){
+	selected_name = '';
+	document.getElementById('editNameInput').setAttribute('style', 'display:none');
+	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:none');
+	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:none');
+}
+
+function addName(){
+	nameEditToggle = false;
+	var edit = document.getElementById('editNameInput');
+	edit.value = '';
+	edit.innerHTML = '';
+	edit.setAttribute('style', 'display:show');
+	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:show');
+	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:show');
+}
+
+function removeName(){
+	var edit = document.getElementById('editNameInput');
+	selected_name = document.getElementById('file_names').value;
+	$('#file_names option[value="'+selected_name+'"]')[0].remove();
+}
+
+function removeFile(read){
+	var file_select = document.getElementById('file'+read+'_select');
+	for(var x = file_select.options.length - 1; x >= 0; x--){
+		if (file_select.options[x].selected) {
+			file_select.options[x].remove();
+		}
+	}
+}
+
+function swapFiles(swap1, swap2) {
+	var file1_select = document.getElementById('file'+swap1+'_select');
+	var file2_select = document.getElementById('file'+swap2+'_select');
+	var options_list
+	
+	for(var x = file1_select.options.length - 1; x >= 0; x--){
+		if (file1_select.options[x].selected) {
+			var option = document.createElement('option');
+			option.value = file1_select.options[x].value;
+			option.innerHTML = file1_select.options[x].value;
+			file2_select.add(option);
+			file1_select.options[x].remove();
+		}
+	}
+}
+
+function selectName(){
+	var selected_name = document.getElementById('file_names').selectedOptions[0].value;
+	console.log(selected_name);
+	if (NAME_FILE_STORAGE[selected_name] == undefined) {
+		NAME_FILE_STORAGE[selected_name] = [];
+	}else{
+		
+	}
+}
+
+function selectFile(read){
+	
 }
 
 //	On Open of fastlane

@@ -845,23 +845,54 @@ Single End Example:
 		$html .= 	'<div class="box-body">
 						<div class="input-group margin col-md-12">
 							<form role="form">
-								<div id="input_naming_scheme" class="col-md-4">
+								<div id="input_naming_scheme" class="col-md-3">
 									<div class="col-md-12">
-										<select id="file_names" type="multiple" size="10"></select>
+										<label>Name</label>
+										<select id="file_names" type="multiple" size="10" style="width:100%" onchange="selectName()"></select>
 									</div>
 									<div class="col-md-12 margin">
-										<button id="add_filename_button" type="button" class="btn btn-primary" onclick=""><i class="fa fa-plus"></i></button>
-										<button id="remove_filename_button" type="button" class="btn btn-primary" onclick=""><i class="fa fa-minus"></i></button>
+										<button id="add_filename_button" type="button" class="btn btn-primary" onclick="addName()"><i class="fa fa-plus"></i></button>
+										<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeName()"><i class="fa fa-minus"></i></button>
+										<button id="edit_name_button" type="button" class="btn btn-primary" onclick="editName()">Edit Name</button>
 									</div>
 									<div class="col-md-12 margin">
-										<button id="edit_filename_button" type="button" class="btn btn-primary" onclick="">Edit Name</button>
+										<input id="editNameInput" type="text" class="form-control" style="display:none">
+										<button id="cancel_edit_name_button" type="button" class="btn btn-danger pull-right" onclick="cancelNameEdit()" style="display:none">Cancel</button>
+										<button id="confirm_edit_name_button" type="button" class="btn btn-primary pull-right" onclick="confirmNameEdit()" style="display:none">Confirm</button>
 									</div>
 								</div>
-								<div id="input_file1" class="col-md-4">
-									<select id="file1_select" type="multiple" size="10"></select>
-								</div>
-								<div id="input_file2" class="col-md-4">
-									<select id="file2_select" type="multiple" size="10"></select>
+								<div class="col-md-9">
+								    <table width="%100"><tr><td>
+									<div id="input_file1">
+										<div class="col-md-12">
+											<label>Read 1</label>
+											<select id="file1_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(1)"></select>
+										</div>
+										<div class="col-md-12 margin">
+											<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(1)"><i class="fa fa-minus"></i></button>
+										</div>
+									</div>
+								    </td><td style="v-align: center">
+									<div id="swapCol" style="height:100%;vertical-align:center">
+										<div class="row">
+											<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
+										</div>
+										<div class="row">
+											<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>
+										</div>
+									</div>
+									</td><td>
+									<div id="input_file2">
+										<div class="col-md-12">
+											<label>Read 2</label>
+											<select id="file2_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(2)"></select>
+										</div>
+										<div class="col-md-12 margin">
+											<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(2)"><i class="fa fa-minus"></i></button>
+										</div>
+									</div>
+									</td></tr>
+									</table>
 								</div>
 							</form>
 						</div>
