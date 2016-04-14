@@ -33,7 +33,40 @@ function submitFastlaneButton() {
 	//	genomebuild placeholder
 	value_array.push("human,hg19");
 	for(var x = 0; x < id_array.length; x++){
-		if (document.getElementById(id_array[x]) != null) {
+		if (id_array[x] == 'input_files'){
+			//      Manual Text box
+			if (document.getElementById('Manual_toggle').parentNode.className == "active") {
+					//      obtain value and trim and replace commas and tabs
+					var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
+					//      push to array
+					console.log(value_str);
+					value_array.push(value_str);
+			//      File-Directory Selection
+			}else{
+					var value_str = "";
+					if (Object.keys(NAME_FILE_STORAGE).length == 0) {
+							sendProcessDataRaw([''], 'dir_used');
+					}else{
+							sendProcessDataRaw([NAME_FILE_STORAGE], 'dir_used');
+					}
+					//      For every selected entry
+					for(var key in NAME_FILE_STORAGE ){
+							console.log(key);
+							if (NAME_FILE_STORAGE[key] != undefined){
+									for (var y = 0; y < NAME_FILE_STORAGE[key][0].length; y++) {
+											console.log(NAME_FILE_STORAGE[key][0]);
+											if (NAME_FILE_STORAGE[key][1][y] == undefined) {
+													value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + ':';
+											}else{
+													value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_ST
+											}
+									}
+							}
+					}
+					console.log(value_str);
+					value_array.push(value_str);
+			}
+        }else if (document.getElementById(id_array[x]) != null) {
 			//	obtain value and trim and replace commas and tabs
 			var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
 			//	push to array
