@@ -121,9 +121,9 @@ class funcs
         $this->username=$params['username'];
         $this->readINI();
         if (isset($params['directory'])){
-          $com = 'ls -l '.$params['directory'].'| grep ^[-l] | awk \'{print $9}\'';
+          $com = 'ls -1 '.$params['directory'];
         }else{
-          $com = 'ls -l ~ | grep ^[-l] | awk \'{print $9}\'';
+          $com = 'ls -1';
         }
         $retval = $this->syscall($this->getCMDs($com));
         return $retval;
