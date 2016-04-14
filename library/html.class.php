@@ -877,7 +877,7 @@ Single End Example:
 									<td>
 										<div id="swapCol" class="margin" style="height:100%;vertical-align:center">
 											<div class="row">
-												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
+												<button id="send_R1_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
 											</div>
 											<div class="row">
 												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>

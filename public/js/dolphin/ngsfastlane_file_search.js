@@ -51,6 +51,7 @@ function queryDirectory() {
 				if (document.getElementById('spaired').value == 'yes') {
 					//	Show R2 Options
 					document.getElementById('input_file2').setAttribute('style', 'display:show');
+					document.getElementById('send_R1_button').setAttribute('style', 'display:show');
 					document.getElementById('send_R2_button').setAttribute('style', 'display:show');
 					//	Regex R1
 					if (regexRead1.test(file_list[x])) {
@@ -63,6 +64,7 @@ function queryDirectory() {
 				}else{
 					//	Remove R2 Options
 					document.getElementById('input_file2').setAttribute('style', 'display:none');
+					document.getElementById('send_R1_button').setAttribute('style', 'display:none');
 					document.getElementById('send_R2_button').setAttribute('style', 'display:none');
 					//	Regex fastq
 					if (regexRead1.test(file_list[x])) {
@@ -145,6 +147,8 @@ function editName() {
 function confirmNameEdit() {
 	var new_file_name = document.getElementById('editNameInput').value;
 	if (nameEditToggle) {
+		NAME_FILE_STORAGE[new_file_name] = NAME_FILE_STORAGE[document.getElementById('file_names').value];
+		delete NAME_FILE_STORAGE[document.getElementById('file_names').value];
 		$('#file_names option[value="'+selected_name+'"]')[0].innerHTML = new_file_name;
 		$('#file_names option[value="'+selected_name+'"]')[0].value = new_file_name;
 	}else{
@@ -178,18 +182,46 @@ function addName(){
 }
 
 function removeName(){
-	var edit = document.getElementById('editNameInput');
-	selected_name = document.getElementById('file_names').value;
+	var selected_name = document.getElementById('file_names').value;
+	for(var x = 0; x < NAME_FILE_STORAGE[selected_name].length; x++){
+		if (x == 0) {
+			for(file in NAME_FILE_STORAGE[selected_name][x]){
+				if (DISABLED_FILE1.indexOf(NAME_FILE_STORAGE[selected_name][x][file]) != -1) {
+					DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(NAME_FILE_STORAGE[selected_name][x][file]), 1);
+				}
+			}
+		}else{
+			for(file in NAME_FILE_STORAGE[selected_name][x]){
+				if (DISABLED_FILE2.indexOf(NAME_FILE_STORAGE[selected_name][x][file]) != -1) {
+					DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(NAME_FILE_STORAGE[selected_name][x][file]), 1);
+				}
+			}
+		}
+	}
+	delete NAME_FILE_STORAGE[selected_name];
+	selectName();
 	$('#file_names option[value="'+selected_name+'"]')[0].remove();
 }
 
 function removeFile(read){
+	var selected_name = document.getElementById('file_names').value;
 	var file_select = document.getElementById('file'+read+'_select');
 	for(var x = file_select.options.length - 1; x >= 0; x--){
 		if (file_select.options[x].selected) {
+			if (read == 1) {
+				DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(file_select), 1);
+				NAME_FILE_STORAGE[selected_name][0].splice(NAME_FILE_STORAGE[selected_name][0].indexOf(file_select), 1);
+			}else{
+				DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(file_select), 1);
+				NAME_FILE_STORAGE[selected_name][0].splice(NAME_FILE_STORAGE[selected_name][1].indexOf(file_select), 1);
+			}
 			file_select.options[x].remove();
+			if (NAME_FILE_STORAGE[selected_name][0].length == 0 && NAME_FILE_STORAGE[selected_name][1].length == 0) {
+				delete NAME_FILE_STORAGE[selected_name];
+			}
 		}
 	}
+	selectName();
 }
 
 function swapFiles(swap1, swap2) {

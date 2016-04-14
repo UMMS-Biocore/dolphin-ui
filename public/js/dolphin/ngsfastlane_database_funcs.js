@@ -248,68 +248,13 @@ function checkFastlaneInput(info_array){
 		//	Obtain group id
 		var gid = document.getElementById('groups').value.toString();
 		var perms = obtainPermsFromRadio();
+		var barcode_count = 0;
 		if (experiment_series_id > 0) {
 			//	If adding to a experiment series
-			if (lane_id > 0) {
-				//	If adding to a lane
-				if (info_array[1] == 'yes') {
-					//	If seperating barcodes
-					for (var a = 0; a < barcode_array.length; a++) {
-						if (sample_file_check.indexOf(barcode_array[a][0]) == -1) {
-							var true_id = insertSample(experiment_series_id, lane_id, barcode_array[a][0],
-										barcode_array[a][1], gid, perms);
-							true_sample_ids.push(true_id);
-							sample_ids.push(true_id);
-							sample_file_check.push(barcode_array[a][0]);
-						}else{
-							sample_ids.push(sampleCheck(experiment_series_id, lane_id, barcode_array[a][0]));
-						}
-					}
-				}else{
-					//	If not separating barcodes
-					for (var a = 0; a < input_array.length; a++) {
-						if (sample_file_check.indexOf(input_array[a][0]) == -1) {
-							var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
-									'nobarcode', gid, perms);
-							true_sample_ids.push(true_id);
-							sample_ids.push(true_id);
-							sample_file_check.push(input_array[a][0]);
-						}else{
-							sample_ids.push(sampleCheck(experiment_series_id, lane_id, input_array[a][0]));
-						}
-					}
-				}
-			}else{
+			if (!lane_id > 0) {
 				//	If creating a lane
 				insertLane(experiment_series_id, info_array[4], gid, perms);
-				var lane_id = laneCheck(experiment_series_id, info_array[4]);
-				if (info_array[1] == 'yes') {
-					//	If separating barcodes
-					for (var a = 0; a < barcode_array.length; a++) {
-						if (sample_file_check.indexOf(barcode_array[a][0]) == -1) {
-							var true_id = insertSample(experiment_series_id, lane_id, barcode_array[a][0],
-										barcode_array[a][1], gid, perms);
-							true_sample_ids.push(true_id);
-							sample_ids.push(true_id);
-							sample_file_check.push(barcode_array[a][0]);
-						}else{
-							sample_ids.push(sampleCheck(experiment_series_id, lane_id, barcode_array[a][0]));
-						}
-					}
-				}else{
-					//	If not separating barcodes
-					for (var a = 0; a < input_array.length; a++) {
-						if (sample_file_check.indexOf(input_array[a][0]) == -1) {
-							var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
-									'nobarcode', gid, perms);
-						true_sample_ids.push(true_id);
-						sample_ids.push(true_id);
-							sample_file_check.push(input_array[a][0]);
-						}else{
-							sample_ids.push(sampleCheck(experiment_series_id, lane_id, input_array[a][0]));
-						}
-					}
-				}
+				lane_id = laneCheck(experiment_series_id, info_array[4]);
 			}
 		}else{
 			//	If creating an experiment series
@@ -317,34 +262,24 @@ function checkFastlaneInput(info_array){
 			experiment_series_id = experimentSeriesCheck(info_array[3]);
 			
 			insertLane(experiment_series_id, info_array[4], gid, perms);
-			var lane_id = laneCheck(experiment_series_id, info_array[4]);
-			
-			if (info_array[1] == 'yes') {
-				//	If separating barcodes
-				for (var a = 0; a < barcode_array.length; a++) {
-					if (sample_file_check.indexOf(barcode_array[a][0]) == -1) {
-						var true_id = insertSample(experiment_series_id, lane_id, barcode_array[a][0], barcode_array[a][1], gid, perms);
-							true_sample_ids.push(true_id);
-							sample_ids.push(true_id);
-						sample_file_check.push(barcode_array[a][0]);
-						
-					}else{
-						sample_ids.push(sampleCheck(experiment_series_id, lane_id, barcode_array[a][0]));
-					}
+			lane_id = laneCheck(experiment_series_id, info_array[4]);
+		}
+		
+		for (var a = 0; a < input_array.length; a++) {
+			if (sample_file_check.indexOf(input_array[a][0]) == -1) {
+				if (info_array[1] == 'yes') {
+					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
+							barcode_array[barcode_count][0], gid, perms);
+					barcode_count++;
+				}else{
+					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
+						'nobarcode', gid, perms);
 				}
+				true_sample_ids.push(true_id);
+				sample_ids.push(true_id);
+				sample_file_check.push(input_array[a][0]);
 			}else{
-				//	If not separating barcodes
-				for (var a = 0; a < input_array.length; a++) {
-					if (sample_file_check.indexOf(input_array[a][0]) == -1) {
-						var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
-									'nobarcode', gid, perms);
-						true_sample_ids.push(true_id);
-						sample_ids.push(true_id);
-						sample_file_check.push(input_array[a][0]);
-					}else{
-						sample_ids.push(sampleCheck(experiment_series_id, lane_id, input_array[a][0]));
-					}
-				}
+				sample_ids.push(sampleCheck(experiment_series_id, lane_id, input_array[a][0]));
 			}
 		}
 		
