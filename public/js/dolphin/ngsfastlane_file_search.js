@@ -39,64 +39,71 @@ function queryDirectory() {
 		var R2 = [];
 		//	Grab files from directory
 		var file_list = directoryGrab(directory, regexRead1, regexRead2);;
-		
-		//	If Paired end
-		for (var x = 0; x < file_list.length; x++) {
-			if (document.getElementById('spaired').value == 'yes') {
-				//	Show R2 Options
-				document.getElementById('input_file2').setAttribute('style', 'display:show');
-				document.getElementById('send_R2_button').setAttribute('style', 'display:show');
-				//	Regex R1
-				if (regexRead1.test(file_list[x])) {
-					R1.push(file_list[x]);
-				//	Regex R2
-				}else if (regexRead2.test(file_list[x])) {
-					R2.push(file_list[x]);
+		if (file_list[0] == "" || file_list[0].indexOf("ls: cannot access") > -1) {
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML = 'You cannot access this directory.';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else{
+			//	If Paired end
+			for (var x = 0; x < file_list.length; x++) {
+				if (document.getElementById('spaired').value == 'yes') {
+					//	Show R2 Options
+					document.getElementById('input_file2').setAttribute('style', 'display:show');
+					document.getElementById('send_R2_button').setAttribute('style', 'display:show');
+					//	Regex R1
+					if (regexRead1.test(file_list[x])) {
+						R1.push(file_list[x]);
+					//	Regex R2
+					}else if (regexRead2.test(file_list[x])) {
+						R2.push(file_list[x]);
+					}
+				//	Single end
+				}else{
+					//	Remove R2 Options
+					document.getElementById('input_file2').setAttribute('style', 'display:none');
+					document.getElementById('send_R2_button').setAttribute('style', 'display:none');
+					//	Regex fastq
+					if (regexRead1.test(file_list[x])) {
+						R1.push(file_list[x]);
+					}
 				}
-			//	Single end
-			}else{
-				//	Remove R2 Options
-				document.getElementById('input_file2').setAttribute('style', 'display:none');
-				document.getElementById('send_R2_button').setAttribute('style', 'display:none');
-				//	Regex fastq
-				if (regexRead1.test(file_list[x])) {
-					R1.push(file_list[x]);
+			}
+			
+			//	Add to Selection Boxes
+			var namingIndex = [];
+			var nameOptions = '';
+			var selectOptions1 = '';
+			var selectOptions2 = '';
+			for(var x = 0; x < R1.length; x++){
+				var name = '';
+				if (R1[x].split(read_1_input).length != 1 && read_1_input != '') {
+					name = R1[x].split(read_1_input)[0]
+				}else if (R1[x].split('.fastq').length != 1){
+					name = R1[x].split('.fastq')[0];
+				}else{
+					name = R1[x].split('.fq')[0];
+				}
+				if (namingIndex[name] == undefined) {
+					namingIndex[name] = R1[x]
+					nameOptions += '<option value="'+name+'">'+name+'</option>';
+				}
+				selectOptions1 += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
+			}
+			if (R2.length != 0) {
+				for(var x = 0; x < R2.length; x++){
+					selectOptions2 += '<option value="'+R2[x]+'">'+R2[x]+'</option>';
 				}
 			}
+			document.getElementById('file_names').innerHTML = nameOptions;
+			document.getElementById('file1_select').innerHTML = selectOptions1;
+			document.getElementById('file2_select').innerHTML = selectOptions2;
+			
+			//	After successful query
+			document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
+			$('.nav-tabs a[href="#Directory"]').tab('show')
 		}
-		
-		//	Add to Selection Boxes
-		var namingIndex = [];
-		var nameOptions = '';
-		var selectOptions1 = '';
-		var selectOptions2 = '';
-		for(var x = 0; x < R1.length; x++){
-			var name = '';
-			if (R1[x].split(read_1_input).length != 1 && read_1_input != '') {
-				name = R1[x].split(read_1_input)[0]
-			}else if (R1[x].split('.fastq').length != 1){
-				name = R1[x].split('.fastq')[0];
-			}else{
-				name = R1[x].split('.fq')[0];
-			}
-			if (namingIndex[name] == undefined) {
-				namingIndex[name] = R1[x]
-				nameOptions += '<option value="'+name+'">'+name+'</option>';
-			}
-			selectOptions1 += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
-		}
-		if (R2.length != 0) {
-			for(var x = 0; x < R2.length; x++){
-				selectOptions2 += '<option value="'+R2[x]+'">'+R2[x]+'</option>';
-			}
-		}
-		document.getElementById('file_names').innerHTML = nameOptions;
-		document.getElementById('file1_select').innerHTML = selectOptions1;
-		document.getElementById('file2_select').innerHTML = selectOptions2;
-		
-		//	After successful query
-		document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
-		$('.nav-tabs a[href="#Directory"]').tab('show')
 	}else{
 		$('#errorModal').modal({
 			show: true
@@ -298,7 +305,9 @@ function selectFile(read){
 $(function() {
 	"use strict";
 	//	Disable directory tab
-	document.getElementById('Directory_toggle').setAttribute('data-toggle', 'none');
+	if (window.location.href.split("/")[window.location.href.split("/").length - 1] != "process") {
+		document.getElementById('Directory_toggle').setAttribute('data-toggle', 'none');
+	}
 	
 	//	Get cluster username for file checks
 	$.ajax({

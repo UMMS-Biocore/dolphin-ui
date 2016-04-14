@@ -44,24 +44,21 @@ function submitFastlaneButton() {
 			//	File-Directory Selection
 			}else{
 				var value_str = "";
+				if (Object.keys(NAME_FILE_STORAGE).length == 0) {
+					sendProcessDataRaw([''], 'dir_used');
+				}else{
+					sendProcessDataRaw([NAME_FILE_STORAGE], 'dir_used');
+				}
 				//	For every selected entry
 				for(var key in NAME_FILE_STORAGE ){
-					//	Single end
-					if (NAME_FILE_STORAGE[key] != undefined && document.getElementById(id_array[3]).value == 'yes') {
+					console.log(key);
+					if (NAME_FILE_STORAGE[key] != undefined){
 						for (var y = 0; y < NAME_FILE_STORAGE[key][0].length; y++) {
-							if (y + 1 == NAME_FILE_STORAGE[key][0].length) {
-								value_str += key + " " + NAME_FILE_STORAGE[key][0][y];
+							console.log(NAME_FILE_STORAGE[key][0]);
+							if (NAME_FILE_STORAGE[key][1][y] == undefined) {
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + ':';
 							}else{
-								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + "\n";
-							}
-						}
-					//	Paired end
-					}else if (NAME_FILE_STORAGE[key] != undefined){
-						for (var y = 0; y < NAME_FILE_STORAGE[key][0].length; y++) {
-							if (y + 1 == NAME_FILE_STORAGE[key][0].length) {
-								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][1][y];
-							}else{
-								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][1][y] + "\n";
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][1][y] + ':';
 							}
 						}
 					}

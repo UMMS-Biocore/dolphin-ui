@@ -57,7 +57,12 @@ function checkFastlaneInput(info_array){
 		}else if (id_array[x] == 'input_files'){
 			//	Paired-end libraries
 			var bad_files = [];
-			var split_inputs = info_array[6].split("\n");
+			if (document.getElementById('Directory_toggle').parentNode.className == "active") {
+				var split_inputs = info_array[6].split(":");
+			}else{
+				var split_inputs = info_array[6].split("\n");
+			}
+			console.log(split_inputs);
 			//	Check for blank lines and eliminate them
 			split_inputs = split_inputs.filter(function(n){return n != ''});
 			var input_bool_check = true;
@@ -529,6 +534,18 @@ function sendProcessData(info_array, post_name){
 			type: 	'GET',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'sendProcessData', info_array: info_array, post: post_name},
+			async:	false,
+			success: function(s)
+			{
+			}
+	});
+}
+
+function sendProcessDataRaw(info_array, post_name){
+	$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			data:  	{ p: 'sendProcessDataRaw', info_array: info_array, post: post_name},
 			async:	false,
 			success: function(s)
 			{
