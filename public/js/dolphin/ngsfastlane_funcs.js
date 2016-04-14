@@ -33,7 +33,43 @@ function submitFastlaneButton() {
 	//	genomebuild placeholder
 	value_array.push("human,hg19");
 	for(var x = 0; x < id_array.length; x++){
-		if (document.getElementById(id_array[x]) != null) {
+		if (id_array[x] == 'input_files'){
+			//	Manual Text box
+			if (document.getElementById('Manual_toggle').parentNode.className == "active") {
+				//	obtain value and trim and replace commas and tabs
+				var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
+				//	push to array
+				console.log(value_str);
+				value_array.push(value_str);
+			//	File-Directory Selection
+			}else{
+				var value_str = "";
+				//	For every selected entry
+				for(var key in NAME_FILE_STORAGE ){
+					//	Single end
+					if (NAME_FILE_STORAGE[key] != undefined && document.getElementById(id_array[3]).value == 'yes') {
+						for (var y = 0; y < NAME_FILE_STORAGE[key][0].length; y++) {
+							if (y + 1 == NAME_FILE_STORAGE[key][0].length) {
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y];
+							}else{
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + "\n";
+							}
+						}
+					//	Paired end
+					}else if (NAME_FILE_STORAGE[key] != undefined){
+						for (var y = 0; y < NAME_FILE_STORAGE[key][0].length; y++) {
+							if (y + 1 == NAME_FILE_STORAGE[key][0].length) {
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][1][y];
+							}else{
+								value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][1][y] + "\n";
+							}
+						}
+					}
+				}
+				console.log(value_str);
+				value_array.push(value_str);
+			}
+		}else if (document.getElementById(id_array[x]) != null) {
 			//	obtain value and trim and replace commas and tabs
 			var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
 			//	push to array
