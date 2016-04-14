@@ -70,7 +70,16 @@ function checkFastlaneInput(info_array){
 		}else if (id_array[x] == 'input_files'){
 			//	Paired-end libraries
 			var bad_files = [];
+			var input_bool_check = true;
 			if (document.getElementById('Directory_toggle').parentNode.className == "active") {
+					var name_keys = Object.keys(NAME_FILE_STORAGE);
+					for(key in name_keys){
+						console.log(NAME_FILE_STORAGE[name_keys[key]][0])
+						console.log(NAME_FILE_STORAGE[name_keys[key]][1])
+						if (NAME_FILE_STORAGE[name_keys[key]][0].length != NAME_FILE_STORAGE[name_keys[key]][1].length && info_array[2] == 'yes') {
+							input_bool_check = false;
+						}
+					}
 					var split_inputs = info_array[6].split(":");
 			}else{
 					var split_inputs = info_array[6].split("\n");
@@ -78,7 +87,6 @@ function checkFastlaneInput(info_array){
 			console.log(split_inputs);
 			//	Check for blank lines and eliminate them
 			split_inputs = split_inputs.filter(function(n){return n != ''});
-			var input_bool_check = true;
 			for (var y = 0; y < split_inputs.length; y++) {
 				//	Check for proper characters
 				if (!/^[a-zA-Z 0-9\_\.\-\s\t\,]*$/.test(split_inputs[y])) {

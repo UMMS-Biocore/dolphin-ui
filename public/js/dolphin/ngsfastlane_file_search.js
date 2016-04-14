@@ -105,6 +105,10 @@ function queryDirectory() {
 			//	After successful query
 			document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
 			$('.nav-tabs a[href="#Directory"]').tab('show')
+			
+			NAME_FILE_STORAGE = {};
+			DISABLED_FILE1 = [];
+			DISABLED_FILE2 = [];
 		}
 	}else{
 		$('#errorModal').modal({
@@ -147,7 +151,11 @@ function editName() {
 function confirmNameEdit() {
 	var new_file_name = document.getElementById('editNameInput').value;
 	if (nameEditToggle) {
-		NAME_FILE_STORAGE[new_file_name] = NAME_FILE_STORAGE[document.getElementById('file_names').value];
+		if (NAME_FILE_STORAGE[document.getElementById('file_names').value] != undefined) {
+			if (NAME_FILE_STORAGE[document.getElementById('file_names').value][0].length != 0 && NAME_FILE_STORAGE[document.getElementById('file_names').value][1].length != 0) {
+				NAME_FILE_STORAGE[new_file_name] = NAME_FILE_STORAGE[document.getElementById('file_names').value];
+			}
+		}
 		delete NAME_FILE_STORAGE[document.getElementById('file_names').value];
 		$('#file_names option[value="'+selected_name+'"]')[0].innerHTML = new_file_name;
 		$('#file_names option[value="'+selected_name+'"]')[0].value = new_file_name;
@@ -213,12 +221,12 @@ function removeFile(read){
 				NAME_FILE_STORAGE[selected_name][0].splice(NAME_FILE_STORAGE[selected_name][0].indexOf(file_select), 1);
 			}else{
 				DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(file_select), 1);
-				NAME_FILE_STORAGE[selected_name][0].splice(NAME_FILE_STORAGE[selected_name][1].indexOf(file_select), 1);
+				NAME_FILE_STORAGE[selected_name][1].splice(NAME_FILE_STORAGE[selected_name][1].indexOf(file_select), 1);
 			}
-			file_select.options[x].remove();
 			if (NAME_FILE_STORAGE[selected_name][0].length == 0 && NAME_FILE_STORAGE[selected_name][1].length == 0) {
 				delete NAME_FILE_STORAGE[selected_name];
 			}
+			file_select.options[x].remove();
 		}
 	}
 	selectName();
@@ -330,6 +338,9 @@ function selectFile(read){
 			}
 		}
 		NAME_FILE_STORAGE[current_selection] = [R1, R2];
+		if (NAME_FILE_STORAGE[current_selection][0].length == 0 && NAME_FILE_STORAGE[current_selection][1].length == 0) {
+			delete NAME_FILE_STORAGE[current_selection];
+		}
 	}
 }
 
