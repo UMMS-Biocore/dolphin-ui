@@ -11,6 +11,66 @@
 					</ol>
 				</section>
 			<?php echo $html->sendJScript("fastlane", "", "", "", $uid, $gids); ?>
+			
+			<div class="modal fade" id="regexModal" tabindex="-1" role="dialog" aria-labelledby="regexModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					  <h4 class="modal-title" id="regexModalLabel">File Select</h4>
+					</div>
+					<form name="regexForm" role="form" method="post">
+						<div class="modal-body">
+							<fieldset>
+								<div class="form-group" style="overflow:scroll">
+									<label id="regexLabel">Distinguish the Fastq Files</label>
+									<br>
+									<p id="regexArea">
+										To help determine the correct fastq files listed in your selected directory, Please give the naming scheme for each type of read.
+										To list every Fastq  file, just leave the fields blank.
+									</p>
+									<div class="col-md-11">
+										<label id="read_1_label">First Read</label>
+										<input id="read_1_input" class="form-control margin" type="text" placeholder="_R1">
+										<label id="read_2_label">Second Read</label>
+										<input id="read_2_input" class="form-control margin" type="text" placeholder="_R2">
+									</div>
+								</div>
+							</fieldset>   
+						</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="queryDirectory()">OK</button>
+						  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				  </div>
+				</div>
+			</div><!-- End Regex modal -->
+			<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					  <h4 class="modal-title" id="myModalLabel">Warning</h4>
+					</div>
+					<form name="editForm" role="form" method="post">
+						<div class="modal-body">
+							<fieldset>
+								<div class="form-group" style="overflow:scroll">
+									<label id="errorLabel"></label>
+									<br>
+									<p id="errorAreas"></p>
+								</div>
+							</fieldset>   
+						</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+						</div>
+					</form>
+				  </div>
+				</div>
+			</div><!-- End Error modal -->
+			
 			<form role="form" enctype="multipart/form-data" action="fastlane/process" method="post">
 				<section class="content">
 					<div class="row">
@@ -41,9 +101,15 @@
 							<?php echo $html->getStaticSelectionBox("Experiment Series Name", "series_name", "TEXT", 6)?>
 							<?php echo $html->getStaticSelectionBox("Import Name", "lane_name", "TEXT", 6)?>
 						</div>
+						<div id="input_dir_div" class="col-md-12">
+							<?php echo $html->getStaticSelectionBoxWithButton("Input Directory (Full path)", "input_dir", "TEXT", "searchDirectoryModal()", "Search Directory", 12)?>
+						</div>
 						<div id="input_files_div" class="col-md-12">
-							<?php echo $html->getStaticSelectionBox("Input Directory (Full path)", "input_dir", "TEXT", 12)?>
-							<?php echo $html->getStaticSelectionBox("Input Files", "input_files", "TEXTBOX", 12)?>
+							<?php
+							$manual = $html->fastlaneManualFileInput();
+							$directory = $html->fastlaneDirectoryFileInput();
+							echo $html->getStaticTabbedSelectionBox("Input Files", "input_files", ['Manual', 'Directory'], [$manual, $directory], 12);
+							?>
 						</div>
 						<div id="output_files" class="col-md-12">
 							<?php echo $html->getStaticSelectionBox("Process Directory (Full path)", "backup_dir", "TEXT", 12)?>

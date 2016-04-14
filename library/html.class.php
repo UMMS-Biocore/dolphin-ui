@@ -755,10 +755,10 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html = "";
 	$html = '<div class="col-md-'.$width.'">
 			<div class="box box-default">
-				<div class="box-header with-border">
-				<h3 class="box-title">'.$title.'</h3>';
-		$html.= $this->getInfoBox($id);
-		$html.= '</div><!-- /.box-header -->
+			<div class="box-header with-border">
+			<h3 class="box-title">'.$title.'</h3>';
+	$html.= $this->getInfoBox($id);
+	$html.= '</div><!-- /.box-header -->
 				<div class="box-body">
 					<div class="input-group margin col-md-11">
 						<form role="form">';
@@ -783,6 +783,150 @@ e range"><i class="fa fa-calendar"></i></button>
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
 		</div><!-- /.col -->';
+	return $html;
+	}
+	function getStaticTabbedSelectionBox($title, $id, $tabs, $tab_data, $width){
+	$html = "";
+	$html = '<div class="col-md-'.$width.'">
+			<div class="box box-default">
+			<div class="box-header with-border">
+			<h3 class="box-title">'.$title.'</h3>';
+	$html.= $this->getInfoBox($id);
+	$html.= '</div><!-- /.box-header -->
+				<div class="box-body">
+					<div class="nav-tabs-custom">
+						<ul id="tabList" class="nav nav-tabs">';
+	foreach($tabs as $tab){
+		$loc = array_search($tab, $tabs);
+		if($loc == 0){
+			$html .= 		'<li class="active">';
+		}else{
+			$html .= 		'<li>';
+		}
+		$html .= 			'	<a id="'.$tab.'_toggle" href="#'.$tab.'" data-toggle="tab" aria-expanded="true">'.$tab.'</a>
+							</li>';
+	}
+	$html .= 			'</ul>
+						<div class="tab-content">';
+	foreach($tab_data as $td){
+		$loc = array_search($td, $tab_data);
+		$id = $tabs[$loc];
+		if($loc == 0){
+			$html .= 		'<div class="tab-pane active" id="'.$id.'">';
+		}else{
+			$html .= 		'<div class="tab-pane" id="'.$id.'">';
+		}
+	$html .=					'<div id="'.$id.'_tab_div" class="margin">
+									'.$td.'
+								</div>
+							</div>';
+	}
+	$html.= 			'</div><!-- /.tab-content -->
+					</div><!-- /.nav-tabs-custom -->
+				</div><!-- /.box-body -->
+			</div><!-- /.box -->
+		</div><!-- /.col -->';
+	return $html;
+	}
+	function fastlaneManualFileInput(){
+		$html ='<div class="box-body">
+						<div class="input-group margin col-md-11">
+							<form role="form"><textarea id="input_files" type="text" class="form-control" rows="5" placeholder="Paired End Example:
+	library_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz
+Single End Example:
+	library_name_rep1 lib_rep1.fastq.gz"></textarea>
+							</form>
+						</div>
+					</div>';
+		return $html;
+	}
+	function fastlaneDirectoryFileInput(){
+		$html = "";
+		$html .= 	'<div class="box-body">
+						<div class="input-group margin col-md-12">
+							<form role="form">
+								<div id="input_naming_scheme" class="col-md-3">
+									<div class="col-md-12">
+										<label>Name</label>
+										<select id="file_names" type="multiple" size="10" style="width:100%" onchange="selectName()"></select>
+									</div>
+									<div class="col-md-12 margin">
+										<button id="add_filename_button" type="button" class="btn btn-primary" onclick="addName()"><i class="fa fa-plus"></i></button>
+										<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeName()"><i class="fa fa-minus"></i></button>
+										<button id="edit_name_button" type="button" class="btn btn-primary" onclick="editName()">Edit Name</button>
+									</div>
+									<div class="col-md-12 margin">
+										<input id="editNameInput" type="text" class="form-control" style="display:none">
+										<button id="cancel_edit_name_button" type="button" class="btn btn-danger pull-right" onclick="cancelNameEdit()" style="display:none">Cancel</button>
+										<button id="confirm_edit_name_button" type="button" class="btn btn-primary pull-right" onclick="confirmNameEdit()" style="display:none">Confirm</button>
+									</div>
+								</div>
+								<div class="col-md-9">
+								    <table style="width:100%"><tr>
+									<td>
+										<div id="input_file1">
+											<div class="col-md-12">
+												<label>Read 1</label>
+												<select id="file1_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(1)"></select>
+											</div>
+											<div class="col-md-12 margin">
+												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(1)"><i class="fa fa-minus"></i></button>
+											</div>
+										</div>
+								    </td>
+									<td>
+										<div id="swapCol" class="margin" style="height:100%;vertical-align:center">
+											<div class="row">
+												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
+											</div>
+											<div class="row">
+												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>
+											</div>
+										</div>
+									</td>
+									<td>
+										<div id="input_file2">
+											<div class="col-md-12">
+												<label>Read 2</label>
+												<select id="file2_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(2)"></select>
+											</div>
+											<div class="col-md-12 margin">
+												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(2)"><i class="fa fa-minus"></i></button>
+											</div>
+										</div>
+									</td>
+									</tr></table>
+								</div>
+							</form>
+						</div>
+					</div>';
+		return $html;
+	}
+	function getStaticSelectionBoxWithButton($title, $id, $selection, $button_function, $button_title, $width){
+	$html = "";
+	$html = '<div class="col-md-'.$width.'">
+			<div class="box box-default">
+			<div class="box-header with-border">
+			<h3 class="box-title">'.$title.'</h3>';
+	$html.= $this->getInfoBox($id);
+	$html.= '</div><!-- /.box-header -->
+			<div class="box-body">
+				<div class="input-group margin col-md-11">
+					<form role="form">';
+	if ($selection == "TEXT"){
+		$html.= 		'<input type="text" class="form-control" id="'.$id.'">';
+	}else{
+		$html.=			'<select class="form-control" id="'.$id.'">
+							'.$selection.'
+						</select>';
+	}	
+	$html.= 		'<br>
+					<button id="'.$title.'_button" type="button" class="btn btn-primary" onclick="'.$button_function.'">'.$button_title.'</button>
+					</form>
+				</div>
+			</div><!-- /.box-body -->
+			</div><!-- /.box -->
+			</div><!-- /.col -->';
 	return $html;
 	}
 	function startExpandingSelectionBox($width){
