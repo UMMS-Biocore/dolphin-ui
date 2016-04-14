@@ -573,6 +573,18 @@ function sendProcessData(info_array, post_name){
 	});
 }
 
+function sendProcessDataRaw(info_array, post_name){
+	$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			data:  	{ p: 'sendProcessDataRaw', info_array: info_array, post: post_name},
+			async:	false,
+			success: function(s)
+			{
+			}
+	});
+}
+
 function getBadSamples(){
 	return bad_samples;
 }

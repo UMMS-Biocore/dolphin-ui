@@ -58,7 +58,7 @@ function submitFastlaneButton() {
 											if (NAME_FILE_STORAGE[key][1][y] == undefined) {
 													value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + ':';
 											}else{
-													value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_ST
+													value_str += key + " " + NAME_FILE_STORAGE[key][0][y] + " " + NAME_FILE_STORAGE[key][0][y] + ":";
 											}
 									}
 							}
