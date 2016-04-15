@@ -38,6 +38,7 @@ function checkFastlaneInput(info_array){
 	//	For each input passed
 	console.log(info_array);
 	console.log(id_array);
+	var barcode_count = 0;
 	for(var x = 0; x < (id_array.length); x ++){
 		//	Left a field blank that is not barcode definitions or amazon_bucket
 		if (info_array[x] == '' && id_array[x] != 'amazon_bucket' && id_array[x] != 'Barcode Definitions') {
@@ -48,6 +49,8 @@ function checkFastlaneInput(info_array){
 			var split_barcodes = info_array[id_array.length - 3].split('\n');
 			//	remove blank new lines
 			split_barcodes = split_barcodes.filter(function(n){return n != ''});
+			var files = $('#jsontable_dir_files').dataTable();
+			var table_data = files.fnGetData();
 			var split_check = true;
 			for (var y = 0; y < split_barcodes.length; y++) {
 				//	If proper characters are not being used
@@ -58,10 +61,11 @@ function checkFastlaneInput(info_array){
 					single_barcode_array = single_barcode_array.filter(function(n){return n != ''});
 					//	Check for proper barcode input length
 					barcode_array.push(single_barcode_array);
+					barcode_count++;
 				}
 			}
 			//	If a barcode error exists
-			if (split_check) {
+			if (split_check && barcode_count == table_data.length) {
 				database_checks.push(true);
 			}else{
 				database_checks.push(false);
@@ -72,14 +76,6 @@ function checkFastlaneInput(info_array){
 			var bad_files = [];
 			var input_bool_check = true;
 			if (document.getElementById('Directory_toggle').parentNode.className == "active") {
-					var name_keys = Object.keys(NAME_FILE_STORAGE);
-					for(key in name_keys){
-						console.log(NAME_FILE_STORAGE[name_keys[key]][0])
-						console.log(NAME_FILE_STORAGE[name_keys[key]][1])
-						if (NAME_FILE_STORAGE[name_keys[key]][0].length != NAME_FILE_STORAGE[name_keys[key]][1].length && info_array[2] == 'yes') {
-							input_bool_check = false;
-						}
-					}
 					var split_inputs = info_array[6].split(":");
 			}else{
 					var split_inputs = info_array[6].split("\n");
@@ -87,6 +83,11 @@ function checkFastlaneInput(info_array){
 			console.log(split_inputs);
 			//	Check for blank lines and eliminate them
 			split_inputs = split_inputs.filter(function(n){return n != ''});
+			console.log(split_inputs)
+			if (split_inputs.length == 0) {
+				bad_files.push("There are no samples/files selected.");
+				input_bool_check = false;
+			}
 			for (var y = 0; y < split_inputs.length; y++) {
 				//	Check for proper characters
 				if (!/^[a-zA-Z 0-9\_\.\-\s\t\,]*$/.test(split_inputs[y])) {
@@ -276,12 +277,10 @@ function checkFastlaneInput(info_array){
 		for (var a = 0; a < input_array.length; a++) {
 			if (sample_file_check.indexOf(input_array[a][0]) == -1) {
 				if (info_array[1] == 'yes') {
-					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
-							barcode_array[barcode_count][0], gid, perms);
+					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0], barcode_array[barcode_count][0], gid, perms);
 					barcode_count++;
 				}else{
-					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0],
-						'nobarcode', gid, perms);
+					var true_id = insertSample(experiment_series_id, lane_id, input_array[a][0], 'nobarcode', gid, perms);
 				}
 				true_sample_ids.push(true_id);
 				sample_ids.push(true_id);

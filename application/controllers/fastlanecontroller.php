@@ -68,7 +68,7 @@ class FastlaneController extends VanillaController {
 			foreach($pass_fail_array as $key=>$index){
 				if($index == 'false'){
 					if($key == 1){
-						$text.="<font color=\"red\">Barcode selection is either empty or not properly formatted.</font><br><br>";
+						$text.="<font color=\"red\">Barcode selection is either empty, not properly formatted, or does not match the number of samples given.</font><br><br>";
 					}else if($key == 3){
 						$text.="<font color=\"red\">Experiment Series field is empty or contains improper characters. Please use alpha-numerics, underscores, spaces, and dashes only.</font><br><br>";
 					}else if($key == 4){

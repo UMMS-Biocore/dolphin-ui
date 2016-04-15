@@ -1,10 +1,5 @@
 
 var username;
-var selected_name;
-var nameEditToggle;
-var NAME_FILE_STORAGE = {};
-var DISABLED_FILE1 = [];
-var DISABLED_FILE2 = [];
 var R1_REGEX;
 var R2_REGEX;
 
@@ -94,10 +89,8 @@ function queryDirectory() {
 				//	After successful query
 				document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
 				$('.nav-tabs a[href="#Directory"]').tab('show')
-				
-				NAME_FILE_STORAGE = {};
-				DISABLED_FILE1 = [];
-				DISABLED_FILE2 = [];
+				var files = $('#jsontable_dir_files').dataTable();
+				files.fnClearTable();
 			}else{
 				$('#errorModal').modal({
 					show: true
@@ -156,7 +149,7 @@ function addSelection(type){
 	}
 	file_string = file_string.substring(0, file_string.length - 3);
 	var name = file_string.split(R1_REGEX)[0];
-	var input = createElement('input', ['type', 'class', 'value'], ['text', 'form-control', name])
+	var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [name, 'text', 'form-control', name, 'updateName(this)'])
 	var button_div = createElement('div', ['class'], ['text-center'])
 	var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
 	var icon = createElement('i', ['class'],['fa fa-times']);
@@ -199,7 +192,7 @@ function smartSelection(){
 		}
 		file_string = file_string.substring(0, file_string.length - 3);
 		var name = regex_string;
-		var input = createElement('input', ['type', 'class', 'value'], ['text', 'form-control', name])
+		var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [name, 'text', 'form-control', name, 'updateName(this)'])
 		var button_div = createElement('div', ['class'], ['text-center'])
 		var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
 		var icon = createElement('i', ['class'],['fa fa-times']);
@@ -213,12 +206,19 @@ function smartSelection(){
 	}
 }
 
+function updateName(input){
+	input.id = input.value;
+}
+
 //	On Open of fastlane
 $(function() {
 	"use strict";
 	//	Disable directory tab
 	if (window.location.href.split("/")[window.location.href.split("/").length - 1] != "process") {
 		document.getElementById('Directory_toggle').setAttribute('data-toggle', 'none');
+		var files = $('#jsontable_dir_files').dataTable();
+		files.fnClearTable();
+		document.getElementById('jsontable_dir_files').style.width = '100%';
 	}
 	
 	//	Get cluster username for file checks
@@ -232,8 +232,4 @@ $(function() {
 			username = s[0];
 		}
 	});
-	
-	var files = $('#jsontable_dir_files').dataTable();
-	files.fnClearTable();
-	document.getElementById('jsontable_dir_files').style.width = '100%';
 });
