@@ -5,6 +5,8 @@ var nameEditToggle;
 var NAME_FILE_STORAGE = {};
 var DISABLED_FILE1 = [];
 var DISABLED_FILE2 = [];
+var R1_REGEX;
+var R2_REGEX;
 
 function searchDirectoryModal() {
 	if (document.getElementById('spaired').value == 'no') {
@@ -26,19 +28,21 @@ function queryDirectory() {
 	//	If not empty, search directory
 	if (directory != '') {
 		//	Grab web variables
-		var read_1_input = document.getElementById('read_1_input').value;
-		var read_2_input = document.getElementById('read_2_input').value;
+		R1_REGEX = document.getElementById('read_1_input').value;
+		R2_REGEX = document.getElementById('read_2_input').value;
 		
-		var regexRead1 = new RegExp(read_1_input);
+		var r1_search = new RegExp(R1_REGEX);
+		console.log(r1_search);
 		if (document.getElementById('spaired').value == 'yes') {
-				var regexRead2 = new RegExp(read_2_input);
+			var r2_search = new RegExp(R2_REGEX);
 		}else{
-			var regexRead2 = undefined;
+			var r2_search = undefined;
 		}
+		console.log(r2_search);
 		var R1 = [];
 		var R2 = [];
 		//	Grab files from directory
-		var file_list = directoryGrab(directory, regexRead1, regexRead2);;
+		var file_list = directoryGrab(directory, r1_search, r2_search);;
 		if (file_list[0] == "" || file_list[0].indexOf("ls: cannot access") > -1) {
 			$('#errorModal').modal({
 				show: true
@@ -49,25 +53,18 @@ function queryDirectory() {
 			//	If Paired end
 			for (var x = 0; x < file_list.length; x++) {
 				if (document.getElementById('spaired').value == 'yes') {
-					//	Show R2 Options
-					document.getElementById('input_file2').setAttribute('style', 'display:show');
-					document.getElementById('send_R1_button').setAttribute('style', 'display:show');
-					document.getElementById('send_R2_button').setAttribute('style', 'display:show');
 					//	Regex R1
-					if (regexRead1.test(file_list[x])) {
+					if (r1_search.test(file_list[x])) {
+						console.log(r1_search.test(file_list[x]))
 						R1.push(file_list[x]);
 					//	Regex R2
-					}else if (regexRead2.test(file_list[x])) {
+					}else if (r2_search.test(file_list[x])) {
 						R2.push(file_list[x]);
 					}
 				//	Single end
 				}else{
-					//	Remove R2 Options
-					document.getElementById('input_file2').setAttribute('style', 'display:none');
-					document.getElementById('send_R1_button').setAttribute('style', 'display:none');
-					document.getElementById('send_R2_button').setAttribute('style', 'display:none');
 					//	Regex fastq
-					if (regexRead1.test(file_list[x])) {
+					if (r1_search.test(file_list[x])) {
 						R1.push(file_list[x]);
 					}
 				}
@@ -76,39 +73,38 @@ function queryDirectory() {
 			//	Add to Selection Boxes
 			var namingIndex = [];
 			var nameOptions = '';
-			var selectOptions1 = '';
-			var selectOptions2 = '';
+			var selectOptions = '';
+			var file_pass = true;
+			console.log(R1);
+			console.log(R2);
 			for(var x = 0; x < R1.length; x++){
 				var name = '';
-				if (R1[x].split(read_1_input).length != 1 && read_1_input != '') {
-					name = R1[x].split(read_1_input)[0]
-				}else if (R1[x].split('.fastq').length != 1){
-					name = R1[x].split('.fastq')[0];
+				if (document.getElementById('spaired').value == 'yes') {
+					if (R1.length == R2.length) {
+						selectOptions += '<option value="'+R1[x]+','+R2[x]+'">'+R1[x]+','+R2[x]+'</option>';
+					}else{
+						file_pass = false;
+					}
 				}else{
-					name = R1[x].split('.fq')[0];
-				}
-				if (namingIndex[name] == undefined) {
-					namingIndex[name] = R1[x]
-					nameOptions += '<option value="'+name+'">'+name+'</option>';
-				}
-				selectOptions1 += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
-			}
-			if (R2.length != 0) {
-				for(var x = 0; x < R2.length; x++){
-					selectOptions2 += '<option value="'+R2[x]+'">'+R2[x]+'</option>';
+					selectOptions += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
 				}
 			}
-			document.getElementById('file_names').innerHTML = nameOptions;
-			document.getElementById('file1_select').innerHTML = selectOptions1;
-			document.getElementById('file2_select').innerHTML = selectOptions2;
-			
-			//	After successful query
-			document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
-			$('.nav-tabs a[href="#Directory"]').tab('show')
-			
-			NAME_FILE_STORAGE = {};
-			DISABLED_FILE1 = [];
-			DISABLED_FILE2 = [];
+			if (file_pass) {
+				document.getElementById('file_select').innerHTML = selectOptions;
+				//	After successful query
+				document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
+				$('.nav-tabs a[href="#Directory"]').tab('show')
+				
+				NAME_FILE_STORAGE = {};
+				DISABLED_FILE1 = [];
+				DISABLED_FILE2 = [];
+			}else{
+				$('#errorModal').modal({
+					show: true
+				});
+				document.getElementById('errorLabel').innerHTML = 'Directory contains unequal paired end reads based on user regex.  Please try a new regex.';
+				document.getElementById('errorAreas').innerHTML = '';
+			}
 		}
 	}else{
 		$('#errorModal').modal({
@@ -137,210 +133,83 @@ function directoryGrab(directory){
 	return file_array;
 }
 
-function editName() {
-	var edit = document.getElementById('editNameInput');
-	selected_name = document.getElementById('file_names').value;
-	nameEditToggle = true;
-	edit.setAttribute('style', 'display:show');
-	edit.value = selected_name;
-	edit.innerHTML = selected_name;
-	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:show');
-	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:show');
-}
-
-function confirmNameEdit() {
-	var new_file_name = document.getElementById('editNameInput').value;
-	if (nameEditToggle) {
-		if (NAME_FILE_STORAGE[document.getElementById('file_names').value] != undefined) {
-			if (NAME_FILE_STORAGE[document.getElementById('file_names').value][0].length != 0 && NAME_FILE_STORAGE[document.getElementById('file_names').value][1].length != 0) {
-				NAME_FILE_STORAGE[new_file_name] = NAME_FILE_STORAGE[document.getElementById('file_names').value];
+function addSelection(type){
+	var current_selection = document.getElementById('file_select').options;
+	var regex_string = document.getElementById('regex_add_field').value;
+	var regex = new RegExp(regex_string);
+	var files = $('#jsontable_dir_files').dataTable();
+	var file_string = '';
+	for(var x = 0; x < current_selection.length; x++){
+		if (type == 'adv') {
+			if (regex.test(current_selection[x].value)) {
+				file_string += current_selection[x].value + ' | '
+				$('#file_select option[value="'+current_selection[x].value+'"]')[0].remove();
+				x--;
 			}
-		}
-		delete NAME_FILE_STORAGE[document.getElementById('file_names').value];
-		$('#file_names option[value="'+selected_name+'"]')[0].innerHTML = new_file_name;
-		$('#file_names option[value="'+selected_name+'"]')[0].value = new_file_name;
-	}else{
-		var select = document.getElementById('file_names');
-		var option = document.createElement("option");
-		option.value = new_file_name;
-		option.innerHTML = new_file_name;
-		select.add(option);
-	}
-	selected_name = '';
-	document.getElementById('editNameInput').setAttribute('style', 'display:none');
-	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:none');
-	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:none');
-}
-
-function cancelNameEdit(){
-	selected_name = '';
-	document.getElementById('editNameInput').setAttribute('style', 'display:none');
-	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:none');
-	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:none');
-}
-
-function addName(){
-	nameEditToggle = false;
-	var edit = document.getElementById('editNameInput');
-	edit.value = '';
-	edit.innerHTML = '';
-	edit.setAttribute('style', 'display:show');
-	document.getElementById('confirm_edit_name_button').setAttribute('style', 'display:show');
-	document.getElementById('cancel_edit_name_button').setAttribute('style', 'display:show');
-}
-
-function removeName(){
-	var selected_name = document.getElementById('file_names').value;
-	for(var x = 0; x < NAME_FILE_STORAGE[selected_name].length; x++){
-		if (x == 0) {
-			for(file in NAME_FILE_STORAGE[selected_name][x]){
-				if (DISABLED_FILE1.indexOf(NAME_FILE_STORAGE[selected_name][x][file]) != -1) {
-					DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(NAME_FILE_STORAGE[selected_name][x][file]), 1);
-				}
-			}
-		}else{
-			for(file in NAME_FILE_STORAGE[selected_name][x]){
-				if (DISABLED_FILE2.indexOf(NAME_FILE_STORAGE[selected_name][x][file]) != -1) {
-					DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(NAME_FILE_STORAGE[selected_name][x][file]), 1);
-				}
+		}else if(type == 'standard'){
+			if (current_selection[x].selected) {
+				file_string += current_selection[x].value + ' | '
+				$('#file_select option[value="'+current_selection[x].value+'"]')[0].remove();
+				x--
 			}
 		}
 	}
-	delete NAME_FILE_STORAGE[selected_name];
-	selectName();
-	$('#file_names option[value="'+selected_name+'"]')[0].remove();
+	file_string = file_string.substring(0, file_string.length - 3);
+	var name = file_string.split(R1_REGEX)[0];
+	var input = createElement('input', ['type', 'class', 'value'], ['text', 'form-control', name])
+	var button_div = createElement('div', ['class'], ['text-center'])
+	var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
+	var icon = createElement('i', ['class'],['fa fa-times']);
+	remove_button.appendChild(icon);
+	button_div.appendChild(remove_button);
+	files.fnAddData([
+		input.outerHTML,
+		file_string,
+		button_div.outerHTML
+	]);
 }
 
-function removeFile(read){
-	var selected_name = document.getElementById('file_names').value;
-	var file_select = document.getElementById('file'+read+'_select');
-	for(var x = file_select.options.length - 1; x >= 0; x--){
-		if (file_select.options[x].selected) {
-			if (read == 1) {
-				DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(file_select), 1);
-				NAME_FILE_STORAGE[selected_name][0].splice(NAME_FILE_STORAGE[selected_name][0].indexOf(file_select), 1);
-			}else{
-				DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(file_select), 1);
-				NAME_FILE_STORAGE[selected_name][1].splice(NAME_FILE_STORAGE[selected_name][1].indexOf(file_select), 1);
-			}
-			if (NAME_FILE_STORAGE[selected_name][0].length == 0 && NAME_FILE_STORAGE[selected_name][1].length == 0) {
-				delete NAME_FILE_STORAGE[selected_name];
-			}
-			file_select.options[x].remove();
-		}
+function removeRow(button){
+	var files_select = document.getElementById('file_select')
+	var files_table = $('#jsontable_dir_files').dataTable();
+	var row = $(button).closest('tr');
+	var files_used = row.children()[1].innerHTML.split(' | ');
+	console.log(files_used);
+	for(var x = 0; x < files_used.length; x++){
+		files_select.innerHTML += '<option value="'+files_used[x]+'">'+files_used[x]+'</option>'
 	}
-	selectName();
+	files_table.fnDeleteRow(row);
+	files_table.fnDraw();
 }
 
-function swapFiles(swap1, swap2) {
-	var current_selection = document.getElementById('file_names').selectedOptions;
-	var file1_select = document.getElementById('file'+swap1+'_select');
-	var file2_select = document.getElementById('file'+swap2+'_select');
-	var options_list = [];
-	console.log(current_selection);
-	for(var x = file1_select.options.length - 1; x >= 0; x--){
-		if (file1_select.options[x].selected) {
-			if (DISABLED_FILE1.indexOf(file1_select.options[x].value) > -1) {
-				NAME_FILE_STORAGE[current_selection[0].value][0].splice(NAME_FILE_STORAGE[current_selection[0].value][0].indexOf(file1_select.options[x].value), 1);
-				DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(file1_select.options[x].value), 1);
-			}else if (DISABLED_FILE2.indexOf(file1_select.options[x].value) > -1) {
-				NAME_FILE_STORAGE[current_selection[0].value][1].splice(NAME_FILE_STORAGE[current_selection[0].value][1].indexOf(file1_select.options[x].value), 1);
-				DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(file1_select.options[x].value), 1);
-			}
-			var option = document.createElement('option');
-			option.value = file1_select.options[x].value;
-			option.innerHTML = file1_select.options[x].value;
-			options_list.push(option);
-			file1_select.options[x].remove();
-		}
-	}
-	options_list.reverse();
-	for(var x = 0; x < options_list.length; x++){
-		file2_select.add(options_list[x]);	
-	}
-}
-
-function selectName(){
-	var current_selection = document.getElementById('file_names').selectedOptions[0].value;
-	var select_file1 = document.getElementById('file1_select');
-	var select_file2 = document.getElementById('file2_select');
-	
-	if (NAME_FILE_STORAGE[current_selection] != undefined) {
-		for(var x = 0; x < select_file1.options.length; x++){
-			if (NAME_FILE_STORAGE[current_selection][0].indexOf(select_file1.options[x].value) != -1) {
-				select_file1.options[x].disabled = false;
-				select_file1.options[x].selected = true;
-			}else if(DISABLED_FILE1.indexOf(select_file1.options[x].value) > -1){
-				select_file1.options[x].disabled = true;
-				select_file1.options[x].selected = false;
-			}else{
-				select_file1.options[x].selected = false;
-				select_file1.options[x].disabled = false;
+function smartSelection(){
+	var files_select = document.getElementById('file_select');
+	var files = $('#jsontable_dir_files').dataTable();
+	while (files_select.options.length != 0) {
+		var file_string = '';
+		//	use prvious regex to find the values before the pivot
+		var regex_string = files_select.options[0].value.split(R1_REGEX)[0];
+		var file_regex = new RegExp(regex_string);
+		for(var x = 0; x < files_select.options.length; x++){
+			if (file_regex.test(files_select.options[x].value)) {
+				file_string += files_select.options[x].value + ' | '
+				$('#file_select option[value="'+files_select.options[x].value+'"]')[0].remove();
+				x--;
 			}
 		}
-		for(var x = 0; x < select_file2.options.length; x++){
-			if (NAME_FILE_STORAGE[current_selection][1].indexOf(select_file2.options[x].value) != -1) {
-				select_file2.options[x].disabled = false;
-				select_file2.options[x].selected = true;
-			}else if(DISABLED_FILE2.indexOf(select_file2.options[x].value) > -1){
-				select_file2.options[x].disabled = true;
-				select_file2.options[x].selected = false;
-			}else{
-				select_file2.options[x].selected = false;
-				select_file2.options[x].disabled = false;
-			}
-		}
-	}else{
-		for(var x = 0; x < select_file1.options.length; x++){
-			select_file1.options[x].selected = false;
-			if(DISABLED_FILE1.indexOf(select_file1.options[x].value) > -1){
-				select_file1.options[x].disabled = true;
-			}
-		}
-		for(var x = 0; x < select_file2.options.length; x++){
-			select_file2.options[x].selected = false;
-			if(DISABLED_FILE2.indexOf(select_file2.options[x].value) > -1){
-				select_file2.options[x].disabled = true;
-			}
-		}
-	}
-}
-
-function selectFile(read){
-	var name_check = document.getElementById('file_names').selectedOptions.length;
-	if (name_check > 0) {
-		var current_selection = document.getElementById('file_names').selectedOptions[0].value;
-		var select_file1 = document.getElementById('file1_select');
-		var select_file2 = document.getElementById('file2_select');
-		var R1 = [];
-		var R2 = [];
-		if (current_selection != undefined) {
-			console.log(current_selection)
-			for(var x = 0; x < select_file1.options.length; x ++){
-				if (select_file1.options[x].selected) {
-					R1.push(select_file1.options[x].value);
-					if (DISABLED_FILE1.indexOf(select_file1.options[x].value) == -1) {
-						DISABLED_FILE1.push(select_file1.options[x].value);
-					}
-				}else if (DISABLED_FILE1.indexOf(select_file1.options[x].value) > -1 && select_file1.options[x].disabled == false) {
-					DISABLED_FILE1.splice(DISABLED_FILE1.indexOf(select_file1.options[x].value), 1);
-				}
-			}
-			for(var x = 0; x < select_file2.options.length; x ++){
-				if (select_file2.options[x].selected) {
-					R2.push(select_file2.options[x].value);
-					if (DISABLED_FILE2.indexOf(select_file2.options[x].value) == -1) {
-						DISABLED_FILE2.push(select_file2.options[x].value);
-					}
-				}else if (DISABLED_FILE2.indexOf(select_file2.options[x].value) > -1 && select_file2.options[x].disabled == false) {
-					DISABLED_FILE2.splice(DISABLED_FILE2.indexOf(select_file2.options[x].value), 1);
-				}
-			}
-		}
-		NAME_FILE_STORAGE[current_selection] = [R1, R2];
-		if (NAME_FILE_STORAGE[current_selection][0].length == 0 && NAME_FILE_STORAGE[current_selection][1].length == 0) {
-			delete NAME_FILE_STORAGE[current_selection];
-		}
+		file_string = file_string.substring(0, file_string.length - 3);
+		var name = regex_string;
+		var input = createElement('input', ['type', 'class', 'value'], ['text', 'form-control', name])
+		var button_div = createElement('div', ['class'], ['text-center'])
+		var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
+		var icon = createElement('i', ['class'],['fa fa-times']);
+		remove_button.appendChild(icon);
+		button_div.appendChild(remove_button);
+		files.fnAddData([
+			input.outerHTML,
+			file_string,
+			button_div.outerHTML
+		]);
 	}
 }
 
@@ -363,4 +232,8 @@ $(function() {
 			username = s[0];
 		}
 	});
+	
+	var files = $('#jsontable_dir_files').dataTable();
+	files.fnClearTable();
+	document.getElementById('jsontable_dir_files').style.width = '100%';
 });

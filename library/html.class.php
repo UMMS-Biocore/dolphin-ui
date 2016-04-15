@@ -844,60 +844,35 @@ Single End Example:
 		$html = "";
 		$html .= 	'<div class="box-body">
 						<div class="input-group margin col-md-12">
-							<form role="form">
-								<div id="input_naming_scheme" class="col-md-3">
-									<div class="col-md-12">
-										<label>Name</label>
-										<select id="file_names" type="multiple" size="10" style="width:100%" onchange="selectName()"></select>
+							<div class="col-md-12">
+								<div id="input_file1" class="col-md-12">
+									<div class="col-md-12 margin">
+										<label>Read Files</label>
+										<select id="file_select" type="select-multiple" multiple size="10" style="width:100%"></select>
 									</div>
 									<div class="col-md-12 margin">
-										<button id="add_filename_button" type="button" class="btn btn-primary" onclick="addName()"><i class="fa fa-plus"></i></button>
-										<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeName()"><i class="fa fa-minus"></i></button>
-										<button id="edit_name_button" type="button" class="btn btn-primary" onclick="editName()">Edit Name</button>
-									</div>
-									<div class="col-md-12 margin">
-										<input id="editNameInput" type="text" class="form-control" style="display:none">
-										<button id="cancel_edit_name_button" type="button" class="btn btn-danger pull-right" onclick="cancelNameEdit()" style="display:none">Cancel</button>
-										<button id="confirm_edit_name_button" type="button" class="btn btn-primary pull-right" onclick="confirmNameEdit()" style="display:none">Confirm</button>
+										<div class="col-md-7">
+											<input id="regex_add_field" type="text" class="form-control" placeholder="Adv Regex Select">
+										</div>
+										<div class="col-md-5">
+											<button id="add_selection_file" type="button" class="btn btn-primary pull-right" onclick="addSelection(\'standard\')">Add Selection</i></button>
+											<button id="smart_add_file" type="button" class="btn btn-primary pull-right" onclick="smartSelection()">Smart Add All</i></button>
+											<button id="regex_add_file" type="button" class="btn btn-primary pull-right" onclick="addSelection(\'adv\')">Adv Regex Select</i></button>
+										</div>
 									</div>
 								</div>
-								<div class="col-md-9">
-								    <table style="width:100%"><tr>
-									<td>
-										<div id="input_file1">
-											<div class="col-md-12">
-												<label>Read 1</label>
-												<select id="file1_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(1)"></select>
-											</div>
-											<div class="col-md-12 margin">
-												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(1)"><i class="fa fa-minus"></i></button>
-											</div>
-										</div>
-								    </td>
-									<td>
-										<div id="swapCol" class="margin" style="height:100%;vertical-align:center">
-											<div class="row">
-												<button id="send_R1_button" type="button" class="btn btn-primary" onclick="swapFiles(1,2)"><i class="fa fa-arrow-right"></i></button>
-											</div>
-											<div class="row">
-												<button id="send_R2_button" type="button" class="btn btn-primary" onclick="swapFiles(2,1)"><i class="fa fa-arrow-left"></i></button>
-											</div>
-										</div>
-									</td>
-									<td>
-										<div id="input_file2">
-											<div class="col-md-12">
-												<label>Read 2</label>
-												<select id="file2_select" type="select-multiple" multiple size="10" style="width:100%" onchange="selectFile(2)"></select>
-											</div>
-											<div class="col-md-12 margin">
-												<button id="remove_filename_button" type="button" class="btn btn-primary" onclick="removeFile(2)"><i class="fa fa-minus"></i></button>
-											</div>
-										</div>
-									</td>
-									</tr></table>
-								</div>
-							</form>
+							</div>
+							<div class="col-md-12">
+								<table id="jsontable_dir_files" class="table table-hover table-bordered compact">
+									<thead>
+										<tr id="tablerow">
+											<th>Sample Name</th>
+											<th>Files Used</th>
+											<th>Remove</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
 						</div>
 					</div>';
 		return $html;
