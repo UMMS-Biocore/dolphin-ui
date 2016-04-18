@@ -117,6 +117,17 @@ class funcs
         }
         return "{\"Result\":\"Ok\"}";
     }
+    function directoryContents($params){
+        $this->username=$params['username'];
+        $this->readINI();
+        if (isset($params['directory'])){
+          $com = 'ls -1 '.$params['directory'];
+        }else{
+          $com = 'ls -1';
+        }
+        $retval = $this->syscall($this->getCMDs($com));
+        return $retval;
+    }
     function removeSuccessFile($run_id, $dir, $file, $clusteruser)
     {
         $this->username=$clusteruser;

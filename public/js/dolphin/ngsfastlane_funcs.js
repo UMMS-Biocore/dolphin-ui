@@ -33,7 +33,42 @@ function submitFastlaneButton() {
 	//	genomebuild placeholder
 	value_array.push("human,hg19");
 	for(var x = 0; x < id_array.length; x++){
-		if (document.getElementById(id_array[x]) != null) {
+		if (id_array[x] == 'input_files'){
+			//      Manual Text box
+			if (document.getElementById('Manual_toggle').parentNode.className == "active") {
+				//      obtain value and trim and replace commas and tabs
+				var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
+				//      push to array
+				console.log(value_str);
+				value_array.push(value_str);
+			//      File-Directory Selection
+			}else{
+				var files = $('#jsontable_dir_files').dataTable();
+				var table_data = files.fnGetData();
+				var value_str = "";
+				sendProcessDataRaw([''], 'dir_used');
+				//      For every selected entry
+				for(var y = 0; y < table_data.length; y++){
+					var raw_name = table_data[y][0].toString();
+					console.log(raw_name);
+					var raw_outer = createElement('div', [], []);
+					raw_outer.innerHTML = raw_name;
+					var name = raw_outer.firstChild.id;
+					console.log(name);
+					var files_used = table_data[y][1].split(" | ");
+					for(var z = 0; z < files_used.length; z++){
+						if (z == files_used.length - 1 && y == table_data.length - 1) {
+							value_str += name + " " + files_used[z];
+						}else{
+							value_str += name + " " + files_used[z] + ':';
+						}
+					}
+				}
+				value_str = value_str.replace(/[\t\,]+/g, " ");
+				console.log(value_str);
+				value_array.push(value_str);
+			}
+        }else if (document.getElementById(id_array[x]) != null) {
 			//	obtain value and trim and replace commas and tabs
 			var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
 			//	push to array

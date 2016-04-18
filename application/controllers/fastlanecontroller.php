@@ -33,6 +33,7 @@ class FastlaneController extends VanillaController {
 		if(isset($_SESSION['pass_fail_values'])){$pass_fail_values = $_SESSION['pass_fail_values'];}
 		if(isset($_SESSION['bad_files'])){$bad_files = $_SESSION['bad_files'];}
 		if(isset($_SESSION['bad_samples'])){$bad_samples = $_SESSION['bad_samples'];}
+		if(isset($_SESSION['dir_used'])){$dir_used = $_SESSION['dir_used'];}
 		if(isset($_SESSION['fastlane_values'])){
 			if(isset($fastlane_values)){
 				$fastlane_values = str_replace("\n", ":", $fastlane_values);
@@ -67,7 +68,7 @@ class FastlaneController extends VanillaController {
 			foreach($pass_fail_array as $key=>$index){
 				if($index == 'false'){
 					if($key == 1){
-						$text.="<font color=\"red\">Barcode selection is either empty or not properly formatted.</font><br><br>";
+						$text.="<font color=\"red\">Barcode selection is either empty, not properly formatted, or does not match the number of samples given.</font><br><br>";
 					}else if($key == 3){
 						$text.="<font color=\"red\">Experiment Series field is empty or contains improper characters. Please use alpha-numerics, underscores, spaces, and dashes only.</font><br><br>";
 					}else if($key == 4){
@@ -88,9 +89,12 @@ class FastlaneController extends VanillaController {
 								$text.="<font color=\"red\">".$bfa."</font><br>";
 							}
 							$text.="<br>";
-							$text.="<font color=\"red\">If the files given are not in the proper fastlane format, please use alpha-numerics, underscores, and dashes only.</font><br><br>";
+						}
+						if(isset($dir_used)){
+								$text.="<font color=\"red\">Directory given file selection contains an error. If using paired end reads, please make sure that both reads are selected.<br>
+								Order is important for multiple file selection for one sample name.  Make sure your sample names contain alpha-numerics, underscores, and dashes only.</font><br><br>"; 
 						}else{
-							$text.="<font color=\"red\">The files given are not in the proper fastlane format.  Please use alpha-numerics, underscores, and dashes only.</font><br><br>";
+								$text.="<font color=\"red\">If the files given are not in the proper fastlane format, please use alpha-numerics, underscores, and dashes only.</font><br><br>";
 						}
 					}else if($key == 7){
 						$text.="<h3>Process Directory</h3>";
@@ -139,6 +143,7 @@ class FastlaneController extends VanillaController {
 		unset($_SESSION['pass_fail_values']);
 		unset($_SESSION['bad_samples']);
 		unset($_SESSION['bad_files']);
+		unset($_SESSION['dir_used']);
 	}
 	
 	function afterAction(){
