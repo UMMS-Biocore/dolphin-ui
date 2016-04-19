@@ -94,9 +94,12 @@ class funcs
         $retval = $this->syscall($this->getCMDs($com));
         if (preg_match('/No such file or directory/', $retval)) {
              return "{\"ERROR\": \"".trim($retval)."\"}";
-        }
-        if (preg_match('/Permission denied/', $retval)) {
+        }else if (preg_match('/Permission denied/', $retval)) {
              return "{\"ERROR\": \"".trim($retval)."\"}";
+        }else if (preg_match('/usage:/', $retval)){
+            return "{\"ERROR\": \"Your user account is not within the GHPCC cluster.  Please contact an admin to be added to the cluster.\"}";
+        }else if (preg_match('/password:/', $retval)){
+            return "{\"ERROR\": \"Dolphin cannot access your cluster account.  Please log into the GHPCC cluster and run this script: /project/umw_biocore/bin/addKey.bash\"}";
         }
         return "{\"Result\":\"Ok\"}";
     }
@@ -114,6 +117,10 @@ class funcs
              return "{\"ERROR\": \"Permission denied: ".$params['outdir']."\"}";
         }else if (preg_match('/cannot create directory/', $retval)) {
              return "{\"ERROR\": \"Permission denied: ".$params['outdir']."\"}";
+        }else if (preg_match('/usage:/', $retval)){
+            return "{\"ERROR\": \"Your user account is not within the GHPCC cluster.  Please contact an admin to be added to the cluster.\"}";
+        }else if (preg_match('/password:/', $retval)){
+            return "{\"ERROR\": \"Dolphin cannot access your cluster account.  Please log into the GHPCC cluster and run this script: /project/umw_biocore/bin/addKey.bash\"}";
         }
         return "{\"Result\":\"Ok\"}";
     }

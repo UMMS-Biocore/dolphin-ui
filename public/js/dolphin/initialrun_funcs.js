@@ -38,9 +38,10 @@ $(function() {
 				var barcodes = {};
 				barcodes['distance'] = barcode_array.split(',')[0];
 				barcodes['format'] = barcode_array.split(",")[1];
+				barcodes['barcodes'] = initial_split[initial_split.length - 3];
 				JSON_OBJECT['barcodes'] = [barcodes];
-				JSON_OBJECT['adapters'] = initial_split[initial_split.length - 3].split(" ")[0].replace(/\:/g, "__cr____cn__");
 			}
+			JSON_OBJECT['adapters'] = 'none';
 			JSON_OBJECT['quality'] = 'none';
 			JSON_OBJECT['trim'] = 'none';
 			JSON_OBJECT['split'] = 'none';

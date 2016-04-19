@@ -31,9 +31,9 @@ class FastlaneController extends VanillaController {
 		if(isset($_SESSION['fastlane_values'])){$fastlane_values = $_SESSION['fastlane_values'];}
 		if(isset($_SESSION['barcode_array'])){$barcode_array = $_SESSION['barcode_array'];}
 		if(isset($_SESSION['pass_fail_values'])){$pass_fail_values = $_SESSION['pass_fail_values'];}
-		if(isset($_SESSION['bad_files'])){$bad_files = $_SESSION['bad_files'];}
 		if(isset($_SESSION['bad_samples'])){$bad_samples = $_SESSION['bad_samples'];}
 		if(isset($_SESSION['dir_used'])){$dir_used = $_SESSION['dir_used'];}
+		if(isset($_SESSION['error_out'])){$error_out = $_SESSION['error_out'];}
 		if(isset($_SESSION['fastlane_values'])){
 			if(isset($fastlane_values)){
 				$fastlane_values = str_replace("\n", ":", $fastlane_values);
@@ -47,6 +47,9 @@ class FastlaneController extends VanillaController {
 			}
 			if(isset($bad_files)){
 				$bad_files_array = explode(",", $bad_files);
+			}
+			if(isset($error_out)){
+				$error_out_array = explode(",", $error_out);
 			}
 		}
 		if($pass_fail_array != []){
@@ -67,6 +70,7 @@ class FastlaneController extends VanillaController {
 			$database_sample_bool = false;
 			foreach($pass_fail_array as $key=>$index){
 				if($index == 'false'){
+					/*
 					if($key == 1){
 						$text.="<font color=\"red\">Barcode selection is either empty, not properly formatted, or does not match the number of samples given.</font><br><br>";
 					}else if($key == 3){
@@ -112,6 +116,8 @@ class FastlaneController extends VanillaController {
 					}else if($key >= 9){
 						$database_sample_bool = true;
 					}
+					*/
+					
 					$failed_test = true;
 				}else if($index != 'true' && $index != 'false'){
 					$text.= "Sample created with id #".$index."<br><br>";
@@ -124,8 +130,13 @@ class FastlaneController extends VanillaController {
 				}
 			}
 			if($failed_test){
+				foreach($error_out_array as $error){
+					$text .= $error;
+				}
+				/*
 				$text.="If you're not sure if you have cluster access, visit <a href='http://umassmed.edu/biocore/resources/galaxy-group/'>this website</a> for more help.<br><br>";
 				$text.="For all additional questions about fastlane, please see our <a href=\"http://dolphin.readthedocs.org/en/master/dolphin-ui/fastlane.html\">documentation</a><br><br>";
+				*/
 			}
 			if($index != 'true' && $index != 'false'){
 				$text.='<div class="callout callout-info lead"><h4>We are currently processing your samples to obtain read counts and additional information.<br><br>
@@ -144,6 +155,7 @@ class FastlaneController extends VanillaController {
 		unset($_SESSION['bad_samples']);
 		unset($_SESSION['bad_files']);
 		unset($_SESSION['dir_used']);
+		unset($_SESSION['error_out']);
 	}
 	
 	function afterAction(){
