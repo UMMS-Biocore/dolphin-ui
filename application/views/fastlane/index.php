@@ -75,12 +75,14 @@
 				<section class="content">
 					<div class="row">
 						<div id="static_info_selection" class="col-md-12">
-							<?php echo $html->getStaticSelectionBox("Barcode Seperation", "barcode_sep", "<option>no</option>
-																				<option>yes</option>", 6)?>
+							<?php echo $html->getStaticSelectionBox("Barcode Seperation", "barcode_sep", "<option>no</option><option>yes</option>", 6)?>
 							<script>
 								document.getElementById('barcode_sep').setAttribute('onchange', 'expandBarcodeSep()');
 							</script>
 							<?php echo $html->getStaticSelectionBox("Mate-paired", "spaired", "<option>yes</option><option>no</option>", 6)?>
+							<script>
+								document.getElementById('spaired').setAttribute('onchange', 'resetSelection()');
+							</script>
 						</div>
 						<div id="barcode_div" class="col-md-12" style="display: none">
 							<?php echo $html->getStaticSelectionBox("Barcode Definitions", "Barcode Definitions", "TEXTBOX", 12)?>

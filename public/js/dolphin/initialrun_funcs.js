@@ -38,7 +38,7 @@ $(function() {
 				var barcodes = {};
 				barcodes['distance'] = barcode_array.split(',')[0];
 				barcodes['format'] = barcode_array.split(",")[1];
-				barcodes['barcodes'] = initial_split[initial_split.length - 3];
+				barcodes['barcodes'] = initial_split[initial_split.length - 3].replace(/[\s\t\,\:]+/g, ",");
 				JSON_OBJECT['barcodes'] = [barcodes];
 			}
 			JSON_OBJECT['adapters'] = 'none';

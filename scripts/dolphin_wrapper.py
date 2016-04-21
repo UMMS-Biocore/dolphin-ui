@@ -245,7 +245,7 @@ class Dolphin:
        #u'barcodes': [{u'distance': u'1', u'format': u'5 end read 1'}]
        if ('barcodes' in runparams and barcodes):
           pipe=runparams['barcodes'][0]
-          barcode="Distance,%s:Format,%s%s"%(str(int(pipe['distance'])+1), str(pipe['format'][0]),barcodes)
+          barcode="Distance,%s:Format,%s:%s"%(str(int(pipe['distance'])+1), str(pipe['format'][0]), str(pipe['barcodes'][0]))
           print >>fp, '@BARCODES=%s'%barcode
           previous="BARCODES"
        else:

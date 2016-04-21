@@ -16,6 +16,8 @@ function expandBarcodeSep(){
 	var barcodeDiv = document.getElementById('barcode_div');
 	var barcodeOptDiv = document.getElementById('barcode_opt_div');
 	
+	resetSelection();
+	
 	//	Check the expand type
 	if (expandType == 'yes') {
 		barcodeDiv.style.display = 'inline';
@@ -26,6 +28,16 @@ function expandBarcodeSep(){
 		barcodeOptDiv.style.display = 'none';
 		document.getElementById('input_files').placeholder = "Paired End Example:\nlibrary_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz\nSingle End Example:\nlibrary_name_rep1 lib_rep1.fastq.gz";
 	}
+}
+
+function resetSelection(){
+	document.getElementById('Directory_toggle').setAttribute('data-toggle', 'none');
+	var files = $('#jsontable_dir_files').dataTable();
+	files.fnClearTable();
+	var barcodes = $('#jsontable_barcode_files').dataTable();
+	barcodes.fnClearTable();
+	
+	$('.nav-tabs a[href="#Manual"]').tab('show')
 }
 
 function submitFastlaneButton() {
