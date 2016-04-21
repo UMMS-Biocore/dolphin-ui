@@ -79,6 +79,9 @@ function checkFastlaneInput(info_array){
 				}else if (!/^[actgATCG]*$/.test(split_barcodes[y].split(/[\s\t\,]/)[1])) {
 					error_out.push("Barcode " + split_barcodes[y].split(/[\s\t\,]/)[1] + " must contain ATCG only.")
 					split_check = false;
+				}else if (/[0-9]/.test(split_inputs[y].substring(0,1))){
+ 					error_out.push("Sample name " + split_barcodes[y].split(/[\s\t\,]/)[0] + " cannot start with a numeric character.");
+ 					split_check = false;
 				}else{
 					var single_barcode_array = [split_barcodes[y].split(/[\s\t\,]/)];
 					single_barcode_array = single_barcode_array.filter(function(n){return n != ''});
@@ -130,13 +133,16 @@ function checkFastlaneInput(info_array){
 					var single_input_array = split_inputs[y].split(/[\s\t\,]+/);
 					single_input_array = single_input_array.filter(function(n){return n != ''});
 					if (single_input_array.length != 3  && info_array[2] == 'yes') {
-							//      Not proper file input (paired end)
-							error_out.push("Paired-end file submission requires a sample name and 2 files.");
-							input_bool_check = false;
+						//      Not proper file input (paired end)
+						error_out.push("Paired-end file submission requires a sample name and 2 files.");
+						input_bool_check = false;
 					}else if (single_input_array.length != 2  && info_array[2] == 'no') {
-							//      Not proper file input (single end)
-							error_out.push("Single-end file submission requires a sample name and 1 file.");
-							input_bool_check = false;
+						//      Not proper file input (single end)
+						error_out.push("Single-end file submission requires a sample name and 1 file.");
+						input_bool_check = false;
+					}else if (/[0-9]/.test(split_inputs[y].substring(0,1))){
+						error_out.push("Sample name " + single_input_array[0] + " cannot start with a numeric character.");
+						input_bool_check = false;
 					}else{
 						input_array.push(single_input_array);
 					}
