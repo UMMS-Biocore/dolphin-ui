@@ -2,6 +2,7 @@
 var username;
 var R1_REGEX;
 var R2_REGEX;
+var FILE_LIST_OPTIONS = [];
 
 function searchDirectoryModal() {
 	if (document.getElementById('spaired').value == 'no') {
@@ -20,6 +21,11 @@ function searchDirectoryModal() {
 function queryDirectory() {
 	//	Grab directory
 	var directory = document.getElementById('input_dir').value;
+	//	Use barcodes?
+	var barcode_bool = false;
+	if (document.getElementById('barcode_sep').value == 'yes') {
+		barcode_bool = true;
+	}
 	//	If not empty, search directory
 	if (directory != '') {
 		//	Grab web variables
@@ -27,13 +33,13 @@ function queryDirectory() {
 		R2_REGEX = document.getElementById('read_2_input').value;
 		
 		var r1_search = new RegExp(R1_REGEX);
-		console.log(r1_search);
+		
 		if (document.getElementById('spaired').value == 'yes') {
 			var r2_search = new RegExp(R2_REGEX);
 		}else{
 			var r2_search = undefined;
 		}
-		console.log(r2_search);
+		
 		var R1 = [];
 		var R2 = [];
 		//	Grab files from directory
@@ -70,27 +76,37 @@ function queryDirectory() {
 			var nameOptions = '';
 			var selectOptions = '';
 			var file_pass = true;
-			console.log(R1);
-			console.log(R2);
+			FILE_LIST_OPTIONS = [];
 			for(var x = 0; x < R1.length; x++){
 				var name = '';
 				if (document.getElementById('spaired').value == 'yes') {
 					if (R1.length == R2.length) {
 						selectOptions += '<option value="'+R1[x]+','+R2[x]+'">'+R1[x]+','+R2[x]+'</option>';
+						FILE_LIST_OPTIONS.push('<option value="'+R1[x]+','+R2[x]+'">'+R1[x]+','+R2[x]+'</option>');
 					}else{
 						file_pass = false;
 					}
 				}else{
 					selectOptions += '<option value="'+R1[x]+'">'+R1[x]+'</option>';
+					FILE_LIST_OPTIONS.push('<option value="'+R1[x]+'">'+R1[x]+'</option>');
 				}
 			}
 			if (file_pass) {
+				if (barcode_bool) {
+					document.getElementById('barcodes_div').setAttribute('style', 'display:show');
+					document.getElementById('nobarcodes_div').setAttribute('style', 'display:none');
+					var barcodes = $('#jsontable_barcode_files').dataTable();
+					barcodes.fnClearTable();
+				}else{
+					document.getElementById('barcodes_div').setAttribute('style', 'display:none');
+					document.getElementById('nobarcodes_div').setAttribute('style', 'display:show');
+					var files = $('#jsontable_dir_files').dataTable();
+					files.fnClearTable();
+				}
 				document.getElementById('file_select').innerHTML = selectOptions;
 				//	After successful query
 				document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
 				$('.nav-tabs a[href="#Directory"]').tab('show')
-				var files = $('#jsontable_dir_files').dataTable();
-				files.fnClearTable();
 			}else{
 				$('#errorModal').modal({
 					show: true
@@ -130,7 +146,13 @@ function addSelection(type){
 	var current_selection = document.getElementById('file_select').options;
 	var regex_string = document.getElementById('regex_add_field').value;
 	var regex = new RegExp(regex_string);
-	var files = $('#jsontable_dir_files').dataTable();
+	var barcode_bool = false;
+	if (document.getElementById('barcode_sep').value == 'yes') {
+		barcode_bool = true;
+		var files = $('#jsontable_barcode_files').dataTable();
+	}else{
+		var files = $('#jsontable_dir_files').dataTable();
+	}
 	var file_string = '';
 	for(var x = 0; x < current_selection.length; x++){
 		if (type == 'adv') {
@@ -155,19 +177,33 @@ function addSelection(type){
 	var icon = createElement('i', ['class'],['fa fa-times']);
 	remove_button.appendChild(icon);
 	button_div.appendChild(remove_button);
-	files.fnAddData([
-		input.outerHTML,
-		file_string,
-		button_div.outerHTML
-	]);
+	if (barcode_bool) {
+		files.fnAddData([
+			file_string,
+			button_div.outerHTML
+		]);
+	}else{
+		files.fnAddData([
+			input.outerHTML,
+			file_string,
+			button_div.outerHTML
+		]);
+	}
 }
 
 function removeRow(button){
 	var files_select = document.getElementById('file_select')
-	var files_table = $('#jsontable_dir_files').dataTable();
-	var row = $(button).closest('tr');
-	var files_used = row.children()[1].innerHTML.split(' | ');
-	console.log(files_used);
+	var barcode_bool = false;
+	if (document.getElementById('barcode_sep').value == 'yes') {
+		barcode_bool = true;
+		var files_table = $('#jsontable_barcode_files').dataTable();
+		var row = $(button).closest('tr');
+		var files_used = row.children()[0].innerHTML.split(' | ');
+	}else{
+		var files_table = $('#jsontable_dir_files').dataTable();
+		var row = $(button).closest('tr');
+		var files_used = row.children()[1].innerHTML.split(' | ');
+	}
 	for(var x = 0; x < files_used.length; x++){
 		files_select.innerHTML += '<option value="'+files_used[x]+'">'+files_used[x]+'</option>'
 	}
@@ -177,7 +213,13 @@ function removeRow(button){
 
 function smartSelection(){
 	var files_select = document.getElementById('file_select');
-	var files = $('#jsontable_dir_files').dataTable();
+	var barcode_bool = false;
+	if (document.getElementById('barcode_sep').value == 'yes') {
+		barcode_bool = true;
+		var files = $('#jsontable_barcode_files').dataTable();
+	}else{
+		var files = $('#jsontable_dir_files').dataTable();
+	}
 	while (files_select.options.length != 0) {
 		var file_string = '';
 		//	use prvious regex to find the values before the pivot
@@ -198,16 +240,39 @@ function smartSelection(){
 		var icon = createElement('i', ['class'],['fa fa-times']);
 		remove_button.appendChild(icon);
 		button_div.appendChild(remove_button);
-		files.fnAddData([
-			input.outerHTML,
-			file_string,
-			button_div.outerHTML
-		]);
+		if (barcode_bool) {
+			files.fnAddData([
+				file_string,
+				button_div.outerHTML
+			]);
+		}else{
+			files.fnAddData([
+				input.outerHTML,
+				file_string,
+				button_div.outerHTML
+			]);
+		}
 	}
 }
 
 function updateName(input){
 	input.id = input.value;
+}
+
+function clearSelection(){
+	var files_select = document.getElementById('file_select');
+	var barcode_bool = false;
+	if (document.getElementById('barcode_sep').value == 'yes') {
+		barcode_bool = true;
+		var files = $('#jsontable_barcode_files').dataTable();
+	}else{
+		var files = $('#jsontable_dir_files').dataTable();
+	}
+	files.fnClearTable();
+	files_select.innerHTML = '';
+	for(var x = 0; x < FILE_LIST_OPTIONS.length; x++){
+		files_select.innerHTML += FILE_LIST_OPTIONS[x];
+	}
 }
 
 //	On Open of fastlane
@@ -219,6 +284,9 @@ $(function() {
 		var files = $('#jsontable_dir_files').dataTable();
 		files.fnClearTable();
 		document.getElementById('jsontable_dir_files').style.width = '100%';
+		var barcodes = $('#jsontable_barcode_files').dataTable();
+		barcodes.fnClearTable();
+		document.getElementById('jsontable_barcode_files').style.width = '100%';
 	}
 	
 	//	Get cluster username for file checks

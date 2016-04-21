@@ -43,26 +43,40 @@ function submitFastlaneButton() {
 				value_array.push(value_str);
 			//      File-Directory Selection
 			}else{
-				var files = $('#jsontable_dir_files').dataTable();
+				var barcode_bool = false;
+				if (document.getElementById('barcode_sep').value == 'yes') {
+					barcode_bool = true;
+					var files = $('#jsontable_barcode_files').dataTable();
+				}else{
+					var files = $('#jsontable_dir_files').dataTable();
+				}
 				var table_data = files.fnGetData();
+				var table_nodes = files.fnGetNodes();
 				var value_str = "";
 				sendProcessDataRaw([''], 'dir_used');
 				//      For every selected entry
 				for(var y = 0; y < table_data.length; y++){
-					var raw_name = table_data[y][0].toString();
-					console.log(raw_name);
-					var raw_outer = createElement('div', [], []);
-					raw_outer.innerHTML = raw_name;
-					var name = raw_outer.firstChild.id;
-					console.log(name);
-					var files_used = table_data[y][1].split(" | ");
-					for(var z = 0; z < files_used.length; z++){
-						if (z == files_used.length - 1 && y == table_data.length - 1) {
-							value_str += name + " " + files_used[z];
-						}else{
-							value_str += name + " " + files_used[z] + ':';
+					if (barcode_bool) {
+						var files_used = table_data[y][0].split(" | ");
+						for(var z = 0; z < files_used.length; z++){
+							if (z == files_used.length - 1 && y == table_data.length - 1) {
+								value_str += files_used[z];
+							}else{
+								value_str += files_used[z] + ':';
+							}
+						}
+					}else{
+						var name = table_nodes[y].children[0].children[0].id
+						var files_used = table_data[y][1].split(" | ");
+						for(var z = 0; z < files_used.length; z++){
+							if (z == files_used.length - 1 && y == table_data.length - 1) {
+								value_str += name + " " + files_used[z];
+							}else{
+								value_str += name + " " + files_used[z] + ':';
+							}
 						}
 					}
+					
 				}
 				value_str = value_str.replace(/[\t\,]+/g, " ");
 				console.log(value_str);
