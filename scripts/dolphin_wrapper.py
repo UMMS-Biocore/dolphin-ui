@@ -371,6 +371,12 @@ class Dolphin:
                print >>fp, '@MBQS=%s'%(pipe['min_base_quality_score'])
                print >>fp, '@MRPAS=%s'%(pipe['minReadsPerAlignmentStart'])
                print >>fp, '@MRIRPS=%s'%(pipe['maxReadsInRegionPerSample'])
+               if ('common' in pipe and pipe['common'] == "yes"):
+                 print >>fp, '@COMMON=%s'%(pipe['common'])
+               if ('clinical' in pipe and pipe['clinical'] == "yes"):
+                 print >>fp, '@CLINICAL=%s'%(pipe['clinical'])
+               if ('motifs' in pipe and pipe['motifs'] != "none"):
+                 print >>fp, '@MOTIFS=%s'%(pipe['motifs'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -565,7 +571,11 @@ class Dolphin:
                  self.prf( fp, '%s'%(stepDiffMeth % locals()) )             
 
               if (pipe['Type'] == "HaplotypeCaller"):
-                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
+                if ('mergeSamples' in runparams and runparams['mergeSamples'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="merge"+type
+                self.prf( fp, '%s'%(stepHaplotype % locals()) )
+                type="haplotypecaller"
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
         print >>fp, '%s'%(stepClean % locals())
