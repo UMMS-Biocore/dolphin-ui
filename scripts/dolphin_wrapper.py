@@ -375,6 +375,10 @@ class Dolphin:
                  print >>fp, '@COMMON=%s'%(pipe['common'])
                if ('clinical' in pipe and pipe['clinical'] == "yes"):
                  print >>fp, '@CLINICAL=%s'%(pipe['clinical'])
+               if ('enhancers' in pipe and pipe['enhancers'] == "yes"):
+                 print >>fp, '@ENHANCER=%s'%(pipe['enhancers'])
+               if ('promoters' in pipe and pipe['promoters'] == "yes"):
+                 print >>fp, '@PROMOTER=%s'%(pipe['promoters'])
                if ('motifs' in pipe and pipe['motifs'] != "none"):
                  print >>fp, '@MOTIFS=%s'%(pipe['motifs'])
 
@@ -571,7 +575,7 @@ class Dolphin:
                  self.prf( fp, '%s'%(stepDiffMeth % locals()) )             
 
               if (pipe['Type'] == "HaplotypeCaller"):
-                if ('mergeSamples' in runparams and runparams['mergeSamples'].lower() != 'none'):
+                if ('merge' in runparams and runparams['merge'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                     type="merge"+type
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
@@ -621,7 +625,7 @@ class Dolphin:
         for input in content:
             new_content += input['name'] + '__tt__'
             new_content += self.parse_content(input['samples']) + '__tt__'
-            if (input == content(-1)):
+            if (input == content[-1]):
                 new_content += self.parse_content(input['input'])
             else:
                 new_content += self.parse_content(input['input']) + ':'

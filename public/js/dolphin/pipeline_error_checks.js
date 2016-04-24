@@ -162,6 +162,14 @@ function checkChipMultiSelectEmpty(input){
 	return check;
 }
 
+function checkGenomeType(input, genome){
+	var check = false;
+	if (document.getElementById(input).value != genome) {
+		check = true;
+	}
+	return check;
+}
+
 //	END GENERIC FUNCTIONS
 //	************************************************************************
 //	START GROUPED FUNCTIONS
@@ -448,6 +456,31 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			}
 		//	HaplotypeCaller
 		}else if (name == 'HaplotypeCaller') {
+			//	Human only
+			if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
+				return true;
+			}
+			//	Human only
+			if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Clinical SNPs option');
+				return true;
+			}
+			//	Human only
+			if (!checkFieldCheckboxChecked('checkbox_3_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Enhancers option');
+				return true;
+			}
+			//	Human only
+			if (!checkFieldCheckboxChecked('checkbox_4_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Promoters option');
+				return true;
+			}
+			//	Human only
+			if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
+				return true;
+			}
 			//	Min Calling Threshold Confidence
 			if (checkFieldIsNotInt('text_1_'+pipeline_index[x]) || checkFieldsEmpty('text_1_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Calling Threshold Confidence field must be of type int for HaplotypeCaller');

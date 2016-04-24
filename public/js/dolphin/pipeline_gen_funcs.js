@@ -399,6 +399,24 @@ function rerunLoad() {
 								document.getElementById('text_3_'+i).value = splt1[i].min_base_quality_score;
 								document.getElementById('text_4_'+i).value = splt1[i].minReadsPerAlignmentStart;
 								document.getElementById('text_5_'+i).value = splt1[i].maxReadsInRegionPerSample;
+								if (splt1[i].common == 'yes' || splt1[i].common == '1') {
+									document.getElementById('checkbox_1_'+i).checked = true;
+								}
+								if (splt1[i].clinical == 'yes' || splt1[i].clinical == '1') {
+									document.getElementById('checkbox_2_'+i).checked = true;
+								}
+								if (splt1[i].enhancers == 'yes' || splt1[i].enhancers == '1') {
+									document.getElementById('checkbox_3_'+i).checked = true;
+								}
+								if (splt1[i].promoters == 'yes' || splt1[i].promoters == '1') {
+									document.getElementById('checkbox_4_'+i).checked = true;
+								}
+								if (splt1[i].motifs == 'yes' || splt1[i].motifs == '1') {
+									document.getElementById('checkbox_5_'+i).checked = true;
+								}
+								if (splt1[i].merge == 'yes' || splt1[i].merge == '1') {
+									document.getElementById('checkbox_6_'+i).checked = true;
+								}
 							}
 						}
 						document.getElementById(jsonTypeList[x]+'_exp_body').setAttribute('style', 'display: block');
@@ -627,6 +645,19 @@ function pipelineSelect(num){
 					createElement('select',['id', 'class', 'type', 'multiple', 'size', 'onchange'],['multi_select_2_'+num, 'form-control', 'select-multiple', 'multiple', '8', 'deselectCondition(2, '+num+')'])] ]);
 		}else if (pipeType == pipelineDict[6]) {
 			//HaplotypeCaller
+			divAdj = mergeTidy(divAdj, 6,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Common SNPs:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Clinical SNPs:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Enhancers:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Promoters:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Motifs:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_5_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Merge Samples:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_6_'+num, 'checkbox', 'margin'])]]);
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Calling Threshold Confidence:']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_1_'+num, 'form-control', 'text', '30'])],
@@ -1840,7 +1871,7 @@ function findPipelineValues(){
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample'];
+	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample'];
 	
 	var JSON_ARRAY =  [];
 	for (var y = 0; y < currentPipelineID.length; y++) {
