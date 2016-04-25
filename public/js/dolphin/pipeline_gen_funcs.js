@@ -417,6 +417,9 @@ function rerunLoad() {
 								if (splt1[i].merge == 'yes' || splt1[i].merge == '1') {
 									document.getElementById('checkbox_6_'+i).checked = true;
 								}
+								if (splt1[i].peaks == 'yes' || splt1[i].peaks == '1') {
+									document.getElementById('checkbox_7_'+i).checked = true;
+								}
 							}
 						}
 						document.getElementById(jsonTypeList[x]+'_exp_body').setAttribute('style', 'display: block');
@@ -646,17 +649,17 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[6]) {
 			//HaplotypeCaller
 			divAdj = mergeTidy(divAdj, 6,
-					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Common SNPs:']),
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Common SNPs: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Clinical SNPs:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Clinical SNPs: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Enhancers:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Enhancers: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Promoters:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Promoters: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Motifs:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Motifs: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_5_'+num, 'checkbox', 'margin'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Merge Samples:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Merge Samples: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_6_'+num, 'checkbox', 'margin'])]]);
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Calling Threshold Confidence:']),
@@ -664,13 +667,16 @@ function pipelineSelect(num){
 					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Emitting Threshold Confidence:']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_2_'+num, 'form-control', 'text', '30'])] ]);
 			divAdj = mergeTidy(divAdj, 6,
-					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Base Quality Score:']),
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Base Quality Score: ']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_3_'+num, 'form-control', 'text', '10'])],
-					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Reads Per Alignment Start:']),
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Min Reads Per Alignment Start: ']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_4_'+num, 'form-control', 'text', '10'])] ]);
 			divAdj = mergeTidy(divAdj, 6,
-					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Max Reads In Region Per Sample:']),
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Max Reads In Region Per Sample: ']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_5_'+num, 'form-control', 'text', '10000'])] ]);
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Use Chip Peaks: ']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_7_'+num, 'checkbox', 'margin'])] ]);
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
@@ -1871,7 +1877,7 @@ function findPipelineValues(){
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample'];
+	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'peaks', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample'];
 	
 	var JSON_ARRAY =  [];
 	for (var y = 0; y < currentPipelineID.length; y++) {

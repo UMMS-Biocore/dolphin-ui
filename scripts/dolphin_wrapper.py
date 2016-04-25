@@ -381,6 +381,10 @@ class Dolphin:
                  print >>fp, '@PROMOTER=%s'%(pipe['promoters'])
                if ('motifs' in pipe and pipe['motifs'] != "none"):
                  print >>fp, '@MOTIFS=%s'%(pipe['motifs'])
+               if ('merge' in pipe and pipe['merge'] != "none"):
+                 print >>fp, '@MERGEALL=%s'%(pipe['merge'])
+               if ('peaks' in pipe and pipe['peaks'] != "none"):
+                 print >>fp, '@PEAKS=%s'%(pipe['peaks'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -575,7 +579,7 @@ class Dolphin:
                  self.prf( fp, '%s'%(stepDiffMeth % locals()) )             
 
               if (pipe['Type'] == "HaplotypeCaller"):
-                if ('merge' in runparams and runparams['merge'].lower() != 'none'):
+                if (pipe['merge'] == "yes"):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                     type="merge"+type
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )

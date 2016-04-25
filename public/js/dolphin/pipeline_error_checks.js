@@ -241,8 +241,8 @@ function pipelineSelectCheck(num, type){
 		}else{
 			var tophat_check = checkPipelineDoesNotExist(num, 'Tophat') || checkPipelineDownstream(num, 'Tophat') || checkPipelineReplacing(num, 'Tophat');
 			var chipseq_check = checkPipelineDoesNotExist(num, 'ChipSeq') || checkPipelineDownstream(num, 'ChipSeq') || checkPipelineReplacing(num, 'ChipSeq');
-			if (tophat_check && chipseq_check) {
-				displayErrorModal('#errorModal', 'You must run a Tophat or ChipSeq pipeline before you can run HaplotypeCaller');
+			if (chipseq_check) {
+				displayErrorModal('#errorModal', 'You must run a ChipSeq pipeline before you can run HaplotypeCaller');
 				return true;
 			}
 		}
@@ -456,6 +456,7 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			}
 		//	HaplotypeCaller
 		}else if (name == 'HaplotypeCaller') {
+			/*
 			//	Human only
 			if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
@@ -481,6 +482,7 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
 				return true;
 			}
+			*/
 			//	Min Calling Threshold Confidence
 			if (checkFieldIsNotInt('text_1_'+pipeline_index[x]) || checkFieldsEmpty('text_1_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Calling Threshold Confidence field must be of type int for HaplotypeCaller');
