@@ -436,7 +436,6 @@ class Dolphin:
             self.prf( fp, stepPicard % locals() if ((metric in pipe and pipe[metric].lower()=="yes")) else None )
             if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                 type = "dedup"+initialtype
-                self.prf( fp, stepPCRDups % locals())
         
         if (('CollectRnaSeqMetrics' in pipe and pipe['CollectRnaSeqMetrics'].lower()=="yes") or ('CollectMultipleMetrics' in pipe and pipe['CollectMultipleMetrics'].lower()=="yes")):
             self.prf( fp, stepMergePicard % locals())
@@ -517,6 +516,7 @@ class Dolphin:
                      type = self.writeDedupForRSEM(pipe, runparams, type, fp, sep)
                      previousrsem = "dedup" + type
                      type=previousrsem
+                     self.prf( fp, stepPCRDups % locals())
 
                      
                  rsemref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@RSEMREF" )
@@ -544,6 +544,7 @@ class Dolphin:
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
                  self.writeVisualizationStr( fp, type, pipe, sep )
                  self.writeRSeQC ( fp, type, pipe, sep )
 
@@ -563,6 +564,7 @@ class Dolphin:
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
 
                  self.writeVisualizationStr( fp, type, pipe, sep )
                                   
