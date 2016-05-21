@@ -578,7 +578,7 @@ function numberWithCommas(x) {
 function populateTable(summary_files, samplenames, libraries, read_counts) {
 	var RNA_types = [];
 	for (var z = 0; z < summary_files.length; z++) {
-		if (!/picard/.test(summary_files[z]['file']) && !/flagstat/.test(summary_files[z]['file'])) {
+		if (!/pcrdups/.test(summary_files[z]['file']) && !/flagstat/.test(summary_files[z]['file'])) {
 			console.log(summary_files[z]['file'])
 			RNA_types.push(summary_files[z]['file'].split("/")[1].split(".")[0]);
 		}
@@ -590,7 +590,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		}
 		
 		for (var z = 0; z < summary_files.length; z++) {
-			if (!/picard/.test(summary_files[z]['file']) && !/flagstat/.test(summary_files[z]['file'])) {
+			if (!/pcrdups/.test(summary_files[z]['file']) && !/flagstat/.test(summary_files[z]['file'])) {
 				var RNA_name = '';
 				for (RNA in RNA_types) {
 					if (RNA_types[RNA] == summary_files[z]['file'].split("/")[1].split(".")[0]) {
@@ -603,7 +603,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					table_data[table_array_raw[x][0]][RNA_name] = parseInt(table_array_raw[x][2].split(" ")[0]) + parseInt(table_array_raw[x][3].split(" ")[0]);
 					table_data[table_array_raw[x][0]]['unmapped'] = parseInt(table_array_raw[x][4].split(" ")[0]);
 				}
-			}else if (/picard/.test(summary_files[z]['file'])){
+			}else if (/pcrdups/.test(summary_files[z]['file'])){
 				dedup = parseDedup(summary_files[z]['file']);
 				for (var k = 0; k < samplenames.length; k++) {
 					if (/rsem/.test(summary_files[z]['file'])){
@@ -787,7 +787,7 @@ $(function() {
 				}else if (/chip/.test(summary_files[z]['file'])){
 					non_rna_object['chip'] = true;
 				}
-			}else if (/picard/.test(summary_files[z]['file'])){
+			}else if (/pcrdups/.test(summary_files[z]['file'])){
 				if (/rsem/.test(summary_files[z]['file'])){
 					non_rna_object['rsem_dedup'] = true;
 				}else if (/tophat/.test(summary_files[z]['file'])){
