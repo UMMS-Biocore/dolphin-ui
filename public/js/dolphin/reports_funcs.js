@@ -766,7 +766,7 @@ $(function() {
 		var summary_rna_type = [];
 		var non_rna_object = {}
 		for (var z = 0; z < summary_files.length; z++) {
-			if (!/flagstat/.test(summary_files[z]['file']) && !/picard/.test(summary_files[z]['file'])) {
+			if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 				var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 				summary_rna_type.push(RNA);
 				document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
