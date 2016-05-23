@@ -35,13 +35,18 @@
 										<div class="form-group">
 											<label for="Group">Who can see?</label>
 											<?php
-						$radiofields=array(
-								array('name' => 'only me', 'value' => '3', 'selected' => ''),
-								array('name' => 'only my group', 'value' => '15', 'selected' => 'checked'),
-								array('name' => 'everyone', 'value' => '32', 'selected' => ''));
-						echo $html->getRadioBox($radiofields, 'security_id', 'name');
-						?>
+												$radiofields=array(
+														array('name' => 'only me', 'value' => '3', 'selected' => ''),
+														array('name' => 'only my group', 'value' => '15', 'selected' => 'checked'),
+														array('name' => 'everyone', 'value' => '32', 'selected' => ''));
+												echo $html->getRadioBox($radiofields, 'security_id', 'name');
+											?>
 											<p class="help-block">Please select the security credentials for this import</p>
+										</div>
+										<div class="callout callout-info">
+											<h4>Before Submission:</h4>
+											<p>If re-submitting an old import with different data, make sure all the samples you wish to keep are still within the import.</p>
+											<p>Any old sample information will be lost if you have removed that data from the excel spreadsheet.</p>
 										</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer">
