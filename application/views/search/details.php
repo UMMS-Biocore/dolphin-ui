@@ -108,7 +108,7 @@
 					}
 				}
 				if ($table=="experiments" || $table=="samples"){
-					echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL);
+					echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL, $dir_array);
 				}
 				else{
 					if(!isset($_SESSION['ngs_lanes'])){
@@ -121,7 +121,7 @@
 					}
 				}
 				if ($table=="samples"){
-					echo $html->getBrowserPanelMore($samples, $sample_fields, "Sample",'name', $sample_file, $sample_fastq_file, $sample_runs, $sample_tables);
+					echo $html->getBrowserPanelMore($samples, $sample_fields, "Sample",'name', $sample_file, $sample_fastq_file, $sample_runs, $sample_tables, $dir_array);
 				}else{
 					if(!isset($_SESSION['ngs_samples'])){
 						echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);

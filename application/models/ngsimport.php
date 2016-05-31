@@ -2320,7 +2320,11 @@ class files extends main{
 			$this->fieldname="sample_id";
 			$this->value=$this->sample_id;
 			
-			$sql="select id from `$this->tablename` where `file_name`='$file->file_name' and `sample_id`='$this->sample_id'";
+			$sql="select id
+				from `$this->tablename`
+				where `file_name`='$file->file_name'
+				and `sample_id`='$this->sample_id'
+				and `dir_id` = $this->dir_id";
 			return $this->model->query($sql,1);
 		}
 		else
@@ -2329,7 +2333,11 @@ class files extends main{
 			$this->fieldname="lane_id";
 			$this->value=$this->lane_id;
 			
-			$sql="select id from `$this->tablename` where `file_name`='$file->file_name' and `lane_id`='$this->lane_id'";
+			$sql="select id
+				from `$this->tablename`
+				where `file_name`='$file->file_name'
+				and `lane_id`='$this->lane_id'
+				and `dir_id` = $this->dir_id";
 			return $this->model->query($sql,1);
 		}
 		

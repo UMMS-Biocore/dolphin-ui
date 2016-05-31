@@ -493,7 +493,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	return $html;
 	}
 	
-	function getBrowserPanelMore($objects, $fields, $header ,$name, $files, $fastq_files, $sample_runs, $sample_tables)
+	function getBrowserPanelMore($objects, $fields, $header ,$name, $files, $fastq_files, $sample_runs, $sample_tables, $dir_array)
 	{
 	foreach ($objects as $obj):
 	$html='<div class="panel panel-default">
@@ -570,23 +570,27 @@ e range"><i class="fa fa-calendar"></i></button>
 						</div>'; // END DATA PANEL
 		$html.=			'<div class="box-body tab-pane" id="directory_'.$header.'">
 							<div class="box-body">';
-		if($files != null){
+		if(isset($files)){
+			foreach ($dir_array as $da){
 				$html .= '		<table class="table table-hover table-striped table-condensed">';
 				$html.='			<thead><tr><th>Input File(s) Directory:</th></tr></thead>
 									<tbody>';
-				$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $files[0]['dir_id'].', \'fastq_dir\', \'ngs_dirs\', this)">'.$files[0]['fastq_dir'].'</td></tr>
+				$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $da['id'].', \'fastq_dir\', \'ngs_dirs\', this)">'.$da['fastq_dir'].'</td></tr>
 									</tbody>';
 				$html.='			<thead><tr><th>Input File(s):</th></tr></thead>
 									<tbody>';
 				foreach ($files as $f){
+					if($f['dir_id'] == $da['id']){
 						if($fastq_files == 'lanes'){
 								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_lane_files\', this)">'.$f['file_name'].'</td></tr>';
 						}else{
 								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_sample_files\', this)">'.$f['file_name'].'</td></tr>';	
 						}
+					}
 				}
 				$html .= '			</tbody>
 								</table>';
+			}
 		}
 		if($fastq_files != null && $fastq_files != 'lanes'){
 				$html .= '		<table class="table table-hover table-striped table-condensed">';
