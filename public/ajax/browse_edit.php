@@ -5,8 +5,10 @@ ini_set('report_errors','on');
 
 require_once("../../config/config.php");
 require_once("../../includes/dbfuncs.php");
+require_once("../api/funcs.php");
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $query = new dbfuncs();
+$funcs = new funcs();
 
 $p = '';
 $normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organization', 'genotype', 'library_type',
@@ -41,8 +43,11 @@ else if($p == 'checkPerms')
 	if (isset($_GET['uid'])){$uid = $_GET['uid'];}
 	if (isset($_GET['table'])){$table = $_GET['table'];}
 	
-	$owner_id = json_decode($query->queryTable("SELECT owner_id FROM $table WHERE id = $id"));
-	if($owner_id[0]->owner_id == $uid || $_SESSION['uid'] == 1){
+	$group_id = json_decode($query->queryTable("SELECT group_id, owner_id FROM $table WHERE id = $id"));
+	$user_pass = json_decode($query->queryTable("SELECT u_id FROM user_group WHERE g_id = ".$group_id[0]->group_id." and u_id = $uid"));
+	if($user_pass[0]->u_id == $uid || $_SESSION['uid'] == 1){
+		$data = 1;
+	}else if ($group_id[0]->owner_id == $uid){
 		$data = 1;
 	}else{
 		$data = 0;
@@ -81,6 +86,34 @@ else if($p == 'deleteSelected')
 					where id in ($samples)
 				   ");
 	
+	//	RUN IDS
+	$sample_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN ($samples)"));
+	$lane_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN (SELECT id from ngs_samples WHERE lane_id in ($lanes))"));
+	
+	$all_run_ids = array();
+	foreach($sample_run_ids as $sri){
+		if(!in_array($sri->run_id, $all_run_ids)){
+			array_push($all_run_ids, $sri->run_id);
+		}
+	}
+	foreach($lane_run_ids as $lri){
+		if(!in_array($lri->run_id, $all_run_ids)){
+			array_push($all_run_ids, $lri->run_id);
+		}
+	}
+	
+	$clusteruser = json_decode($query->queryTable("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
+	$samplenames = json_decode($query->queryTable("SELECT samplename FROM ngs_samples WHERE id in ($samples)"));
+	$samplename_array = array();
+	foreach($samplenames as $sn){
+		array_push($samplename_array, $sn->samplename);
+	}
+	//	REMOVE SUCCESS FILES
+	foreach ($all_run_ids as $ari){
+		$outdir=json_decode($query->queryTable("SELECT outdir FROM ngs_runparams WHERE id = $ari"));
+		$data = $funcs->removeAllSampleSuccessFiles($outdir[0]->outdir, $samplename_array, $clusteruser[0]->clusteruser);
+	}
+	
 	//	EXPERIMENT SERIES
 	if ($experiments != ""){
 		$query->runSQL("DELETE FROM ngs_experiment_series WHERE id IN ($experiments)");
@@ -100,23 +133,7 @@ else if($p == 'deleteSelected')
 	$query->runSQL("DELETE FROM ngs_fastq_files WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_samples WHERE id IN ($samples)");
 	
-	//	WKEY
-	$sample_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN ($samples)"));
-	$lane_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN (SELECT id from ngs_samples WHERE lane_id in ($lanes))"));
-	
-	$all_run_ids = array();
-	foreach($sample_run_ids as $sri){
-		if(!in_array($sri->run_id, $all_run_ids)){
-			array_push($all_run_ids, $sri->run_id);
-		}
-	}
-	foreach($lane_run_ids as $lri){
-		if(!in_array($lri->run_id, $all_run_ids)){
-			array_push($all_run_ids, $lri->run_id);
-		}
-	}
 	//	OBTAIN WKEY INFORMATION FOR REPORT_LIST REMOVAL //
-	
 	$wkeys = array();
 	$wkeys_json = json_decode($query->queryTable("SELECT wkey FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")"));
 	foreach($wkeys_json as $wj){

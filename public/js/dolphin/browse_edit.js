@@ -288,6 +288,8 @@ function confirmDeletePressed(){
 				async: false,
 				success : function(s)
 				{
+					console.log(s);
+					alert();
 				}
 		});
 		
