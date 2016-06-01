@@ -126,6 +126,53 @@ function editBox(uid, id, type, table, element){
 	}
 }
 
+function fastlaneDropdown(type, table, html_id){
+	var element = document.getElementById(html_id);
+	element.innerHTML = '';
+	
+	var masterDiv = document.createElement('div');
+	masterDiv.setAttribute('class','combobox input-group');
+	
+	var input = document.createElement('input');
+	input.setAttribute('type', 'text');
+	input.setAttribute('name', 'comboboxfieldname');
+	input.setAttribute('id','cb_identifier');
+	input.setAttribute('class','cb_identifier');
+	
+	var button = document.createElement('button');
+	button.setAttribute('class', 'btn btn-default btn-group pull-right')
+	
+	var span = document.createElement('span');
+	span.setAttribute('class','caret');
+	button.appendChild(span);
+	
+	var div = document.createElement('div');
+	div.setAttribute('class','dropdownlist');
+	div.setAttribute('style','z-index: 999');
+	
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/browse_edit.php",
+		data: { p: 'getDropdownValuesPerms', type: type, table: table, gids: phpGrab.gids},
+		async: false,
+		success : function(r)
+		{
+			console.log(r)
+			for(var x = 0; x < r.length; x++){
+				var a = document.createElement('a');
+				a.innerHTML = (r[x][type]);
+				div.appendChild(a);
+			}
+		}
+	});
+	
+	element.appendChild(masterDiv);
+	masterDiv.appendChild(input);
+	masterDiv.appendChild(button);
+	masterDiv.appendChild(div);
+	var no = new ComboBox('cb_identifier');
+	console.log('test');
+}
+
 function cancelChangesFiles(){
 	submitChanges('details_cancel', 27);
 }

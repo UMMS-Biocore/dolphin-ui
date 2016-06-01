@@ -17,6 +17,8 @@
 		<script src="<?php echo BASE_PATH?>/js/AdminLTE/app.js" type="text/javascript"></script>
 		<!-- AdminLTE for demo purposes -->
 		<script src='<?php echo BASE_PATH?>/js/dolphin/js_to_html_funcs.js' type="text/javascript"></script>
+		<script src="<?php echo BASE_PATH?>/js/combobox/combobox.js" type="text/javascript"></script>
+		<script src="<?php echo BASE_PATH?>/js/dolphin/browse_edit.js" type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/pipeline_gen_funcs.js' type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/sessionget_funcs.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/dolphin/ngsfastlane_funcs.js" type="text/javascript"></script>

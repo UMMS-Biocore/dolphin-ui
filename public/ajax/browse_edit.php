@@ -58,6 +58,13 @@ else if($p == 'getDropdownValues')
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	$data=$query->queryTable("SELECT $type FROM ngs_".$type);
 }
+else if($p == 'getDropdownValuesPerms')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['table'])){$table = $_GET['table'];}
+	if (isset($_GET['gids'])){$gids = $_GET['gids'];}
+	$data=$query->queryTable("SELECT $type FROM $table WHERE (((group_id in ($gids)) AND (perms >= 15)) OR (owner_id = ".$_SESSION['uid'].") OR (perms >= 32))");
+}
 else if ($p == 'getExperimentPermissions')
 {
 	if (isset($_GET['experiments'])){$experiments = $_GET['experiments'];}
@@ -182,8 +189,8 @@ else if($p == 'deleteSelected')
 	$query->runSQL($insert_query);
 	
 	//	If sample is deleted, delete all run information
-	$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
-	$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
+	//$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
+	//$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
 	$data = '';
 }
 else if ($p == 'intialRunCheck')

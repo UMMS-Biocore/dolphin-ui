@@ -150,13 +150,9 @@ class funcs
     }
     function removeAllSampleSuccessFiles($dir, $samplenames, $clusteruser){
         $this->username=$clusteruser;
-        var_dump($this->username);
-        var_dump($dir);
-        var_dump($samplenames);
         $this->readINI();
         $com = "";
         foreach ($samplenames as $sample){
-            var_dump($sample);
             $com.= "rm -rf $dir/tmp/track/*$sample\.*\.success && ";
         }
         $com.= "echo \"end $dir\"";

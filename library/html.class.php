@@ -768,10 +768,13 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html.= $this->getInfoBox($id);
 	$html.= '</div><!-- /.box-header -->
 				<div class="box-body">
-					<div class="input-group margin col-md-11">
-						<form role="form">';
+					<div class="input-group margin col-md-11">';
 	if ($selection == "TEXT"){
-		$html.= 						'<input type="text" class="form-control" id="'.$id.'">';
+		$html.= 					'<form role="form">
+										<input type="text" class="form-control" id="'.$id.'">
+									</form>';
+	}else if($selection == "DIV"){
+		$html.= 						'<div id="'.$id.'"></div>';
 	}else if($selection == "TEXTBOX"){
 		if($id == 'input_files'){
 				$placeholder = "Paired End Example:\nlibrary_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz\nSingle End Example:\nlibrary_name_rep1 lib_rep1.fastq.gz";
@@ -780,14 +783,17 @@ e range"><i class="fa fa-calendar"></i></button>
 		}else{
 				$placeholder = "...";
 		}
-		$html.=							'<textarea id="'.$id.'" type="text" class="form-control" rows="5" placeholder="'.$placeholder.'"></textarea>';
+		$html.=						'<form role="form">
+										<textarea id="'.$id.'" type="text" class="form-control" rows="5" placeholder="'.$placeholder.'"></textarea>
+									</form>';	
 	}else{
 		$html.=							'<select class="form-control" id="'.$id.'">
 									'.$selection.'
-								</select>';
+								</select>
+							</form>';
 	}	
-	$html.= 						'</form>
-					</div>
+	
+	$html.= 		'</div>
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
 		</div><!-- /.col -->';

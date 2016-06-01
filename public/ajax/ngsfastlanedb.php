@@ -5,8 +5,9 @@ ini_set('report_errors','on');
 
 require_once("../../config/config.php");
 require_once("../../includes/dbfuncs.php");
-
+require_once("../api/funcs.php");
 $query = new dbfuncs();
+$funcs = new funcs();
 
 $data = '';
 
@@ -36,7 +37,7 @@ if ($p == 'experimentSeriesCheck'){
 	$data=$query->queryAVal("
 	SELECT id
 	FROM ngs_samples
-	WHERE series_id = '$experiment' AND lane_id = '$lane' AND name = '$sample';
+	WHERE series_id = '$experiment' AND lane_id = '$lane' AND samplename = '$sample';
 	");
 }else if ($p == 'directoryCheck'){
 	if (isset($_GET['input'])){$input = $_GET['input'];}
@@ -73,53 +74,96 @@ if ($p == 'experimentSeriesCheck'){
 	if (isset($_GET['barcode'])){$barcode = $_GET['barcode'];}
 	if (isset($_GET['gids'])){$gids = $_GET['gids'];}
 	if (isset($_GET['perms'])){$perms = $_GET['perms'];}
-
-	$data=$query->runSQL("
-	INSERT INTO ngs_samples
-		(series_id, lane_id, name, samplename, title, barcode,
-		owner_id, group_id, perms, date_created, date_modified, last_modified_user)
-		VALUES ($experiment, $lane, '$sample', '$sample', '$sample', '$barcode',
-		".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
-	");
+	$sample_check=json_decode($query->queryTable("
+		SELECT id
+		FROM ngs_samples
+		WHERE series_id = $experiment
+		AND lane_id = $lane
+		AND samplename = '$sample'
+		"));
+	if($sample_check[0]->id > 0){
+		$data = $sample_check[0]->id;
+	}else{
+		$data=$query->runSQL("
+		INSERT INTO ngs_samples
+			(series_id, lane_id, name, samplename, title, barcode,
+			owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+			VALUES ($experiment, $lane, '$sample', '$sample', '$sample', '$barcode',
+			".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
+		");
+	}
 }else if ($p == 'insertDirectories'){
 	if (isset($_POST['input'])){$input = $_POST['input'];}
 	if (isset($_POST['backup'])){$backup = $_POST['backup'];}
 	if (isset($_POST['amazon'])){$amazon = $_POST['amazon'];}
 	if (isset($_POST['gids'])){$gids = $_POST['gids'];}
 	if (isset($_POST['perms'])){$perms = $_POST['perms'];}
-	$data=$query->runSQL("
-	INSERT INTO ngs_dirs
-		(fastq_dir, backup_dir, amazon_bucket,
-		owner_id, group_id, perms, date_created, date_modified, last_modified_user)
-		VALUES ('$input', '$backup', '$amazon',
-		".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
-	");
+	$dir_check=json_decode($query->queryTable("
+		SELECT id
+		FROM ngs_dirs
+		WHERE fastq_dir = '$input'
+		AND backup_dir = '$backup'
+		AND amazon_bucket = '$amazon'
+		"));
+	if($dir_check[0]->id > 0){
+		$data = $dir_check[0]->id;
+	}else{
+		$data=$query->runSQL("
+		INSERT INTO ngs_dirs
+			(fastq_dir, backup_dir, amazon_bucket,
+			owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+			VALUES ('$input', '$backup', '$amazon',
+			".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
+		");
+	}
 }else if ($p == 'insertTempSample'){
 	if (isset($_POST['filename'])){$filename = $_POST['filename'];}
 	if (isset($_POST['sample_id'])){$sample_id = $_POST['sample_id'];}
 	if (isset($_POST['input'])){$input = $_POST['input'];}
 	if (isset($_POST['gids'])){$gids = $_POST['gids'];}
 	if (isset($_POST['perms'])){$perms = $_POST['perms'];}
-	$data=$query->runSQL("
-	INSERT INTO ngs_temp_sample_files
-		(file_name, sample_id, dir_id,
-		owner_id, group_id, perms, date_created, date_modified, last_modified_user)
-		VALUES ('$filename', $sample_id, $input,
-		".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
-	");
+	$temp_check=json_decode($query->queryTable("
+		SELECT id
+		FROM ngs_temp_sample_files
+		WHERE filename = '$filename'
+		AND sample_id = $sample_id
+		AND dir_id = $input
+		"));
+	if($temp_check[0]->id > 0){
+		$data = $temp_check[0]->id;
+	}else{
+		$data=$query->runSQL("
+		INSERT INTO ngs_temp_sample_files
+			(file_name, sample_id, dir_id,
+			owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+			VALUES ('$filename', $sample_id, $input,
+			".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
+		");
+	}
 }else if ($p == 'insertTempLane'){
 	if (isset($_POST['file_name'])){$file_name = $_POST['file_name'];}
 	if (isset($_POST['lane_id'])){$lane_id = $_POST['lane_id'];}
 	if (isset($_POST['dir_id'])){$dir_id = $_POST['dir_id'];}
 	if (isset($_POST['gids'])){$gids = $_POST['gids'];}
 	if (isset($_POST['perms'])){$perms = $_POST['perms'];}
-	$data=$query->runSQL("
-	INSERT INTO ngs_temp_lane_files
-		(file_name, lane_id, dir_id,
-		owner_id, group_id, perms, date_created, date_modified, last_modified_user)
-		VALUES ('$file_name', $lane_id, $dir_id,
-		".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
-	");
+	$temp_check=json_decode($query->queryTable("
+		SELECT id
+		FROM ngs_temp_lane_files
+		WHERE filename = '$file_name'
+		AND lane_id = $lane_id
+		AND dir_id = $dir_id
+		"));
+	if($temp_check[0]->id > 0){
+		$data = $temp_check[0]->id;
+	}else{
+		$data=$query->runSQL("
+		INSERT INTO ngs_temp_lane_files
+			(file_name, lane_id, dir_id,
+			owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+			VALUES ('$file_name', $lane_id, $dir_id,
+			".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
+		");
+	}
 }else if ($p == 'sendProcessData'){
 	if (isset($_GET['info_array'])){$info_array = $_GET['info_array'];}
 	if (isset($_GET['post'])){$post = $_GET['post'];}
@@ -138,9 +182,7 @@ if ($p == 'experimentSeriesCheck'){
 	FROM users
 	WHERE username = '".$_SESSION['user']."'
 	");
-}
-else if ($p == 'checkOutputDir')
-{
+}else if ($p == 'checkOutputDir'){
 	if (isset($_GET['outdir'])){$outdir = $_GET['outdir'];}
 	$data=json_encode($query->queryAVal("
     SELECT outdir
@@ -148,6 +190,23 @@ else if ($p == 'checkOutputDir')
     where outdir = '$outdir/initial_run'
 	or outdir = '$outdir//initial_run'
     "));
+}else if ($p == 'removeSuccessFiles'){
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
+	$clusteruser = json_decode($query->queryTable("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
+	$outdirs=json_decode($query->queryTable("
+	SELECT outdir
+	FROM ngs_runparams
+	WHERE id IN (
+		SELECT DISTINCT run_id
+		FROM ngs_runlist
+		WHERE sample_id in ($sample_ids)
+	)
+	"));
+	$samples_array = explode(",",$samples);
+	foreach($outdirs as $o){
+		$data = $funcs->removeAllSampleSuccessFiles($o->outdir, $samples_array, $clusteruser[0]->clusteruser);
+	}
 }
 
 if (!headers_sent()) {
