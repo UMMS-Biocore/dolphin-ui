@@ -81,7 +81,7 @@ if ($p == 'experimentSeriesCheck'){
 		AND lane_id = $lane
 		AND samplename = '$sample'
 		"));
-	if($sample_check[0]->id > 0){
+	if(isset($sample_check[0]->id)){
 		$data = $sample_check[0]->id;
 	}else{
 		$data=$query->runSQL("
@@ -105,7 +105,7 @@ if ($p == 'experimentSeriesCheck'){
 		AND backup_dir = '$backup'
 		AND amazon_bucket = '$amazon'
 		"));
-	if($dir_check[0]->id > 0){
+	if(isset($dir_check[0]->id)){
 		$data = $dir_check[0]->id;
 	}else{
 		$data=$query->runSQL("
@@ -129,7 +129,7 @@ if ($p == 'experimentSeriesCheck'){
 		AND sample_id = $sample_id
 		AND dir_id = $input
 		"));
-	if($temp_check[0]->id > 0){
+	if(isset($temp_check[0]->id)){
 		$data = $temp_check[0]->id;
 	}else{
 		$data=$query->runSQL("
@@ -153,7 +153,7 @@ if ($p == 'experimentSeriesCheck'){
 		AND lane_id = $lane_id
 		AND dir_id = $dir_id
 		"));
-	if($temp_check[0]->id > 0){
+	if(isset($temp_check[0]->id)){
 		$data = $temp_check[0]->id;
 	}else{
 		$data=$query->runSQL("
