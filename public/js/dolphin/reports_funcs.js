@@ -73,7 +73,8 @@ function parseDedup(url_path) {
 			{
 				var array = s.split("\n");
 				for (var x = 0; x < array.length; x++) {
-					var name = array[x].split("/")[array[x].split("/").length - 1].split(".")[0]
+					var name = array[x].split("/")[array[x].split("/").length - 1].split("PCR_duplicates")[0];
+                    name = name.slice(0,-1);
 					dedup[name] = array[x].split(" ")[1]
 				}
 			}
