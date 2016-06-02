@@ -189,8 +189,8 @@ else if($p == 'deleteSelected')
 	$query->runSQL($insert_query);
 	
 	//	If sample is deleted, delete all run information
-	//$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
-	//$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
+	$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
+	$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
 	$data = '';
 }
 else if ($p == 'intialRunCheck')

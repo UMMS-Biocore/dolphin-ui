@@ -131,9 +131,9 @@ $(function() {
 					//	]
 					//	else if new run:
 					//	[ [], [], [], [sample ids]]
-					
 					returned_info = s;
 					console.log(s);
+					removeSuccessFiles(names_list, returned_info[3]);
 					if (returned_info[1][0] != undefined) {
 						for(var k = 0; k < returned_info[1].length; k++){
 							//	get variables for previoius run
