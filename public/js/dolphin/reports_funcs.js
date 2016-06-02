@@ -71,6 +71,7 @@ function parseDedup(url_path) {
 			async: false,
 			success : function(s)
 			{
+				console.log(s);
 				var array = s.split("\n");
 				for (var x = 0; x < array.length; x++) {
 					var name = array[x].split("/")[array[x].split("/").length - 1].split("PCR_duplicates")[0];
@@ -107,7 +108,6 @@ function createDetails(libraries) {
 		async: false,
 		success : function(s)
 		{
-			console.log(s);
 			var returnedSamples = s.split(',');
 			console.log(returnedSamples);
 			for(var x = 0; x < s.length; x++){
@@ -696,7 +696,7 @@ function downloadInitialMapping() {
 	for (var sample_array in initial_mapping_table) {
 		textString += initial_mapping_table[sample_array].join("\t") + "\n";
 	}
-    var data = new Blob([textString], {type: 'text/plain'});
+    var data = new Blob([textString], {type: 'text/tsv'});
 	if (textFile !== null) {
 		window.URL.revokeObjectURL(textFile);
     }
@@ -860,7 +860,7 @@ $(function() {
 		var table_div = document.getElementById('jsontable_initial_mapping_wrapper').children[0]
 		table_div.appendChild(createElement('button', ['id', 'class', 'onclick'], ['initial_download_button', 'btn btn-primary margin pull-right', 'downloadInitialMapping()']), table_div.children[0])
 		document.getElementById('initial_download_button').innerHTML = 'Download Table';
-		document.getElementById('jsontable_initial_mapping_wrapper').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.txt', 'display:none']))
+		document.getElementById('jsontable_initial_mapping_wrapper').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.tsv', 'display:none']))
 		createDropdown(summary_rna_type, 'initial_mapping');
 		
 		for (var sample_obj in table_data) {
