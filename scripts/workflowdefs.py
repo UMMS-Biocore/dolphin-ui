@@ -33,3 +33,4 @@ stepHaplotype = 'stepHaplotype%(sep)s@RUNHAPLOTYPE -o @OUTDIR -g @GENOMEFASTA -s
 stepSummary  = 'stepSummary%(sep)s@RUNSUMMARY -c @CONFIG -s @SAMTOOLSFLAG -u @USERNAME -p @PUBDIR -w @WKEY -o @OUTDIR%(sep)s10'
 stepAlignmentCount  = 'stepAlignmentCount%(type)s%(sep)s@RUNALIGNMENTCOUNT -c @CONFIG -s @SAMTOOLSFLAG -u @USERNAME -t %(type)s -p @PUBDIR -w @WKEY -o @OUTDIR%(sep)s10'
 stepClean  = 'stepClean%(sep)s@RUNCLEAN -c @CONFIG -l %(level)s -u @USERNAME -p @PUBDIR -w @WKEY -d @DBCOMMCMD  -o @OUTDIR%(sep)s10'
+
