@@ -153,7 +153,7 @@ class funcs
         $this->readINI();
         $com = "";
         foreach ($samplenames as $sample){
-            $com.= "rm -rf $dir/tmp/track/*$sample\.*\.success && ";
+            $com.= "rm -rf $dir/tmp/track/*$sample.*.success && ";
         }
         $com.= "echo \"end $dir\"";
         $removal = $this->syscall($this->getCMDs($com));
