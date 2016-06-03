@@ -1278,7 +1278,7 @@ class Ngsimport extends VanillaModel {
 			
 			//	File Name checks
 			if(isset($file->file_name)){
-				$this->file_arr[$file->file_name]=$file;
+				array_push($this->file_arr,$file);
 				if(!$this->checkAlphaNumWithAddChars('\_\-\,\.\+', $file->file_name)){
 					$text.= $this->errorText("File(s) ".$file->file_name." does not contain proper characters, please use alpha-numerics, dashes, underscores, and periods");
 					$this->final_check = false;
@@ -2352,10 +2352,6 @@ class files extends main{
 		$outdirs = json_decode($this->model->query("SELECT outdir FROM ngs_runparams WHERE id in (SELECT run_id FROM ngs_runlist WHERE sample_id = ".$this->getSampleId($file->name).")"));
 		foreach($outdirs as $o){
 			$data = $funcs->removeAllSampleSuccessFiles($o->outdir, [$samplename[0]->samplename], $clusteruser[0]->clusteruser);
-			var_dump($o->outdir);
-			var_dump($samplename[0]->samplename);
-			var_dump($clusteruser[0]->clusteruser);
-			var_dump($data);
 		}
 		
 		$sql="INSERT INTO `$this->tablename`
