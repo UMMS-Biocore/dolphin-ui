@@ -235,7 +235,7 @@ function rerunLoad() {
 										document.getElementById('0_1_'+ chip[z].samples.split(",")[k]).remove();
 									}
 								}
-								document.getElementById('textarea_1_'+i).value = splt1[i].Params;
+								document.getElementById('textarea_1_'+i).value = splt1[i].Params.replace("__cr____cn__", "\n");
 								document.getElementById('text_1_'+i).value = splt1[i].MultiMapper;
 								document.getElementById('text_2_'+i).value = splt1[i].TagSize;
 								document.getElementById('select_1_'+i).value = splt1[i].BandWith;
