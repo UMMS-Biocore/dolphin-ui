@@ -353,6 +353,7 @@ class Dolphin:
                print >>fp, '@TSIZE=%s'%(self.remove_space(str(pipe['TagSize'])))
                print >>fp, '@BWIDTH=%s'%(self.remove_space(str(pipe['BandWith'])))
                print >>fp, '@GSIZE=%s'%(self.remove_space(str(pipe['EffectiveGenome'])))
+               print >>fp, '@EXTRAPARAMS=%s'%(pipe['Params'])
 
              if (pipe['Type']=="BisulphiteMapping"):
                if ('BSMapStep' in pipe and pipe['BSMapStep'] == "yes"):

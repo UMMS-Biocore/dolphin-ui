@@ -235,6 +235,7 @@ function rerunLoad() {
 										document.getElementById('0_1_'+ chip[z].samples.split(",")[k]).remove();
 									}
 								}
+								document.getElementById('textarea_1_'+i).value = splt1[i].Params;
 								document.getElementById('text_1_'+i).value = splt1[i].MultiMapper;
 								document.getElementById('text_2_'+i).value = splt1[i].TagSize;
 								document.getElementById('select_1_'+i).value = splt1[i].BandWith;
@@ -535,6 +536,9 @@ function pipelineSelect(num){
 			var chip_table = createElement('table', ['id', 'class'], ['json_chiptable', 'table table-hover table-striped table-condensed table-scrollable'])
 				chip_table.innerHTML = "<thead><tr><th>Name</th><th>Sample</th><th>Inputs</th><th>Remove</th></tr></thead><tbody></tbody>";
 			divAdj.appendChild(chip_table);
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_2_'+num, 'box-title', 'MACS parameters:']),
+					   createElement('textarea', ['id', 'class'], ['textarea_1_'+num, 'form-control'])] ]);
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Multimapper:']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_1_'+num, 'form-control', 'text', '1'])],
@@ -1883,7 +1887,7 @@ function findAdditionalInfoValues(goWord, additionalArray){
 function findPipelineValues(){
 	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
-	var CHIPSEQ_JSON_DICT = ['ChipInput', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
+	var CHIPSEQ_JSON_DICT = ['ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
@@ -1945,7 +1949,7 @@ function findPipelineValues(){
 						console.log(JSON_OBJECT[USED_DICT[dict_counter]])
 					}else{
 						dict_counter--;
-						if (e.id.match("text_1_")) {
+						if (e.id.match("textarea_1_")) {
 							chip_bool = false;
 							x--;
 						}
