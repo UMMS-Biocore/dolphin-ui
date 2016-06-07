@@ -180,7 +180,9 @@ function sendToTableGen(){
 	var file_send = '&file=' + files_selected.toString();
 	
 	var type_send = '';
-	if (file_send.indexOf('.summary.') > -1) {
+	console.log(file_send);
+	if (file_send.indexOf('summary.') > -1) {
+		console.log("@@@");
 		type_send = '&type=summary';
 	}
 	var common_send = '';

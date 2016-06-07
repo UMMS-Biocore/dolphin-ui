@@ -13,8 +13,8 @@ var tableDirectionNum = 0;
 var table_data = {};
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
-							'Total align', 'Duplicated Reads: rsem', 'Reads Aligned: rsem', 'Duplicated Reads: tophat',
-							'Reads Aligned: tophat', 'Duplicated Reads: chip', 'Reads Aligned: chip'];
+							'Total align', 'Duplicated Reads rsem', 'Reads Aligned rsem', 'Duplicated Reads tophat',
+							'Reads Aligned tophat', 'Duplicated Reads chip', 'Reads Aligned chip'];
 var html_summary_dictionary = ['File', 'total_reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
 							'unmapped', 'rsem_dedup', 'rsem', 'tophat_dedup', 'tophat', 'chip_dedup', 'chip'];
 var initial_mapping_table = [];
@@ -609,34 +609,34 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		var table_array = parseSummary(summary_files[summary_files.length - 1]['file']);
 		console.log(table_array);
 		var parsed = [];
-		var total_parsed = [];
 		for( var j = 0; j < table_array.length; j++){
 			for( var i = 0; i < summary_dictionary.length; i++){
 				if (table_array[j][summary_dictionary[i]] != undefined) {
 					parsed.push(table_array[j][summary_dictionary[i]]);
 					if (table_data[table_array[j]['Sample']] == undefined) {
 						table_data[table_array[j]['Sample']] = {};
+						if (summary_dictionary[i] != 'Sample') {
+							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
+						}
 					}else{
-						table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
-						console.log(table_array[j][summary_dictionary[i]]);
+						if (summary_dictionary[i] != 'Sample') {
+							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
+						}
 					}
 				}
 			}
-			total_parsed.push(parsed);
+			initial_mapping_table.push(parsed);
 			parsed = [];
 		}
-		console.log(total_parsed);
 		console.log(table_data)
-		initial_mapping_table = total_parsed;
+		console.log(initial_mapping_table);
 		var reports_table = $('#jsontable_initial_mapping').dataTable();
 		reports_table.fnClearTable();
 		document.getElementById('jsontable_initial_mapping').setAttribute('style','overflow-x:scroll');
-		for(var y = 0; y < table_array.length; y++){
-			var row_array = table_array[y];
+		for(var y = 0; y < initial_mapping_table.length; y++){
+			var row_array = initial_mapping_table[y];
 			reports_table.fnAddData(row_array);
 		}
-		table_data = table_array;
-		initial_mapping_table.push(table_array);
 	}else{
 		var RNA_types = [];
 		for (var z = 0; z < summary_files.length; z++) {
@@ -833,7 +833,7 @@ $(function() {
 		var non_rna_object = {}
 		for (var z = 0; z < summary_files.length; z++) {
 			console.log(summary_files[z]['file'])
-			if (!/summary.tsv/.test(summary_files[z]['file'])) {
+			if (!/summary.summary/.test(summary_files[z]['file'])) {
 				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_rna_type.push(RNA);
