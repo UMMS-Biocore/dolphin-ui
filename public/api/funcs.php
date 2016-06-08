@@ -148,6 +148,17 @@ class funcs
             return "File given is an empty string";
         }
     }
+    function removeAllSampleSuccessFiles($dir, $samplenames, $clusteruser){
+        $this->username=$clusteruser;
+        $this->readINI();
+        $com = "";
+        foreach ($samplenames as $sample){
+            $com.= "rm -rf $dir/tmp/track/*$sample.*.success && ";
+        }
+        $com.= "echo \"end $dir\"";
+        $removal = $this->syscall($this->getCMDs($com));
+        return $removal;
+    }
     function getKey()
     {
         $characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

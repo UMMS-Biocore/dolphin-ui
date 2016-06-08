@@ -444,22 +444,23 @@ class Ngsimport extends VanillaModel {
 		$request = "";
 		foreach($this->file_name_arr as $fna){
 			if(end($this->file_name_arr) == $fna){
-					$request .= $fna;
+				$request .= $fna;
 			}else{
-					$request .= $fna . ',';
+				$request .= $fna . ',';
 			}
 		}
 		$params['username'] = $clustername;
 		$params['file'] = $request;
-		$result = $funcs->checkFile($params);
-		$valid_fastq = json_decode('['.$result.']');
-		if(isset($valid_fastq[0]->ERROR)){
+		$result = stripslashes($funcs->checkFile($params));
+		$valid_fastq = json_decode('['.str_replace("\n","",$result).']', true);
+		if(isset($valid_fastq[0]['ERROR'])){
 			$this->final_check = false;
-			$error_array = explode("ls: ",$valid_fastq[0]->ERROR);
+			$error_array = explode("ls: ",$valid_fastq[0]['ERROR']);
 			return implode("<br>", array_splice($error_array, 1));
 		}
 		return 'pass';
-        }
+	}
+
 	
 	/*
 	 *	getMeta()
@@ -1277,7 +1278,7 @@ class Ngsimport extends VanillaModel {
 			
 			//	File Name checks
 			if(isset($file->file_name)){
-				$this->file_arr[$file->file_name]=$file;
+				array_push($this->file_arr,$file);
 				if(!$this->checkAlphaNumWithAddChars('\_\-\,\.\+', $file->file_name)){
 					$text.= $this->errorText("File(s) ".$file->file_name." does not contain proper characters, please use alpha-numerics, dashes, underscores, and periods");
 					$this->final_check = false;
@@ -1368,7 +1369,7 @@ class Ngsimport extends VanillaModel {
 			//For every sample id found within the directory that isn't in the samples listed, remove them.
 			foreach($sample_name_removal as $snr){
 				if(!in_array($snr->sample_id, $this->sample_ids)){
-					$this->query("DELETE FROM ngs_temp_sample_files where sample_id = $snr->sample_id");
+					$this->query("DELETE FROM ngs_temp_sample_files where sample_id = $snr->sample_id AND dir_id in (" . implode(",", $dir_ids_check) . ")");
 					$this->query("DELETE FROM ngs_samples where id = $snr->sample_id");
 				}
 			}
@@ -2319,7 +2320,11 @@ class files extends main{
 			$this->fieldname="sample_id";
 			$this->value=$this->sample_id;
 			
-			$sql="select id from `$this->tablename` where `file_name`='$file->file_name' and `sample_id`='$this->sample_id'";
+			$sql="select id
+				from `$this->tablename`
+				where `file_name`='$file->file_name'
+				and `sample_id`='$this->sample_id'
+				and `dir_id` = $this->dir_id";
 			return $this->model->query($sql,1);
 		}
 		else
@@ -2328,7 +2333,11 @@ class files extends main{
 			$this->fieldname="lane_id";
 			$this->value=$this->lane_id;
 			
-			$sql="select id from `$this->tablename` where `file_name`='$file->file_name' and `lane_id`='$this->lane_id'";
+			$sql="select id
+				from `$this->tablename`
+				where `file_name`='$file->file_name'
+				and `lane_id`='$this->lane_id'
+				and `dir_id` = $this->dir_id";
 			return $this->model->query($sql,1);
 		}
 		
@@ -2336,6 +2345,15 @@ class files extends main{
 
 	function insert($file)
 	{
+		require_once("api/funcs.php");
+		$funcs = new funcs();
+		$clusteruser = json_decode($this->model->query("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
+		$samplename=json_decode($this->model->query("SELECT samplename FROM ngs_samples WHERE id = ".$this->getSampleId($file->name)));
+		$outdirs = json_decode($this->model->query("SELECT outdir FROM ngs_runparams WHERE id in (SELECT run_id FROM ngs_runlist WHERE sample_id = ".$this->getSampleId($file->name).")"));
+		foreach($outdirs as $o){
+			$data = $funcs->removeAllSampleSuccessFiles($o->outdir, [$samplename[0]->samplename], $clusteruser[0]->clusteruser);
+		}
+		
 		$sql="INSERT INTO `$this->tablename`
 		(`file_name`,
 		`$this->fieldname`, `dir_id`,
@@ -2370,7 +2388,7 @@ class files extends main{
 class dir{}
 class dirs extends main{
 	private $amazon_bucket;
-
+	
 	function __construct($model, $dir_arr = [], $backup_dir, $amazon_bucket)
 	{
 		$this->model=$model;
@@ -2420,8 +2438,5 @@ class dirs extends main{
 		return $this->model->query($sql);
 	}
 }
-
-
-
 
 ?>

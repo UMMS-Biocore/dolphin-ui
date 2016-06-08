@@ -180,4 +180,12 @@ class Search extends VanillaModel {
         $result = $this->query("select ngs_temp_lane_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_temp_lane_files left join ngs_dirs on ngs_temp_lane_files.dir_id = ngs_dirs.id where lane_id = $value");
 		return json_decode($result, true);
     }
+	function getInputSampleDirectories($value){
+		$result = $this->query("select ngs_dirs.fastq_dir, ngs_dirs.id from ngs_dirs where id in (select dir_id from ngs_temp_sample_files where sample_id = $value)");
+		return json_decode($result, true);
+	}
+	function getInputLaneDirectories($value){
+		$result = $this->query("select ngs_dirs.fastq_dir, ngs_dirs.id from ngs_dirs where id in (select dir_id from ngs_temp_lane_files where lane_id = $value)");
+		return json_decode($result, true);
+	}
 }

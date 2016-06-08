@@ -5,6 +5,8 @@
  */
 
 var bad_samples = [];
+var replaced_samples = [];
+var replaced_samples_ids = [];
 var id_array = ['genomebuild', 'barcode_sep', 'spaired', 'series_name', 'lane_name', 'input_dir', 'input_files', 'backup_dir', 'amazon_bucket',
 				'Barcode Definitions', 'groups', 'perms'];
 
@@ -231,20 +233,6 @@ function checkFastlaneInput(info_array){
 							}
 						}
 					});
-					
-					$.ajax({
-						type: 	'GET',
-						url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
-						data:  	{ p: 'checkOutputDir', outdir:info_array[x] },
-						async:	false,
-						success: function(s)
-						{
-							console.log(s);
-							if (s.toString() != '' && s.toString() != 0) {
-								used_outdir = true;
-							}
-						}
-					});
 				}
 				
 				if (dir_check_1.Result != 'Ok'){
@@ -253,10 +241,6 @@ function checkFastlaneInput(info_array){
 				}else if (dir_check_2.Result != 'Ok') {
 					//	perms errors
 					error_out.push(dir_check_2.ERROR);
-					database_checks.push(false);
-				}else if (used_outdir){
-					//	Outdir already used
-					error_out.push("Process directory is already being used.  Either change your process directory or remove the run that is using this directory.");
 					database_checks.push(false);
 				}else{
 					//	No errors
@@ -293,23 +277,16 @@ function checkFastlaneInput(info_array){
 	//	Samples
 	if (experiment_series_id > 0 && lane_id > 0) {
 		for(z in input_array){
-			if(sampleCheck(experiment_series_id, lane_id, input_array[z][0]) != 0){
-				bad_samples.push(input_array[z][0]);
+			var id_check = sampleCheck(experiment_series_id, lane_id, input_array[z][0]);
+			if(id_check > 0){
+				replaced_samples.push(input_array[z][0]);
+				replaced_samples_ids.push(id_check);
 			}
 		}
-		if (bad_samples.length > 0) {
-			database_checks.push(false);
-		}else{
-			database_checks.push(true);
-		}
+		database_checks.push(true);
 	}else{
 		database_checks.push(true);
 	}
-	
-	//	Directories
-		//	Make sure directories are real?
-	//	Files
-		//	Make sure files are real?
 	
 	if (database_checks.indexOf(false) > -1) {
 		//	Error in submission, do not submit into database
@@ -317,6 +294,12 @@ function checkFastlaneInput(info_array){
 		sendProcessData(error_out, 'error_out');
 		return database_checks;
 	}else{
+		//	Remove sample success files if already exists
+		if (replaced_samples.length > 0) {
+			console.log(replaced_samples);
+			console.log(replaced_samples_ids);
+			removeSuccessFiles(replaced_samples, replaced_samples_ids);
+		}
 		//	Obtain group id
 		var gid = document.getElementById('groups').value.toString();
 		var perms = obtainPermsFromRadio();
@@ -597,3 +580,15 @@ function getBadSamples(){
 	return bad_samples;
 }
 
+function removeSuccessFiles(samples, sample_ids){
+	$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			data:  	{ p: 'removeSuccessFiles', samples: samples.toString(), sample_ids: sample_ids.toString()},
+			async:	false,
+			success: function(s)
+			{
+				console.log(s);
+			}
+	});
+}

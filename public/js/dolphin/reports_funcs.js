@@ -94,9 +94,11 @@ function parseDedup(url_path) {
 			async: false,
 			success : function(s)
 			{
+				console.log(s);
 				var array = s.split("\n");
 				for (var x = 0; x < array.length; x++) {
-					var name = array[x].split("/")[array[x].split("/").length - 1].split(".")[0]
+					var name = array[x].split("/")[array[x].split("/").length - 1].split("PCR_duplicates")[0];
+                    name = name.slice(0,-1);
 					dedup[name] = array[x].split(" ")[1]
 				}
 			}
@@ -129,7 +131,6 @@ function createDetails(libraries) {
 		async: false,
 		success : function(s)
 		{
-			console.log(s);
 			var returnedSamples = s.split(',');
 			console.log(returnedSamples);
 			for(var x = 0; x < s.length; x++){
@@ -385,7 +386,7 @@ function showTable(type){
 			
 			document.getElementById('rseqc_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("rseqc_table_div", "rseqc_plot")']))
 			document.getElementById('switch_plot').innerHTML = 'Switch Plot Type';
-			createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', 'rseqc_table_div', 'rseqc_plot', 'normal');
+			createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', 'rseqc_table_div', 'rseqc_plot', 'percent');
 			showHighchart('rseqc_table_div');
 		}
 	}else{
@@ -912,7 +913,7 @@ function downloadInitialMapping() {
 	for (var sample_array in initial_mapping_table) {
 		textString += initial_mapping_table[sample_array].join("\t") + "\n";
 	}
-    var data = new Blob([textString], {type: 'text/plain'});
+    var data = new Blob([textString], {type: 'text/tsv'});
 	if (textFile !== null) {
 		window.URL.revokeObjectURL(textFile);
     }
@@ -985,6 +986,7 @@ $(function() {
 		var summary_rna_type = [];
 		var non_rna_object = {}
 		for (var z = 0; z < summary_files.length; z++) {
+<<<<<<< HEAD
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
 				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
@@ -1016,6 +1018,36 @@ $(function() {
 					}else if (/chip/.test(summary_files[z]['file'])){
 						non_rna_object['chip_dedup'] = true;
 					}
+=======
+			if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
+				var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
+				summary_rna_type.push(RNA);
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
+				document.getElementById(RNA).innerHTML = RNA;
+				if (document.getElementById('unused') != undefined) {
+					document.getElementById('unused').remove();
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
+					document.getElementById('unused').innerHTML = 'Reads Left';
+				}else{
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
+					document.getElementById('unused').innerHTML = 'Reads Left';
+				}
+			}else if (/flagstat/.test(summary_files[z]['file'])){
+				if (/rsem/.test(summary_files[z]['file'])){
+					non_rna_object['rsem'] = true;
+				}else if (/tophat/.test(summary_files[z]['file'])){
+					non_rna_object['tophat'] = true;
+				}else if (/chip/.test(summary_files[z]['file'])){
+					non_rna_object['chip'] = true;
+				}
+			}else if (/pcrdups/.test(summary_files[z]['file'])){
+				if (/rsem/.test(summary_files[z]['file'])){
+					non_rna_object['rsem_dedup'] = true;
+				}else if (/tophat/.test(summary_files[z]['file'])){
+					non_rna_object['tophat_dedup'] = true;
+				}else if (/chip/.test(summary_files[z]['file'])){
+					non_rna_object['chip_dedup'] = true;
+>>>>>>> develop
 				}
 			}
 		}
@@ -1082,6 +1114,7 @@ $(function() {
 		
 		//	Gather/organize sample data
 		populateTable(summary_files, samplenames, libraries, read_counts);
+<<<<<<< HEAD
 		
 		//	set up UI
 		document.getElementById('jsontable_initial_mapping').appendChild(createElement('button', ['id', 'class', 'onclick'], ['initial_download_button', 'btn btn-primary margin', 'downloadInitialMapping()']))
@@ -1096,6 +1129,135 @@ $(function() {
 		console.log(headers)
 		console.log(initial_mapping_table)
 		console.log(table_data)
+=======
+		var table_div = document.getElementById('jsontable_initial_mapping_wrapper').children[0]
+		table_div.appendChild(createElement('button', ['id', 'class', 'onclick'], ['initial_download_button', 'btn btn-primary margin pull-right', 'downloadInitialMapping()']), table_div.children[0])
+		document.getElementById('initial_download_button').innerHTML = 'Download Table';
+		document.getElementById('jsontable_initial_mapping_wrapper').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.tsv', 'display:none']))
+		createDropdown(summary_rna_type, 'initial_mapping');
+		
+		for (var sample_obj in table_data) {
+			if (table_data[sample_obj]['rsem'] != undefined) {
+				rsem_toggle = true;
+				rsem_categories.push(sample_obj);
+				for (var data in table_data[sample_obj]) {
+					if (!/chip/.test(data) && !/tophat/.test(data) && !/total_reads/.test(data) && !/unmapped/.test(data)) {
+						if (rsem_series[data] == undefined) {
+							var name = data;
+							if (data == 'rsem') {
+								name = 'reads mapped'
+							}else if (data == 'rsem_dedup') {
+								name = 'dedup reads'
+							}
+							rsem_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						}else{
+							rsem_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						}
+					}
+				}
+			}
+			
+			if (table_data[sample_obj]['tophat_dedup'] != undefined) {
+				tophat_toggle = true;
+				tophat_categories.push(sample_obj);
+				for (var data in table_data[sample_obj]) {
+					if (!/chip/.test(data) && !/rsem/.test(data) && !/total_reads/.test(data) && !/unmapped/.test(data)) {
+						if (tophat_series[data] == undefined) {
+							var name = data;
+							if (data == 'tophat') {
+								name = 'reads mapped'
+							}else if (data == 'tophat_dedup') {
+								name = 'dedup reads'
+							}
+							tophat_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						}else{
+							tophat_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						}
+					}
+				}
+			}
+			
+			if (table_data[sample_obj]['chip_dedup'] != undefined) {
+				chip_toggle = true;
+				chip_categories.push(sample_obj);
+				for (var data in table_data[sample_obj]) {
+					if (!/rsem/.test(data) && !/tophat/.test(data) && !/total_reads/.test(data) && !/unmapped/.test(data)) {
+						if (chip_series[data] == undefined) {
+							var name = data;
+							if (data == 'chip') {
+								name = 'reads mapped'
+							}else if (data == 'chip_dedup') {
+								name = 'dedup reads'
+							}
+							chip_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						}else{
+							chip_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						}
+					}
+				}
+			}
+			
+			if (table_data[sample_obj]['chip_dedup'] == undefined && table_data[sample_obj]['tophat_dedup'] == undefined && table_data[sample_obj]['rsem_dedup'] == undefined) {
+				base_categories.push(sample_obj);
+				for (var data in table_data[sample_obj]) {
+					if (!/rsem/.test(data) && !/tophat/.test(data) && !/chip/.test(data) && !/total_reads/.test(data)) {
+						console.log(data)
+						if (base_series[data] == undefined) {
+							var name = data;
+							base_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						}else{
+							base_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						}
+					}
+				}
+            }
+		}
+		console.log(rsem_series)
+		console.log(tophat_series)
+		console.log(chip_series)
+		console.log(base_series)
+		
+		if (rsem_toggle) {
+			var rsem_final_series = [];
+			for (var series in rsem_series) {
+				rsem_final_series.push(rsem_series[series]);
+			}
+			document.getElementById('plots').appendChild(createElement('button', ['id', 'class', 'onclick', 'style'], ['rsem_switch', 'btn btn-primary margin', 'switchStacking("plots", "rsem_plot")', 'display:none']))
+			document.getElementById('rsem_switch').innerHTML = 'Switch RSEM Plot Type';
+			createHighchart(rsem_categories, rsem_final_series, 'Distribution of RSEM Reads', 'Percentage of Reads', 'plots', 'rsem_plot', 'percent');
+		}
+		
+		if (tophat_toggle) {
+			var tophat_final_series = [];
+			for (var series in tophat_series) {
+				tophat_final_series.push(tophat_series[series]);
+			}
+			console.log(tophat_final_series)
+			document.getElementById('plots').appendChild(createElement('button', ['id', 'class', 'onclick', 'style'], ['tophat_switch', 'btn btn-primary margin', 'switchStacking("plots", "tophat_plot")', 'display:none']))
+			document.getElementById('tophat_switch').innerHTML = 'Switch Tophat Plot Type';
+			createHighchart(tophat_categories, tophat_final_series, 'Distribution of Tophat Reads', 'Percentage of Reads', 'plots', 'tophat_plot', 'percent');
+		}
+		
+		if (chip_toggle) {
+			var chip_final_series = [];
+			for (var series in chip_series) {
+				chip_final_series.push(chip_series[series]);
+			}
+			document.getElementById('plots').appendChild(createElement('button', ['id', 'class', 'onclick', 'style'], ['chip_switch', 'btn btn-primary margin', 'switchStacking("plots", "chip_plot")', 'display:none']))
+			document.getElementById('chip_switch').innerHTML = 'Switch Chip Plot Type';
+			createHighchart(chip_categories, chip_final_series, 'Distribution of Chip Reads', 'Percentage of Reads', 'plots', 'chip_plot', 'percent');
+		}
+		
+		if (!chip_toggle && !tophat_toggle && !rsem_toggle) {
+            var base_final_series = [];
+			for (var series in base_series) {
+				base_final_series.push(base_series[series]);
+			}
+			document.getElementById('plots').appendChild(createElement('button', ['id', 'class', 'onclick', 'style'], ['base_switch', 'btn btn-primary margin', 'switchStacking("plots", "base_plot")', 'display:none']))
+			document.getElementById('base_switch').innerHTML = 'Switch Plot Type';
+			createHighchart(base_categories, base_final_series, 'Distribution of Reads', 'Percentage of Reads', 'plots', 'base_plot', 'percent');
+        }
+>>>>>>> develop
 		
 		//Create a check for FASTQC output????
 		if (getFastQCBool(run_id)) {

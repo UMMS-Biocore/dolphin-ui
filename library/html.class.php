@@ -493,7 +493,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	return $html;
 	}
 	
-	function getBrowserPanelMore($objects, $fields, $header ,$name, $files, $fastq_files, $sample_runs, $sample_tables)
+	function getBrowserPanelMore($objects, $fields, $header ,$name, $files, $fastq_files, $sample_runs, $sample_tables, $dir_array)
 	{
 	foreach ($objects as $obj):
 	$html='<div class="panel panel-default">
@@ -570,23 +570,27 @@ e range"><i class="fa fa-calendar"></i></button>
 						</div>'; // END DATA PANEL
 		$html.=			'<div class="box-body tab-pane" id="directory_'.$header.'">
 							<div class="box-body">';
-		if($files != null){
+		if(isset($files)){
+			foreach ($dir_array as $da){
 				$html .= '		<table class="table table-hover table-striped table-condensed">';
 				$html.='			<thead><tr><th>Input File(s) Directory:</th></tr></thead>
 									<tbody>';
-				$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $files[0]['dir_id'].', \'fastq_dir\', \'ngs_dirs\', this)">'.$files[0]['fastq_dir'].'</td></tr>
+				$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $da['id'].', \'fastq_dir\', \'ngs_dirs\', this)">'.$da['fastq_dir'].'</td></tr>
 									</tbody>';
 				$html.='			<thead><tr><th>Input File(s):</th></tr></thead>
 									<tbody>';
 				foreach ($files as $f){
+					if($f['dir_id'] == $da['id']){
 						if($fastq_files == 'lanes'){
 								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_lane_files\', this)">'.$f['file_name'].'</td></tr>';
 						}else{
 								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_sample_files\', this)">'.$f['file_name'].'</td></tr>';	
 						}
+					}
 				}
 				$html .= '			</tbody>
 								</table>';
+			}
 		}
 		if($fastq_files != null && $fastq_files != 'lanes'){
 				$html .= '		<table class="table table-hover table-striped table-condensed">';
@@ -764,10 +768,13 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html.= $this->getInfoBox($id);
 	$html.= '</div><!-- /.box-header -->
 				<div class="box-body">
-					<div class="input-group margin col-md-11">
-						<form role="form">';
+					<div class="input-group margin col-md-11">';
 	if ($selection == "TEXT"){
-		$html.= 						'<input type="text" class="form-control" id="'.$id.'">';
+		$html.= 					'<form role="form">
+										<input type="text" class="form-control" id="'.$id.'">
+									</form>';
+	}else if($selection == "DIV"){
+		$html.= 						'<div id="'.$id.'"></div>';
 	}else if($selection == "TEXTBOX"){
 		if($id == 'input_files'){
 				$placeholder = "Paired End Example:\nlibrary_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz\nSingle End Example:\nlibrary_name_rep1 lib_rep1.fastq.gz";
@@ -776,14 +783,17 @@ e range"><i class="fa fa-calendar"></i></button>
 		}else{
 				$placeholder = "...";
 		}
-		$html.=							'<textarea id="'.$id.'" type="text" class="form-control" rows="5" placeholder="'.$placeholder.'"></textarea>';
+		$html.=						'<form role="form">
+										<textarea id="'.$id.'" type="text" class="form-control" rows="5" placeholder="'.$placeholder.'"></textarea>
+									</form>';	
 	}else{
 		$html.=							'<select class="form-control" id="'.$id.'">
 									'.$selection.'
-								</select>';
+								</select>
+							</form>';
 	}	
-	$html.= 						'</form>
-					</div>
+	
+	$html.= 		'</div>
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
 		</div><!-- /.col -->';

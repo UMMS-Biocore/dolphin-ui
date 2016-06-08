@@ -306,4 +306,7 @@ $(function() {
 			username = s[0];
 		}
 	});
+	
+	//fastlaneDropdown('experiment_name', 'ngs_experiment_series', 'series_name');
+	//fastlaneDropdown('name', 'ngs_lanes', 'lane_name');
 });

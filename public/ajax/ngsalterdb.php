@@ -131,6 +131,10 @@ if ($p == "submitPipeline" )
 			");
 		}
         
+		if($name == 'Import Initial Run' || $name == 'Fastlane Initial Run'){
+			$wkey = '';
+		}
+		
         $data=$query->runSQL("
         UPDATE ngs_runparams
         SET run_status = 0,

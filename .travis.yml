@@ -34,6 +34,12 @@ before_script:
   - sudo service apache2 restart
   - mysql -u root -e "CREATE USER 'myproject'@'localhost' IDENTIFIED BY 'mypass'"
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'myproject'@'localhost' WITH GRANT OPTION;"
+  - mkdir /home/vagrant/dir1
+  - touch /home/vagrant/dir1/EXAMPLE_AAAAAA_R1_001.fastq.gz /home/vagrant/dir1/EXAMPLE_AAAAAA_R2_001.fastq.gz /home/vagrant/dir1/EXAMPLE_AAAAAA_R1_002.fastq.gz /home/vagrant/dir1/EXAMPLE_AAAAAA_R2_002.fastq.gz
+  - touch /home/vagrant/dir1/EXAMPLE_CCCCCC_R1_001.fastq.gz /home/vagrant/dir1/EXAMPLE_CCCCCC_R2_001.fastq.gz /home/vagrant/dir1/EXAMPLE_CCCCCC_R1_002.fastq.gz /home/vagrant/dir1/EXAMPLE_CCCCCC_R2_002.fastq.gz
+  - mkdir /home/vagrant/dir2
+  - touch /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_002.fastq.gz
+  - touch /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_002.fastq.gz
   # update database
   - gzip -d db/biocoredb.sql.gz
   - mysql -e "CREATE DATABASE biocore;" -uroot
