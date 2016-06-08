@@ -350,6 +350,26 @@ else if ($p == 'updateTableFile')
 	
 	$_SESSION['table_file'] = $user;
 }
+else if ($p == "createSummaryTSV")
+{
+	if (isset($_GET['wkey'])){$wkey = $_GET['wkey'];}
+	if (isset($_GET['headers'])){$headers = $_GET['headers'];}
+	if (isset($_GET['data_array'])){$data_array = $_GET['data_array'];}
+	
+	$file = fopen("../pub/$wkey/summary/summary.tsv", "w");
+	fwrite($file,implode("\t",$headers)."\n");
+	foreach($data_array as $d){
+		fwrite($file,implode("\t",$d)."\n");
+	}
+	fclose($file);
+	
+	$data=$query->runSQL("
+	INSERT INTO report_list
+	(`wkey`, `version`, `type`, `file`)
+	VALUES
+	('$wkey', '1.0.0', 'summary', 'summary/summary.tsv')
+	");
+}
 
 if (!headers_sent()) {
 	header('Cache-Control: no-cache, must-revalidate');

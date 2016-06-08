@@ -43,6 +43,10 @@
 									unset($_SESSION['tablecreatorcheck']);
 								?>
 							</div>
+							<div class="" id="plots">
+								<div id="plot_container" style="min-width: 310px;margin: 0 auto">
+								</div>
+							</div>
 						</div>
 					</div><!-- /.row -->
 					<div class="row">

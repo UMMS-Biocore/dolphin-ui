@@ -17,6 +17,9 @@
 		<script src="<?php echo BASE_PATH?>/js/AdminLTE/app.js" type="text/javascript"></script>
 		<!-- AdminLTE for demo purposes -->
 		<script src='<?php echo BASE_PATH?>/js/dolphin/js_to_html_funcs.js'></script>
+		<script src="<?php echo BASE_PATH?>/js/Highcharts-4.2.5/js/highcharts.js"></script>
+		<script src="<?php echo BASE_PATH?>/js/Highcharts-4.2.5/js/modules/exporting.js"></script>
+		<script src="<?php echo BASE_PATH?>/js/dolphin/highchart_funcs.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/combobox/combobox.js" type="text/javascript" charset="utf-8"></script>
         <script src='<?php echo BASE_PATH?>/js/dolphin/pipeline_gen_funcs.js' type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/ngsget_funcs.js' type="text/javascript"></script>
@@ -28,6 +31,7 @@
 		<script src="<?php echo BASE_PATH?>/js/dolphin/tablecreator_funcs.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/streamTable/stream_table.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
+		<script src='<?php echo BASE_PATH?>/js/dolphin/reports_funcs.js' type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 	</body>
 </html>

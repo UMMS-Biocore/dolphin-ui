@@ -120,7 +120,7 @@ function reportSelection(){
 	}
 	for(var y = 0; y < reports.length; y ++){
 		var filename = reports[y].file.split(".")[reports[y].file.split(".").length - 1];
-		if (filename != 'pdf' && filename != 'R') {
+		if (filename != 'pdf' && filename != 'R' && filename != 'txt') {
 			if (run_cohesion_check.indexOf(reports[y].file) < 0) {
 				run_cohesion_check.push(reports[y].file);
 				run_cohesion_count_check.push(1);

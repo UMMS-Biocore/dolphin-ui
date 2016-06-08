@@ -702,6 +702,34 @@ $(function() {
 				}
 			});
 		}
+		
+		//	Plot variables contained within highchart_funcs.js
+		//	Dictionaries contained within report_funcs.js
+		var table_array = json_obj;
+		for( var j = 0; j < table_array.length; j++){
+			for( var i = 0; i < summary_dictionary.length; i++){
+				if (table_array[j][summary_dictionary[i]] != undefined) {
+					if (table_data[table_array[j]['Sample']] == undefined) {
+						table_data[table_array[j]['Sample']] = {};
+						if (summary_dictionary[i] != 'Sample') {
+							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
+						}
+					}else{
+						if (summary_dictionary[i] != 'Sample') {
+							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
+						}
+					}
+				}
+			}
+		}
+		
+		//	Function within report_fincs.js
+		summaryPlotSetup(table_data);
+		console.log(table_data);
+		createSummaryHighchart();
+		showHighchart('plots');
+		
+		console.log(table_params);
 		//	Log data path
 		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
