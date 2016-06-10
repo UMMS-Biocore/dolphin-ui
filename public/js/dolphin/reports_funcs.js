@@ -1087,7 +1087,7 @@ $(function() {
 		//	set up UI
 		document.getElementById('jsontable_initial_mapping').appendChild(createElement('button', ['id', 'class', 'onclick'], ['initial_download_button', 'btn btn-primary margin', 'downloadInitialMapping()']))
 		document.getElementById('initial_download_button').innerHTML = 'Download Initial Table';
-		document.getElementById('jsontable_initial_mapping').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.txt', 'display:none']))
+		document.getElementById('jsontable_initial_mapping').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.tsv', 'display:none']))
 		createDropdown(summary_rna_type, 'initial_mapping');
 		
 		//	Set up plot data
