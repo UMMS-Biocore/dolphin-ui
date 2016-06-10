@@ -68,14 +68,12 @@ ADD COLUMN `biological_replica` VARCHAR(255) NULL DEFAULT NULL AFTER `time`,
 ADD COLUMN `technical_replica` VARCHAR(255) NULL DEFAULT NULL AFTER `biological_replica`,
 ADD COLUMN `spike_ins` VARCHAR(255) NULL DEFAULT NULL AFTER `technical_replica`;
 
-DROP TABLE ngs_sample_conds;
 CREATE TABLE `biocore`.`ngs_sample_conds` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `sample_id` INT NULL DEFAULT NULL,
   `cond_id` INT NULL DEFAULT NULL,
   PRIMARY KEY (`id`));
 
-DROP TABLE ngs_conds;
 CREATE TABLE `biocore`.`ngs_conds` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cond_symbol` VARCHAR(45) NULL DEFAULT NULL,
@@ -85,7 +83,6 @@ CREATE TABLE `biocore`.`ngs_conds` (
 ALTER TABLE `biocore`.`ngs_samples` 
 DROP COLUMN `condition`;
 
-DROP TABLE ngs_source;
 CREATE TABLE `biocore`.`ngs_source` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `source` VARCHAR(45) NULL DEFAULT NULL,
@@ -96,7 +93,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `source`,
 ADD COLUMN `source_id` INT NULL DEFAULT NULL AFTER `spike_ins`;
 
-DROP TABLE ngs_organism;
 CREATE TABLE `biocore`.`ngs_organism` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `organism` VARCHAR(100) NULL DEFAULT NULL,
@@ -107,7 +103,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `organism`,
 ADD COLUMN `organism_id` INT NULL DEFAULT NULL AFTER `source_id`;
 
-DROP TABLE ngs_genotype;
 CREATE TABLE `biocore`.`ngs_genotype` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `genotype` VARCHAR(45) NULL DEFAULT NULL,
@@ -117,7 +112,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `genotype`,
 ADD COLUMN `genotype_id` INT NULL DEFAULT NULL AFTER `organism_id`;
 
-DROP TABLE ngs_molecule;
 CREATE TABLE `biocore`.`ngs_molecule` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `molecule` VARCHAR(45) NULL DEFAULT NULL,
@@ -127,7 +121,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `molecule`,
 ADD COLUMN `molecule_id` INT NULL DEFAULT NULL AFTER `genotype_id`;
 
-DROP TABLE ngs_library_type;
 CREATE TABLE `biocore`.`ngs_library_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `library_type` VARCHAR(255) NULL DEFAULT NULL,
@@ -137,7 +130,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `library_type`,
 ADD COLUMN `library_type_id` INT NULL DEFAULT NULL AFTER `molecule_id`;
 
-DROP TABLE ngs_donor;
 CREATE TABLE `biocore`.`ngs_donor` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `donor` VARCHAR(100) NULL DEFAULT NULL,
@@ -146,7 +138,6 @@ CREATE TABLE `biocore`.`ngs_donor` (
 ALTER TABLE `biocore`.`ngs_samples` 
 ADD COLUMN `donor_id` INT NULL DEFAULT NULL AFTER `library_type_id`;
 
-DROP TABLE ngs_biosample_type;
 CREATE TABLE `biocore`.`ngs_biosample_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `biosample_type` VARCHAR(100) NULL DEFAULT NULL,
@@ -155,7 +146,6 @@ CREATE TABLE `biocore`.`ngs_biosample_type` (
 ALTER TABLE `biocore`.`ngs_samples` 
 ADD COLUMN `biosample_type_id` INT NULL DEFAULT NULL AFTER `donor_id`;
 
-DROP TABLE ngs_instrument_model;
 CREATE TABLE `biocore`.`ngs_instrument_model` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `instrument_model` VARCHAR(100) NULL DEFAULT NULL,
@@ -165,7 +155,6 @@ ALTER TABLE `biocore`.`ngs_samples`
 DROP COLUMN `instrument_model`,
 ADD COLUMN `instrument_model_id` INT NULL DEFAULT NULL AFTER `biosample_type_id`;
 
-DROP TABLE ngs_treatment_manufacturer;
 CREATE TABLE `biocore`.`ngs_treatment_manufacturer` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `treatment_manufacturer` VARCHAR(255) NULL DEFAULT NULL,
@@ -174,7 +163,6 @@ CREATE TABLE `biocore`.`ngs_treatment_manufacturer` (
 ALTER TABLE `biocore`.`ngs_samples` 
 ADD COLUMN `treatment_manufacturer_id` INT NULL DEFAULT NULL AFTER `instrument_model_id`;
 
-DROP TABLE ngs_library_strategy;
 CREATE TABLE `biocore`.`ngs_library_strategy` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `library_strategy` VARCHAR(100) NULL DEFAULT NULL,
@@ -184,7 +172,6 @@ ALTER TABLE `biocore`.`ngs_protocols`
 DROP COLUMN `library_strategy`,
 ADD COLUMN `library_strategy_id` INT NULL DEFAULT NULL AFTER `strand_specific`;
 
-DROP TABLE ngs_organization;
 CREATE TABLE `biocore`.`ngs_organization` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `organization` VARCHAR(100) NULL DEFAULT NULL,
@@ -195,7 +182,6 @@ CREATE TABLE `biocore`.`ngs_lab` (
   `lab` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`id`));
 
-DROP TABLE ngs_facility;
 CREATE TABLE `biocore`.`ngs_facility` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `facility` VARCHAR(100) NULL DEFAULT NULL,
@@ -216,7 +202,6 @@ ADD COLUMN `target_id` INT NULL DEFAULT NULL AFTER `notebook_ref`;
 
 UPDATE `biocore`.`sidebar` SET `link`='stat/status' WHERE `id`='12';
 
-DROP TABLE ngs_antibody_target;
 CREATE TABLE `biocore`.`ngs_antibody_target` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `target` VARCHAR(100) NULL DEFAULT NULL,
