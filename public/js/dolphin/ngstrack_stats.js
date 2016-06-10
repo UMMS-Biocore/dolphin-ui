@@ -654,7 +654,7 @@ $(function() {
 				//	Generate JSON data manually
 				$.ajax({ type: "GET",
 					url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
-					async: true,
+					async: false,
 					success : function(s)
 					{
 						console.log(s);
@@ -667,7 +667,7 @@ $(function() {
 				$.ajax({ type: "GET",
 					url: BASE_PATH +"/public/ajax/tablegenerator.php",
 					data: { p: "updateTableFile", url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
-					async: true,
+					async: false,
 					success : function(s)
 					{
 						console.log(s);
@@ -682,7 +682,7 @@ $(function() {
 			//	Generate JSON data manually
 			$.ajax({ type: "GET",
 				url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
-				async: true,
+				async: false,
 				success : function(s)
 				{
 					console.log(s);
@@ -695,7 +695,7 @@ $(function() {
 			$.ajax({ type: "GET",
 				url: BASE_PATH +"/public/ajax/tablegenerator.php",
 				data: { p: "updateTableFile", url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
-				async: true,
+				async: false,
 				success : function(s)
 				{
 					console.log(s);
