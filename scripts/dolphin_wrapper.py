@@ -539,7 +539,7 @@ class Dolphin:
                  type="tophat"
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
-                    type="mergetophat"
+                    type="merge"+type
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
@@ -595,9 +595,9 @@ class Dolphin:
                  self.prf( fp, '%s'%(stepDiffMeth % locals()) )             
 
               if (pipe['Type'] == "HaplotypeCaller"):
-                if (pipe['merge'] == "yes"):
-                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
-                    type="merge"+type
+                #if (pipe['merge'] == "yes"):
+                    #self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    #type="merge"+type
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
                 type="haplotypecaller"
 
