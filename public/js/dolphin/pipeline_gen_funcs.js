@@ -1891,10 +1891,13 @@ function findPipelineValues(){
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'peaks', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample'];
+	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'peaks'];
 	
 	var JSON_ARRAY =  [];
+	console.log(currentPipelineID);
+	console.log(currentPipelineID.length);
 	for (var y = 0; y < currentPipelineID.length; y++) {
+		console.log(y);
 		var JSON_OBJECT = {};
 		var USED_DICT;
 		if (currentPipelineVal[y] == 'RNASeqRSEM') {
@@ -1936,11 +1939,11 @@ function findPipelineValues(){
 						var table_nodes = chip_table.fnGetNodes();
 						var value_str = "";
 						//      For every selected entry
-						for(var y = 0; y < table_data.length; y++){
+						for(var z = 0; z < table_data.length; z++){
 							chip_object = {};
-							chip_object['name'] = table_nodes[y].children[0].children[0].id
-							chip_object['samples'] = table_data[y][1].split(", ").toString();
-							chip_object['input'] = table_data[y][2].split(", ").toString();
+							chip_object['name'] = table_nodes[z].children[0].children[0].id
+							chip_object['samples'] = table_data[z][1].split(", ").toString();
+							chip_object['input'] = table_data[z][2].split(", ").toString();
 							if (JSON_OBJECT[USED_DICT[dict_counter]] == undefined) {
 								JSON_OBJECT[USED_DICT[dict_counter]] = [];
 							}
