@@ -664,7 +664,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		if (summary_files.length > 0) {
 			for (var z = 0; z < samplenames.length; z++) {
 				table_data[samplenames[z]] = {};
-				table_data[samplenames[z]]['total_reads'] = read_counts[z];
 			}
 			
 			for (var z = 0; z < summary_files.length; z++) {
@@ -678,6 +677,9 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					console.log(RNA_types)
 					var table_array_raw = (parseMoreTSV(['File','Total Reads','Reads 1','Reads >1','Unmapped Reads'], summary_files[z]['file']));
 					for(var x = 0; x < table_array_raw.length; x++){
+						if (x == 0) {
+							table_data[table_array_raw[x][0]]['total_reads'] = parseInt(table_array_raw[x][1]);
+						}
 						table_data[table_array_raw[x][0]][RNA_name] = parseInt(table_array_raw[x][2].split(" ")[0]) + parseInt(table_array_raw[x][3].split(" ")[0]);
 						table_data[table_array_raw[x][0]]['unmapped'] = parseInt(table_array_raw[x][4].split(" ")[0]);
 					}
