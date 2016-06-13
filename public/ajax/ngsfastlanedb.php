@@ -203,6 +203,11 @@ if ($p == 'experimentSeriesCheck'){
 		WHERE sample_id in ($sample_ids)
 	)
 	"));
+	$ngsfastqfilesremoval = $query->runSQL("
+	DELETE FROM
+	ngs_fastq_files
+	WHERE sample_id in ($sample_ids);
+	");
 	$samples_array = explode(",",$samples);
 	foreach($outdirs as $o){
 		$data = $funcs->removeAllSampleSuccessFiles($o->outdir, $samples_array, $clusteruser[0]->clusteruser);
