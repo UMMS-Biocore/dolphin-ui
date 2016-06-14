@@ -13,6 +13,7 @@ var tableDirectionNum = 0;
 var table_data = {};
 var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
+
 var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
 							'Total align', 'Duplicated Reads rsem', 'Reads Aligned rsem', 'Duplicated Reads tophat',
 							'Reads Aligned tophat', 'Duplicated Reads chip', 'Reads Aligned chip'];
@@ -601,7 +602,9 @@ function numberWithCommas(x) {
 
 function addPercentageArray(array){
 	for (var x = 2; x < array.length; x++){
-		array[x] = numberWithCommas(array[x] + " (" + ((array[x]/array[1])*100).toFixed(2) + " %)");
+		if (array[x].toString().split(" ").length < 2) {
+			array[x] = numberWithCommas(array[x] + " (" + ((array[x]/array[1])*100).toFixed(2) + " %)");
+		}
 	}
 	array[1] = numberWithCommas(array[1]);
 	return array
@@ -664,6 +667,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		if (summary_files.length > 0) {
 			for (var z = 0; z < samplenames.length; z++) {
 				table_data[samplenames[z]] = {};
+				table_data[samplenames[z]]['total_reads'] = read_counts[z];
 			}
 			
 			for (var z = 0; z < summary_files.length; z++) {
@@ -677,9 +681,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					console.log(RNA_types)
 					var table_array_raw = (parseMoreTSV(['File','Total Reads','Reads 1','Reads >1','Unmapped Reads'], summary_files[z]['file']));
 					for(var x = 0; x < table_array_raw.length; x++){
-						if (x == 0) {
-							table_data[table_array_raw[x][0]]['total_reads'] = parseInt(table_array_raw[x][1]);
-						}
 						table_data[table_array_raw[x][0]][RNA_name] = parseInt(table_array_raw[x][2].split(" ")[0]) + parseInt(table_array_raw[x][3].split(" ")[0]);
 						table_data[table_array_raw[x][0]]['unmapped'] = parseInt(table_array_raw[x][4].split(" ")[0]);
 					}
@@ -723,17 +724,17 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					if (sample_data[RNA_types[RNA]] != undefined) { row_array.push(sample_data[RNA_types[RNA]]) }
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
-				row_array = checkTableOutput(sample_data['rsem'], 'Transcriptomic Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Deduplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['tophat'], 'Genomic Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['rsem'], 'Transcriptomic Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Deduplicated Reads (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['chip'], 'Genomic Reads Aligned (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['tophat'], 'Genomic Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['chip_dedup'], 'Deduplicated Reads (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['chip'], 'Genomic Reads Aligned (Chip)', row_array);
 				
 				var reads_total = row_array[1];
 				console.log(row_array)
-				reports_table.fnAddData(addPercentageArray(row_array));
 				initial_mapping_table.push(row_array);
+				reports_table.fnAddData(addPercentageArray(row_array));
 			}
 			console.log(initial_mapping_table)
 			console.log(wkey)
@@ -752,11 +753,11 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			reports_table.fnClearTable();
 			for(var y = 0; y < read_counts.length; y++){
 				if (samplenames[y] == '' || samplenames[y] == null || samplenames[y] == undefined) {
-					reports_table.fnAddData([libraries[y], read_counts[y]]);
-					initial_mapping_table.push([libraries[y], read_counts[y]]);
+					reports_table.fnAddData([libraries[y], numberWithCommas(read_counts[y])]);
+					initial_mapping_table.push([libraries[y], numberWithCommas(read_counts[y])]);
 				}else{
-					reports_table.fnAddData([samplenames[y], read_counts[y]]);
-					initial_mapping_table.push([samplenames[y], read_counts[y]])
+					reports_table.fnAddData([samplenames[y], numberWithCommas(read_counts[y])]);
+					initial_mapping_table.push([samplenames[y], numberWithCommas(read_counts[y])]);
 				}
 			}
 		}else{
@@ -790,7 +791,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['tophat_dedup'] != undefined) {
+		if (table_data[sample_obj]['tophat'] != undefined) {
 			tophat_toggle = true;
 			tophat_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
@@ -810,7 +811,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['chip_dedup'] != undefined) {
+		if (table_data[sample_obj]['chip'] != undefined) {
 			chip_toggle = true;
 			chip_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
@@ -830,15 +831,18 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['chip_dedup'] == undefined && table_data[sample_obj]['tophat_dedup'] == undefined && table_data[sample_obj]['rsem_dedup'] == undefined) {
+		if (table_data[sample_obj]['chip'] == undefined && table_data[sample_obj]['tophat'] == undefined && table_data[sample_obj]['rsem'] == undefined) {
 			base_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
 				if (!/rsem/.test(data) && !/tophat/.test(data) && !/chip/.test(data) && !/total_reads/.test(data)) {
 					if (base_series[data] == undefined) {
 						var name = data;
-						base_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						console.log(data);
+						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						base_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						base_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						base_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -990,6 +994,14 @@ $(function() {
 		for (var z = 0; z < summary_files.length; z++) {
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
+				/*
+				if (/adapter/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
+					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
+				}else if (/quality/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
+					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
+				}else */
 				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_rna_type.push(RNA);
