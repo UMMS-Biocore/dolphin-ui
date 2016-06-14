@@ -723,12 +723,12 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					if (sample_data[RNA_types[RNA]] != undefined) { row_array.push(sample_data[RNA_types[RNA]]) }
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
-				row_array = checkTableOutput(sample_data['rsem'], 'Transcriptomic Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Deduplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['tophat'], 'Genomic Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['rsem'], 'Transcriptomic Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Deduplicated Reads (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['chip'], 'Genomic Reads Aligned (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['tophat'], 'Genomic Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['chip_dedup'], 'Deduplicated Reads (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['chip'], 'Genomic Reads Aligned (Chip)', row_array);
 				
 				var reads_total = row_array[1];
 				console.log(row_array)
@@ -790,7 +790,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['tophat_dedup'] != undefined) {
+		if (table_data[sample_obj]['tophat'] != undefined) {
 			tophat_toggle = true;
 			tophat_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
@@ -810,7 +810,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['chip_dedup'] != undefined) {
+		if (table_data[sample_obj]['chip'] != undefined) {
 			chip_toggle = true;
 			chip_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
@@ -830,7 +830,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['chip_dedup'] == undefined && table_data[sample_obj]['tophat_dedup'] == undefined && table_data[sample_obj]['rsem_dedup'] == undefined) {
+		if (table_data[sample_obj]['chip'] == undefined && table_data[sample_obj]['tophat'] == undefined && table_data[sample_obj]['rsem'] == undefined) {
 			base_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
 				if (!/rsem/.test(data) && !/tophat/.test(data) && !/chip/.test(data) && !/total_reads/.test(data)) {
