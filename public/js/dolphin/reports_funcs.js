@@ -752,11 +752,11 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			reports_table.fnClearTable();
 			for(var y = 0; y < read_counts.length; y++){
 				if (samplenames[y] == '' || samplenames[y] == null || samplenames[y] == undefined) {
-					reports_table.fnAddData([libraries[y], read_counts[y]]);
-					initial_mapping_table.push([libraries[y], read_counts[y]]);
+					reports_table.fnAddData([libraries[y], numberWithCommas(read_counts[y])]);
+					initial_mapping_table.push([libraries[y], numberWithCommas(read_counts[y])]);
 				}else{
-					reports_table.fnAddData([samplenames[y], read_counts[y]]);
-					initial_mapping_table.push([samplenames[y], read_counts[y]])
+					reports_table.fnAddData([samplenames[y], numberWithCommas(read_counts[y])]);
+					initial_mapping_table.push([samplenames[y], numberWithCommas(read_counts[y])]);
 				}
 			}
 		}else{
