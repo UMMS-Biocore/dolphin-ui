@@ -783,9 +783,9 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
 						}
-						rsem_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						rsem_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						rsem_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						rsem_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -803,9 +803,11 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'tophat_dedup') {
 							name = 'dedup reads'
 						}
-						tophat_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						tophat_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						tophat_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						tophat_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -823,9 +825,11 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'chip_dedup') {
 							name = 'dedup reads'
 						}
-						chip_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						chip_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						chip_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						chip_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -838,10 +842,10 @@ function summaryPlotSetup(table_data){
 					if (base_series[data] == undefined) {
 						var name = data;
 						console.log(data);
-						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						base_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						base_series[data]['data'].push(parseInt(num))
 					}
 				}
