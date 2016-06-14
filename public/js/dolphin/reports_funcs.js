@@ -689,25 +689,37 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					for (var k = 0; k < samplenames.length; k++) {
 						if (/rsem/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['rsem_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads rsem');
+							if (headers.indexOf('Duplicated Reads rsem') == -1) {
+								headers.push('Duplicated Reads rsem');
+							}
 						}else if (/tophat/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['tophat_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads tophat');
+							if (headers.indexOf('Duplicated Reads tophat') == -1) {
+								headers.push('Duplicated Reads tophat');
+							}
 						}else if (/chip/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['chip_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads chip');
+							if (headers.indexOf('Duplicated Reads chip') == -1) {
+								headers.push('Duplicated Reads chip');
+							}
 						}
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned rsem');
+						if (headers.indexOf('Reads Aligned rsem') == -1) {
+							headers.push('Reads Aligned rsem');
+						}
 					}else if (/tophat/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned tophat');
+						if (headers.indexOf('Reads Aligned tophat') == -1) {
+							headers.push('Reads Aligned tophat');
+						}
 					}else if (/chip/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned chip');
+						if (headers.indexOf('Reads Aligned chip') == -1) {
+							headers.push('Reads Aligned chip');
+						}
 					}
 				}
 			}
@@ -783,9 +795,9 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
 						}
-						rsem_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						rsem_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						rsem_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						rsem_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -803,9 +815,11 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'tophat_dedup') {
 							name = 'dedup reads'
 						}
-						tophat_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						tophat_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						tophat_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						tophat_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -823,9 +837,11 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'chip_dedup') {
 							name = 'dedup reads'
 						}
-						chip_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						chip_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						chip_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
+						chip_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
@@ -838,10 +854,10 @@ function summaryPlotSetup(table_data){
 					if (base_series[data] == undefined) {
 						var name = data;
 						console.log(data);
-						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						base_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						base_series[data]['data'].push(parseInt(num))
 					}
 				}
