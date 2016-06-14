@@ -680,9 +680,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					console.log(RNA_types)
 					var table_array_raw = (parseMoreTSV(['File','Total Reads','Reads 1','Reads >1','Unmapped Reads'], summary_files[z]['file']));
 					for(var x = 0; x < table_array_raw.length; x++){
-						if (x == 0) {
-							
-						}
 						table_data[table_array_raw[x][0]][RNA_name] = parseInt(table_array_raw[x][2].split(" ")[0]) + parseInt(table_array_raw[x][3].split(" ")[0]);
 						table_data[table_array_raw[x][0]]['unmapped'] = parseInt(table_array_raw[x][4].split(" ")[0]);
 					}
@@ -993,13 +990,15 @@ $(function() {
 		for (var z = 0; z < summary_files.length; z++) {
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
+				/*
 				if (/adapter/.test(summary_files[z]['file'])) {
 					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
 					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
 				}else if (/quality/.test(summary_files[z]['file'])) {
 					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
 					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
-				}else if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
+				}else */
+				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_rna_type.push(RNA);
 					document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
