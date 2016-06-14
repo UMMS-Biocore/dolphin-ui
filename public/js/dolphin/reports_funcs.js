@@ -836,9 +836,12 @@ function summaryPlotSetup(table_data){
 				if (!/rsem/.test(data) && !/tophat/.test(data) && !/chip/.test(data) && !/total_reads/.test(data)) {
 					if (base_series[data] == undefined) {
 						var name = data;
-						base_series[data] = {name: name, data: [parseInt(table_data[sample_obj][data])]}
+						console.log(data);
+						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						base_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
-						base_series[data]['data'].push(parseInt(table_data[sample_obj][data]))
+						var num = table_data[sample_obj][data].split(" ")[0].replace(/,/g, "");
+						base_series[data]['data'].push(parseInt(num))
 					}
 				}
 			}
