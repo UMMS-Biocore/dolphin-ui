@@ -601,7 +601,7 @@ function numberWithCommas(x) {
 
 function addPercentageArray(array){
 	for (var x = 2; x < array.length; x++){
-		if (array[x].split(" ").length < 2) {
+		if (array[x].toString().split(" ").length < 2) {
 			array[x] = numberWithCommas(array[x] + " (" + ((array[x]/array[1])*100).toFixed(2) + " %)");
 		}
 	}
