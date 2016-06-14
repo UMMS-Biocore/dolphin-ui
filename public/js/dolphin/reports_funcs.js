@@ -13,10 +13,10 @@ var tableDirectionNum = 0;
 var table_data = {};
 var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
-var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
+var summary_dictionary = ['Sample', 'Total Reads', 'Adapter Reads Removed', 'Quality Filtered Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
 							'Total align', 'Duplicated Reads rsem', 'Reads Aligned rsem', 'Duplicated Reads tophat',
 							'Reads Aligned tophat', 'Duplicated Reads chip', 'Reads Aligned chip'];
-var html_summary_dictionary = ['File', 'total_reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
+var html_summary_dictionary = ['File', 'total_reads', 'adapter', 'quality', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
 							'unmapped', 'rsem_dedup', 'rsem', 'tophat_dedup', 'tophat', 'chip_dedup', 'chip'];
 var initial_mapping_table = [];
 
@@ -601,7 +601,9 @@ function numberWithCommas(x) {
 
 function addPercentageArray(array){
 	for (var x = 2; x < array.length; x++){
-		array[x] = numberWithCommas(array[x] + " (" + ((array[x]/array[1])*100).toFixed(2) + " %)");
+		if (array[x].split(" ").length < 2) {
+			array[x] = numberWithCommas(array[x] + " (" + ((array[x]/array[1])*100).toFixed(2) + " %)");
+		}
 	}
 	array[1] = numberWithCommas(array[1]);
 	return array
@@ -664,6 +666,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		if (summary_files.length > 0) {
 			for (var z = 0; z < samplenames.length; z++) {
 				table_data[samplenames[z]] = {};
+				table_data[samplenames[z]]['total_reads'] = read_counts[z];
 			}
 			
 			for (var z = 0; z < summary_files.length; z++) {
@@ -678,7 +681,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					var table_array_raw = (parseMoreTSV(['File','Total Reads','Reads 1','Reads >1','Unmapped Reads'], summary_files[z]['file']));
 					for(var x = 0; x < table_array_raw.length; x++){
 						if (x == 0) {
-							table_data[table_array_raw[x][0]]['total_reads'] = parseInt(table_array_raw[x][1]);
+							
 						}
 						table_data[table_array_raw[x][0]][RNA_name] = parseInt(table_array_raw[x][2].split(" ")[0]) + parseInt(table_array_raw[x][3].split(" ")[0]);
 						table_data[table_array_raw[x][0]]['unmapped'] = parseInt(table_array_raw[x][4].split(" ")[0]);
@@ -732,8 +735,8 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				
 				var reads_total = row_array[1];
 				console.log(row_array)
-				reports_table.fnAddData(addPercentageArray(row_array));
 				initial_mapping_table.push(row_array);
+				reports_table.fnAddData(addPercentageArray(row_array));
 			}
 			console.log(initial_mapping_table)
 			console.log(wkey)
@@ -990,7 +993,13 @@ $(function() {
 		for (var z = 0; z < summary_files.length; z++) {
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
-				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
+				if (/adapter/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
+					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
+				}else if (/quality/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
+					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
+				}else if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_rna_type.push(RNA);
 					document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
