@@ -689,25 +689,37 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					for (var k = 0; k < samplenames.length; k++) {
 						if (/rsem/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['rsem_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads rsem');
+							if (headers.indexOf('Duplicated Reads rsem') == -1) {
+								headers.push('Duplicated Reads rsem');
+							}
 						}else if (/tophat/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['tophat_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads tophat');
+							if (headers.indexOf('Duplicated Reads tophat') == -1) {
+								headers.push('Duplicated Reads tophat');
+							}
 						}else if (/chip/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['chip_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
-							headers.push('Duplicated Reads chip');
+							if (headers.indexOf('Duplicated Reads chip') == -1) {
+								headers.push('Duplicated Reads chip');
+							}
 						}
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned rsem');
+						if (headers.indexOf('Reads Aligned rsem') == -1) {
+							headers.push('Reads Aligned rsem');
+						}
 					}else if (/tophat/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned tophat');
+						if (headers.indexOf('Reads Aligned tophat') == -1) {
+							headers.push('Reads Aligned tophat');
+						}
 					}else if (/chip/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
-						headers.push('Reads Aligned chip');
+						if (headers.indexOf('Reads Aligned chip') == -1) {
+							headers.push('Reads Aligned chip');
+						}
 					}
 				}
 			}
