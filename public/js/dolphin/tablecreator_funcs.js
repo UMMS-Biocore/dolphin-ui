@@ -120,7 +120,7 @@ function reportSelection(){
 	}
 	for(var y = 0; y < reports.length; y ++){
 		var filename = reports[y].file.split(".")[reports[y].file.split(".").length - 1];
-		if (filename != 'pdf' && filename != 'R') {
+		if (filename != 'pdf' && filename != 'R' && filename != 'txt') {
 			if (run_cohesion_check.indexOf(reports[y].file) < 0) {
 				run_cohesion_check.push(reports[y].file);
 				run_cohesion_count_check.push(1);
@@ -180,7 +180,9 @@ function sendToTableGen(){
 	var file_send = '&file=' + files_selected.toString();
 	
 	var type_send = '';
-	if (file_send.indexOf('.summary.') > -1) {
+	console.log(file_send);
+	if (file_send.indexOf('summary.') > -1) {
+		console.log("@@@");
 		type_send = '&type=summary';
 	}
 	var common_send = '';

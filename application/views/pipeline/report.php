@@ -22,7 +22,7 @@
 				<div class="panel-body">
 					<div id='empty_div'>
 					</div>
-					<?php echo $html->getExpandingAnalysisBox('Initial Mapping Results', "initial_mapping", true); ?>
+					<?php echo $html->getExpandingAnalysisBox('Summary Report', "initial_mapping", true); ?>
 					<?php echo $html->getExpandingAnalysisBox('FastQC Summary', "summary", false); ?>
 					<?php echo $html->getExpandingAnalysisBox('Detailed FastQC Results', "details", false); ?>
 					<?php echo $html->getExpandingAnalysisBox('RSEM Results', "RSEM", false); ?>

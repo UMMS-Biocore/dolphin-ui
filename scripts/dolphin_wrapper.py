@@ -518,7 +518,6 @@ class Dolphin:
                      previousrsem = "dedup" + type
                      type=previousrsem
                      self.prf( fp, stepPCRDups % locals())
-
                      
                  rsemref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@RSEMREF" )
 
@@ -529,9 +528,9 @@ class Dolphin:
                  for g_i in gis:
                    for t_e in tes:
                      self.prf( fp, stepRSEMCount % locals() )
-
                  self.writeVisualizationStr( fp, type, pipe, sep )
                  self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
               
               if (pipe['Type']=="Tophat"):
                  gtf = (pipe['CustomGenomeAnnotation'] if ('CustomGenomeAnnotation' in pipe and pipe['CustomGenomeAnnotation'].lower()!="none") else "@GTF" )
@@ -541,13 +540,13 @@ class Dolphin:
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                     type="mergetophat"
-
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
                     self.prf( fp, stepPCRDups % locals())
                  self.writeVisualizationStr( fp, type, pipe, sep )
                  self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
 
               if (pipe['Type'] == "DESeq"):
                  deseq_name =( pipe['Name'] if ('Name' in pipe) else '' )
@@ -561,7 +560,6 @@ class Dolphin:
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                      self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                      type="mergechip"
-
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
@@ -572,7 +570,7 @@ class Dolphin:
                  #Set running macs step
                  self.prf( fp, '%s'%(stepMACS % locals()) )
                  self.prf( fp, '%s'%(stepAggregation % locals()) )
-     
+                 self.prf( fp, stepAlignmentCount % locals() )
 
               if (pipe['Type'] == "BisulphiteMapping"):
                  self.prf( fp, '%s'% ( stepBSMap % locals() if ('BSMapStep' in pipe and pipe['BSMapStep'].lower()=="yes") else None ) )
@@ -604,6 +602,7 @@ class Dolphin:
                 type="haplotypecaller"
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
+        print >>fp, '%s'%(stepSummary % locals())
         print >>fp, '%s'%(stepClean % locals())
 
         fp.close()

@@ -69,7 +69,7 @@ foreach ($a as $i => $row){
     array_pop($sample_breakdown);
     $url=API_PATH."/public/api/?source=".API_PATH."/public/pub/".$i."/$file&$fields&$format";
     $json = file_get_contents($url);
-        $dat1 = json_decode($json, $array=TRUE);
+    $dat1 = json_decode($json, $array=TRUE);
     foreach ($dat1[0] as $key => $value){
         $new_key = array_search($key."_run".$c[$i], $sample_breakdown);
         if($new_key > -1){
@@ -87,6 +87,8 @@ foreach ($a as $i => $row){
         if ($type=="summary"){
             if(in_array($row["File"], $sample_array)){
                 $new_data[$row["File"]]=$row;
+            }elseif(in_array($row["Sample"], $sample_array)){
+                $new_data[$row["Sample"]]=$row;
             }
         }else{
             if ((isset($filter) && in_array($row[$keyfield], $filter_array)) || !isset($filter)){
