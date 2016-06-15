@@ -602,7 +602,7 @@ class Dolphin:
                 type="haplotypecaller"
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
-        print >>fp, '%s'%(stepSummary % locals())
+        print >>fp, '%s'%(stepSummary % locals() if (backupS3 and backupS3.lower()=="none") else None )
         print >>fp, '%s'%(stepClean % locals())
 
         fp.close()
