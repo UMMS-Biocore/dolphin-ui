@@ -1026,10 +1026,10 @@ $(function() {
 					if (document.getElementById('unused') != undefined) {
 						document.getElementById('unused').remove();
 						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
-						document.getElementById('unused').innerHTML = 'Reads Left';
+						document.getElementById('unused').innerHTML = 'Reads After Filtering';
 					}else{
 						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
-						document.getElementById('unused').innerHTML = 'Reads Left';
+						document.getElementById('unused').innerHTML = 'Reads After Filtering';
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
