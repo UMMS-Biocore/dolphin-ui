@@ -82,7 +82,12 @@ function parseFlagstat(url_path) {
 			async: false,
 			success : function(s)
 			{
-				mapped = s.split("\n")[4].split(" ")[0];
+				console.log(s.split("\n"));
+				if(s.split("\n").length > 3){
+					mapped = s.split("\n")[4].split(" ")[0];
+				}else{
+					mapped = s.trim();
+				}
 			}
 	});
 	return mapped;
