@@ -31,5 +31,5 @@ stepCounts = 'stepCounts%(sep)s@RUNCOUNTS -m @MAPNAMES -i @INDEXCMD -o @OUTDIR -
 stepDESeq2 = 'stepDESeq2%(deseq_name)s%(sep)s@RUNDESEQ2 -c @COLS%(deseq_name)s -pu @PUBDIR -da @DATASET%(deseq_name)s -w @WKEY -dc @CONDS%(deseq_name)s -r @RSCRIPT -o @OUTDIR -n %(deseq_name)s -e @HEATMAP%(deseq_name)s -t @FITTYPE%(deseq_name)s -pa @PADJ%(deseq_name)s -f @FOLDCHANGE%(deseq_name)s -s stepDESeq2%(deseq_name)s -j @JOB%(sep)s10'
 stepHaplotype = 'stepHaplotype%(sep)s@RUNHAPLOTYPE -o @OUTDIR -g @GENOMEFASTA -sa @SAMTOOLS -bed @BEDTOOLS -haplobed @HAPLOBED -haplocmd @HAPLOTYPECMD -multicmd @MULTIINTER -pi @PICARDCMD -smctfc @SMCTFC -smctfe @SMCTFE -mb @MBQS -mrp @MRPAS -mri @MRIRPS -common @COMMON -cl @CLINICAL -enh @ENHANCER -pro @PROMOTER -mo @MOTIFS -compare @PEAKS -se stepHaplotype -t %(type)s -j @JOB%(sep)s10'
 stepSummary  = 'stepSummary%(sep)s@RUNSUMMARY -c @CONFIG -u @USERNAME -p @PUBDIR -w @WKEY -o @OUTDIR%(sep)s10'
-stepAlignmentCount  = 'stepAlignmentCount%(sep)s@RUNALIGNMENTCOUNT -c @CONFIG -s @SAMTOOLS -u @USERNAME -t %(type)s -p @PUBDIR -w @WKEY -o @OUTDIR%(sep)s10'
+stepAlignmentCount  = 'stepAlignmentCount%(sep)s@RUNALIGNMENTCOUNT -c @CONFIG -s @SAMTOOLS1 -u @USERNAME -t %(type)s -p @PUBDIR -w @WKEY -o @OUTDIR%(sep)s10'
 stepClean  = 'stepClean%(sep)s@RUNCLEAN -c @CONFIG -l %(level)s -u @USERNAME -p @PUBDIR -w @WKEY -d @DBCOMMCMD  -o @OUTDIR%(sep)s10'
