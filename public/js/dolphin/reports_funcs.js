@@ -468,8 +468,12 @@ function generateSelectionTable(keys, type){
 			}
 		}
 	}else{
+		var dash_library = libraries;
+		for (var x =0; x < dash_library.length; x++){
+			dash_library[x] = dash_library[x].replace("-", "_");
+		}
 		for(var x = 0; x < keys.length; x++){
-			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange') {
+			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange' || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
 			}else{
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::string', 'shiftColumns(this)']);
