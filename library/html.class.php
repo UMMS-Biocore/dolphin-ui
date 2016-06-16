@@ -201,7 +201,7 @@ class HTML {
 	
  function getRespBoxTable_ng($title, $table, $fields)
 	{
-	$html='				<div class="box">
+	$html='				<div class="box" style="overflow:scroll">
 				<div class="box-header">
 					<h3 class="box-title">'.$title.'</h3>';
 		$html.= $this->getInfoBox($table);

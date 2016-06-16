@@ -141,7 +141,7 @@
 				<!-- Main content -->
 				<section class="">
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-12 margin">
 						<?php echo $html->sendJScript('status', "", "", "", $uid, $gids); ?>
 						<?php echo $html->getRespBoxTable_ng("Current Run Status", "runparams", "<th>ID</th><th>Name</th><th>Output Directory</th><th>Description</th><th>Status</th><th>Owner</th><th>Options</th>"); ?>
 						</div>
