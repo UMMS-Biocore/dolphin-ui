@@ -7,6 +7,7 @@
 var wkey = '';
 var lib_checklist = [];
 var libraries = [];
+var dash_library = [];
 var table_array = [];
 var currentResultSelection = '--- Select a Result ---';
 var tableDirectionNum = 0;
@@ -253,7 +254,7 @@ function showTable(type){
 	var objList;
 	
 	if (type == 'initial_mapping') {
-		temp_currentResultSelection = 'counts/' + currentResultSelection + '.counts.tsv&fields=id,' + lib_checklist.toString();
+		temp_currentResultSelection = 'counts/' + currentResultSelection + '.counts.tsv&fields=id,' + lib_checklist.toString().replace(/-/g,"_");
 		console.log(BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection);
 	}else{
 		temp_currentResultSelection = currentResultSelection;
@@ -264,6 +265,7 @@ function showTable(type){
 			async: false,
 			success : function(s)
 			{
+				console.log(s);
 				objList = s;
 			}
 	});
@@ -455,7 +457,8 @@ function generateSelectionTable(keys, type){
 	
 	if (type == 'initial_mapping') {
 		for(var x = 0; x < keys.length; x++){
-			if (temp_lib_checklist.indexOf(keys[x]) > -1) {
+			console.log(temp_lib_checklist);
+			if (temp_lib_checklist.indexOf(keys[x]) > -1 || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
 				th.innerHTML = keys[x];
 				th.appendChild(createElement('i', ['id', 'class'], [keys[x], 'pull-right fa fa-unsorted']));
@@ -468,10 +471,6 @@ function generateSelectionTable(keys, type){
 			}
 		}
 	}else{
-		var dash_library = libraries;
-		for (var x =0; x < dash_library.length; x++){
-			dash_library[x] = dash_library[x].replace("-", "_");
-		}
 		for(var x = 0; x < keys.length; x++){
 			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange' || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
@@ -1099,8 +1098,10 @@ $(function() {
 					for(var x  = 0; x < s.length; x++){
 						if (s[x].samplename == null) {
 							libraries.push(s[x].name);
+							dash_library.push(s[x].name.replace("-","_"));
 						}else{
 							libraries.push(s[x].samplename);
+							dash_library.push(s[x].samplename.replace("-","_"));
 						}
 					}
 					for(var x  = 0; x < s.length; x++){
