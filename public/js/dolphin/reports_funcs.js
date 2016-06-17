@@ -457,8 +457,7 @@ function generateSelectionTable(keys, type){
 	
 	if (type == 'initial_mapping') {
 		for(var x = 0; x < keys.length; x++){
-			console.log(temp_lib_checklist);
-			if (temp_lib_checklist.indexOf(keys[x]) > -1 || dash_library.indexOf(keys[x]) > -1) {
+			if (temp_lib_checklist.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
 				th.innerHTML = keys[x];
 				th.appendChild(createElement('i', ['id', 'class'], [keys[x], 'pull-right fa fa-unsorted']));
