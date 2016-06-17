@@ -174,7 +174,7 @@ function addSelection(type){
 	file_string = file_string.substring(0, file_string.length - 3);
 	if (file_string != '') {
 		var name = file_string.split(R1_REGEX)[0];
-		var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [name, 'text', 'form-control', name, 'updateName(this)'])
+		var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [replaceCharacters(name), 'text', 'form-control', replaceCharacters(name), 'updateName(this)'])
 		var button_div = createElement('div', ['class'], ['text-center'])
 		var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
 		var icon = createElement('i', ['class'],['fa fa-times']);
@@ -215,6 +215,12 @@ function removeRow(button){
 	files_table.fnDraw();
 }
 
+function replaceCharacters(string){
+	string = string.replace(/\./g, "_");
+	string = string.replace(/-/g, "_");
+	return string;
+}
+
 function smartSelection(){
 	var files_select = document.getElementById('file_select');
 	var barcode_bool = false;
@@ -238,7 +244,7 @@ function smartSelection(){
 		}
 		file_string = file_string.substring(0, file_string.length - 3);
 		var name = regex_string.split(' | ')[0].split('.')[0];
-		var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [name, 'text', 'form-control', name, 'updateName(this)'])
+		var input = createElement('input', ['id', 'type', 'class', 'value', 'onChange'], [replaceCharacters(name), 'text', 'form-control', replaceCharacters(name), 'updateName(this)'])
 		var button_div = createElement('div', ['class'], ['text-center'])
 		var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-danger text-center', 'button', 'removeRow(this)']);
 		var icon = createElement('i', ['class'],['fa fa-times']);
