@@ -83,8 +83,11 @@ function parseFlagstat(url_path) {
 			success : function(s)
 			{
 				console.log(s.split("\n"));
+				var flag_array = s.split("\n");
 				if(s.split("\n").length > 3){
-					mapped = s.split("\n")[4].split(" ")[0];
+					console.log(flag_array[9].split(" ")[0]);
+					console.log(flag_array[10].split(" ")[0]);
+					mapped = (parseInt(flag_array[9].split(" ")[0]) / 2) + parseInt(flag_array[10].split(" ")[0]);
 				}else{
 					mapped = s.trim();
 				}
@@ -465,8 +468,12 @@ function generateSelectionTable(keys, type){
 			}
 		}
 	}else{
+		var dash_library = libraries;
+		for (var x =0; x < dash_library.length; x++){
+			dash_library[x] = dash_library[x].replace("-", "_");
+		}
 		for(var x = 0; x < keys.length; x++){
-			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange') {
+			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange' || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
 			}else{
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::string', 'shiftColumns(this)']);
@@ -741,12 +748,12 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					if (sample_data[RNA_types[RNA]] != undefined) { row_array.push(sample_data[RNA_types[RNA]]) }
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
-				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Deduplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['rsem'], 'Transcriptomic Reads Aligned (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Deduplicated Reads (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['tophat'], 'Genomic Reads Aligned (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['chip_dedup'], 'Deduplicated Reads (Chip)', row_array);
-				row_array = checkTableOutput(sample_data['chip'], 'Genomic Reads Aligned (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Duplicated Reads (RSEM)', row_array);
+				row_array = checkTableOutput(sample_data['rsem'], 'Reads Aligned (RSEM)', row_array);
+				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Duplicated Reads (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['tophat'], 'Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['chip_dedup'], 'Duplicated Reads (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['chip'], 'Reads Aligned (Chip)', row_array);
 				
 				var reads_total = row_array[1];
 				console.log(row_array)
@@ -1057,28 +1064,28 @@ $(function() {
 		}
 		console.log(non_rna_object)
 		if (non_rna_object['rsem_dedup']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Deduplicated Reads (RSEM)']));
-			document.getElementById('Deduplicated Reads (RSEM)').innerHTML = 'Deduplicated Reads (RSEM)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (RSEM)']));
+			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
 		}
 		if (non_rna_object['rsem']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Transcriptomic Reads Aligned (RSEM)']));
-			document.getElementById('Transcriptomic Reads Aligned (RSEM)').innerHTML = 'Transcriptomic Reads Aligned (RSEM)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
+			document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
 		}
 		if (non_rna_object['tophat_dedup']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Deduplicated Reads (Tophat)']));
-			document.getElementById('Deduplicated Reads (Tophat)').innerHTML = 'Deduplicated Reads (Tophat)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Tophat)']));
+			document.getElementById('Duplicated Reads (Tophat)').innerHTML = 'Duplicated Reads (Tophat)';
 		}
 		if (non_rna_object['tophat']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Genomic Reads Aligned (Tophat)']));
-			document.getElementById('Genomic Reads Aligned (Tophat)').innerHTML = 'Genomic Reads Aligned (Tophat)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
+			document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
 		}
 		if (non_rna_object['chip_dedup']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Deduplicated Reads (Chip)']));
-			document.getElementById('Deduplicated Reads (Chip)').innerHTML = 'Deduplicated Reads (Chip)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Chip)']));
+			document.getElementById('Duplicated Reads (Chip)').innerHTML = 'Duplicated Reads (Chip)';
 		}
 		if (non_rna_object['chip']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Genomic Reads Aligned (Chip)']));
-			document.getElementById('Genomic Reads Aligned (Chip)').innerHTML = 'Genomic Reads Aligned (Chip)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
+			document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
 		}
 		
 		//	Gather sample names
