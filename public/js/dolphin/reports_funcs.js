@@ -807,8 +807,10 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
 						}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data]['data'].push(parseInt(num))
 					}
 				}
