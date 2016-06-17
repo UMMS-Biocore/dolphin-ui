@@ -34,13 +34,7 @@
                 </div>
                 <div class="footer">                                                               
                     <button type="submit" name="login" class="btn bg-olive btn-block">Sign me in</button>
-                    <?php
-                        if(LDAP_SERVER != 'none' || LDAP_SERVER != ''){
-                            echo '<button type="submit" name="signup" class="btn bg-olive btn-block" disabled>New User</button>';
-                        }else{
-                            echo '<button type="submit" name="signup" class="btn bg-olive btn-block">New User</button>';
-                        }
-                    ?>
+                    <button type="submit" name="signup" class="btn bg-olive btn-block">New User</button>
                 </div>
             </form>
         </div>

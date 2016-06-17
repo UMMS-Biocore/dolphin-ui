@@ -53,6 +53,23 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	SET verification = NULL
 	WHERE verification = '$code'
 	");
+	$insert_group = $query->runSQL("
+	INSERT INTO groups
+	(name, owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+	VALUES
+	('".$newuser[0]->username."', ".$newuser[0]->id.", 1, 15, NOW(), NOW(), 1)
+	");
+	$new_group = json_decode($query->queryTable("
+	SELECT id
+	FROM groups
+	WHERE name = '".$newuser[0]->username."'
+	"));
+	$insert_user = $query->runSQL("
+	INSERT INTO user_group
+	(u_id, g_id, owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+	VALUES
+	(".$newuser[0]->id.", ".$new_group[0]->id.", 1, 1, 15, NOW(), NOW(), 1);
+	");
     require_once("../includes/newuser_verified.php");
     session_destroy();
     exit;
@@ -219,7 +236,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	( `username`, `clusteruser`, `name`, `email`, `institute`, `lab`, `pass_hash`, `verification`, `memberdate`,
     `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user` )
 	VALUES
-	( '$username_val', '$clustername_val', '$fullname_space', '$email_val', '$institute_val',
+	( '".strtolower($username_val)."', '".strtolower($clustername_val)."', '$fullname_space', '$email_val', '$institute_val',
     '$lab_val', '$pass_hash', '".$verify."', NOW(), 1, 1, 15, NOW(), NOW(), 1 )
 	");
 	mail($email_val, 'Dolphin User Verification', 'Please visit this link in order to activate your dolphin account:\n ' . BASE_PATH . '?p=verify&code=' . $verify);
