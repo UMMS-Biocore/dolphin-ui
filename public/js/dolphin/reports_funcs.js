@@ -7,6 +7,7 @@
 var wkey = '';
 var lib_checklist = [];
 var libraries = [];
+var dash_library = [];
 var table_array = [];
 var currentResultSelection = '--- Select a Result ---';
 var tableDirectionNum = 0;
@@ -253,7 +254,7 @@ function showTable(type){
 	var objList;
 	
 	if (type == 'initial_mapping') {
-		temp_currentResultSelection = 'counts/' + currentResultSelection + '.counts.tsv&fields=id,' + lib_checklist.toString();
+		temp_currentResultSelection = 'counts/' + currentResultSelection + '.counts.tsv&fields=id,' + lib_checklist.toString().replace(/-/g,"_");
 		console.log(BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection);
 	}else{
 		temp_currentResultSelection = currentResultSelection;
@@ -264,6 +265,7 @@ function showTable(type){
 			async: false,
 			success : function(s)
 			{
+				console.log(s);
 				objList = s;
 			}
 	});
@@ -468,10 +470,6 @@ function generateSelectionTable(keys, type){
 			}
 		}
 	}else{
-		var dash_library = libraries;
-		for (var x =0; x < dash_library.length; x++){
-			dash_library[x] = dash_library[x].replace("-", "_");
-		}
 		for(var x = 0; x < keys.length; x++){
 			if (libraries.indexOf(keys[x]) > -1 || keys[x] == 'padj' || keys[x] == 'log2FoldChange' || keys[x] == 'foldChange' || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
@@ -718,17 +716,17 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned rsem') == -1) {
 							headers.push('Reads Aligned rsem');
 						}
 					}else if (/tophat/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned tophat') == -1) {
 							headers.push('Reads Aligned tophat');
 						}
 					}else if (/chip/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned chip') == -1) {
 							headers.push('Reads Aligned chip');
 						}
@@ -807,8 +805,10 @@ function summaryPlotSetup(table_data){
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
 						}
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data] = {name: name, data: [parseInt(num)]}
 					}else{
+						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data]['data'].push(parseInt(num))
 					}
 				}
@@ -1099,8 +1099,10 @@ $(function() {
 					for(var x  = 0; x < s.length; x++){
 						if (s[x].samplename == null) {
 							libraries.push(s[x].name);
+							dash_library.push(s[x].name.replace("-","_"));
 						}else{
 							libraries.push(s[x].samplename);
+							dash_library.push(s[x].samplename.replace("-","_"));
 						}
 					}
 					for(var x  = 0; x < s.length; x++){
