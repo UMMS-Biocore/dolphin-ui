@@ -716,17 +716,17 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['rsem'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned rsem') == -1) {
 							headers.push('Reads Aligned rsem');
 						}
 					}else if (/tophat/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned tophat') == -1) {
 							headers.push('Reads Aligned tophat');
 						}
 					}else if (/chip/.test(summary_files[z]['file'])){
-						table_data[summary_files[z]['file'].split("/")[1].split(".")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned chip') == -1) {
 							headers.push('Reads Aligned chip');
 						}
