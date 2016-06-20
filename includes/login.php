@@ -250,7 +250,7 @@ First name: ".$_POST['firstname']."
 Last name: ".$_POST['lastname']."
 Username: ".$_POST['username']."
 Clustername: ".$_POST['clustername']."
-Institute: ".$_POST['insitute']."
+Institute: ".$_POST['institute']."
 Lab: ".$_POST['lab']."
 Email: ".$_POST['email']."
 		 
