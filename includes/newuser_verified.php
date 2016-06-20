@@ -24,7 +24,7 @@
                 <div class="body bg-gray">
                     <div class="text-center form-group">
                         <label>
-							You are now a new user in the Dolphin system!
+							New user has been verified!
 						</label>
                     </div>
                 </div>

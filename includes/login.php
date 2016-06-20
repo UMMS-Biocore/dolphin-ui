@@ -70,6 +70,9 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	VALUES
 	(".$newuser[0]->id.", ".$new_group[0]->id.", 1, 1, 15, NOW(), NOW(), 1);
 	");
+	mail($newuser[0]->email, "Your Dolphin account is now active!",
+		 "Your Dolphin account is now active!
+		 You can start browsing and adding data at http://dolphin.umassmed.edu/");
     require_once("../includes/newuser_verified.php");
     session_destroy();
     exit;
@@ -89,13 +92,14 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	}else if (LDAP_SERVER != 'none' || LDAP_SERVER != ''){
 	  //	LDAP check
 	  $res=checkLDAP(strtolower($_POST['username']), $_POST['password']);
-	}else{
-	  //	Database password
-	  $pass_hash = $query->queryAVal("SELECT pass_hash FROM users WHERE username = " . $_POST['username']);
-	  if($pass_hash == $post_pass){
-		$res=1;
-	  }else{
-		$res=0;
+	  if ($res == 0){
+		//	Database password
+		$pass_hash = $query->queryAVal("SELECT pass_hash FROM users WHERE username = " . $_POST['username']);
+		if($pass_hash == $post_pass){
+		  $res=1;
+		}else{
+		  $res=0;
+		}
 	  }
 	}
 	#$res=1;
@@ -105,14 +109,14 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	}
   
 	if($login_ok){ 
-	  $s="Succefull";
+	  $s="Successfull";
 	  $_SESSION['user'] = strtolower($_POST['username']);
 	  $uid_check = $query->getUserID($_SESSION['user']);
 	  if($uid_check != "0"){
 		$group_check = $query->queryAVal("SELECT id FROM user_group WHERE u_id = $uid_check");
 		if($group_check != "0"){
 		  $_SESSION['uid'] = $uid_check;
-		  if (strtolower($_POST['username']) == "kucukura" || strtolower($_POST['username']) == "garberm"){
+		  if (strtolower($_POST['username']) == "kucukura" || strtolower($_POST['username']) == "garberm" || strtolower($_POST['username']) == "merowskn"){
 			$_SESSION['admin'] = "admin";
 		  }
 		}else{
@@ -239,7 +243,18 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	( '".strtolower($username_val)."', '".strtolower($clustername_val)."', '$fullname_space', '$email_val', '$institute_val',
     '$lab_val', '$pass_hash', '".$verify."', NOW(), 1, 1, 15, NOW(), NOW(), 1 )
 	");
-	mail($email_val, 'Dolphin User Verification', 'Please visit this link in order to activate your dolphin account:\n ' . BASE_PATH . '?p=verify&code=' . $verify);
+	mail("nicholas.merowsky@umassmed.edu", "Dolphin User Verification: $fullname_space",
+		 "User Information:
+		 
+		 First name: ".$_POST['firstname']."
+		 Last name: ".$_POST['lastname']."
+		 Username: ".$_POST['username']."
+		 Clustername: ".$_POST['clustername']."
+		 Institute: ".$_POST['insitute']."
+		 Lab: ".$_POST['lab']."
+		 Email: ".$_POST['email']."
+		 
+		 Please visit this link in order to activate this dolphin account:\n " . BASE_PATH . "?p=verify&code=$verify");
 	session_destroy();
 	require_once("../includes/newuser_verification.php");
 	exit;
