@@ -94,7 +94,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	  $res=checkLDAP(strtolower($_POST['username']), $_POST['password']);
 	  if ($res == 0){
 		//	Database password
-		$pass_hash = $query->queryAVal("SELECT pass_hash FROM users WHERE username = " . $_POST['username']);
+		$pass_hash = $query->queryAVal("SELECT pass_hash FROM users WHERE username = '" . $_POST['username']."'");
 		if($pass_hash == $post_pass){
 		  $res=1;
 		}else{
@@ -243,18 +243,18 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	( '".strtolower($username_val)."', '".strtolower($clustername_val)."', '$fullname_space', '$email_val', '$institute_val',
     '$lab_val', '$pass_hash', '".$verify."', NOW(), 1, 1, 15, NOW(), NOW(), 1 )
 	");
-	mail("nicholas.merowsky@umassmed.edu", "Dolphin User Verification: $fullname_space",
+	mail("alper.kucukural@umassmed.edu, nicholas.merowsky@umassmed.edu", "Dolphin User Verification: $fullname_space",
 		 "User Information:
 		 
-		 First name: ".$_POST['firstname']."
-		 Last name: ".$_POST['lastname']."
-		 Username: ".$_POST['username']."
-		 Clustername: ".$_POST['clustername']."
-		 Institute: ".$_POST['insitute']."
-		 Lab: ".$_POST['lab']."
-		 Email: ".$_POST['email']."
+First name: ".$_POST['firstname']."
+Last name: ".$_POST['lastname']."
+Username: ".$_POST['username']."
+Clustername: ".$_POST['clustername']."
+Institute: ".$_POST['insitute']."
+Lab: ".$_POST['lab']."
+Email: ".$_POST['email']."
 		 
-		 Please visit this link in order to activate this dolphin account:\n " . BASE_PATH . "?p=verify&code=$verify");
+Please visit this link in order to activate this dolphin account:\n " . BASE_PATH . "?p=verify&code=$verify");
 	session_destroy();
 	require_once("../includes/newuser_verification.php");
 	exit;
