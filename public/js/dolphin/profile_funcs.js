@@ -467,6 +467,24 @@ function updateEmail(){
 	});
 }
 
+function updatePassword(){
+	var oldpass = document.getElementById('old_password').value
+	var newpass = document.getElementById('new_password').value
+	var newpassconf = document.getElementById('pass_confirm').value
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/profiledb.php",
+		data: { p: 'changePassword', oldpass: oldpass, newpass: newpass, newpassconf: newpassconf },
+		async: false,
+		success : function(s)
+		{
+			$('#passwordModal').modal({
+				show: true
+			});
+			document.getElementById('passwordLabel').innerHTML = s;
+		}
+	});
+}
+
 function requestNewGroup(){
 	$('#groupModal').modal({
 		show: true
