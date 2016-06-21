@@ -597,7 +597,6 @@ class Dolphin:
               if (pipe['Type'] == "HaplotypeCaller"):
                 #if (pipe['merge'] == "yes"):
                     #self.prf( fp, '%s'%(stepMergeBAM % locals()) )
-                    #type="merge"+type
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
                 type="haplotypecaller"
 
