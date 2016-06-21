@@ -153,19 +153,19 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if($_POST['lastname'] == ""){
 	$err_lastname = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$lastname_val = $_POST['lastname'];
-	$fullname = $_POST['lastname'] . ",";
-	$fullname_space = $_POST['lastname'] . ", ";
+	$lastname_val = str_replace("'", "", $_POST['lastname']);
+	$fullname = str_replace("'", "", $_POST['lastname'] . ",");
+	$fullname_space = str_replace("'", "", $_POST['lastname'] . ", ");
   }
   
   if($_POST['firstname'] == ""){
 	$err_firstname = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else if (!isset($fullname)){
-	$firstname_val = $_POST['firstname'];
+	$firstname_val = str_replace("'", "", $_POST['firstname']);
   }else{
-	$firstname_val = $_POST['firstname'];
-	$fullname .= $_POST['firstname'];
-	$fullname_space .= $_POST['firstname'];
+	$firstname_val = str_replace("'", "", $_POST['firstname']);
+	$fullname .= str_replace("'", "", $_POST['firstname']);
+	$fullname_space .= str_replace("'", "", $_POST['firstname']);
 	$fullname_check = $query->queryAVal("SELECT id FROM users WHERE LCASE(name) = LCASE('$fullname') OR LCASE(name) = LCASE('$fullname_space')");
 	if($fullname_check != "0"){
 	  $err_firstname = '<font class="text-center" size="3" color="red">This Name already exists.</font>';
@@ -175,7 +175,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if($_POST['username'] == ""){
 	$err_username = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$username_val = $_POST['username'];
+	$username_val = str_replace("'", "", $_POST['username']);
 	$username_check = $query->queryAVal("SELECT id FROM users WHERE username = LCASE('" . $_POST['username'] . "')");
 	if($username_check != "0"){
 	  $err_username = '<font class="text-center" size="3" color="red">This Username already exists.</font>';
@@ -185,7 +185,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if($_POST['clustername'] == ""){
 	$err_clustername = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$clustername_val = $_POST['clustername'];
+	$clustername_val = str_replace("'", "", $_POST['clustername']);
 	$clustername_check = $query->queryAVal("SELECT id FROM users WHERE clusteruser = LCASE('" . $_POST['clustername'] . "')");
 	if($clustername_check != "0"){
 	  $err_clustername .= '<font class="text-center" size="3" color="red">This Clustername already exists.</font>';
@@ -195,19 +195,19 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if($_POST['institute'] == ""){
 	$err_institute = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$institute_val = $_POST['institute'];
+	$institute_val = str_replace("'", "", $_POST['institute']);
   }
   
   if($_POST['lab'] == ""){
 	$err_lab = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$lab_val = $_POST['lab'];
+	$lab_val = str_replace("'", "", $_POST['lab']);
   }
   
   if($_POST['email'] == ""){
 	$err_email = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$email_val = $_POST['email'];
+	$email_val = str_replace("'", "", $_POST['email']);
 	$email_check = $query->queryAVal("SELECT id FROM users WHERE email = LCASE('" . $_POST['email'] . "')");
 	if($email_check != "0"){
 	  $err_email .= '<font class="text-center" size="3" color="red">This Email already exists.</font>';
@@ -217,7 +217,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if($_POST['password'] == ""){
 	$err_password = '<font class="text-center" size="3" color="red">Cannot submit with this field empty.</font>';
   }else{
-	$password_val = $_POST['password'];
+	$password_val = str_replace("'", "", $_POST['password']);
 	if(strlen($_POST['password']) < 7){
 	  $err_password = '<font class="text-center" size="3" color="red">Password must be at least 7 characters long.</font>';
 	}
