@@ -30,7 +30,7 @@
 						<?php echo $err_lastname ?>
                     </div>
                     <div class="text-center form-group">
-                        <input type="text" name="username" class="form-control" placeholder="Username" value="<?php echo $username_val ?>"/>
+                        <input type="text" name="username" class="form-control" placeholder="UMASS email username" value="<?php echo $username_val ?>"/>
 						<?php echo $err_username ?>
                     </div>
 					<div class="text-center form-group">
