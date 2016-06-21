@@ -63,7 +63,7 @@ $new_data=array();
 $title=array();
 foreach ($a as $i => $row){
     if ($type!="summary"){
-        $fields="&fields=$commonfields,$keepcols,$row";
+        $fields="&fields=$commonfields,$keepcols,".str_replace("-", "_", $row);
     }
         $sample_breakdown = explode(",",$b[$i]);
     array_pop($sample_breakdown);
