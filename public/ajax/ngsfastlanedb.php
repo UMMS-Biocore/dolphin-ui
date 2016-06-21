@@ -125,7 +125,7 @@ if ($p == 'experimentSeriesCheck'){
 	$temp_check=json_decode($query->queryTable("
 		SELECT id
 		FROM ngs_temp_sample_files
-		WHERE filename = '$filename'
+		WHERE file_name = '$filename'
 		AND sample_id = $sample_id
 		AND dir_id = $input
 		"));
