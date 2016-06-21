@@ -313,6 +313,36 @@ else if ($p == 'changeEmail')
        WHERE id = " . $_SESSION['uid']
        );
 }
+else if ($p == 'changePassword')
+{
+	if (isset($_GET['oldpass'])){$oldpass = $_GET['oldpass'];}
+	if (isset($_GET['newpass'])){$newpass = $_GET['newpass'];}
+	if (isset($_GET['newpassconf'])){$newpassconf = $_GET['newpassconf'];}
+	
+	$oldpass_check=hash('md5', $oldpass . "12as7ad8s9d9a0") . hash('sha256', $oldpass . "1m2kmk211kl123k");
+	$stored_pass=$query->queryAVal("
+       SELECT pass_hash
+       FROM users
+       WHERE id = " . $_SESSION['uid']
+    );
+	
+	
+	if ($stored_pass == NULL){
+		$data = json_encode("Current password if from a LDAP verification, please change your LDAP password instead");
+	}else if ($stored_pass != $oldpass_check){
+		$data = json_encode("Old passwords do not match");
+	}else if ($newpass != $newpassconf){
+		$data = json_encode("New password and new password confirmation do not match");
+	}else{
+		$newpass_sha=hash('md5', $newpass . "12as7ad8s9d9a0") . hash('sha256', $newpass . "1m2kmk211kl123k");
+		$query->runSQL("
+		UPDATE users
+		SET pass_hash = '$newpass_sha'
+		WHERE id = " . $_SESSION['uid']
+		);
+		$data = json_encode("New password has been saved");
+	}
+}
 
 
 if (!headers_sent()) {

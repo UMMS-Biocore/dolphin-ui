@@ -43,6 +43,26 @@
 					  </div>
 					</div>
 				</div><!-- End aws modal -->
+				<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="myPasswordModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myPasswordModalLabel">Change Password Results:</h4>
+						</div>
+						<form name="editPasswordForm" role="form" method="post">
+							<div class="modal-body" style="overflow:scroll">
+								<fieldset>
+									<label id="passwordLabel"></label>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button id="passwordButton" type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End password modal -->
 				<div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="mySubmitModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
@@ -62,7 +82,7 @@
 						</form>
 					  </div>
 					</div>
-				</div><!-- End aws modal -->
+				</div><!-- End submit modal -->
 				<section class="content-header">
 					<h1>
 						Profile
@@ -91,6 +111,9 @@
 									</li>
 									<li class>
 										<a href="#email" data-toggle="tab" aria-expanded="true">Email</a>
+									</li>
+									<li class>
+										<a href="#password" data-toggle="tab" aria-expanded="true">Password</a>
 									</li>
 									<li class>
 										<a href="#bucket" data-toggle="tab" aria-expanded="true">Amazon Information</a>
@@ -151,6 +174,26 @@
 										</div>
 										<div class="box-footer margin">
 											<button type="button" id="changeEmail" class="btn btn-primary" onclick="updateEmail()">Update</button>
+										</div>
+									</div>
+									<div class="tab-pane" id="password">
+										<div id="password_box" class="margin">
+											<div class="form-group" ">
+												<div class="margin">
+													<label><h3>Change your Password</h3></label>
+												</div>
+												<div class="margin">
+													<label>Old password:</label>
+													<input type="password" class="form-control" id="old_password" password>
+													<label>New password:</label>
+													<input type="password" class="form-control" id="new_password" password>
+													<label>Confirm new password:</label>
+													<input type="password" class="form-control" id="pass_confirm" password>
+												</div>
+											</div>
+										</div>
+										<div class="box-footer margin">
+											<button type="button" id="changeEmail" class="btn btn-primary" onclick="updatePassword()">Update</button>
 										</div>
 									</div>
 									<div class="tab-pane" id="bucket">
