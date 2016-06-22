@@ -854,7 +854,7 @@ class Ngsimport extends VanillaModel {
 				if(($this->sheetData[3][$j]=="Lane name" || $this->sheetData[3][$j]=="Import name") && $samp->lane_name != NULL){
 					if ($this->laneList == null){
 						$this->laneList = $samp->lane_name;
-					}else if(strpos($this->laneList, $samp->lane_name) === false){
+					}else if(in_array($samp->lane_name, explode(",",$this->laneList)) === false){
 						$this->laneList .= ','.$samp->lane_name;
 					}
 				}
