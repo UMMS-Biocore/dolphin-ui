@@ -97,7 +97,7 @@ function checkFieldCheckboxChecked(input){
 
 function checkFieldSelection(input, value){
 	var check = false;
-	if (!document.getElementById(input).value == value) {
+	if (document.getElementById(input).value != value) {
 		check = true;
 	}
 	return check;
