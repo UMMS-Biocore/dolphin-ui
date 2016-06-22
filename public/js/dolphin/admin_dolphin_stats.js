@@ -87,6 +87,8 @@ $(function() {
         hideHover: 'auto'
     });
 
+	/*##### USER TABLE #####*/
+	
      var userTable = $('#jsontable_User').dataTable(); 
      $.ajax({ type: "GET",   
                      url: BASE_PATH+"/public/ajax/adminstatquerydb.php",
@@ -141,6 +143,7 @@ $(function() {
      
     userTable.fnSort( [ [2,'desc'] ] );
     
+	/*##### LAB TABLE #####*/
      
     var labTable = $('#jsontable_Lab').dataTable();
      
