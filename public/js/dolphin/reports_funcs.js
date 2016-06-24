@@ -1203,7 +1203,6 @@ $(function() {
 				}
 		});
 		console.log(run_id);
-		document.getElementsByClassName('panel-heading')[0].innerHTML = "Run: "+run_id + " Directory: " + directory;
 		document.getElementById('back_to_adv_status').name = run_id;
 	}
 });

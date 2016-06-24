@@ -152,7 +152,6 @@ $(function() {
 		});
 		
 	wkey = getWKey(run_id);
-	document.getElementsByClassName('box-title')[0].innerHTML = "Services - Run "+run_id + " Directory: - " + directory;
 	document.getElementById('send_to_reports').name = run_id;
 	var runparams = $('#jsontable_services').dataTable();
 	console.log(wkey);	
