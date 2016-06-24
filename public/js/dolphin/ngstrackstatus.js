@@ -1,5 +1,4 @@
 var run_id = '0';
-var directory = '';
 var wkey = '';
 var page_mark_runparams = 0;
 var page_mark_services = 0;
@@ -138,16 +137,6 @@ $(function() {
 			{
 				console.log(s);
 				run_id = s;
-			}
-		});
-		$.ajax({ type: "GET",
-			url: BASE_PATH +"/ajax/ngs_stat_funcs.php",
-			data: { p: 'getAdvStatusDirectory', run_id: run_id },
-			async: false,
-			success : function(s)
-			{
-				console.log(s);
-				directory = s;
 			}
 		});
 		
