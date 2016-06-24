@@ -44,6 +44,7 @@
 						</div>
 						<div class="col-md-12">
 							<button id="back_to_status" class="btn btn-primary" onclick="backToStatus('<?php echo BASE_PATH?>')">Back to General Status</button>
+							<button id="send_to_reports" class="btn btn-primary" onclick="reportSelected(this.name, this.name)">View Reports</button>
 						</div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->

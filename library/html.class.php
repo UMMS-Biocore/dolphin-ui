@@ -614,7 +614,10 @@ e range"><i class="fa fa-calendar"></i></button>
 			$html.= 	'<div class="box-body tab-pane" id="runs">
 							<div class="box-body margin" style="overflow-y:scroll">';
 			foreach($sample_runs as $sr){
-				$html.=				'<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">'.$sr->id.' -- '.$sr->run_name.'</a><br>';
+				$html.=				'<p>'.$sr->id.' -- '.$sr->run_name.' 
+									<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">Reports</a> | 
+									<a href="#" id="'.$sr->id.'" onclick="sendToAdvancedStatus(this.id)">Status</a>
+									</p>';
 			}
 			$html.=			'</div>
 						</div>'; // END RUNS PANEL
