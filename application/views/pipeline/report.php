@@ -30,7 +30,8 @@
 					<?php echo $html->getExpandingAnalysisBox('RSeQC', "rseqc", false); ?>
 				</div>
 				<div class="input margin">
-					<button id="back_to_status" class="btn btn-primary" onclick="sendToStatus()">Return to Status</button>
+					<button id="back_to_gen_status" class="btn btn-primary" onclick="sendToStatus()">Go to General Status</button>
+					<button id="back_to_adv_status" class="btn btn-primary" onclick="sendToAdvancedStatus(this.name)">Go to Advanced Status</button>
 					<button id="send_to_plots" class="btn btn-primary" onclick="sendToPlots()">Go to Plots</button>
 				</div>
 			</div>
