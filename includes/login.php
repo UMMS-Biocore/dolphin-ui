@@ -82,7 +82,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
     exit;
   }
 }else if(isset($_POST['login'])){
-  if(!empty($_POST) && isset($_POST['password'])){
+  if(!empty($_POST) && isset($_POST['password']) && $_POST['password'] !=""){
 	$login_ok = false; 
 	$post_pass=hash('md5', $_POST['password'] . "12as7ad8s9d9a0") . hash('sha256', $_POST['password'] . "1m2kmk211kl123k");
   
