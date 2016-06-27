@@ -140,6 +140,12 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	  $e="Login Failed.";
 	  exit;
 	} 
+  }else{
+  	session_destroy();
+        $loginfail = '<font class="text-center" size="3" color="red">Incorrect Username/Password.</font>';
+        require_once("../includes/loginform.php");
+        $e="Login Failed.";
+        exit;
   }
 }else if (isset($_POST['signup'])){
   session_destroy();
