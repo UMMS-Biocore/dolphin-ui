@@ -127,9 +127,9 @@ class ngsfastlanddb_unittest extends PHPUnit_Framework_TestCase
 	
 	public function testSendProcessData(){
 		ob_start();
-		$_GET['p'] = 'sendProcessData';
-		$_GET['info_array'] = array('test1','test2');
-		$_GET['post'] = 'test_post';
+		$_POST['p'] = 'sendProcessData';
+		$_POST['info_array'] = array('test1','test2');
+		$_POST['post'] = 'test_post';
 		include("ngsfastlanedb.php");
 		$this->assertEquals($_SESSION['test_post'],'test1,test2');
 		ob_end_clean();
