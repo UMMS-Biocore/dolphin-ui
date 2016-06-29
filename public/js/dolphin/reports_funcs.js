@@ -660,23 +660,23 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		}
 		console.log(table_data)
 		console.log(initial_mapping_table);
-		if (table_data.length > 1) {
+		if (table_data != undefined) {
 			if (table_data[0]['rsem'] != undefined) {
 				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
 				document.getElementById('Unique Reads Aligned (RSEM)').remove();
-			}else{
+			}else if(table_data[0]['rsem_unique'] != undefined){
 				document.getElementById('Reads Aligned (RSEM)').remove();
 			}
 			if (table_data[0]['tophat'] != undefined) {
 				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
 				document.getElementById('Unique Reads Aligned (Tophat)').remove();
-			}else{
+			}else if(table_data[0]['tophat_unique'] != undefined){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
-			if (table_data[0]['rsem'] != undefined) {
+			if (table_data[0]['chip'] != undefined) {
 				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
 				document.getElementById('Unique Reads Aligned (Chip)').remove();
-			}else{
+			}else if(table_data[0]['chip_unique'] != undefined){
 				document.getElementById('Reads Aligned (Chip)').remove();
 			}
 		}
