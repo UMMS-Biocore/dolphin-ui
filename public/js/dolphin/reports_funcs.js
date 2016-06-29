@@ -749,15 +749,15 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
 				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Duplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['rsem_multimapped'], 'Duplicated Reads (RSEM)', row_array);
+				row_array = checkTableOutput(sample_data['rsem_multimap'], 'Duplicated Reads (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['rsem_unique'], 'Duplicated Reads (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['rsem'], 'Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Duplicated Reads (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['tophat_multimapped'], 'Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['tophat_multimap'], 'Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_unique'], 'Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['tophat'], 'Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['chip_dedup'], 'Duplicated Reads (Chip)', row_array);
-				row_array = checkTableOutput(sample_data['chip_multimapped'], 'Reads Aligned (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['chip_multimap'], 'Reads Aligned (Chip)', row_array);
 				row_array = checkTableOutput(sample_data['chip_unique'], 'Reads Aligned (Chip)', row_array);
 				row_array = checkTableOutput(sample_data['chip'], 'Reads Aligned (Chip)', row_array);
 				
