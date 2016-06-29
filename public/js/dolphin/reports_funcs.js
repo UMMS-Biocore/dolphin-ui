@@ -801,13 +801,11 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 }
 
 function summaryPlotSetup(table_data){
-	console.log(table_data)
 	for (var sample_obj in table_data) {
-		if (table_data[sample_obj]['rsem'] != undefined) {
+		if (table_data[sample_obj]['rsem'] != undefined || table_data[sample_obj]['rsem_unique'] != undefined) {
 			rsem_toggle = true;
 			rsem_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
-				console.log(data)
 				if (!/chip/.test(data) && !/tophat/.test(data) && !/total_reads/.test(data) && !/unmapped/.test(data)) {
 					if (rsem_series[data] == undefined) {
 						var name = data;
@@ -830,7 +828,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['tophat'] != undefined) {
+		if (table_data[sample_obj]['tophat'] != undefined || table_data[sample_obj]['tophat_unique'] != undefined) {
 			tophat_toggle = true;
 			tophat_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
@@ -856,7 +854,7 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		if (table_data[sample_obj]['chip'] != undefined) {
+		if (table_data[sample_obj]['chip'] != undefined || table_data[sample_obj]['chip_unique'] != undefined) {
 			chip_toggle = true;
 			chip_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
