@@ -801,11 +801,13 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 }
 
 function summaryPlotSetup(table_data){
+	console.log(table_data)
 	for (var sample_obj in table_data) {
 		if (table_data[sample_obj]['rsem'] != undefined) {
 			rsem_toggle = true;
 			rsem_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
+				console.log(data)
 				if (!/chip/.test(data) && !/tophat/.test(data) && !/total_reads/.test(data) && !/unmapped/.test(data)) {
 					if (rsem_series[data] == undefined) {
 						var name = data;
