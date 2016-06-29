@@ -22,8 +22,8 @@ var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tR
 						  'Duplicated Reads chip', 'Multimapped Reads Aligned chip', 'Unique Reads Aligned chip', 'Reads Aligned chip'];
 var html_summary_dictionary = ['File', 'total_reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc', 'unmapped',
 							   'rsem_dedup', 'rsem_multimap', 'rsem_unique', 'rsem',
-							   'tophat_dedup', 'rsem_multimap', 'tophat_unique', 'tophat',
-							   'chip_dedup', 'rsem_multimap', 'chip_unique', 'chip'];
+							   'tophat_dedup', 'tophat_multimap', 'tophat_unique', 'tophat',
+							   'chip_dedup', 'chip_multimap', 'chip_unique', 'chip'];
 var initial_mapping_table = [];
 
 function parseSummary(url_path){
