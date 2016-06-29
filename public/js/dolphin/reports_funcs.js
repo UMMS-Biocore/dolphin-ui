@@ -813,6 +813,10 @@ function summaryPlotSetup(table_data){
 							name = 'reads mapped'
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
+						}else if (data == 'rsem_multimap') {
+							name = 'multimapped reads'
+						}else if (data == 'rsem_unique') {
+							name = 'uniquely mapped reads'
 						}
 						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data] = {name: name, data: [parseInt(num)]}
@@ -835,6 +839,10 @@ function summaryPlotSetup(table_data){
 							name = 'reads mapped'
 						}else if (data == 'tophat_dedup') {
 							name = 'dedup reads'
+						}else if (data == 'tophat_multimap') {
+							name = 'multimapped reads'
+						}else if (data == 'tophat_unique') {
+							name = 'uniquely mapped reads'
 						}
 						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						tophat_series[data] = {name: name, data: [parseInt(num)]}
@@ -857,6 +865,10 @@ function summaryPlotSetup(table_data){
 							name = 'reads mapped'
 						}else if (data == 'chip_dedup') {
 							name = 'dedup reads'
+						}else if (data == 'chip_multimap') {
+							name = 'multimapped reads'
+						}else if (data == 'chip_unique') {
+							name = 'uniquely mapped reads'
 						}
 						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						chip_series[data] = {name: name, data: [parseInt(num)]}
