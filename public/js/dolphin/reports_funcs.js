@@ -761,6 +761,26 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			var reports_table = $('#jsontable_initial_mapping').dataTable();
 			reports_table.fnClearTable();
 			document.getElementById('jsontable_initial_mapping').setAttribute('style','overflow-x:scroll');
+			
+			if (table_data[samplenames[0].Sample].hasOwnProperty('rsem')) {
+				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
+				document.getElementById('Unique Reads Aligned (RSEM)').remove();
+			}else if(table_data[samplenames[0].Sample].hasOwnProperty('rsem_unique')){
+				document.getElementById('Reads Aligned (RSEM)').remove();
+			}
+			if (table_data[samplenames[0].Sample].hasOwnProperty('tophat')) {
+				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
+				document.getElementById('Unique Reads Aligned (Tophat)').remove();
+			}else if(table_data[samplenames[0].Sample].hasOwnProperty('tophat_unique')){
+				document.getElementById('Reads Aligned (Tophat)').remove();
+			}
+			if (table_data[samplenames[0].Sample].hasOwnProperty('chip')) {
+				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
+				document.getElementById('Unique Reads Aligned (Chip)').remove();
+			}else if(table_data[samplenames[0].Sample].hasOwnProperty('chip_unique')){
+				document.getElementById('Reads Aligned (Chip)').remove();
+			}
+			
 			for (key in table_data) {
 				sample_data = table_data[key];
 				row_array = [key];
@@ -969,8 +989,6 @@ function createSummaryHighchart(){
 function checkTableOutput(sample_data, ui_id, row_array) {
 	if (sample_data != undefined) {
 		row_array.push(sample_data)
-	}else if (document.getElementById(ui_id) != undefined) {
-		row_array.push("");
 	}
 	return row_array
 }
