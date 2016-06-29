@@ -1029,7 +1029,7 @@ $(function() {
 		var non_rna_object = {}
 		for (var z = 0; z < summary_files.length; z++) {
 			if (summary_files[z]['file'] == "summary/summary.tsv") {
-				summary_check == true;
+				summary_check = true;
 			}
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
