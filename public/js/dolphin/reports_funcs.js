@@ -762,22 +762,22 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			reports_table.fnClearTable();
 			document.getElementById('jsontable_initial_mapping').setAttribute('style','overflow-x:scroll');
 			
-			if (table_data[samplenames[0].Sample].hasOwnProperty('rsem')) {
+			if (table_data[samplenames[0]].hasOwnProperty('rsem')) {
 				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
 				document.getElementById('Unique Reads Aligned (RSEM)').remove();
-			}else if(table_data[samplenames[0].Sample].hasOwnProperty('rsem_unique')){
+			}else if(table_data[samplenames[0]].hasOwnProperty('rsem_unique')){
 				document.getElementById('Reads Aligned (RSEM)').remove();
 			}
-			if (table_data[samplenames[0].Sample].hasOwnProperty('tophat')) {
+			if (table_data[samplenames[0]].hasOwnProperty('tophat')) {
 				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
 				document.getElementById('Unique Reads Aligned (Tophat)').remove();
 			}else if(table_data[samplenames[0].Sample].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
-			if (table_data[samplenames[0].Sample].hasOwnProperty('chip')) {
+			if (table_data[samplenames[0]].hasOwnProperty('chip')) {
 				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
 				document.getElementById('Unique Reads Aligned (Chip)').remove();
-			}else if(table_data[samplenames[0].Sample].hasOwnProperty('chip_unique')){
+			}else if(table_data[samplenames[0]].hasOwnProperty('chip_unique')){
 				document.getElementById('Reads Aligned (Chip)').remove();
 			}
 			
