@@ -5,6 +5,7 @@
  */
 
 var wkey = '';
+var summary_check = false;
 var lib_checklist = [];
 var libraries = [];
 var dash_library = [];
@@ -1026,7 +1027,6 @@ $(function() {
 		
 		//	Set up summary table headers
 		var non_rna_object = {}
-		var summary_check = false;
 		for (var z = 0; z < summary_files.length; z++) {
 			if (summary_files[z]['file'] == "summary/summary.tsv") {
 				summary_check == true;
@@ -1056,11 +1056,26 @@ $(function() {
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
-						non_rna_object['rsem'] = true;
+						if (summary_check) {
+							non_rna_object['rsem_multimap'] = true;
+							non_rna_object['rsem_unique'] = true;
+						}else{
+							non_rna_object['rsem'] = true;
+						}
 					}else if (/tophat/.test(summary_files[z]['file'])){
-						non_rna_object['tophat'] = true;
+						if (summary_check) {
+							non_rna_object['tophat_multimap'] = true;
+							non_rna_object['tophat_unique'] = true;
+						}else{
+							non_rna_object['tophat'] = true;
+						}
 					}else if (/chip/.test(summary_files[z]['file'])){
-						non_rna_object['chip'] = true;
+						if (summary_check) {
+							non_rna_object['chip_multimap'] = true;
+							non_rna_object['chip_unique'] = true;
+						}else{
+							non_rna_object['chip'] = true;
+						}
 					}
 				}else if (/pcrdups/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
