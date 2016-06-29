@@ -638,6 +638,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 	if (summary_bool) {
 		var table_array = parseSummary(summary_files[summary_files.length - 1]['file']);
 		console.log(table_array);
+		console.log(table_array);
 		var parsed = [];
 		for( var j = 0; j < table_array.length; j++){
 			for( var i = 0; i < summary_dictionary.length; i++){
@@ -660,23 +661,23 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		}
 		console.log(table_data)
 		console.log(initial_mapping_table);
-		if (table_data != undefined) {
-			if (table_data[0]['rsem'] != undefined) {
+		if (table_array.length > 0) {
+			if (table_data[table_array[0]].hasOwnProperty('rsem')) {
 				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
 				document.getElementById('Unique Reads Aligned (RSEM)').remove();
-			}else if(table_data[0]['rsem_unique'] != undefined){
+			}else if(table_data[table_array[0]].hasOwnProperty('rsem_unique')){
 				document.getElementById('Reads Aligned (RSEM)').remove();
 			}
-			if (table_data[0]['tophat'] != undefined) {
+			if (table_data[table_array[0]].hasOwnProperty('tophat')) {
 				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
 				document.getElementById('Unique Reads Aligned (Tophat)').remove();
-			}else if(table_data[0]['tophat_unique'] != undefined){
+			}else if(table_data[table_array[0]].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
-			if (table_data[0]['chip'] != undefined) {
+			if (table_data[table_array[0]].hasOwnProperty('chip')) {
 				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
 				document.getElementById('Unique Reads Aligned (Chip)').remove();
-			}else if(table_data[0]['chip_unique'] != undefined){
+			}else if(table_data[table_array[0]].hasOwnProperty('chip_unique')){
 				document.getElementById('Reads Aligned (Chip)').remove();
 			}
 		}
