@@ -92,7 +92,7 @@ function parseFlagstat(url_path) {
 				if(s.split("\n").length > 3){
 					console.log(flag_array[9].split(" ")[0]);
 					console.log(flag_array[10].split(" ")[0]);
-					mapped = (parseInt(flag_array[9].split(" ")[0]) / 2) //+ parseInt(flag_array[10].split(" ")[0]);
+					mapped = (parseInt(flag_array[9].split(" ")[0]) / 2) + parseInt(flag_array[10].split(" ")[0]);
 					if (mapped == 0) {
 						mapped = (parseInt(flag_array[4].split(" ")[0]));
 					}
