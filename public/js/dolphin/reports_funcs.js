@@ -661,6 +661,8 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		console.log(table_data)
 		console.log(initial_mapping_table);
 		if (table_array.length > 0) {
+			console.log(table_data[table_array[0]])
+			console.log(table_data[table_array[0][0]])
 			if (table_data[table_array[0][0]].hasOwnProperty('rsem')) {
 				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
 				document.getElementById('Unique Reads Aligned (RSEM)').remove();
