@@ -30,5 +30,4 @@ $url = $server_start. $object . "/" . $accession . $server_end; // <-Replace thi
 $response = Requests::get($url, $headers, $auth);
 # If the GET succeeds, the response is the new object in JSON format
 echo $response->body;
-
 ?>

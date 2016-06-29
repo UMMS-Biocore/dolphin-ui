@@ -48,5 +48,4 @@ foreach ($json as $json_object) {
 		echo $response->body . ",";	
 	}
 }
-
 ?>

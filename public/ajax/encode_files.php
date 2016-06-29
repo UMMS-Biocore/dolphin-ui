@@ -114,13 +114,6 @@ foreach($file_query as $fq){
 					$data["paired_end"] = '1';
 					$paired = $my_lab.':'.$step.'_fastq_p1_'.$sample_name;
 				}
-				if($step != 'step1'){
-					if(end($file_names) == $fn){
-						$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
-					}else{
-						$data['derived_from'] = array(explode(",",$step_list['step1'])[0]);
-					}
-				}
 			}else if (count($file_names) == 1){
 				//	FASTQ SINGLE
 				$data["file_format"] = 'fastq';
@@ -137,94 +130,50 @@ foreach($file_query as $fq){
 			$data["file_format"] = 'tar';
 			$data['assembly'] = "hg19";
 			if(end($file_names) == $fn && count($file_names) == 1){
-				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastqc_'.$sample_name);
 				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
 			}else if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_p2_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastqc_p2_'.$sample_name);
 				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
 			}else{
-				$data["aliases"] = array($my_lab.':'.$step.'_fastqc_p1_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastqc_p1_'.$sample_name);
 				$data['derived_from'] = array(explode(",",$step_list['step1'])[0]);
 			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
 			$data['output_type'] = 'alignments';
-			if(strpos($fn, "seqmapping/") > -1){
+			if(strpos($fn, "tdf") > -1){
 				$step = "step3";
+				$data["aliases"] = array($my_lab.':tophat_'.$sample_name);
 			}else{
-				$step = "step5";
+				$step = "step4";
+				$data["aliases"] = array($my_lab.':rsem_'.$sample_name);
 			}
-			$data["aliases"] = array($my_lab.'":"'.$step.'_bam_'.$sample_name);
 			$data["file_format"] = 'bam';
 			$data['assembly'] = "hg19";
-			if($step == 'step3'){
-				$data['derived_from'] = explode(",",$step_list['step1']);;
-			}else{
-				$data['derived_from'] = explode(",",$step_list['step3']);;
-			}
+			$data['derived_from'] = explode(",",$step_list['step1']);;
 		}else if($fq->file_type == 'bigwig'){
 			//	BIGWIG
 			$step = 'step6';
 			$data['output_type'] = 'signal of all reads';
-			$data["aliases"] = array($my_lab.':'.$step.'_bigwig_'.$sample_name);
+			$data["aliases"] = array($my_lab.':bigwig_'.$sample_name);
 			$data["file_format"] = 'bigWig';
 			$data['assembly'] = "hg19";
-			$data['derived_from'] = explode(",",$step_list['step5']);;
+			$data['derived_from'] = explode(",",$step_list['step3']);;
 		}else if($fq->file_type == 'tsv'){
 			//	TSV
-			if(strpos($fn, "RNA_summary") > -1){
-				$step = 'step4';
-			}elseif(strpos($fn, "RNASeqMetrics") > -1){
-				$step = 'step9';
-			}elseif(strpos($fn, 'gene_exp') > -1 || strpos($fn, 'gene_tpm') > -1 || strpos($fn, 'iso_exp') > -1 || strpos($fn, 'iso_tpm') > -1){
-				$step = 'step7';
-			}else{
-				$step = 'step8';
-			}
-			$data["aliases"] = array($my_lab.':'.$step.'_'.$sample_name);
+			$step = 'step7';
 			$data["file_format"] = 'tsv';
 			$data['assembly'] = "hg19";
-			if($step == 'step4'){
-				$directory = substr(getcwd(), 0, getcwd() - 11);
-				if(strpos($fn, "rRNA")){
-					$data["aliases"] = array($my_lab.':'.$step.'_rRNA_'.$sample_name);
-				}else if(strpos($fn, "miRNA")){
-					$data["aliases"] = array($my_lab.':'.$step.'_miRNA_'.$sample_name);
-				}else if(strpos($fn, "tRNA")){
-					$data["aliases"] = array($my_lab.':'.$step.'_tRNA_'.$sample_name);
-				}else if(strpos($fn, "snRNA")){
-					$data["aliases"] = array($my_lab.':'.$step.'_snRNA_'.$sample_name);
-				}
-				$data['output_type'] = 'transcript quantifications';
-				$data['derived_from'] = explode(",",$step_list['step3']);
-				$data["file_size"] = filesize($directory . $fn);
-			}else if ($step == 'step7'){
-				$directory = substr(getcwd(), 0, getcwd() - 11);
-				$data['derived_from'] = explode(",",$step_list['step3']);
-				if(strpos($fn, "gene_exp")){
-					$data["aliases"] = array($my_lab.':'.$step.'_gene_exp_'.$sample_name);
-					$data['output_type'] = 'gene quantifications';
-				}else if(strpos($fn, "gene_tpm")){
-					$data["aliases"] = array($my_lab.':'.$step.'_gene_tpm_'.$sample_name);
-					$data['output_type'] = 'gene quantifications';
-				}else if(strpos($fn, "iso_exp")){
-					$data["aliases"] = array($my_lab.':'.$step.'_iso_exp_'.$sample_name);
-					$data['output_type'] = 'transcript quantifications';
-				}else{
-					$data["aliases"] = array($my_lab.':'.$step.'_iso_tpm_'.$sample_name);
-					$data['output_type'] = 'transcript quantifications';
-				}
-				$data["file_size"] = filesize($directory . $fn);
-			}else if ($step == 'step8'){
+			$data['derived_from'] = explode(",",$step_list['step4']);
+			if(strpos($fn, "gene")){
+				$data["aliases"] = array($my_lab.':gene_exp_'.$sample_name);
 				$data['output_type'] = 'gene quantifications';
-				$data['derived_from'] = explode(",",$step_list['step5']);
-				$data["file_size"] = filesize($directory . $fn);
 			}else{
-				$directory = substr(getcwd(), 0, getcwd() - 11);
-				$data['output_type'] = 'gene quantifications';
-				$data['derived_from'] = explode(",",$step_list['step5']);
-				$data["file_size"] = filesize($directory . $fn);
+				$data["aliases"] = array($my_lab.':iso_exp_'.$sample_name);
+				$data['output_type'] = 'transcript quantifications';
 			}
+			$data["file_size"] = filesize($directory . $fn);
 		}
 		$gzip_types = array(
 			"CEL",
@@ -313,6 +262,8 @@ foreach($file_query as $fq){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
 			
+			//$server_start = "https://ggr-test.demo.encodedcc.org/";
+			//$server_start = "https://www.encodeproject.org/";
 			$server_start = ENCODE_URL;
 			$server_end = "/";	
 			
@@ -360,21 +311,43 @@ foreach($file_query as $fq){
 			
 			$item = $body->{'@graph'}[0];
 			
-			echo $response->body . ',';
-			
-			####################
-			# POST file to S3
-			####################
-			$creds = $item->{'upload_credentials'};
-			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-				$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
-			echo '{"command":"'. $cmd_aws_launch. '"}';
+			echo $response->body;
 			if(end($file_query) != $fq){
 				echo ',';
 			}
-			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-			pclose($AWS_COMMAND_DO);
-			echo $AWS_COMMAND_OUT;
+			
+			####################
+			# POST file to S3
+			/*
+			$com = "ps -ef | grep '[".preg_replace("/[\n\r]/", "", substr($data['md5sum'], 0, 1)."]".substr($data['md5sum'],1))."'";
+			$FILE_SUB_CHECK = popen( $com, "r" );
+			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
+			pclose($FILE_SUB_CHECK);
+			*/
+			$FILE_SUB_CHECK_OUTUT = "";
+			if($FILE_SUB_CHECK_OUTUT == ""){
+				if($step != 'step1'){
+					$creds = $item->{'upload_credentials'};
+					/*
+					if($step == 'step1' && end($file_names) != $fn){
+						$cmd_aws_launch = "echo '#!/bin/bash' > ../../tmp/encode_" . $sample_name . ".sh ;\n";
+						$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh ;\n";
+						$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+							$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh;";
+					}else{
+					*/
+					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
+					$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+					$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
+					pclose($AWS_COMMAND_DO);
+					echo $cmd_aws_launch . "\n\n";
+					echo $AWS_COMMAND_OUT;
+				}
+			}else{
+				echo '{"error":"'.$fn.' submission currently running"},';
+			}
+			echo $cmd_aws_launch.',';
 		}else{
 			//	File Validation Failed
 			if(end($file_names) == $fn && end($file_query) == $fq){
@@ -392,5 +365,4 @@ foreach($file_query as $fq){
 		}
 	}
 }
-
 ?>
