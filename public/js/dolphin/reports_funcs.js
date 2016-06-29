@@ -16,13 +16,13 @@ var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_RNA = [];
 var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc', 'Total align',
-						  'Duplicated Reads rsem', 'Multi-mapped Reads Aligned rsem', 'Unique Reads Aligned rsem', 'Reads Aligned rsem',
-						  'Duplicated Reads tophat', 'Multi-mapped Reads Aligned tophat', 'Unique Reads Aligned tophat', 'Reads Aligned tophat',
-						  'Duplicated Reads chip', 'Multi-mapped Reads Aligned chip', 'Unique Reads Aligned chip', 'Reads Aligned chip'];
+						  'Duplicated Reads rsem', 'Multimapped Reads Aligned rsem', 'Unique Reads Aligned rsem', 'Reads Aligned rsem',
+						  'Duplicated Reads tophat', 'Multimapped Reads Aligned tophat', 'Unique Reads Aligned tophat', 'Reads Aligned tophat',
+						  'Duplicated Reads chip', 'Multimapped Reads Aligned chip', 'Unique Reads Aligned chip', 'Reads Aligned chip'];
 var html_summary_dictionary = ['File', 'total_reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc', 'unmapped',
-							   'rsem_dedup', 'rsem_multimap', 'rsem',
-							   'tophat_dedup', 'rsem_multimap', 'tophat',
-							   'chip_dedup', 'rsem_multimap', 'chip'];
+							   'rsem_dedup', 'rsem_multimap', 'rsem_unique', 'rsem',
+							   'tophat_dedup', 'rsem_multimap', 'tophat_unique', 'tophat',
+							   'chip_dedup', 'rsem_multimap', 'chip_unique', 'chip'];
 var initial_mapping_table = [];
 
 function parseSummary(url_path){
@@ -667,16 +667,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			reports_table.fnAddData(addPercentageArray(row_array));
 		}
 	}else{
-		//	Set up RNA
-		for (var z = 0; z < summary_files.length; z++) {
-			if (!/summary.summary/.test(summary_files[z]['file'])) {
-				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
-					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
-					summary_RNA.push(RNA);
-				}
-			}
-		}
-		
 		headers.push('Sample');
 		headers.push('Total Reads');
 		for (var z = 0; z < summary_RNA.length; z++) {
@@ -745,76 +735,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				}
 			}
 			console.log(table_data);
-			
-			//	Set up summary table headers
-			var non_rna_object = {}
-			for (var z = 0; z < summary_files.length; z++) {
-				console.log(summary_files[z]['file'])
-				if (!/summary.summary/.test(summary_files[z]['file'])) {
-					/*
-					if (/adapter/.test(summary_files[z]['file'])) {
-						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
-						document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
-					}else if (/quality/.test(summary_files[z]['file'])) {
-						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
-						document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
-					}else */
-					if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
-						var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
-						document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
-						document.getElementById(RNA).innerHTML = RNA;
-						if (document.getElementById('unused') != undefined) {
-							document.getElementById('unused').remove();
-							document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
-							document.getElementById('unused').innerHTML = 'Reads After Filtering';
-						}else{
-							document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
-							document.getElementById('unused').innerHTML = 'Reads After Filtering';
-						}
-					}else if (/flagstat/.test(summary_files[z]['file'])){
-						if (/rsem/.test(summary_files[z]['file'])){
-							non_rna_object['rsem'] = true;
-						}else if (/tophat/.test(summary_files[z]['file'])){
-							non_rna_object['tophat'] = true;
-						}else if (/chip/.test(summary_files[z]['file'])){
-							non_rna_object['chip'] = true;
-						}
-					}else if (/pcrdups/.test(summary_files[z]['file'])){
-						if (/rsem/.test(summary_files[z]['file'])){
-							non_rna_object['rsem_dedup'] = true;
-						}else if (/tophat/.test(summary_files[z]['file'])){
-							non_rna_object['tophat_dedup'] = true;
-						}else if (/chip/.test(summary_files[z]['file'])){
-							non_rna_object['chip_dedup'] = true;
-						}
-					}
-				}
-			}
-			console.log(non_rna_object)
-			if (non_rna_object['rsem_dedup']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (RSEM)']));
-				document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
-			}
-			if (non_rna_object['rsem']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
-				document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
-			}
-			if (non_rna_object['tophat_dedup']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Tophat)']));
-				document.getElementById('Duplicated Reads (Tophat)').innerHTML = 'Duplicated Reads (Tophat)';
-			}
-			if (non_rna_object['tophat']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
-				document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
-			}
-			if (non_rna_object['chip_dedup']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Chip)']));
-				document.getElementById('Duplicated Reads (Chip)').innerHTML = 'Duplicated Reads (Chip)';
-			}
-			if (non_rna_object['chip']){
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
-				document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
-			}
 			
 			//Initial Mapping Results
 			var reports_table = $('#jsontable_initial_mapping').dataTable();
@@ -1097,6 +1017,102 @@ $(function() {
 					}
 				}
 		});
+		
+		//	Set up summary table headers
+		var non_rna_object = {}
+		var summary_check = false;
+		for (var z = 0; z < summary_files.length; z++) {
+			if (summary_files[z]['file'] == "summary/summary.tsv") {
+				summary_check == true;
+			}
+			console.log(summary_files[z]['file'])
+			if (!/summary.summary/.test(summary_files[z]['file'])) {
+				/*
+				if (/adapter/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
+					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
+				}else if (/quality/.test(summary_files[z]['file'])) {
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
+					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
+				}else */
+				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
+					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
+					summary_RNA.push(RNA);
+					document.getElementById('tablerow').appendChild(createElement('th', ['id'], [RNA]));
+					document.getElementById(RNA).innerHTML = RNA;
+					if (document.getElementById('unused') != undefined) {
+						document.getElementById('unused').remove();
+						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
+						document.getElementById('unused').innerHTML = 'Reads After Filtering';
+					}else{
+						document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['unused']));
+						document.getElementById('unused').innerHTML = 'Reads After Filtering';
+					}
+				}else if (/flagstat/.test(summary_files[z]['file'])){
+					if (/rsem/.test(summary_files[z]['file'])){
+						non_rna_object['rsem'] = true;
+					}else if (/tophat/.test(summary_files[z]['file'])){
+						non_rna_object['tophat'] = true;
+					}else if (/chip/.test(summary_files[z]['file'])){
+						non_rna_object['chip'] = true;
+					}
+				}else if (/pcrdups/.test(summary_files[z]['file'])){
+					if (/rsem/.test(summary_files[z]['file'])){
+						non_rna_object['rsem_dedup'] = true;
+					}else if (/tophat/.test(summary_files[z]['file'])){
+						non_rna_object['tophat_dedup'] = true;
+					}else if (/chip/.test(summary_files[z]['file'])){
+						non_rna_object['chip_dedup'] = true;
+					}
+				}
+			}
+		}
+		console.log(non_rna_object)
+		if (non_rna_object['rsem_dedup']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (RSEM)']));
+			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
+		}
+		if (non_rna_object['rsem']){
+			if (summary_check) {
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (RSEM)']));
+				document.getElementById('Multi-mapped Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (RSEM)']));
+				document.getElementById('Unique Reads Aligned (RSEM)').innerHTML = 'Unique Reads Aligned (RSEM)';
+			}else{
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
+				document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
+			}
+		}
+		if (non_rna_object['tophat_dedup']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Tophat)']));
+			document.getElementById('Duplicated Reads (Tophat)').innerHTML = 'Duplicated Reads (Tophat)';
+		}
+		if (non_rna_object['tophat']){
+			if (summary_check) {
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (Tophat)']));
+				document.getElementById('Multi-mapped Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Tophat)']));
+				document.getElementById('Unique Reads Aligned (Tophat)').innerHTML = 'Unique Reads Aligned (Tophat)';
+			}else{
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
+				document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
+			}
+		}
+		if (non_rna_object['chip_dedup']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Chip)']));
+			document.getElementById('Duplicated Reads (Chip)').innerHTML = 'Duplicated Reads (Chip)';
+		}
+		if (non_rna_object['chip']){
+			if (summary_check) {
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (Chip)']));
+				document.getElementById('Multi-mapped Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Chip)']));
+				document.getElementById('Unique Reads Aligned (Chip)').innerHTML = 'Unique Reads Aligned (Chip)';
+			}else{
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
+				document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
+			}
+		}
 		
 		//	Gather sample names
 		var samplenames = [];
