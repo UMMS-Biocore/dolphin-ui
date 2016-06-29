@@ -1089,14 +1089,15 @@ $(function() {
 			}
 		}
 		console.log(non_rna_object)
+		console.log(summary_check)
 		if (non_rna_object['rsem_dedup']){
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (RSEM)']));
 			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
 		}
 		if (non_rna_object['rsem']){
 			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (RSEM)']));
-				document.getElementById('Multi-mapped Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (RSEM)']));
+				document.getElementById('Multimapped Reads Aligned (RSEM)').innerHTML = 'Multimapped Reads Aligned (RSEM)';
 				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (RSEM)']));
 				document.getElementById('Unique Reads Aligned (RSEM)').innerHTML = 'Unique Reads Aligned (RSEM)';
 			}else{
@@ -1110,8 +1111,8 @@ $(function() {
 		}
 		if (non_rna_object['tophat']){
 			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (Tophat)']));
-				document.getElementById('Multi-mapped Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Tophat)']));
+				document.getElementById('Multimapped Reads Aligned (Tophat)').innerHTML = 'Multimapped Reads Aligned (Tophat)';
 				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Tophat)']));
 				document.getElementById('Unique Reads Aligned (Tophat)').innerHTML = 'Unique Reads Aligned (Tophat)';
 			}else{
@@ -1125,8 +1126,8 @@ $(function() {
 		}
 		if (non_rna_object['chip']){
 			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multi-mapped Reads Aligned (Chip)']));
-				document.getElementById('Multi-mapped Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
+				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Chip)']));
+				document.getElementById('Multimapped Reads Aligned (Chip)').innerHTML = 'Multimapped Reads Aligned (Chip)';
 				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Chip)']));
 				document.getElementById('Unique Reads Aligned (Chip)').innerHTML = 'Unique Reads Aligned (Chip)';
 			}else{
