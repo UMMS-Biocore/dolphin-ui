@@ -660,6 +660,26 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		}
 		console.log(table_data)
 		console.log(initial_mapping_table);
+		if (table_data.length > 1) {
+			if (table_data[0]['rsem'] != undefined) {
+				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
+				document.getElementById('Unique Reads Aligned (RSEM)').remove();
+			}else{
+				document.getElementById('Reads Aligned (RSEM)').remove();
+			}
+			if (table_data[0]['tophat'] != undefined) {
+				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
+				document.getElementById('Unique Reads Aligned (Tophat)').remove();
+			}else{
+				document.getElementById('Reads Aligned (Tophat)').remove();
+			}
+			if (table_data[0]['rsem'] != undefined) {
+				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
+				document.getElementById('Unique Reads Aligned (Chip)').remove();
+			}else{
+				document.getElementById('Reads Aligned (Chip)').remove();
+			}
+		}
 		var reports_table = $('#jsontable_initial_mapping').dataTable();
 		reports_table.fnClearTable();
 		document.getElementById('jsontable_initial_mapping').setAttribute('style','overflow-x:scroll');
@@ -1107,45 +1127,36 @@ $(function() {
 			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
 		}
 		if (non_rna_object['rsem']){
-			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (RSEM)']));
-				document.getElementById('Multimapped Reads Aligned (RSEM)').innerHTML = 'Multimapped Reads Aligned (RSEM)';
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (RSEM)']));
-				document.getElementById('Unique Reads Aligned (RSEM)').innerHTML = 'Unique Reads Aligned (RSEM)';
-			}else{
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
-				document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
-			}
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (RSEM)']));
+			document.getElementById('Multimapped Reads Aligned (RSEM)').innerHTML = 'Multimapped Reads Aligned (RSEM)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (RSEM)']));
+			document.getElementById('Unique Reads Aligned (RSEM)').innerHTML = 'Unique Reads Aligned (RSEM)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
+			document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
 		}
 		if (non_rna_object['tophat_dedup']){
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Tophat)']));
 			document.getElementById('Duplicated Reads (Tophat)').innerHTML = 'Duplicated Reads (Tophat)';
 		}
 		if (non_rna_object['tophat']){
-			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Tophat)']));
-				document.getElementById('Multimapped Reads Aligned (Tophat)').innerHTML = 'Multimapped Reads Aligned (Tophat)';
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Tophat)']));
-				document.getElementById('Unique Reads Aligned (Tophat)').innerHTML = 'Unique Reads Aligned (Tophat)';
-			}else{
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
-				document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
-			}
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Tophat)']));
+			document.getElementById('Multimapped Reads Aligned (Tophat)').innerHTML = 'Multimapped Reads Aligned (Tophat)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Tophat)']));
+			document.getElementById('Unique Reads Aligned (Tophat)').innerHTML = 'Unique Reads Aligned (Tophat)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
+			document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
 		}
 		if (non_rna_object['chip_dedup']){
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Chip)']));
 			document.getElementById('Duplicated Reads (Chip)').innerHTML = 'Duplicated Reads (Chip)';
 		}
 		if (non_rna_object['chip']){
-			if (summary_check) {
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Chip)']));
-				document.getElementById('Multimapped Reads Aligned (Chip)').innerHTML = 'Multimapped Reads Aligned (Chip)';
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Chip)']));
-				document.getElementById('Unique Reads Aligned (Chip)').innerHTML = 'Unique Reads Aligned (Chip)';
-			}else{
-				document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
-				document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
-			}
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Chip)']));
+			document.getElementById('Multimapped Reads Aligned (Chip)').innerHTML = 'Multimapped Reads Aligned (Chip)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Chip)']));
+			document.getElementById('Unique Reads Aligned (Chip)').innerHTML = 'Unique Reads Aligned (Chip)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
+			document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
 		}
 		
 		//	Gather sample names
