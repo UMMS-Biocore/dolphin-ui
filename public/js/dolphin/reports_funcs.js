@@ -16,11 +16,11 @@ var table_data = {};
 var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_RNA = [];
-var summary_dictionary = ['Sample', 'Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc', 'Total align',
+var summary_dictionary = ['Sample', 'Total Reads', 'ercc', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'Total align',
 						  'Duplicated Reads rsem', 'Multimapped Reads Aligned rsem', 'Unique Reads Aligned rsem', 'Reads Aligned rsem',
 						  'Duplicated Reads tophat', 'Multimapped Reads Aligned tophat', 'Unique Reads Aligned tophat', 'Reads Aligned tophat',
 						  'Duplicated Reads chip', 'Multimapped Reads Aligned chip', 'Unique Reads Aligned chip', 'Reads Aligned chip'];
-var html_summary_dictionary = ['File', 'total_reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc', 'unmapped',
+var html_summary_dictionary = ['File', 'total_reads', 'ercc', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'unmapped',
 							   'rsem_dedup', 'rsem_multimap', 'rsem_unique', 'rsem',
 							   'tophat_dedup', 'tophat_multimap', 'tophat_unique', 'tophat',
 							   'chip_dedup', 'chip_multimap', 'chip_unique', 'chip'];
@@ -662,20 +662,20 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		console.log(initial_mapping_table);
 		if (table_array.length > 0) {
 			if (table_data[table_array[0].Sample].hasOwnProperty('rsem')) {
-				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
-				document.getElementById('Unique Reads Aligned (RSEM)').remove();
+				document.getElementById('RSEM (>1)').remove();
+				document.getElementById('RSEM (=1)').remove();
 			}else if(table_data[table_array[0].Sample].hasOwnProperty('rsem_unique')){
 				document.getElementById('Reads Aligned (RSEM)').remove();
 			}
 			if (table_data[table_array[0].Sample].hasOwnProperty('tophat')) {
-				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
-				document.getElementById('Unique Reads Aligned (Tophat)').remove();
+				document.getElementById('Tophat (>1)').remove();
+				document.getElementById('Tophat (=1)').remove();
 			}else if(table_data[table_array[0].Sample].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
 			if (table_data[table_array[0].Sample].hasOwnProperty('chip')) {
-				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
-				document.getElementById('Unique Reads Aligned (Chip)').remove();
+				document.getElementById('Chip (>1)').remove();
+				document.getElementById('Chip (=1)').remove();
 			}else if(table_data[table_array[0].Sample].hasOwnProperty('chip_unique')){
 				document.getElementById('Reads Aligned (Chip)').remove();
 			}
@@ -757,20 +757,20 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			}
 			console.log(table_data);
 			if (table_data[samplenames[0]].hasOwnProperty('rsem')) {
-				document.getElementById('Multimapped Reads Aligned (RSEM)').remove();
-				document.getElementById('Unique Reads Aligned (RSEM)').remove();
+				document.getElementById('RSEM (>1)').remove();
+				document.getElementById('RSEM (=1)').remove();
 			}else if(table_data[samplenames[0]].hasOwnProperty('rsem_unique')){
 				document.getElementById('Reads Aligned (RSEM)').remove();
 			}
 			if (table_data[samplenames[0]].hasOwnProperty('tophat')) {
-				document.getElementById('Multimapped Reads Aligned (Tophat)').remove();
-				document.getElementById('Unique Reads Aligned (Tophat)').remove();
+				document.getElementById('Tophat (>1)').remove();
+				document.getElementById('Tophat (=1)').remove();
 			}else if(table_data[samplenames[0].Sample].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
 			if (table_data[samplenames[0]].hasOwnProperty('chip')) {
-				document.getElementById('Multimapped Reads Aligned (Chip)').remove();
-				document.getElementById('Unique Reads Aligned (Chip)').remove();
+				document.getElementById('Chip (>1)').remove();
+				document.getElementById('Chip (=1)').remove();
 			}else if(table_data[samplenames[0]].hasOwnProperty('chip_unique')){
 				document.getElementById('Reads Aligned (Chip)').remove();
 			}
@@ -789,16 +789,16 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
 				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Duplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['rsem_multimap'], 'Multimapped Reads Aligned (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['rsem_unique'], 'Unique Reads Aligned (RSEM)', row_array);
+				row_array = checkTableOutput(sample_data['rsem_multimap'], 'RSEM (>1)', row_array);
+				row_array = checkTableOutput(sample_data['rsem_unique'], 'RSEM (=1)', row_array);
 				row_array = checkTableOutput(sample_data['rsem'], 'Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Duplicated Reads (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['tophat_multimap'], 'Multimapped Reads Aligned (Tophat)', row_array);
-				row_array = checkTableOutput(sample_data['tophat_unique'], 'Unique Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['tophat_multimap'], 'Tophat (>1)', row_array);
+				row_array = checkTableOutput(sample_data['tophat_unique'], 'Tophat (=1)', row_array);
 				row_array = checkTableOutput(sample_data['tophat'], 'Reads Aligned (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['chip_dedup'], 'Duplicated Reads (Chip)', row_array);
-				row_array = checkTableOutput(sample_data['chip_multimap'], 'Multimapped Reads Aligned (Chip)', row_array);
-				row_array = checkTableOutput(sample_data['chip_unique'], 'Unique Reads Aligned (Chip)', row_array);
+				row_array = checkTableOutput(sample_data['chip_multimap'], 'Chip (>1)', row_array);
+				row_array = checkTableOutput(sample_data['chip_unique'], 'Chip (=1)', row_array);
 				row_array = checkTableOutput(sample_data['chip'], 'Reads Aligned (Chip)', row_array);
 				
 				var reads_total = row_array[1];
@@ -1144,10 +1144,10 @@ $(function() {
 			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
 		}
 		if (non_rna_object['rsem']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (RSEM)']));
-			document.getElementById('Multimapped Reads Aligned (RSEM)').innerHTML = 'Multimapped Reads Aligned (RSEM)';
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (RSEM)']));
-			document.getElementById('Unique Reads Aligned (RSEM)').innerHTML = 'Unique Reads Aligned (RSEM)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['RSEM (>1)']));
+			document.getElementById('RSEM (>1)').innerHTML = 'RSEM (>1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['RSEM (=1)']));
+			document.getElementById('RSEM (=1)').innerHTML = 'RSEM (=1)';
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
 			document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
 		}
@@ -1156,10 +1156,10 @@ $(function() {
 			document.getElementById('Duplicated Reads (Tophat)').innerHTML = 'Duplicated Reads (Tophat)';
 		}
 		if (non_rna_object['tophat']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Tophat)']));
-			document.getElementById('Multimapped Reads Aligned (Tophat)').innerHTML = 'Multimapped Reads Aligned (Tophat)';
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Tophat)']));
-			document.getElementById('Unique Reads Aligned (Tophat)').innerHTML = 'Unique Reads Aligned (Tophat)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Tophat (>1)']));
+			document.getElementById('Tophat (>1)').innerHTML = 'Tophat (>1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Tophat (=1)']));
+			document.getElementById('Tophat (=1)').innerHTML = 'Tophat (=1)';
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
 			document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
 		}
@@ -1168,10 +1168,10 @@ $(function() {
 			document.getElementById('Duplicated Reads (Chip)').innerHTML = 'Duplicated Reads (Chip)';
 		}
 		if (non_rna_object['chip']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Multimapped Reads Aligned (Chip)']));
-			document.getElementById('Multimapped Reads Aligned (Chip)').innerHTML = 'Multimapped Reads Aligned (Chip)';
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Unique Reads Aligned (Chip)']));
-			document.getElementById('Unique Reads Aligned (Chip)').innerHTML = 'Unique Reads Aligned (Chip)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Chip (>1)']));
+			document.getElementById('Chip (>1)').innerHTML = 'Chip (>1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Chip (=1)']));
+			document.getElementById('Chip (=1)').innerHTML = 'Chip (=1)';
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
 			document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
 		}
