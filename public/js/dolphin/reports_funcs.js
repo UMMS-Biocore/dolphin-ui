@@ -464,7 +464,7 @@ function generateSelectionTable(keys, type){
 	
 	if (type == 'initial_mapping') {
 		for(var x = 0; x < keys.length; x++){
-			if (temp_lib_checklist.indexOf(keys[x]) > -1) {
+			if (temp_lib_checklist.indexOf(keys[x]) > -1 || dash_library.indexOf(keys[x]) > -1) {
 				var th = createElement('th', ['data-sort', 'onclick'], [keys[x]+'::number', 'shiftColumns(this)']);
 				th.innerHTML = keys[x];
 				th.appendChild(createElement('i', ['id', 'class'], [keys[x], 'pull-right fa fa-unsorted']));
@@ -1187,10 +1187,10 @@ $(function() {
 					for(var x  = 0; x < s.length; x++){
 						if (s[x].samplename == null) {
 							libraries.push(s[x].name);
-							dash_library.push(s[x].name.replace("-","_"));
+							dash_library.push(s[x].name.replace(/-/g,"_"));
 						}else{
 							libraries.push(s[x].samplename);
-							dash_library.push(s[x].samplename.replace("-","_"));
+							dash_library.push(s[x].samplename.replace(/-/g,"_"));
 						}
 					}
 					for(var x  = 0; x < s.length; x++){
