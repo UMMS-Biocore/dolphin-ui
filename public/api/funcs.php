@@ -933,7 +933,7 @@ class funcs
          $res=0;
          if ($sample_id>0)
          {
-            $sql="update ngs_fastq_files set checksum='$md5sum', total_reads=$total_reads, date_modified=now(), last_modified_user=$owner_id where sample_id=$sample_id ";
+            $sql="update ngs_fastq_files set checksum='$md5sum', original_checksum='$m5sum', total_reads=$total_reads, date_modified=now(), last_modified_user=$owner_id where sample_id=$sample_id ";
             $res = $this->runSQL($sql);
          }
          return $res;
@@ -954,7 +954,7 @@ class funcs
          $res=0;
          if ($sample_id>0)
          {
-            $sql="INSERT INTO ngs_fastq_files ( `file_name`, `total_reads`, `checksum`, `sample_id`, `lane_id`,`dir_id`,`owner_id`, `group_id`,`perms`,`date_created`,`date_modified`,`last_modified_user`) VALUES('$filename', '$total_reads','$checksum','$sample_id','$lane_id','$dir_id','$owner_id', '$group_id', '$perms', now(), now(), '$owner_id')";
+            $sql="INSERT INTO ngs_fastq_files ( `file_name`, `total_reads`, `checksum`, `original_checksum`, `sample_id`, `lane_id`,`dir_id`,`owner_id`, `group_id`,`perms`,`date_created`,`date_modified`,`last_modified_user`) VALUES('$filename', '$total_reads','$checksum', '$checksum', '$sample_id','$lane_id','$dir_id','$owner_id', '$group_id', '$perms', now(), now(), '$owner_id')";
             $res = $this->runSQL($sql);
          }
          return $res; 

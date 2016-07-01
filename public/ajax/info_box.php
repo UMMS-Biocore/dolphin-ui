@@ -29,8 +29,9 @@ if($p == "experiments"){
 			You can select all of the samples within a specific import by clicking on the checkbox to the right.
 			<br><br>
 			The 'Backup' column displays the status of the import's samples amazon backup status.  Backups will only be prompted if correct amazon credentials
-			are supplies on sample imports.  The status can be 1 of 4 colors: grey means the backup is pending, red stands for a checksum mismatch, blue means
-			the backup has no errors but is over 2 months old, and green means the upload is current.
+			are supplies on sample imports.  The status can be 1 of 5 colors: grey means the backup is pending, red stands for an amazon checksum mismatch,
+			pink means the checksum has changed from the original checksum of the files, blue means the backup has no errors but is over 2 months old,
+			and green means the upload is current.
 			<br><br>
 			To view more information about the Imports, you can click on the expand button to the left of this info box.
 			<br><br>
@@ -45,8 +46,9 @@ if($p == "experiments"){
 			You can select a sample by clicking on the checkbox to the right.
 			<br><br>
 			The 'Backup' column displays the status of the samples amazon backup status.  Backups will only be prompted if correct amazon credentials
-			are supplies on sample imports.  The status can be 1 of 4 colors: grey means the backup is pending, red stands for a checksum mismatch, blue means
-			the backup has no errors but is over 2 months old, and green means the upload is current.
+			are supplies on sample imports.  The status can be 1 of 4 colors: grey means the backup is pending, red stands for an amazon checksum mismatch,
+			pink means the checksum has changed from the original checksum of the files, blue means the backup has no errors but is over 2 months old,
+			and green means the upload is current.
 			<br><br>
 			For more information about the samples, you can click on the expand button to the left of this info box.
 			<br><br>
