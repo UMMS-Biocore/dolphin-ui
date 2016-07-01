@@ -933,7 +933,7 @@ class funcs
          $res=0;
          if ($sample_id>0)
          {
-            $sql="update ngs_fastq_files set checksum='$md5sum', original_checksum='$m5sum', total_reads=$total_reads, date_modified=now(), last_modified_user=$owner_id where sample_id=$sample_id ";
+            $sql="update ngs_fastq_files set checksum='$md5sum', original_checksum='$md5sum', total_reads=$total_reads, date_modified=now(), last_modified_user=$owner_id where sample_id=$sample_id ";
             $res = $this->runSQL($sql);
          }
          return $res;
