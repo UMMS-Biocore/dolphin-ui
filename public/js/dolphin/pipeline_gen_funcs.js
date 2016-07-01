@@ -1924,6 +1924,7 @@ function findPipelineValues(){
 		var conditions_type_array = [];
 		var chip_bool = true;
 		var multireset = false;
+		console.log(masterDiv);
 		for (var x = 0; x < masterDiv.length; x++) {
 			if (multireset == true) {
 				conditions_array = [];
