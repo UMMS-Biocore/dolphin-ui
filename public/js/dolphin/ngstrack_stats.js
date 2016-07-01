@@ -105,103 +105,32 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	var tableToggle = getTableToggle(type);
 	
 	var data = queryData, html = $.trim($("#template_"+type).html()), template = Mustache.compile(html);
+	var sample_dictionary = ['source', 'organism', 'molecule', 'backup', 'genotype', 'library_type', 'biosample_type', 'instrument_model', 'treatment_manufacturer',
+							'barcode', 'description', 'avg_insert_size', 'read_length', 'concentration', 'time', 'biological_replica', 'technical_replica',
+							'spike_ins', 'adapter', 'notebook_ref'];
+	var lane_dictionary = ['facility', 'total_reads', 'total_samples', 'cost', 'phix_requested', 'phix_in_lane'];
+	var experiment_dictionary = ['design', 'lab', 'organization', 'grant'];
+	
 	var view = function(record, index){
 		//	Samples
-		if (record.source == null) {
-			record.source = '';
+		for (var q = 0; q < sample_dictionary.length; q++) {
+			if (record[sample_dictionary[q]] == null) {
+				record[sample_dictionary[q]] = '';
+			}
 		}
-		if (record.organism == null) {
-			record.organism = '';
-		}
-		if (record.molecule == null) {
-			record.molecule = '';
-		}
-		if (record.backup == null) {
-			record.backup = '';
-		}
-		if (record.genotype == null) {
-			record.genotype = '';
-		}
-		if (record.library_type == null) {
-			record.library_type = '';
-		}
-		if (record.biosample_type == null) {
-			record.biosample_type = '';
-		}
-		if (record.instrument_model == null) {
-			record.instrument_model = '';
-		}
-		if (record.treatment_manufacturer == null) {
-			record.treatment_manufacturer = '';
-		}
-		if (record.barcode == null){
-			record.barcode = '';
-		}
-		if (record.description == null){
-			record.description = '';
-		}
-		if (record.avg_insert_size == null){
-			record.avg_insert_size = '';
-		}
-		if (record.read_length == null){
-			record.read_length = '';
-		}
-		if (record.concentration == null){
-			record.concentration = '';
-		}
-		if (record.time == null){
-			record.time = '';
-		}
-		if (record.biological_replica == null){
-			record.biological_replica = '';
-		}
-		if (record.technical_replica == null){
-			record.technical_replica = '';
-		}
-		if (record.spike_ins == null){
-			record.spike_ins = '';
-		}
-		if (record.adapter == null){
-			record.adapter = '';
-		}
-		if (record.notebook_ref == null){
-			record.notebook_ref = '';
-		}
-		
 		//	Lanes
-		if (record.facility == null) {
-			record.facility = '';
-		}
-		if (record.total_reads == null) {
-			record.total_reads = '';
-		}
-		if (record.total_samples == null) {
-			record.total_samples = '';
-		}
-		if (record.cost == null){
-			record.cost = '';
-		}
-		if (record.phix_requested == null){
-			record.phix_requested = '';
-		}
-		if (record.phix_in_lane == null){
-			record.phix_in_lane = '';
+		for (var q = 0; q < lane_dictionary.length; q++) {
+			if (record[lane_dictionary[q]] == null) {
+				record[lane_dictionary[q]] = '';
+			}
 		}
 		
 		//	Experiment Series
-		if (record.design == null) {
-			record.design = '';
+		for (var q = 0; q < experiment_dictionary.length; q++) {
+			if (record[experiment_dictionary[q]] == null) {
+				record[experiment_dictionary[q]] = '';
+			}
 		}
-		if (record.lab == null) {
-			record.lab = '';
-		}
-		if (record.organization == null) {
-			record.organization = '';
-		}
-		if (record.grant == null) {
-			record.grant = '';
-		}
-
 		//	Multiple
 		if (record.notes == null){
 			record.notes = '';
