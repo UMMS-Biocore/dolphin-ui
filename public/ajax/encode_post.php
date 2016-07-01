@@ -41,7 +41,6 @@ foreach ($json as $json_object) {
 	#POST the JSON and get back response
 	$response = Requests::post($url, $headers, json_encode($json_object), $auth);
 	# If the POST succeeds, the response is the new object in JSON format
-	#var_dump($response->body);
 	if($json_object == end($json)){
 		echo $response->body;
 	}else{

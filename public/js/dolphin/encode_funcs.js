@@ -373,6 +373,7 @@ function createEncodeJson(json_type){
 	var donors = [];
 	var organism = [];
 	var array_info;
+	//	Obtains pre json information and sets up array_info
 	if (json_type == 'donor'){
 		for(var x = 0; x < sample_info.length; x++){
 			if (donors.indexOf(sample_info[x].donor) < 0 ){
@@ -394,6 +395,7 @@ function createEncodeJson(json_type){
 	var post = [];
 	var patch = [];
 	var post_bool = true;
+	//	Using array_info, set up library calls
 	for(var x = 0; x < array_info.length; x++){
 		var json = {};
 		
@@ -675,7 +677,9 @@ function encodeFilePost(){
 }
 
 /*
- *	
+ *	Using the json created, submit the json using the proper type of submission protocol.
+ *
+ *	Reports the php scripts output for each submission
  */
 
 function encodeSubmission(name, json, subType, type, table){

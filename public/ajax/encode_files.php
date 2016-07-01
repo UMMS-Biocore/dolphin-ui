@@ -61,8 +61,9 @@ foreach($file_query as $fq){
 	$file_accs = array();
 	$file_uuids = array();
 	$paired = '';
-	//File names (single or paired end)
 	$file_names = explode(",",$fq->file_name);
+	
+	//	Fill out file metadata to submit before actual file submission
 	foreach($file_names as $fn){
 		//File path
 		if($fq->file_type == 'fastq' && strpos($fn, "/") == false){
@@ -123,22 +124,6 @@ foreach($file_query as $fq){
 					$data['derived_from'] = explode(",",$step_list['step1']);
 				}
 			}
-		}else if($fq->file_type == 'fastqc'){
-			//	FASTQC
-			$step = 'step2';
-			$data['output_type'] = 'reads';
-			$data["file_format"] = 'tar';
-			$data['assembly'] = "hg19";
-			if(end($file_names) == $fn && count($file_names) == 1){
-				$data["aliases"] = array($my_lab.':fastqc_'.$sample_name);
-				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
-			}else if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':fastqc_p2_'.$sample_name);
-				$data['derived_from'] = array(end(explode(",",$step_list['step1'])));
-			}else{
-				$data["aliases"] = array($my_lab.':fastqc_p1_'.$sample_name);
-				$data['derived_from'] = array(explode(",",$step_list['step1'])[0]);
-			}
 		}else if($fq->file_type == 'bam'){
 			//	BAM
 			$data['output_type'] = 'alignments';
@@ -195,6 +180,7 @@ foreach($file_query as $fq){
 			$is_gzipped = 'Expected un-gzipped file';
 		}
 		
+		// Validation data
 		$chromInfo = '-chromInfo='.$encValData.'/'.$assembly.'/chrom.sizes';
 		$validate_map = array(
 			'fasta' =>  array(null => array('-type=fasta')),
@@ -257,17 +243,15 @@ foreach($file_query as $fq){
 		$VALIDATE = popen( $cmd, "r" );
 		$VALIDATE_READ =fread($VALIDATE, 2096);
 		pclose($VALIDATE);
-		$VALIDATE_READ = "Error count 0\n";
+		//$VALIDATE_READ = "Error count 0\n";
 		if($VALIDATE_READ == "Error count 0\n"){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
-			
-			//$server_start = "https://ggr-test.demo.encodedcc.org/";
-			//$server_start = "https://www.encodeproject.org/";
 			$server_start = ENCODE_URL;
 			$server_end = "/";	
 			
 			$auth = array('auth' => array($encoded_access_key, $encoded_secret_access_key));
+			//	Set up file links for next step submission
 			if($fq->file_acc == null || $fq->file_acc == ""){
 				$url = $server_start . 'file' . $server_end;
 				$response = Requests::post($url, $headers, json_encode($data), $auth);
@@ -318,34 +302,15 @@ foreach($file_query as $fq){
 			
 			####################
 			# POST file to S3
-			/*
-			$com = "ps -ef | grep '[".preg_replace("/[\n\r]/", "", substr($data['md5sum'], 0, 1)."]".substr($data['md5sum'],1))."'";
-			$FILE_SUB_CHECK = popen( $com, "r" );
-			$FILE_SUB_CHECK_OUTUT = fread($FILE_SUB_CHECK, 2096);
-			pclose($FILE_SUB_CHECK);
-			*/
-			$FILE_SUB_CHECK_OUTUT = "";
-			if($FILE_SUB_CHECK_OUTUT == ""){
-				if($step != 'step1'){
-					$creds = $item->{'upload_credentials'};
-					/*
-					if($step == 'step1' && end($file_names) != $fn){
-						$cmd_aws_launch = "echo '#!/bin/bash' > ../../tmp/encode_" . $sample_name . ".sh ;\n";
-						$cmd_aws_launch .= "chmod 777 ../../tmp/encode_" . $sample_name . ".sh ;\n";
-						$cmd_aws_launch .= "echo 'python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-							$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " &' >> ../../tmp/encode/encode_" . $sample_name . ".sh;";
-					}else{
-					*/
-					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-						$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
-					$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-					$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
-					pclose($AWS_COMMAND_DO);
-					echo $cmd_aws_launch . "\n\n";
-					echo $AWS_COMMAND_OUT;
-				}
-			}else{
-				echo '{"error":"'.$fn.' submission currently running"},';
+			if($step != 'step1'){
+				$creds = $item->{'upload_credentials'};
+				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
+				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+				$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
+				pclose($AWS_COMMAND_DO);
+				echo $cmd_aws_launch . "\n\n";
+				echo $AWS_COMMAND_OUT;
 			}
 			echo $cmd_aws_launch.',';
 		}else{
@@ -356,6 +321,7 @@ foreach($file_query as $fq){
 				echo '{"error":"'.$fn.' not validated"}' . ',';
 			}
 		}
+		//	Store uuid/acc in database
 		if($inserted && implode(",",$file_accs) != ","){
 			$file_update = json_decode($query->runSQL("
 			UPDATE ngs_file_submissions
