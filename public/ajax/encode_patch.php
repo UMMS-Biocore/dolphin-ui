@@ -10,7 +10,7 @@ $server_start = ENCODE_URL;
 $server_end = "/";
 
 #Uses Requests library from https://github.com/rmccue/Requests
-include('../php/Requests/library/Requests.php');
+include(REQUESTS.'/library/Requests.php');
 Requests::register_autoloader();
 
 # Force return from the server in JSON format

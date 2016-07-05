@@ -3,7 +3,7 @@ require_once("../../config/config.php");
 require_once("../../includes/dbfuncs.php");
 
 //Metadata submission
-include('../php/Requests/library/Requests.php');
+include(REQUESTS.'/library/Requests.php');
 Requests::register_autoloader();
 $query = new dbfuncs();
 
@@ -243,7 +243,7 @@ foreach($file_query as $fq){
 			'gff' => array(null => array(null))
 		);
 		$validate_args = $validate_map[$data['file_format']][null];
-		$cmd = "../php/encodeValidate/validateFiles " . $validate_args[0] . " " . $directory . $fn;
+		$cmd = ENCODE_VALIDATE."/validateFiles " . $validate_args[0] . " " . $directory . $fn;
 		$VALIDATE = popen( $cmd, "r" );
 		$VALIDATE_READ =fread($VALIDATE, 2096);
 		pclose($VALIDATE);
