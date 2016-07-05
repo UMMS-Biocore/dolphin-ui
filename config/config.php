@@ -54,6 +54,8 @@ define('BIND_USER', $ini_array['BIND_USER']);
 define('BIND_PASS', $ini_array['BIND_PASS']);
 define('SCHEDULAR', $ini_array['SCHEDULAR']);
 define('DEBROWSER_HOST', $ini_array['DEBROWSER_HOST']);
+define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
+define('REQUESTS', $ini_array['REQUESTS']);
 
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))
