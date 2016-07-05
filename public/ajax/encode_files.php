@@ -20,13 +20,14 @@ $experiment_info = json_decode($query->queryTable("
 	WHERE ngs_experiment_series.id =
 	(SELECT series_id FROM ngs_samples WHERE id = $sample_id)"));
 $file_query = json_decode($query->queryTable("
-	SELECT ngs_file_submissions.id, ngs_file_submissions.dir_id, ngs_file_submissions.run_id,
+	SELECT DISTINCT ngs_file_submissions.id, ngs_file_submissions.dir_id, ngs_file_submissions.run_id,
 	ngs_file_submissions.sample_id, ngs_file_submissions.file_name, ngs_file_submissions.file_type,
 	ngs_file_submissions.file_md5, ngs_file_submissions.file_uuid, ngs_file_submissions.file_acc, outdir
 	FROM ngs_file_submissions
 	LEFT JOIN ngs_runparams
 	ON ngs_runparams.id = ngs_file_submissions.run_id
 	WHERE sample_id = " . $sample_id . "
+	AND type = 'fastq'
 	ORDER BY ngs_file_submissions.id"));
 $dir_query=json_decode($query->queryTable("
 	SELECT fastq_dir, backup_dir, amazon_bucket
@@ -124,7 +125,9 @@ foreach($file_query as $fq){
 					$data['derived_from'] = explode(",",$step_list['step1']);
 				}
 			}
-		}else if($fq->file_type == 'bam'){
+		}
+		/*
+		else if($fq->file_type == 'bam'){
 			//	BAM
 			$data['output_type'] = 'alignments';
 			if(strpos($fn, "tdf") > -1){
@@ -160,6 +163,7 @@ foreach($file_query as $fq){
 			}
 			$data["file_size"] = filesize($directory . $fn);
 		}
+		*/
 		$gzip_types = array(
 			"CEL",
 			"bam",
@@ -305,7 +309,8 @@ foreach($file_query as $fq){
 			if($step != 'step1'){
 				$creds = $item->{'upload_credentials'};
 				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET;
+					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET .
+					" &";
 				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 				$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
 				pclose($AWS_COMMAND_DO);

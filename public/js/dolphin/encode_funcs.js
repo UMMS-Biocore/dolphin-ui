@@ -28,6 +28,7 @@ var antibody_ids = [];
 var antibody_accs = [];
 var replicate_ids = [];
 var replicate_uuids = [];
+var submission_error = false;
 	
 //	RNA, DNA
 var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
