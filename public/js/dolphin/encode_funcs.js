@@ -28,7 +28,7 @@ var antibody_ids = [];
 var antibody_accs = [];
 var replicate_ids = [];
 var replicate_uuids = [];
-var submission_error = false;
+var submission = true;
 	
 //	RNA, DNA
 var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
@@ -802,6 +802,9 @@ function encodeSubmission(name, json, subType, type, table){
 				}
 				output += response[x].description + '<br><br>';
 			}
+			if (type != "treatment" && type != "antibody_lot") {
+				submission=false;
+			}
 		}	
 	}
 	return output;
@@ -908,7 +911,11 @@ function encodePost(subType){
 	}
 	
 	//	FILE SUBMISSION
-	encodeFilePost();
+	if (submission) {
+		encodeFilePost();
+	}else{
+		responseOutput += "File submission halted due to meta-data errors<br><br>";
+	}
 
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
