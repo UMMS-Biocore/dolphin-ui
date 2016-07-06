@@ -1060,12 +1060,12 @@ Single End Example:
 					}else if($_SESSION['ngs_samples'] == ''){
 						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Selected"], ["id","name","title","source","organism","molecule","total_reads"]);
 					}else{
-						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Description", "Avg Insert Size", "Read Length",
-																				"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-																				"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
-																				["id","name","title","source","organism","molecule","total_reads", "barcode", "description", "avg_insert_size", "read_length",
-																				"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-																				"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
+						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Barcode","Description","Avg Insert Size","Read Length",
+																				"Concentration","Time","Biological Replica","Technical Replica","Spike-ins","Adapter",
+																				"Notebook Ref","Notes","Genotype","Library Type","Biosample Type","Instrument Model","Treatment Manufacturer","Selected"],
+																				["id","name","title","source","organism","molecule","total_reads","barcode","description","avg_insert_size","read_length",
+																				"concentration","time","biological_replica","technical_replica","spike_ins","adapter",
+																				"notebook_ref","notes","genotype","library_type","biosample_type","instrument_model","treatment_manufacturer"]);
 					}
 				}
 				

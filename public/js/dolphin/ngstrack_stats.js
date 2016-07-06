@@ -6,6 +6,7 @@
  **/
 
 var basket_info = getBasketInfo();
+var selected_samples = [];
 var table_params = '';
 
 function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSearch, uid, gids, basket_info){
@@ -163,6 +164,10 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		if (record.total_reads != '' && type == 'samples'){		
  			initialRunWarning = '';		
  		}
+		var checklist_type = "onClick=\"manageChecklists(this.name, 'sample_checkbox')\""
+		if (window.location.href.indexOf("/pipeline/") > -1) {
+			checklist_type = "onClick=\"managePipelineChecklists(this.name, 'sample_checkbox')\""
+		}
 		if (type == 'generated') {
 			var row = '<tr>';
 			for(var key in keys){
@@ -197,7 +202,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'biosample_type', 'ngs_samples', this)\">"+record.biosample_type+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'instrument_model', 'ngs_samples', this)\">"+record.instrument_model+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'treatment_manufacturer', 'ngs_samples', this)\">"+record.treatment_manufacturer+"</td>"+
-						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'sample_checkbox')\"></td>"+
+						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" "+checklist_type+"></td>"+
 						"</tr>";
 				}else if (queryType == 'table_create') {
 					return "<tr>" +
@@ -295,14 +300,15 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'organism', 'ngs_samples', this)\">"+record.organism+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'molecule', 'ngs_samples', this)\">"+record.molecule+"</td>"+
 						record.backup+
-						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'sample_checkbox')\"></td>"+
+						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" "+checklist_type+"></td>"+
 						"</tr>";
 				}else if (queryType == 'table_create') {
+					console.log('test');
 					return "<tr>"+
 						"<td>"+record.id+"</td>"+
 						"<td><a href=\""+BASE_PATH+"/search/details/samples/"+record.id+'/'+theSearch+"\">"+sample_name+"</a></td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'title', 'ngs_samples', this)\">"+record.title+"</td>"+
-						"<td onclick=\"editBox("+uid+", "+record.id+", 'source', 'ngs_samples', this)\">"+record.source+"</td>+"
+						"<td onclick=\"editBox("+uid+", "+record.id+", 'source', 'ngs_samples', this)\">"+record.source+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'organism', 'ngs_samples', this)\">"+record.organism+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'molecule', 'ngs_samples', this)\">"+record.molecule+"</td>"+
 						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" onClick=\"manageCreateChecklists(this.name, this)\" " + checked + "></td>"+
@@ -754,8 +760,10 @@ $(function() {
 		var samplesType = "";
 		if (segment == 'selected') {
 			samplesType = "getSelectedSamples";
-			if (window.location.href.split("/").indexOf('tablecreator') > -1) {
+			if (window.location.href.indexOf("/rerun/") == -1) {
 				theSearch = basket_info;
+			}
+			if (window.location.href.split("/").indexOf('tablecreator') > -1) {
 				qvar = "getTableSamples";
 			}
 		}else{
@@ -774,6 +782,7 @@ $(function() {
 				var hrefSplit = window.location.href.split("/");
 				var typeLocSelected = $.inArray('selected', hrefSplit);
 				var typeLocRerun = $.inArray('rerun', hrefSplit);
+				var queryType = 'getSamples';
 				if (typeLocSelected > 0 || typeLocRerun > 0) {
 					theSearch = '';
 				}
@@ -801,10 +810,41 @@ $(function() {
 					console.log(objects_with_runs);
 					s = objects_with_runs;
 					queryType = 'table_create';
-				}else{
-					var queryType = samplesType;
 				}
-				generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+				if (segment == 'selected') {
+					var runparams = $('#jsontable_samples_selected').dataTable();
+					runparams.fnClearTable();
+					for(var i = 0; i < s.length; i++){
+						var selection_bool = false;
+						if (window.location.href.indexOf("/rerun/") > -1 || window.location.href.indexOf("/selected/") > -1) {
+							selection_bool = true;
+						}
+						if (selection_bool) {
+							runparams.fnAddData([
+								s[i].id,
+								s[i].samplename,
+								s[i].organism,
+								s[i].molecule,
+								s[i].backup,
+								'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeSampleSelection(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
+							]);
+							selected_samples.push(s[i].id);
+						}
+					}
+					samplesType = "getSamples";
+					$.ajax({ type: "GET",
+						url: BASE_PATH+"/public/ajax/ngs_tables.php",
+						data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+						async: false,
+						success : function(k)
+						{
+							generateStreamTable(type, k, queryType, qvar, rvar, segment, theSearch, uid, gids);
+							manageChecklistsBulk(selected_samples)
+						}
+					});
+				}else{
+					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+				}
 			}
 		});
 	

@@ -467,6 +467,53 @@ else if ($p == "changeOwnerExperiment")
 	");
 	$data=json_encode('passed');
 }
+else if ($p == 'getPipelineSamples')
+{
+	if (isset($_GET['id'])){$id = $_GET['id'];}
+	//	inner join for samples table
+	$innerJoin = "LEFT JOIN ngs_source
+					ON ngs_samples.source_id = ngs_source.id
+					LEFT JOIN ngs_organism
+					ON ngs_samples.organism_id = ngs_organism.id
+					LEFT JOIN ngs_molecule
+					ON ngs_samples.molecule_id = ngs_molecule.id
+					LEFT JOIN ngs_genotype
+					ON ngs_samples.genotype_id = ngs_genotype.id
+					LEFT JOIN ngs_library_type
+					ON ngs_samples.library_type_id = ngs_library_type.id
+					LEFT JOIN ngs_biosample_type
+					on ngs_samples.biosample_type_id = ngs_biosample_type.id
+					LEFT JOIN ngs_instrument_model
+					ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+					LEFT JOIN ngs_treatment_manufacturer
+					ON ngs_samples.treatment_manufacturer_id = ngs_treatment_manufacturer.id";
+	$amazon_str = "AND ngs_fastq_files.dir_id = (SELECT ngs_dirs.id FROM ngs_dirs WHERE ngs_fastq_files.dir_id = ngs_dirs.id AND (ngs_dirs.amazon_bucket LIKE '%s3://%'))";
+	$sampleJoin = "LEFT JOIN ngs_fastq_files
+					ON ngs_samples.id = ngs_fastq_files.sample_id";
+	$sampleBackup = "CASE
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE aws_status = 2 AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<td><button class=\"btn btn-warning\" disabled></td>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != original_checksum AND (original_checksum != '' AND original_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<td><button class=\"btn btn-flickr\" disabled></td>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != backup_checksum AND (backup_checksum != '' AND backup_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<td><button class=\"btn btn-danger\" disabled></td>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE (backup_checksum = '' OR backup_checksum IS NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<td><button class=\"btn\" disabled></td>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE date_modified < DATE_SUB(now(), INTERVAL 2 MONTH) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<td><button class=\"btn btn-primary\" disabled></td>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) = 0 THEN '<td></td>'
+						ELSE '<td><button class=\"btn btn-success\" disabled></td>'
+					END AS backup";
+	$data=$query->queryTable("
+	SELECT ngs_samples.id, ngs_samples.series_id, ngs_samples.lane_id, name, samplename, title, source, organism, molecule, total_reads, barcode, description, avg_insert_size, read_length, concentration, time, biological_replica, technical_replica, spike_ins, adapter,
+	notebook_ref, notes, genotype, library_type, biosample_type, instrument_model, treatment_manufacturer, ngs_samples.owner_id,backup_checksum,
+	$sampleBackup
+	FROM ngs_samples
+	$innerJoin
+	$sampleJoin
+	WHERE ngs_samples.id = $id
+	");
+}
+else if ( $p == "clearPreviousSamples")
+{
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	$data=$query->runSQL("DELETE FROM ngs_runlist WHERE run_id = $run_id");
+}
 
 if (!headers_sent()) {
 	header('Cache-Control: no-cache, must-revalidate');

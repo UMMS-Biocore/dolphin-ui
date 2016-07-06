@@ -39,18 +39,10 @@
 					<div class="row">
 						<div class="col-md-12">
 							<?php echo $html->sendJScript("selected", "", "", $selection, $uid, $gids); ?>
-							<?php if(!isset($_SESSION['ngs_samples'])){
-								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup"], ["id","name","title","source","organism","molecule","backup"]);
-							}else if($_SESSION['ngs_samples'] == ''){
-								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup"], ["id","name","title","source","organism","molecule","backup"]);
-							}else{
-								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Backup", "Barcode", "Total Reads", "Description", "Avg Insert Size", "Read Length",
-																						"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-																						"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer"],
-																						["id","samplename","title","source","organism","molecule","backup", "barcode","total_reads", "description", "avg_insert_size", "read_length",
-																						"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-																						"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
-							}?>
+							<?php
+							echo $html->getRespBoxTable_ng("Samples", "samples_selected", "<th>Id</th><th>Sample Name</th><th>Organism</th><th>Molecule</th><th>Backup</th><th>Remove</th>");
+							echo $html->getExpandingAnalysisBox('Additional Sample Selection', "table_create", false);
+							?>
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 					<div class="row">

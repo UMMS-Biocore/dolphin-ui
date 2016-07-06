@@ -199,7 +199,8 @@ else if ($p == 'insertRunlist')
             }
         }
     }
-	$data=$query->runSQL($searchQuery);
+	$query->runSQL($searchQuery);
+	$data=json_encode($sampID);
 }
 else if ($p == 'deleteRunparams')
 {
