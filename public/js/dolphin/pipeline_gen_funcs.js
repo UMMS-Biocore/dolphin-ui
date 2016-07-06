@@ -698,7 +698,7 @@ function pipelineSelect(num){
 		
 		//MULTI-SELECT
 		if (document.getElementById('multi_select_1_'+num) != null) {
-			var sample_names = getSampleNames(window.location.href.split('/')[window.location.href.split('/').length - 1].replace('$', ''));
+			var sample_names = getSampleNames(selected_samples.toString());
 			console.log(sample_names);
 			for(var x = 0; x < sample_names.length; x++){
 					document.getElementById('multi_select_1_'+num).appendChild(createElement('option', ['id', 'value'], [num+'_1_'+sample_names[x], sample_names[x]]));
@@ -2264,7 +2264,7 @@ function populateChipSelection() {
 	names.innerHTML = "";
 	var input = document.getElementById('multi_chip_2');
 	input.innerHTML = "";
-	var sample_names = getTrueSampleNames(window.location.href.split('/')[window.location.href.split('/').length - 1].replace('$', ''));
+	var sample_names = getTrueSampleNames(selected_samples.toString());
 	
 	//CHIP MULTI_SELECT
 	if (document.getElementById('multi_chip_1') != null) {

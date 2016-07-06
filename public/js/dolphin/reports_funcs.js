@@ -226,9 +226,6 @@ function createDropdown(mapping_list, type){
 		var opt = createElement('option', ['id','value'], [mapping_list[x], mapping_list[x]]);
 		opt.innerHTML = mapping_list[x];
 		document.getElementById('select_' + type + '_report').appendChild(opt);
-		if (type_dictionary.indexOf(mapping_list[x]) == -1) {
-			type_dictionary.push(mapping_list[x]);
-		}
 	}
 }
 
@@ -1220,7 +1217,9 @@ $(function() {
 		document.getElementById('jsontable_initial_mapping').appendChild(createElement('button', ['id', 'class', 'onclick'], ['initial_download_button', 'btn btn-primary margin', 'downloadInitialMapping()']))
 		document.getElementById('initial_download_button').innerHTML = 'Download Initial Table';
 		document.getElementById('jsontable_initial_mapping').appendChild(createElement('a', ['id', 'download', 'style'], ['download_link', 'initial_mapping.tsv', 'display:none']))
-		createDropdown(summary_RNA, 'initial_mapping');
+		if (summary_RNA.length > 0) {
+			createDropdown(summary_RNA, 'initial_mapping');
+		}
 		
 		//	Set up plot data
 		summaryPlotSetup(table_data);
