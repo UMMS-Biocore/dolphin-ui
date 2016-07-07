@@ -37,3 +37,5 @@ nytprof.out
 *.bs
 /_eumm/
 *.swp
+
+config/.salt

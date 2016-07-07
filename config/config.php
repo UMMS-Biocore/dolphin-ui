@@ -61,6 +61,11 @@ define('ENCODE_SECRET', $ini_array['ENCODE_SECRET']);
 define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
 define('REQUESTS', $ini_array['REQUESTS']);
 
+$salt = parse_ini_file(".salt", true);
+
+define('MASTER_SALT', $salt['MASTER_SALT']);
+define('AMAZON_SALT', $salt['AMAZON_SALT']);
+
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))
 {
