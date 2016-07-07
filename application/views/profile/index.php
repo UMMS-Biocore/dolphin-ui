@@ -198,11 +198,16 @@
 									</div>
 									<div class="tab-pane" id="bucket">
 										<div id="amazon_keys" class="margin">
-											<?php echo $html->getRespBoxTableStreamNoExpand("Update your Amazon Buckets", "amazon", ['Group','Access Key', 'Secret Key'], ['group','access_key','secret_key']); ?>
-										</div>
-										<div class="box-footer margin">
-											<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Submit</button>
-											<button type="button" id="addAWS" class="btn btn-primary" onclick="addAWSButton()">Add Amazon</button>
+											<div id="loadingKeysHeader">
+												<h3>Loading...</h3>
+											</div>
+											<div id="loadingKeys" style="display: none">
+												<?php echo $html->getRespBoxTableStreamNoExpand("Update your Amazon Buckets", "amazon", ['Group','Access Key', 'Secret Key'], ['group','access_key','secret_key']); ?>
+												<div class="box-footer margin">
+													<button type="button" id="changeAv" class="btn btn-primary" onclick="updateProfile()">Submit</button>
+													<button type="button" id="addAWS" class="btn btn-primary" onclick="addAWSButton()">Add Amazon</button>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>

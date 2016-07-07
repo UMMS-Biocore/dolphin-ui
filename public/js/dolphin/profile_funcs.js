@@ -130,7 +130,7 @@ function awsButton(){
 				confirmPassed = s;
 			}
 		});
-		if (confirmPassed == 0) {
+		if (confirmPassed == 1) {
 			document.getElementById('submitLabel').innerHTML ='New AWS keys have been submitted for that group!';
 		}else{
 			document.getElementById('submitLabel').innerHTML ='An error has occured, please try to add keys again.';
@@ -147,9 +147,10 @@ function obtainKeys(){
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/profiledb.php",
 			data: { p: 'obtainAmazonKeys' },
-			async: false,
+			async: true,
 			success : function(s)
 			{
+				console.log(s)
 				var new_json_array = [];
 				for(var i = 0; i < s.length; i++ ){
 					if (obtainPermissions(s[i].id)) {
@@ -165,6 +166,8 @@ function obtainKeys(){
 					}
 				}
 				createStreamTable('amazon', new_json_array, "", true, [20,50], 20, true, true);
+				document.getElementById('loadingKeysHeader').style.display = 'none';
+				document.getElementById('loadingKeys').style.display = 'inline';
 			}
 	});
 }

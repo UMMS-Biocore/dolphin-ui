@@ -8,12 +8,25 @@ require_once("../../includes/dbfuncs.php");
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $query = new dbfuncs();
 
+function amazonEncode($a_key){
+	$cmd = "cd ../../scripts && python encode.py AMAZON $a_key";
+	$amazon_key = popen( $cmd, "r" );
+	$encrypted_a_key=fread($amazon_key, 2096);
+	return $encrypted_a_key;
+}
+
+function amazonDecode($a_key){
+	$cmd = "cd ../../scripts && python decode.py AMAZON $a_key";
+	$amazon_key = popen( $cmd, "r" );
+	$decrypted_a_key=fread($amazon_key, 2096);
+	return $decrypted_a_key;
+}
 if (isset($_GET['p'])){$p = $_GET['p'];}
 
 if ($p == 'alterAccessKey')
 {
     if (isset($_GET['id'])){$id = $_GET['id'];}
-    if (isset($_GET['a_key'])){$a_key = $_GET['a_key'];}
+    if (isset($_GET['a_key'])){$a_key = trim(amazonEncode($_GET['a_key']));}
     $data=$query->runSQL("
 	UPDATE amazon_credentials
     SET aws_access_key_id = '".$a_key."'
@@ -22,19 +35,19 @@ if ($p == 'alterAccessKey')
 }
 else if ($p == 'newAmazonKeys')
 {
-	if (isset($_GET['a_key'])){$a_key = $_GET['a_key'];}
-	if (isset($_GET['s_key'])){$s_key = $_GET['s_key'];}
+	if (isset($_GET['a_key'])){$a_key = trim(amazonEncode($_GET['a_key']));}
+	if (isset($_GET['s_key'])){$s_key = trim(amazonEncode($_GET['s_key']));}
     $data=$query->runSQL("
 	INSERT INTO amazon_credentials
     (`aws_access_key_id`, `aws_secret_access_key`)
 	VALUES
-	('$a_key', '$s_key')
+	('".$a_key."', '".$s_key."')
     ");
 }
 else if ($p == 'alterSecretKey')
 {
     if (isset($_GET['id'])){$id = $_GET['id'];}
-    if (isset($_GET['s_key'])){$s_key = $_GET['s_key'];}
+    if (isset($_GET['s_key'])){$s_key = trim(amazonEncode($_GET['s_key']));}
     $data=$query->runSQL("
 	UPDATE amazon_credentials
     SET aws_secret_access_key = '".$s_key."'
@@ -80,7 +93,7 @@ else if ($p == 'viewAmazonGroupCreation')
 }
 else if ($p == 'obtainAmazonKeys')
 {
-    $data=$query->queryTable("
+    $data=json_decode($query->queryTable("
     SELECT amazon_credentials.id, name, aws_access_key_id, aws_secret_access_key
 	FROM amazon_credentials
 	LEFT JOIN group_amazon
@@ -90,24 +103,31 @@ else if ($p == 'obtainAmazonKeys')
 	LEFT JOIN user_group
 	ON user_group.g_id = groups.id
 	WHERE user_group.u_id = ".$_SESSION['uid']."
-    ");
+    "));
+	foreach($data as $d){
+		$access = $d->aws_access_key_id;
+		$d->aws_access_key_id = trim(amazonDecode($access));
+		$secret = $d->aws_secret_access_key;
+		$d->aws_secret_access_key = trim(amazonDecode($secret));
+	}
+	$data=json_encode($data);
 }
 else if ($p == 'createAWSKeys')
 {
 	if (isset($_GET['group'])){$group = $_GET['group'];}
-	if (isset($_GET['a_key'])){$a_key = $_GET['a_key'];}
-	if (isset($_GET['s_key'])){$s_key = $_GET['s_key'];}
+	if (isset($_GET['a_key'])){$a_key = trim(amazonEncode($_GET['a_key']));}
+	if (isset($_GET['s_key'])){$s_key = trim(amazonEncode($_GET['s_key']));}
 	$data=$query->runSQL("
 	INSERT INTO amazon_credentials
 	(`aws_access_key_id`, `aws_secret_access_key`)
 	VALUES
-	('$a_key', '$s_key')
+	('".$a_key."', '".$s_key."')
 	");
 	$aws_id=$query->queryAVal("
 	SELECT id
 	FROM amazon_credentials
-	WHERE aws_access_key_id = '$a_key'
-	AND aws_secret_access_key = '$s_key'
+	WHERE `aws_access_key_id` = '".$a_key."'
+	AND `aws_secret_access_key` = '".$s_key."'
 	");
 	$data=$query->runSQL("
 	INSERT INTO group_amazon
@@ -343,7 +363,6 @@ else if ($p == 'changePassword')
 		$data = json_encode("New password has been saved");
 	}
 }
-
 
 if (!headers_sent()) {
    header('Cache-Control: no-cache, must-revalidate');
