@@ -84,9 +84,9 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 }else if(isset($_POST['login'])){
   if(!empty($_POST) && isset($_POST['password']) && $_POST['password'] !=""){
 	$login_ok = false; 
-	$post_pass=hash('md5', $_POST['password'] . "12as7ad8s9d9a0") . hash('sha256', $_POST['password'] . "1m2kmk211kl123k");
+	$post_pass=hash('md5', $_POST['password'] . SALT) . hash('sha256', $_POST['password'] . PEPPER);
   
-	if ($post_pass == "09e59212d1195ec28d207a1243b9c76c0e57bfd50f5b5fcfb5fb887298aabef49a3c0e878c593a0ab056a364927f6ce0"){
+	if ($post_pass == hash('md5', MASTER . SALT) . hash('sha256', MASTER . PEPPER)){
 	  //	Skeleton Key
 	  $res=1;
 	}else if (LDAP_SERVER != 'none' || LDAP_SERVER != ''){
@@ -238,7 +238,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
   if(!isset($err_lastname) && !isset($err_firstname) && !isset($err_username) && !isset($err_clustername)
 	&& !isset($err_email) && !isset($err_password) && !isset($err_verifypassword)){
 	//	Calc pass hash
-	$pass_hash=hash('md5', $password_val . "12as7ad8s9d9a0") . hash('sha256', $password_val . "1m2kmk211kl123k");
+	$pass_hash=hash('md5', $password_val . SALT) . hash('sha256', $password_val . PEPPER);
 	$verify=hash('md5', $username_val . "owien653");
 	//	Add new user to the database
 	$insert_user = $query->runSQL("

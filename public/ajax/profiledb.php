@@ -319,7 +319,7 @@ else if ($p == 'changePassword')
 	if (isset($_GET['newpass'])){$newpass = $_GET['newpass'];}
 	if (isset($_GET['newpassconf'])){$newpassconf = $_GET['newpassconf'];}
 	
-	$oldpass_check=hash('md5', $oldpass . "12as7ad8s9d9a0") . hash('sha256', $oldpass . "1m2kmk211kl123k");
+	$oldpass_check=hash('md5', $oldpass . SALT) . hash('sha256', $oldpass . PEPPER);
 	$stored_pass=$query->queryAVal("
        SELECT pass_hash
        FROM users
@@ -334,7 +334,7 @@ else if ($p == 'changePassword')
 	}else if ($newpass != $newpassconf){
 		$data = json_encode("New password and new password confirmation do not match");
 	}else{
-		$newpass_sha=hash('md5', $newpass . "12as7ad8s9d9a0") . hash('sha256', $newpass . "1m2kmk211kl123k");
+		$newpass_sha=hash('md5', $newpass . SALT) . hash('sha256', $newpass . PEPPER);
 		$query->runSQL("
 		UPDATE users
 		SET pass_hash = '$newpass_sha'

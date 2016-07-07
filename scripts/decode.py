@@ -12,4 +12,4 @@ config.readfp(open('../config/.salt'))
 password = config.get('Dolphin', salt_type)
 
 decrypted = decrypt(password, unhexlify(item)).decode('utf8')
-print "de:"+decrypted
+print decrypted
