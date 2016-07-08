@@ -32,7 +32,6 @@ before_script:
   - echo "$(curl -fsSL https://gist.github.com/roderik/16d751c979fdeb5a14e3/raw/gistfile1.txt)" | sudo tee /etc/apache2/conf.d/phpconfig > /dev/null
   - echo "$(curl -fsSL https://gist.github.com/roderik/2eb301570ed4a1f4c33d/raw/gistfile1.txt)" | sed -e "s,PATH,`pwd`,g" | sudo tee /etc/apache2/sites-available/default > /dev/null
   - sudo service apache2 restart
-  - sudo pip install simple-crypt
   - mysql -u root -e "CREATE USER 'myproject'@'localhost' IDENTIFIED BY 'mypass'"
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'myproject'@'localhost' WITH GRANT OPTION;"
   - mkdir /home/vagrant/dir1
@@ -41,6 +40,10 @@ before_script:
   - mkdir /home/vagrant/dir2
   - touch /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_002.fastq.gz
   - touch /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_002.fastq.gz
+  # pip
+  - pip install --upgrade pip
+  - pip install --upgrade pycrypto
+  - sudo pip install simple-crypt
   # update database
   - gzip -d db/biocoredb.sql.gz
   - mysql -e "CREATE DATABASE biocore;" -uroot
