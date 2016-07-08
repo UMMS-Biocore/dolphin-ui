@@ -41,8 +41,8 @@ before_script:
   - touch /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_002.fastq.gz
   - touch /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_002.fastq.gz
   # pip
-  - pip install --upgrade pip
-  - pip install --upgrade pycrypto
+  - sudo pip install --upgrade pip
+  - sudo pip install --upgrade pycrypto
   - sudo pip install simple-crypt
   # update database
   - gzip -d db/biocoredb.sql.gz
