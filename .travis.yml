@@ -56,7 +56,9 @@ before_script:
   - mysql -e "use biocore; INSERT INTO ngs_organism (organism) VALUES ('human'); UPDATE ngs_samples SET organism_id = 1;" -uroot
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_09_aws.sql
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_11_rechecksum.sql
-  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_01_aws.sql 
+  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_01_aws.sql
+  # other dependencies
+  - touch config/.salt && echo "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\n" > config/.salt
  
 script:
   - phpunit unitTesting/ngsimport_unittest.php
