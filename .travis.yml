@@ -61,6 +61,7 @@ before_script:
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_09_aws.sql
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_11_rechecksum.sql
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_01_aws.sql
+  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_07_salt.sql
   # other dependencies
   - printf "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\n" > config/.salt
   - cat config/.salt
