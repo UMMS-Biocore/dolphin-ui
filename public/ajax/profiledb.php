@@ -8,18 +8,21 @@ require_once("../../includes/dbfuncs.php");
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $query = new dbfuncs();
 
-function amazonEncode($a_key){
-	$cmd = "cd ../../scripts && python encode.py AMAZON $a_key";
-	$amazon_key = popen( $cmd, "r" );
-	$encrypted_a_key=fread($amazon_key, 2096);
-	return $encrypted_a_key;
+if(!function_exists('amazonEncode')){
+	function amazonEncode($a_key){
+		$cmd = "cd ../../scripts && python encode.py AMAZON $a_key";
+		$amazon_key = popen( $cmd, "r" );
+		$encrypted_a_key=fread($amazon_key, 2096);
+		return $encrypted_a_key;
+	}
 }
-
-function amazonDecode($a_key){
-	$cmd = "cd ../../scripts && python decode.py AMAZON $a_key";
-	$amazon_key = popen( $cmd, "r" );
-	$decrypted_a_key=fread($amazon_key, 2096);
-	return $decrypted_a_key;
+if(!function_exists('amazonDecode')){
+	function amazonDecode($a_key){
+		$cmd = "cd ../../scripts && python decode.py AMAZON $a_key";
+		$amazon_key = popen( $cmd, "r" );
+		$decrypted_a_key=fread($amazon_key, 2096);
+		return $decrypted_a_key;
+	}
 }
 if (isset($_GET['p'])){$p = $_GET['p'];}
 
