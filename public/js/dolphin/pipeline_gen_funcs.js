@@ -1070,7 +1070,6 @@ function manageChecklistsBulk(names){
 		if ( checklist_samples.indexOf( name ) > -1 ){
 			//remove
 			remove_bool = true;
-			checklist_samples.splice(checklist_samples.indexOf(name), 1);
 			if (window.location.href.indexOf("/pipeline/") == -1) {
 				if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
 					for(var x = 0; x < lane_samples.length; x++){
@@ -1112,6 +1111,7 @@ function manageChecklistsBulk(names){
 					document.getElementById('clear_basket').disabled = 'true';
 				}
 			}
+			checklist_samples.splice(checklist_samples.indexOf(name), 1);
 			if (document.getElementById('sample_checkbox_' + name) != undefined) {
 				if (document.getElementById('sample_checkbox_' + name).checked != false) {
 					var check = document.getElementById('sample_checkbox_' + name);
