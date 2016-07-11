@@ -160,10 +160,10 @@ function sendToTableGen(){
 	for(var y = 0; y < ids.length; y++){
 		var keys = Object.keys(runIDHelper);
 		for (var x = 0; x < keys.length; x++) {
-			if (run_array[keys[x]] == undefined) {
-				run_array[keys[x]] = ids[y];
+			if (run_array[runIDHelper[keys[x]]] == undefined) {
+				run_array[runIDHelper[keys[x]]] = ids[y];
 			}else{
-				run_array[keys[x]] += "," + ids[y];
+				run_array[runIDHelper[keys[x]]] += "," + ids[y];
 			}
 		}
 	}
@@ -421,7 +421,8 @@ function optionChange(selector){
 			}
 		}
 	}
-	runIDHelper[selector.id.split("_")[0]] = selector.selectedIndex;
+	var selectedOptions = selector.selectedOptions;
+	runIDHelper[selector.id.split("_")[0]] = selectedOptions[0].id.split("_")[0];
 	selectionHelper[runHelper.indexOf(selector.id.split('_')[0])] = options_array;
 	console.log(selector.selectedIndex);
 	reportSelection();
