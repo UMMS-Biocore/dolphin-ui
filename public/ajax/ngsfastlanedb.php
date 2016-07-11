@@ -125,7 +125,7 @@ if ($p == 'experimentSeriesCheck'){
 	$temp_check=json_decode($query->queryTable("
 		SELECT id
 		FROM ngs_temp_sample_files
-		WHERE filename = '$filename'
+		WHERE file_name = '$filename'
 		AND sample_id = $sample_id
 		AND dir_id = $input
 		"));
@@ -165,13 +165,12 @@ if ($p == 'experimentSeriesCheck'){
 		");
 	}
 }else if ($p == 'sendProcessData'){
-	if (isset($_GET['info_array'])){$info_array = $_GET['info_array'];}
-	if (isset($_GET['post'])){$post = $_GET['post'];}
-	
+	if (isset($_POST['info_array'])){$info_array = $_POST['info_array'];}
+	if (isset($_POST['post'])){$post = $_POST['post'];}
 	$_SESSION[$post] = implode(",",$info_array);
 }else if ($p == 'sendProcessDataRaw'){
-	if (isset($_GET['info_array'])){$info_array = $_GET['info_array'];}
-	if (isset($_GET['post'])){$post = $_GET['post'];}
+	if (isset($_POST['info_array'])){$info_array = $_POST['info_array'];}
+	if (isset($_POST['post'])){$post = $_POST['post'];}
 	$_SESSION[$post] = $info_array;
 }else if ($p == 'obtainGroupFromName'){
 	if (isset($_GET['name'])){$name = $_GET['name'];}
@@ -191,8 +190,8 @@ if ($p == 'experimentSeriesCheck'){
 	or outdir = '$outdir//initial_run'
     "));
 }else if ($p == 'removeSuccessFiles'){
-	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
-	if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
+	if (isset($_POST['samples'])){$samples = $_POST['samples'];}
+	if (isset($_POST['sample_ids'])){$sample_ids = $_POST['sample_ids'];}
 	$clusteruser = json_decode($query->queryTable("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
 	$outdirs=json_decode($query->queryTable("
 	SELECT outdir

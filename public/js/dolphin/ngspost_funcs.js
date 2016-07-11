@@ -72,7 +72,10 @@ function postInsertRunparams(JSON_OBJECT, outputdir, name, description, perms, g
                if (runGroupID == 'new') {
 					runlistCheck = 'insertRunlist';
 					runID = r;
-               }else{
+               }else if (window.location.href.indexOf("/rerun/") > -1){
+					runlistCheck = 'old';
+					runID = r;
+			   }else{
 					runlistCheck = 'old';
 			   }
           }
@@ -88,22 +91,45 @@ function postInsertRunlist(runlistCheck, sample_ids, runID){
    var uid = phpGrab.uid;
    var gids = phpGrab.gids;
    var successCheck = false;
-       if (runlistCheck == 'insertRunlist') {
-           $.ajax({
-               type: 	'POST',
-               url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',
-               data:  	{ p: runlistCheck, sampID: sample_ids, runID: runID, uid: uid, gids: gids},
-               async:	false,
-               success: function(r)
-               {
-                   successCheck = true;
-				   console.log('inserted');
-               }
-           });
-       }else if (runlistCheck == 'old') {
-			successCheck = true;
-	   }
-   return successCheck;
+	 if (runlistCheck == 'insertRunlist') {
+		  $.ajax({
+			   type: 	'POST',
+			   url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',
+			   data:  	{ p: runlistCheck, sampID: sample_ids, runID: runID, uid: uid, gids: gids},
+			   async:	false,
+			   success: function(r)
+			   {
+					successCheck = true;
+					console.log('inserted');
+			   }
+		  });
+	 }else if (runlistCheck == 'old') {
+		  if (window.location.href.indexOf("/rerun/") != -1) {
+			   runlistCheck = 'insertRunlist'
+			   $.ajax({
+					type: 'GET',
+					url: BASE_PATH+'/public/ajax/ngsquerydb.php',
+					data: { p: "clearPreviousSamples", run_id: runID},
+					async: false,
+					success: function(r)
+					{
+						 console.log(runID)
+						 $.ajax({
+							  type: 	'POST',
+							  url: 	BASE_PATH+'/public/ajax/ngsalterdb.php',
+							  data:  	{ p: runlistCheck, sampID: sample_ids, runID: runID, uid: uid, gids: gids},
+							  async:	false,
+							  success: function(p)
+							  {
+								   successCheck = true;
+								   console.log(p);
+							  }
+						 }); 
+					}
+			   });
+		  }
+	 }
+	 return successCheck;
 }
 
 function deleteRunparams(run_id) {

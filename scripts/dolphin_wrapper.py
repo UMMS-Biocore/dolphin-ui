@@ -541,7 +541,7 @@ class Dolphin:
                  type="tophat"
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
-                    type="merge"+type
+                    type="mergetophat"
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
@@ -601,7 +601,8 @@ class Dolphin:
                 type="haplotypecaller"
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
-        print >>fp, '%s'%(stepSummary % locals())
+        if(backupS3 == None):
+            print >>fp, '%s'%(stepSummary % locals())
         print >>fp, '%s'%(stepClean % locals())
 
         fp.close()

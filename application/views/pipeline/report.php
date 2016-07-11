@@ -17,7 +17,7 @@
 						<div class="col-md-12">
 						<div class="panel panel-default">
 				<div class="panel-heading">
-				<h4>Analysis Results <small>Comprehensive Analysis</small></h4>
+					<h4><b>Run:</b> <?php echo $run_id?> <b>Directory:</b> <?php echo $outdir?></h4>
 				</div>
 				<div class="panel-body">
 					<div id='empty_div'>
@@ -31,8 +31,9 @@
 					<?php echo $html->getExpandingAnalysisBox('RSeQC', "rseqc", false); ?>
 				</div>
 				<div class="input margin">
-					<button id="back_to_status" class="btn btn-primary" onclick="sendToStatus()">Return to Status</button>
-					<button id="send_to_plots" class="btn btn-primary" onclick="sendToPlots()">Go to Plots</button>
+					<button id="back_to_gen_status" class="btn btn-primary" onclick="sendToStatus()">Run Status</button>
+					<button id="back_to_adv_status" class="btn btn-primary" onclick="sendToAdvancedStatus(this.name)">Advanced Status</button>
+					<button id="send_to_plots" class="btn btn-primary" onclick="sendToPlots()">Plots</button>
 				</div>
 			</div>
 						</div><!-- /.col (RIGHT) -->

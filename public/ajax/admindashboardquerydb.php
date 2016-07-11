@@ -15,9 +15,10 @@ if (isset($_GET['end'])){$end = $_GET['end'];}
 if ($p == "getMonthlyRuns")
 {
     $data=$query->queryTable('
-    select (a.countTotal-b.countDolphin) countGalaxy,a.countTotal, b.countDolphin, a.month from
+    select a.countTotal countGalaxy,a.countTotal, b.countDolphin, a.month from
     (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m") month from galaxy_run group by month order by month) a,
-    (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m") month from galaxy_run where dolphin=TRUE group by month order by month) b
+    (select count(workflow_run_id) countDolphin, DATE_FORMAT(start_time, "%Y-%m") month 
+    from workflow_run group by month order by month) b
     where a.month=b.month order by month
     ');
 }
@@ -28,7 +29,8 @@ else if($p == "getDailyRuns")
    (select * from
    (select a.countTotal, b.countDolphin, a.day from
    (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run group by day order by day) a,
-   (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run where dolphin=TRUE group by day order by day) b
+   (select count(workflow_run_id) countDolphin, DATE_FORMAT(start_time, "%Y-%m") month 
+    from workflow_run group by month order by month) b
    where a.day=b.day order by day desc) a limit 30) a order by day asc
    ');
 }

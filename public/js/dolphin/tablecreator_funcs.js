@@ -89,11 +89,13 @@ function reportSelection(){
 	}
 	for(var y = 0; y < ids.length; y++){
 		var element = document.getElementById(ids[y] + '_run_select');
-		for(var r = 0; r < element.selectedOptions.length; r++){
-			var option_selected = element.selectedOptions[r]
-			option_selected.click();
-			if (wkeys.indexOf(option_selected.value) == -1) {
-				wkeys.push(option_selected.value);
+		if (element != undefined) {
+			for(var r = 0; r < element.selectedOptions.length; r++){
+				var option_selected = element.selectedOptions[r]
+				option_selected.click();
+				if (wkeys.indexOf(option_selected.value) == -1) {
+					wkeys.push(option_selected.value);
+				}
 			}
 		}
 	}

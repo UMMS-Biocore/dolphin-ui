@@ -235,23 +235,31 @@ function deleteButton(){
 	$('#deleteModal').modal({
 		show: true
 	});
-	
-	if (checklist_samples.length == 0 && checklist_lanes.length == 0 && checklist_experiment_series.length == 0){
+	var html = window.location.href.split("/");
+	if (html.indexOf("details") == -1 && html.indexOf("browse") == -1) {
+		if (checklist_samples.length == 0 && checklist_lanes.length == 0 && checklist_experiment_series.length == 0){
+			document.getElementById('myModalLabel').innerHTML = 'Delete Error';
+			document.getElementById('deleteLabel').innerHTML = 'You must make a selection to delete to continue.';
+			
+			document.getElementById('cancelDeleteButton').innerHTML = "OK";
+			document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
+		}else if (checklist_experiment_series.length > 0) {
+			document.getElementById('myModalLabel').innerHTML = 'Delete Experiment Series';
+			document.getElementById('deleteLabel').innerHTML = 'Warning!  You have selected to remove an experiment series!';
+			document.getElementById('deleteAreas').innerHTML = 'Are you sure you want to continue?<br>'+'Experiment series id(s): '+checklist_experiment_series.toString();
+			
+			document.getElementById('confirmDeleteButton').setAttribute('onclick', 'deletePermsModal()');
+			document.getElementById('confirmDeleteButton').setAttribute('data-dismiss', '');
+			document.getElementById('confirmDeleteButton').setAttribute('style', 'display:show');
+		}else{
+			deletePermsModal();
+		}
+	}else{
 		document.getElementById('myModalLabel').innerHTML = 'Delete Error';
-		document.getElementById('deleteLabel').innerHTML = 'You must make a selection to delete to continue.';
+		document.getElementById('deleteLabel').innerHTML = 'Samples/Imports/Experiment Series may only be deleted on the main browser page.';
 		
 		document.getElementById('cancelDeleteButton').innerHTML = "OK";
 		document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
-	}else if (checklist_experiment_series.length > 0) {
-		document.getElementById('myModalLabel').innerHTML = 'Delete Experiment Series';
-		document.getElementById('deleteLabel').innerHTML = 'Warning!  You have selected to remove an experiment series!';
-		document.getElementById('deleteAreas').innerHTML = 'Are you sure you want to continue?<br>'+'Experiment series id(s): '+checklist_experiment_series.toString();
-		
-		document.getElementById('confirmDeleteButton').setAttribute('onclick', 'deletePermsModal()');
-		document.getElementById('confirmDeleteButton').setAttribute('data-dismiss', '');
-		document.getElementById('confirmDeleteButton').setAttribute('style', 'display:show');
-	}else{
-		deletePermsModal();
 	}
 }
 

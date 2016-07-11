@@ -24,7 +24,7 @@
                 <div class="body bg-gray">
                     <div class="text-center form-group">
                         <label>
-							Please check your email for a verification email.
+							An email has been sent to our admins for approval of your Dolphin user account.  We will email you upon verification.
 						</label>
                     </div>
                 </div>

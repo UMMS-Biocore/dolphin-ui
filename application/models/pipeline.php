@@ -20,4 +20,17 @@ class Pipeline extends VanillaModel {
 		$result = $this->query("SELECT * FROM ngs_genome");
 		return json_decode($result, true);
 	}
+	
+	function getRunId(){
+		return $_SESSION['reports_id'];
+	}
+	
+	function getRunDirectory($run_id){
+		$outdir=json_decode($this->query("
+		SELECT outdir
+		FROM ngs_runparams
+		WHERE id = $run_id
+		"));
+		return $outdir[0]->outdir;
+	}
 }

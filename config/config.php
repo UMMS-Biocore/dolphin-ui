@@ -25,6 +25,10 @@ if (!empty($_SERVER["HTTP_HOST"])){
    }
    ###########################################
 }
+
+if(strpos(getcwd(),'/home/travis/build/') > 0){
+   $param_section = "Travis";
+}
  
 $ini = parse_ini_file("config.ini", true);
 
@@ -50,6 +54,19 @@ define('BIND_USER', $ini_array['BIND_USER']);
 define('BIND_PASS', $ini_array['BIND_PASS']);
 define('SCHEDULAR', $ini_array['SCHEDULAR']);
 define('DEBROWSER_HOST', $ini_array['DEBROWSER_HOST']);
+define('ENCODE_URL', $ini_array['ENCODE_URL']);
+define('ENCODE_BUCKET', $ini_array['ENCODE_BUCKET']);
+define('ENCODE_ACCESS', $ini_array['ENCODE_ACCESS']);
+define('ENCODE_SECRET', $ini_array['ENCODE_SECRET']);
+define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
+define('REQUESTS', $ini_array['REQUESTS']);
+
+$salt = parse_ini_file(".salt", true)['Dolphin'];
+
+define('SALT', $salt['SALT']);
+define('PEPPER', $salt['PEPPER']);
+define('MASTER', $salt['MASTER']);
+define('AMAZON', $salt['AMAZON']);
 
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))

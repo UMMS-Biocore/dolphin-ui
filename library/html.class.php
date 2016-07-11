@@ -201,7 +201,7 @@ class HTML {
 	
  function getRespBoxTable_ng($title, $table, $fields)
 	{
-	$html='				<div class="box">
+	$html='				<div class="box" style="overflow:scroll">
 				<div class="box-header">
 					<h3 class="box-title">'.$title.'</h3>';
 		$html.= $this->getInfoBox($table);
@@ -614,7 +614,10 @@ e range"><i class="fa fa-calendar"></i></button>
 			$html.= 	'<div class="box-body tab-pane" id="runs">
 							<div class="box-body margin" style="overflow-y:scroll">';
 			foreach($sample_runs as $sr){
-				$html.=				'<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">'.$sr->id.' -- '.$sr->run_name.'</a><br>';
+				$html.=				'<p>'.$sr->id.' -- '.$sr->run_name.' 
+									<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">Reports</a> | 
+									<a href="#" id="'.$sr->id.'" onclick="sendToAdvancedStatus(this.id)">Status</a>
+									</p>';
 			}
 			$html.=			'</div>
 						</div>'; // END RUNS PANEL
@@ -1057,12 +1060,12 @@ Single End Example:
 					}else if($_SESSION['ngs_samples'] == ''){
 						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Selected"], ["id","name","title","source","organism","molecule","total_reads"]);
 					}else{
-						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Description", "Avg Insert Size", "Read Length",
-																				"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-																				"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
-																				["id","name","title","source","organism","molecule","total_reads", "barcode", "description", "avg_insert_size", "read_length",
-																				"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-																				"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
+						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Barcode","Description","Avg Insert Size","Read Length",
+																				"Concentration","Time","Biological Replica","Technical Replica","Spike-ins","Adapter",
+																				"Notebook Ref","Notes","Genotype","Library Type","Biosample Type","Instrument Model","Treatment Manufacturer","Selected"],
+																				["id","name","title","source","organism","molecule","total_reads","barcode","description","avg_insert_size","read_length",
+																				"concentration","time","biological_replica","technical_replica","spike_ins","adapter",
+																				"notebook_ref","notes","genotype","library_type","biosample_type","instrument_model","treatment_manufacturer"]);
 					}
 				}
 				

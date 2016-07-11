@@ -14,11 +14,11 @@ if (isset($_GET['p'])){$p = $_GET['p'];}
 if($p == "getFileList")
 {
     $data=$query->queryTable("
-    SELECT d.fastq_dir, f.file_name, d.amazon_bucket 
-    FROM ngs_fastq_files f, ngs_dirs d 
-    where d.id=f.dir_id and d.amazon_bucket!='' and
-    d.amazon_bucket != 'none' and
-    (f.backup_checksum='' or isnull(f.backup_checksum))
+     SELECT d.fastq_dir, f.file_name, d.amazon_bucket, ac.aws_access_key_id ak, ac.aws_secret_access_key sk
+     FROM ngs_fastq_files f, ngs_dirs d, group_amazon ga, amazon_credentials ac
+     where d.id=f.dir_id and d.amazon_bucket!='' and
+     d.amazon_bucket != 'none' and ga.group_id=d.group_id and ac.id=ga.amazon_id and
+     (f.backup_checksum='' or isnull(f.backup_checksum) or DATE(f.date_modified) <= DATE(NOW() - INTERVAL 2 MONTH))
     ");
 }
 else if($p == "updateHashBackup")

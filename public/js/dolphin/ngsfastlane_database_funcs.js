@@ -167,8 +167,9 @@ function checkFastlaneInput(info_array){
 				//	use file check list and check permissions
 				console.log(file_check)
 				$.ajax({
-					type: 	'GET',
-					url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+file_check,
+					type: 	'POST',
+					url: 	BASE_PATH+'/public/api/service.php',
+					data: { func: "checkFile", username: username.clusteruser, file: file_check},
 					async:	false,
 					success: function(s)
 					{
@@ -222,7 +223,8 @@ function checkFastlaneInput(info_array){
 					console.log(info_array[x]);
 					$.ajax({
 						type: 	'GET',
-						url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&outdir=' + info_array[x],
+						url: 	BASE_PATH+'/public/api/service.php',
+						data: { func: "checkPermissions", username: username.clusteruser, outdir: info_array[x]},
 						async:	false,
 						success: function(s)
 						{
@@ -554,7 +556,7 @@ function directoryCheck(input, backup, amazon){
 
 function sendProcessData(info_array, post_name){
 	$.ajax({
-			type: 	'GET',
+			type: 	'POST',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'sendProcessData', info_array: info_array, post: post_name},
 			async:	false,
@@ -566,7 +568,7 @@ function sendProcessData(info_array, post_name){
 
 function sendProcessDataRaw(info_array, post_name){
 	$.ajax({
-			type: 	'GET',
+			type: 	'POST',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'sendProcessDataRaw', info_array: info_array, post: post_name},
 			async:	false,
@@ -582,7 +584,7 @@ function getBadSamples(){
 
 function removeSuccessFiles(samples, sample_ids){
 	$.ajax({
-			type: 	'GET',
+			type: 	'POST',
 			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'removeSuccessFiles', samples: samples.toString(), sample_ids: sample_ids.toString()},
 			async:	false,

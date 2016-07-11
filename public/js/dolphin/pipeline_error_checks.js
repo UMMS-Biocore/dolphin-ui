@@ -97,7 +97,7 @@ function checkFieldCheckboxChecked(input){
 
 function checkFieldSelection(input, value){
 	var check = false;
-	if (!document.getElementById(input).value == value) {
+	if (document.getElementById(input).value != value) {
 		check = true;
 	}
 	return check;
@@ -403,12 +403,20 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			if (!checkFieldSelection('select_1_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within RNASeqRSEM');
 				return true;
+			//	single end dedup selected
+			}else if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
+				return true;
 			}
 		//	Tophat
 		}else if (name == 'Tophat') {
 			//	extFactor is empty and selected
 			if (!checkFieldSelection('select_1_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within Tophat');
+				return true;
+			//	single end dedup selected
+			}else if (!checkFieldCheckboxChecked('checkbox_4_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
 				return true;
 			}
 		//	ChipSeq
@@ -423,6 +431,10 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 				return true;
 			}else if (checkEmptyDataTable('#json_chiptable')) {
 				displayErrorModal('#errorModal', 'You must select a Sample input for Chip before you run ChipSeq.');
+				return true;
+			//	single end dedup selected
+			}else if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
 				return true;
 			}
 			

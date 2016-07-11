@@ -355,7 +355,11 @@ else if ($p == "createSummaryTSV")
 	if (isset($_GET['wkey'])){$wkey = $_GET['wkey'];}
 	if (isset($_GET['headers'])){$headers = $_GET['headers'];}
 	if (isset($_GET['data_array'])){$data_array = $_GET['data_array'];}
-	
+
+	$myDir = "../pub/$wkey/summary/";
+	if (!is_dir($myDir)) {
+		mkdir($myDir, 0777, true);
+	}
 	$file = fopen("../pub/$wkey/summary/summary.tsv", "w");
 	fwrite($file,implode("\t",$headers)."\n");
 	foreach($data_array as $d){

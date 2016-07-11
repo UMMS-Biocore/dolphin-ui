@@ -702,7 +702,7 @@ function pipelineSelect(num){
 		
 		//MULTI-SELECT
 		if (document.getElementById('multi_select_1_'+num) != null) {
-			var sample_names = getSampleNames(window.location.href.split('/')[window.location.href.split('/').length - 1].replace('$', ''));
+			var sample_names = getSampleNames(selected_samples.toString());
 			console.log(sample_names);
 			for(var x = 0; x < sample_names.length; x++){
 					document.getElementById('multi_select_1_'+num).appendChild(createElement('option', ['id', 'value'], [num+'_1_'+sample_names[x], sample_names[x]]));
@@ -781,7 +781,7 @@ function submitPipeline(type) {
 	
 	if (!pipelineSubmitCheck(non_pipeline, non_pipeline_values, currentPipelineVal, currentPipelineID, currentChipInputID, currentChipInputVal, username)) {
 		//Grab sample ids
-		var ids = getSampleIDs(phpGrab.theSearch, phpGrab.gids, phpGrab.uid);
+		var ids = selected_samples
 		var previous = 'none';
 		//start json construction
 		
@@ -1063,10 +1063,7 @@ function manageChecklistsBulk(names){
 	for(var j = 0; j < names.length; j++){
 		var name = parseInt(names[j]);
 		var sample_search = searchIDDictionary(name);
-		if (sample_search == undefined) {
-			//	No sample found to be displayed
-			return;
-		}else{
+		if (sample_search != undefined) {
 			lane_check = sample_search[0];
 			experiment_check = sample_search[1];
 			var lane_samples = seachLaneToSamples(lane_check);
@@ -1078,40 +1075,45 @@ function manageChecklistsBulk(names){
 			//remove
 			remove_bool = true;
 			checklist_samples.splice(checklist_samples.indexOf(name), 1);
-			if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
-				for(var x = 0; x < lane_samples.length; x++){
-					if (lane_samples[x] == undefined) {
-						lanes_bool = false;
-					}else{
-						if (checklist_samples.indexOf(lane_samples[x]) > -1 && lanes_bool) {
+			if (window.location.href.indexOf("/pipeline/") == -1) {
+				if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
+					for(var x = 0; x < lane_samples.length; x++){
+						if (lane_samples[x] == undefined) {
 							lanes_bool = false;
+						}else{
+							if (checklist_samples.indexOf(lane_samples[x]) > -1 && lanes_bool) {
+								lanes_bool = false;
+							}
 						}
 					}
-				}
-				if (!lanes_bool) {
-					if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
-						var check = document.getElementById('lane_checkbox_' + lane_check);
-						check.checked = !check.checked;
+					if (!lanes_bool) {
+						if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
+							var check = document.getElementById('lane_checkbox_' + lane_check);
+							check.checked = !check.checked;
+						}
+						checklist_lanes.splice(checklist_lanes.indexOf(parseInt(lane_check)), 1);
 					}
-					checklist_lanes.splice(checklist_lanes.indexOf(parseInt(lane_check)), 1);
 				}
-			}
-			if (checklist_experiment_series.indexOf(parseInt(experiment_check)) > -1) {
-				for(var x = 0; x < experiment_samples.length; x++){
-					if (experiment_samples[x] == undefined) {
-						experiment_bool = false;
-					}else{
-						if (checklist_samples.indexOf(experiment_samples[x]) > -1 && experiment_bool) {
+				if (checklist_experiment_series.indexOf(parseInt(experiment_check)) > -1) {
+					for(var x = 0; x < experiment_samples.length; x++){
+						if (experiment_samples[x] == undefined) {
 							experiment_bool = false;
+						}else{
+							if (checklist_samples.indexOf(experiment_samples[x]) > -1 && experiment_bool) {
+								experiment_bool = false;
+							}
 						}
 					}
-				}
-				if (!experiment_bool) {
-					if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
-						var check = document.getElementById('experiment_checkbox_' + experiment_check);
-						check.checked = !check.checked;
+					if (!experiment_bool) {
+						if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
+							var check = document.getElementById('experiment_checkbox_' + experiment_check);
+							check.checked = !check.checked;
+						}
+						checklist_experiment_series.splice(checklist_experiment_series.indexOf(parseInt(experiment_check)), 1);
 					}
-					checklist_experiment_series.splice(checklist_experiment_series.indexOf(parseInt(experiment_check)), 1);
+				}
+				if (checklist_samples.length == 0) {
+					document.getElementById('clear_basket').disabled = 'true';
 				}
 			}
 			if (document.getElementById('sample_checkbox_' + name) != undefined) {
@@ -1120,15 +1122,11 @@ function manageChecklistsBulk(names){
 					check.checked = !check.checked;
 				}
 			}
-			if (checklist_samples.length == 0) {
-				document.getElementById('clear_basket').disabled = 'true';
-			}
 		}else{
 			//add
 			checklist_samples.push(name);
-			addToDolphinBasket(name);
-			if (document.getElementById('clear_basket').disabled) {
-				document.getElementById('clear_basket').disabled = false;
+			if (window.location.href.indexOf("/rerun/") == -1) {
+				addToDolphinBasket(name);
 			}
 			if (document.getElementById('sample_checkbox_' + name) != undefined) {
 				if (document.getElementById('sample_checkbox_' + name).checked != true) {
@@ -1136,41 +1134,46 @@ function manageChecklistsBulk(names){
 					check.checked = !check.checked;
 				}
 			}
-			if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
-				for(var x = 0; x < lane_samples.length; x++){
-					if (lane_samples[x] == undefined) {
-						lanes_bool = false;
-					}else{
-						if (checklist_samples.indexOf(lane_samples[x]) == -1 && lanes_bool) {
+			if (window.location.href.indexOf("/pipeline/") == -1) {
+				if (document.getElementById('clear_basket').disabled) {
+					document.getElementById('clear_basket').disabled = false;
+				}
+				if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
+					for(var x = 0; x < lane_samples.length; x++){
+						if (lane_samples[x] == undefined) {
 							lanes_bool = false;
+						}else{
+							if (checklist_samples.indexOf(lane_samples[x]) == -1 && lanes_bool) {
+								lanes_bool = false;
+							}
 						}
 					}
-				}
-				if (lanes_bool) {
-					if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
-						var check = document.getElementById('lane_checkbox_' + lane_check);
-						check.checked = !check.checked;
+					if (lanes_bool) {
+						if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
+							var check = document.getElementById('lane_checkbox_' + lane_check);
+							check.checked = !check.checked;
+						}
+						checklist_lanes.push(parseInt(lane_check));
 					}
-					checklist_lanes.push(parseInt(lane_check));
 				}
-			}
-			
-			if (checklist_experiment_series.indexOf(parseInt(experiment_check)) == -1) {
-				for(var x = 0; x < experiment_samples.length; x++){
-					if (experiment_samples[x] == undefined) {
-						experiment_bool = false;
-					}else{
-						if (checklist_samples.indexOf(experiment_samples[x]) == -1 && experiment_bool) {
+				
+				if (checklist_experiment_series.indexOf(parseInt(experiment_check)) == -1) {
+					for(var x = 0; x < experiment_samples.length; x++){
+						if (experiment_samples[x] == undefined) {
 							experiment_bool = false;
+						}else{
+							if (checklist_samples.indexOf(experiment_samples[x]) == -1 && experiment_bool) {
+								experiment_bool = false;
+							}
 						}
 					}
-				}
-				if (experiment_bool) {
-					if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
-						var check = document.getElementById('experiment_checkbox_' + experiment_check);
-						check.checked = !check.checked;
+					if (experiment_bool) {
+						if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
+							var check = document.getElementById('experiment_checkbox_' + experiment_check);
+							check.checked = !check.checked;
+						}
+						checklist_experiment_series.push(parseInt(experiment_check));
 					}
-					checklist_experiment_series.push(parseInt(experiment_check));
 				}
 			}
 		}
@@ -1186,13 +1189,11 @@ function manageChecklists(name, type){
 	var lane_check;
 	var experiment_check;
 	name = parseInt(name);
+	console.log(name)
 	if (type == 'sample_checkbox') {
 		//sample checkbox
 		var sample_search = searchIDDictionary(name);
-		if (sample_search == undefined) {
-			//	No sample found to be displayed
-			return;
-		}else{
+		if (sample_search != undefined) {
 			lane_check = sample_search[0];
 			experiment_check = sample_search[1];
 			var lane_samples = seachLaneToSamples(lane_check);
@@ -1203,41 +1204,48 @@ function manageChecklists(name, type){
 		if ( checklist_samples.indexOf( name ) > -1 ){
 			//remove
 			checklist_samples.splice(checklist_samples.indexOf(name), 1);
-			removeFromDolphinBasket(name);
-			if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
-				for(var x = 0; x < lane_samples.length; x++){
-					if (lane_samples[x] == undefined) {
-						lanes_bool = false;
-					}else{
-						if (checklist_samples.indexOf(lane_samples[x]) > -1 && lanes_bool) {
-							lanes_bool = false;
-						}
-					}
-				}
-				if (!lanes_bool) {
-					if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
-						var check = document.getElementById('lane_checkbox_' + lane_check);
-						check.checked = !check.checked;
-					}
-					checklist_lanes.splice(checklist_lanes.indexOf(parseInt(lane_check)), 1);
-				}
+			if (window.location.href.indexOf("/rerun/") == -1) {
+				removeFromDolphinBasket(name);
 			}
-			if (checklist_experiment_series.indexOf(parseInt(experiment_check)) > -1) {
-				for(var x = 0; x < experiment_samples.length; x++){
-					if (experiment_samples[x] == undefined) {
-						experiment_bool = false;
-					}else{
-						if (checklist_samples.indexOf(experiment_samples[x]) > -1 && experiment_bool) {
-							experiment_bool = false;
+			if (window.location.href.indexOf("/pipeline/") == -1) {
+				if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
+					for(var x = 0; x < lane_samples.length; x++){
+						if (lane_samples[x] == undefined) {
+							lanes_bool = false;
+						}else{
+							if (checklist_samples.indexOf(lane_samples[x]) > -1 && lanes_bool) {
+								lanes_bool = false;
+							}
 						}
 					}
-				}
-				if (!experiment_bool) {
-					if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
-						var check = document.getElementById('experiment_checkbox_' + experiment_check);
-						check.checked = !check.checked;
+					if (!lanes_bool) {
+						if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
+							var check = document.getElementById('lane_checkbox_' + lane_check);
+							check.checked = !check.checked;
+						}
+						checklist_lanes.splice(checklist_lanes.indexOf(parseInt(lane_check)), 1);
 					}
-					checklist_experiment_series.splice(checklist_experiment_series.indexOf(parseInt(experiment_check)), 1);
+				}
+				if (checklist_experiment_series.indexOf(parseInt(experiment_check)) > -1) {
+					for(var x = 0; x < experiment_samples.length; x++){
+						if (experiment_samples[x] == undefined) {
+							experiment_bool = false;
+						}else{
+							if (checklist_samples.indexOf(experiment_samples[x]) > -1 && experiment_bool) {
+								experiment_bool = false;
+							}
+						}
+					}
+					if (!experiment_bool) {
+						if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
+							var check = document.getElementById('experiment_checkbox_' + experiment_check);
+							check.checked = !check.checked;
+						}
+						checklist_experiment_series.splice(checklist_experiment_series.indexOf(parseInt(experiment_check)), 1);
+					}
+				}
+				if (checklist_samples.length == 0) {
+					document.getElementById('clear_basket').disabled = 'true';
 				}
 			}
 			if (document.getElementById('sample_checkbox_' + name) != undefined) {
@@ -1246,59 +1254,59 @@ function manageChecklists(name, type){
 					check.checked = !check.checked;
 				}
 			}
-			if (checklist_samples.length == 0) {
-				document.getElementById('clear_basket').disabled = 'true';
-			}
 		}else{
 			//add
 			checklist_samples.push(name);
-			addToDolphinBasket(name);
-			sendBasketInfo(name);
-			
-			if (document.getElementById('clear_basket').disabled) {
-				document.getElementById('clear_basket').disabled = false;
+			if (window.location.href.indexOf("/rerun/") == -1) {
+				addToDolphinBasket(name);
 			}
+			sendBasketInfo(name);
 			if (document.getElementById('sample_checkbox_' + name) != undefined) {
 				if (document.getElementById('sample_checkbox_' + name).checked != true) {
 					var check = document.getElementById('sample_checkbox_' + name);
 					check.checked = !check.checked;
 				}
 			}
-			if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
-				for(var x = 0; x < lane_samples.length; x++){
-					if (lane_samples[x] == undefined) {
-						lanes_bool = false;
-					}else{
-						if (checklist_samples.indexOf(lane_samples[x]) == -1 && lanes_bool) {
+			if (window.location.href.indexOf("/pipeline/") == -1) {
+				if (document.getElementById('clear_basket').disabled) {
+					document.getElementById('clear_basket').disabled = false;
+				}
+				if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
+					for(var x = 0; x < lane_samples.length; x++){
+						if (lane_samples[x] == undefined) {
 							lanes_bool = false;
+						}else{
+							if (checklist_samples.indexOf(lane_samples[x]) == -1 && lanes_bool) {
+								lanes_bool = false;
+							}
 						}
 					}
-				}
-				if (lanes_bool) {
-					if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
-						var check = document.getElementById('lane_checkbox_' + lane_check);
-						check.checked = !check.checked;
+					if (lanes_bool) {
+						if (document.getElementById('lane_checkbox_' + lane_check) != undefined) {
+							var check = document.getElementById('lane_checkbox_' + lane_check);
+							check.checked = !check.checked;
+						}
+						checklist_lanes.push(parseInt(lane_check));
 					}
-					checklist_lanes.push(parseInt(lane_check));
 				}
-			}
-			
-			if (checklist_experiment_series.indexOf(parseInt(experiment_check)) == -1) {
-				for(var x = 0; x < experiment_samples.length; x++){
-					if (experiment_samples[x] == undefined) {
-						experiment_bool = false;
-					}else{
-						if (checklist_samples.indexOf(experiment_samples[x]) == -1 && experiment_bool) {
+				
+				if (checklist_experiment_series.indexOf(parseInt(experiment_check)) == -1) {
+					for(var x = 0; x < experiment_samples.length; x++){
+						if (experiment_samples[x] == undefined) {
 							experiment_bool = false;
+						}else{
+							if (checklist_samples.indexOf(experiment_samples[x]) == -1 && experiment_bool) {
+								experiment_bool = false;
+							}
 						}
 					}
-				}
-				if (experiment_bool) {
-					if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
-						var check = document.getElementById('experiment_checkbox_' + experiment_check);
-						check.checked = !check.checked;
+					if (experiment_bool) {
+						if (document.getElementById('experiment_checkbox_' + experiment_check) != undefined) {
+							var check = document.getElementById('experiment_checkbox_' + experiment_check);
+							check.checked = !check.checked;
+						}
+						checklist_experiment_series.push(parseInt(experiment_check));
 					}
-					checklist_experiment_series.push(parseInt(experiment_check));
 				}
 			}
 		}
@@ -1458,8 +1466,8 @@ function reloadBasket(){
 function addToDolphinBasket(sampleID){
 	var sample_info = storedSampleSearch(sampleID);
 	var table = $('#dolphin_basket').dataTable();
-	
-	if (table != null) {
+	console.log(sample_info.samplename)
+	if (table != null && sample_info.samplename != undefined) {
 		table.fnAddData([
 			sampleID,
 			sample_info.samplename,
@@ -2264,7 +2272,7 @@ function populateChipSelection() {
 	names.innerHTML = "";
 	var input = document.getElementById('multi_chip_2');
 	input.innerHTML = "";
-	var sample_names = getTrueSampleNames(window.location.href.split('/')[window.location.href.split('/').length - 1].replace('$', ''));
+	var sample_names = getTrueSampleNames(selected_samples.toString());
 	
 	//CHIP MULTI_SELECT
 	if (document.getElementById('multi_chip_1') != null) {
@@ -2371,4 +2379,45 @@ function removeChip(button){
 	}
 	chip_table.fnDeleteRow(row);
 	chip_table.fnDraw();
+}
+
+function removeSampleSelection(id, button){
+	var table = $('#jsontable_samples_selected').dataTable();
+	console.log(table)
+	var row = $(button).closest('tr');
+	table.fnDeleteRow(row);
+	table.fnDraw();
+	manageChecklists(id, "sample_checkbox");
+	selected_samples.splice(selected_samples.indexOf(id), 1)
+}
+
+function managePipelineChecklists(id, button){
+	var table = $('#jsontable_samples_selected').dataTable();
+	var ids = selected_samples;
+	if (ids.indexOf(id) < 0) {
+		//add
+		$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+				data: { p: "getPipelineSamples", id: id },
+				async: true,
+				success : function(s)
+				{
+					console.log(s);
+					for(var i = 0; i < s.length; i++){
+						table.fnAddData([
+							s[i].id,
+							s[i].samplename,
+							s[i].organism,
+							s[i].molecule,
+							s[i].backup,
+							'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeSampleSelection(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
+						]);
+					}
+					selected_samples.push(id);
+					manageChecklists(id, "sample_checkbox");
+				}});
+	}else{
+		//remove
+		removeSampleSelection(id, document.getElementById('sample_removal_'+id))
+	}
 }

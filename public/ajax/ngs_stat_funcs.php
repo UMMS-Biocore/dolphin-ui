@@ -78,15 +78,6 @@ else if ($p == 'getClusterUser')
 	WHERE id = '".$_SESSION['uid']."'
 	"));
 }
-else if ($p == "getAdvStatusDirectory")
-{
-	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
-	$data=json_encode($query->queryAVal("
-	SELECT outdir
-	FROM ngs_runparams
-	WHERE id = $run_id
-	"));
-}
 
 if (!headers_sent()) {
    header('Cache-Control: no-cache, must-revalidate');

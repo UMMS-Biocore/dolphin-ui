@@ -854,7 +854,7 @@ class Ngsimport extends VanillaModel {
 				if(($this->sheetData[3][$j]=="Lane name" || $this->sheetData[3][$j]=="Import name") && $samp->lane_name != NULL){
 					if ($this->laneList == null){
 						$this->laneList = $samp->lane_name;
-					}else if(strpos($this->laneList, $samp->lane_name) === false){
+					}else if(in_array($samp->lane_name, explode(",",$this->laneList)) === false){
 						$this->laneList .= ','.$samp->lane_name;
 					}
 				}
@@ -2347,12 +2347,17 @@ class files extends main{
 	{
 		require_once("api/funcs.php");
 		$funcs = new funcs();
+		
+		//	Gather information to remove success files
 		$clusteruser = json_decode($this->model->query("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
 		$samplename=json_decode($this->model->query("SELECT samplename FROM ngs_samples WHERE id = ".$this->getSampleId($file->name)));
 		$outdirs = json_decode($this->model->query("SELECT outdir FROM ngs_runparams WHERE id in (SELECT run_id FROM ngs_runlist WHERE sample_id = ".$this->getSampleId($file->name).")"));
+		//	Remove success files
 		foreach($outdirs as $o){
 			$data = $funcs->removeAllSampleSuccessFiles($o->outdir, [$samplename[0]->samplename], $clusteruser[0]->clusteruser);
 		}
+		//	Remove fastq_file info
+		$this->model->query("DELETE FROM ngs_fastq_files WHERE sample_id = ".$this->getSampleId($file->name));
 		
 		$sql="INSERT INTO `$this->tablename`
 		(`file_name`,

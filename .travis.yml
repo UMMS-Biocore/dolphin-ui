@@ -40,6 +40,10 @@ before_script:
   - mkdir /home/vagrant/dir2
   - touch /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_GGGGGG_R2_002.fastq.gz
   - touch /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_001.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R1_002.fastq.gz /home/vagrant/dir2/EXAMPLE_TTTTTT_R2_002.fastq.gz
+  # pip
+  - sudo pip install --upgrade pip
+  - sudo pip install --upgrade pycrypto
+  - sudo pip install simple-crypt
   # update database
   - gzip -d db/biocoredb.sql.gz
   - mysql -e "CREATE DATABASE biocore;" -uroot
@@ -55,7 +59,12 @@ before_script:
   - mysql -e "use biocore; INSERT INTO amazon_credentials ( aws_access_key_id, aws_secret_access_key, bucket ) VALUES ( 'test_access', 'test_secret', 'test_bucket' );" -uroot
   - mysql -e "use biocore; INSERT INTO ngs_organism (organism) VALUES ('human'); UPDATE ngs_samples SET organism_id = 1;" -uroot
   - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_09_aws.sql
-  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_11_rechecksum.sql 
+  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_05_11_rechecksum.sql
+  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_01_aws.sql
+  - mysql --user=bioinfo --password=bioinfo2013 biocore < db/2016_07_07_salt.sql
+  # other dependencies
+  - printf "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\n" > config/.salt
+  - cat config/.salt
  
 script:
   - phpunit unitTesting/ngsimport_unittest.php

@@ -158,6 +158,15 @@ else if ($p == 'removeRunlistSamples')
 		}
 	}
 }
+else if ($p == 'getDirectory')
+{
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	$data=$query->queryTable("
+	SELECT outdir
+	FROM ngs_runparams
+	WHERE id = $run_id
+	");
+}
 
 
 if (!headers_sent()) {

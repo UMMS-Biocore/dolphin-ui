@@ -14,4 +14,17 @@ class Stat extends VanillaModel {
         endforeach;
         return rtrim($group_str, ",");
     }
+	
+	function getRunId(){
+		return $_SESSION['adv_status_id'];
+	}
+	
+	function getRunDirectory($run_id){
+		$outdir=json_decode($this->query("
+		SELECT outdir
+		FROM ngs_runparams
+		WHERE id = $run_id
+		"));
+		return $outdir[0]->outdir;
+	}
 }

@@ -79,7 +79,7 @@ else if($p == "getUsersTime")
    if ($type=="Dolphin"){
       if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
-      select u.name, u.lab, count(distinct j.workflow_id) count
+      select u.name, u.lab, count(distinct j.wkey) count
       from users u, jobs j
       where u.clusteruser=j.username
       $time
