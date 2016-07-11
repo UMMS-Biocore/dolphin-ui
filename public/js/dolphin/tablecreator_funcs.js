@@ -89,14 +89,12 @@ function reportSelection(){
 		ids = getBasketInfo().split(",");
 	}
 	for(var y = 0; y < ids.length; y++){
-		var element = document.getElementById(ids[y] + '_run_select');
-		if (element != undefined) {
-			for(var r = 0; r < element.selectedOptions.length; r++){
-				var option_selected = element.selectedOptions[r]
-				option_selected.click();
-				if (wkeys.indexOf(option_selected.value) == -1) {
-					wkeys.push(option_selected.value);
-				}
+		var keys = Object.keys(runIDHelper);
+		for (var x = 0; x < keys.length; x++) {
+			if (run_array[keys[x]] == undefined) {
+				run_array[keys[x]] = ids[y];
+			}else{
+				run_array[keys[x]] += "," + ids[y];
 			}
 		}
 	}
