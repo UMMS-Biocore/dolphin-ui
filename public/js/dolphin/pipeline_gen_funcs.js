@@ -732,6 +732,18 @@ function pipelineSelect(num){
 
 /*##### SUBMIT PIPELINE RUN #####*/
 function submitPipeline(type) {
+	//	get Username
+	$.ajax({
+		type: 	'GET',
+		url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+		data:  	{ p: 'getClusterName' },
+		async:	false,
+		success: function(s)
+		{
+			username = s[0];
+		}
+	});
+	
 	//Static
 	var genome = document.getElementById("genomebuild").value;
 	var matepair = document.getElementById("spaired").value;
@@ -767,19 +779,7 @@ function submitPipeline(type) {
 	var non_pipeline = [doAdapter, doQuality, doTrimming, doRNA, doSplit];
 	var non_pipeline_values = [adapterValType, qualityValType, trimValType, rnaList, splitValType];
 	
-	if (!pipelineSubmitCheck(non_pipeline, non_pipeline_values, currentPipelineVal, currentPipelineID, currentChipInputID, currentChipInputVal)) {
-		//	get Username
-		$.ajax({
-			type: 	'GET',
-			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
-			data:  	{ p: 'getClusterName' },
-			async:	false,
-			success: function(s)
-			{
-				username = s[0];
-			}
-		});
-		
+	if (!pipelineSubmitCheck(non_pipeline, non_pipeline_values, currentPipelineVal, currentPipelineID, currentChipInputID, currentChipInputVal, username)) {
 		//Grab sample ids
 		var ids = getSampleIDs(phpGrab.theSearch, phpGrab.gids, phpGrab.uid);
 		var previous = 'none';
