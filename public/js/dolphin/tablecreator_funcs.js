@@ -346,7 +346,7 @@ function saveTable() {
 		});
 }
 
-function downloadTSV(file_name){
+function downloadCreatedTSV(file_name){
 	if (file_name != '') {
 		var URL = BASE_PATH + '/public/tmp/files/' + file_name; 
 		window.open(URL, '_blank');
@@ -669,7 +669,7 @@ $(function() {
 		li += debrowser_string;
 		li += '<li class="divider"></li>';
 		if (table_params.file != null && table_params.file != '') {
-			li += '<li><a value="Download TSV" onclick="downloadTSV(\''+table_params.file+'\')" style="cursor:pointer">Download TSV</a></li>';
+			li += '<li><a value="Download TSV" onclick="downloadCreatedTSV(\''+table_params.file+'\')" style="cursor:pointer">Download TSV</a></li>';
 		}else{
 			li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
 		}
@@ -719,7 +719,7 @@ $(function() {
 							}
 							var file_str = ""
 							if (s[x].file != '' && s[x].file != undefined) {
-								file_str = '<li><a value="Download TSV" onclick="downloadTSV(\''+s[x].file+'\')">Download TSV</a></li>';
+								file_str = '<li><a value="Download TSV" onclick="downloadCreatedTSV(\''+s[x].file+'\')">Download TSV</a></li>';
 							}else{
 								file_str = '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+s[x].parameters+'\')">Download TSV</a></li>';
 							}
