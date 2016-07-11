@@ -1,5 +1,6 @@
 var selectionHelper = [];
 var runHelper = [];
+var runIDHelper = {};
 
 function removeTableSamples(id, button){
 	var table = $('#jsontable_selected_samples').dataTable();
@@ -234,8 +235,9 @@ function tableCreatorPage(){
 	var empty_ids = [];
 	if (getBasketInfo() != undefined) {
 		ids = getBasketInfo().split(",");
+		var runparams = $('#jsontable_selected_samples')	
 		for (var x = 0; x < ids.length; x++) {
-			if (document.getElementById(ids[x]+'_run_select').selectedIndex == -1) {
+			if (runIDHelper[ids[x]] == undefined) {
 				empty_ids.push(ids[x]);
 			}
 		}
@@ -421,6 +423,7 @@ function optionChange(selector){
 			}
 		}
 	}
+	runIDHelper[selector.id.split("_")[0]] = selector.selectedIndex;
 	selectionHelper[runHelper.indexOf(selector.id.split('_')[0])] = options_array;
 	console.log(selector.selectedIndex);
 	reportSelection();
