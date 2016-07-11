@@ -668,11 +668,7 @@ $(function() {
 		li += '<li><a onclick="changeTableType(\'XML\', \''+beforeFormat+'\')" style="cursor:pointer">XML link</a></li>';
 		li += debrowser_string;
 		li += '<li class="divider"></li>';
-		if (table_params.file != null && table_params.file != '') {
-			li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
-		}else{
-			li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
-		}
+		li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
 		
 		ul.innerHTML = li;
 		export_table.appendChild(ul);
@@ -717,12 +713,7 @@ $(function() {
 										'<li class="divider"></li>';
 								}
 							}
-							var file_str = ""
-							if (s[x].file != '' && s[x].file != undefined) {
-								file_str = '<li><a value="Download TSV" onclick="downloadCreatedTSV(\''+s[x].file+'\')">Download TSV</a></li>';
-							}else{
-								file_str = '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+s[x].parameters+'\')">Download TSV</a></li>';
-							}
+							var file_str = '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+s[x].parameters+'\')">Download TSV</a></li>';
 							runparams.fnAddData([
 								s[x].id,
 								s[x].name,
