@@ -353,8 +353,8 @@ function downloadCreatedTSV(file_name){
 	}
 }
 
-function downloadGeneratedTSV(format){
-	var url = API_PATH +"/public/api/getsamplevals.php?" + format + "format=json"
+function downloadGeneratedTSV(beforeFormat, format){
+	var url = API_PATH +"/public/api/getsamplevals.php?" + beforeFormat + format
 	var file_name = '';
 	console.log(url);
 	$.ajax({ type: "GET",
@@ -668,7 +668,7 @@ $(function() {
 		li += '<li><a onclick="changeTableType(\'XML\', \''+beforeFormat+'\')" style="cursor:pointer">XML link</a></li>';
 		li += debrowser_string;
 		li += '<li class="divider"></li>';
-		li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
+		li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\', \'&format=json\')" style="cursor:pointer">Download TSV</a></li>';
 		
 		ul.innerHTML = li;
 		export_table.appendChild(ul);
@@ -713,7 +713,7 @@ $(function() {
 										'<li class="divider"></li>';
 								}
 							}
-							var file_str = '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+s[x].parameters+'\')">Download TSV</a></li>';
+							var file_str = '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+s[x].parameters+'\', \'\')">Download TSV</a></li>';
 							runparams.fnAddData([
 								s[x].id,
 								s[x].name,
