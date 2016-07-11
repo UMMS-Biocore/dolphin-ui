@@ -1171,10 +1171,6 @@ $(function() {
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Chip)']));
 			document.getElementById('Reads Aligned (Chip)').innerHTML = 'Reads Aligned (Chip)';
 		}
-		if (non_rna_object['chip']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Genomic Reads Aligned (Chip)']));
-			document.getElementById('Genomic Reads Aligned (Chip)').innerHTML = 'Genomic Reads Aligned (Chip)';
-		}
 		
 		//	Gather sample names
 		var samplenames = [];
