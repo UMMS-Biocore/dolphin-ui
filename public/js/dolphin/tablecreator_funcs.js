@@ -353,8 +353,8 @@ function downloadCreatedTSV(file_name){
 	}
 }
 
-function downloadGeneratedTSV(beforeFormat){
-	var url = API_PATH +"/public/api/getsamplevals.php?" + beforeFormat + 'format=json'
+function downloadGeneratedTSV(format){
+	var url = API_PATH +"/public/api/getsamplevals.php?" + format + "format=json"
 	var file_name = '';
 	console.log(url);
 	$.ajax({ type: "GET",
@@ -669,7 +669,7 @@ $(function() {
 		li += debrowser_string;
 		li += '<li class="divider"></li>';
 		if (table_params.file != null && table_params.file != '') {
-			li += '<li><a value="Download TSV" onclick="downloadCreatedTSV(\''+table_params.file+'\')" style="cursor:pointer">Download TSV</a></li>';
+			li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
 		}else{
 			li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\')" style="cursor:pointer">Download TSV</a></li>';
 		}
