@@ -391,6 +391,7 @@ function rerunLoad() {
 								document.getElementById('text_3_'+i).value = splt1[i].min_base_quality_score;
 								document.getElementById('text_4_'+i).value = splt1[i].minReadsPerAlignmentStart;
 								document.getElementById('text_5_'+i).value = splt1[i].maxReadsInRegionPerSample;
+								document.getElementById('text_6_'+i).value = splt1[i].custombed;
 								if (splt1[i].common == 'yes' || splt1[i].common == '1') {
 									document.getElementById('checkbox_1_'+i).checked = true;
 								}
@@ -682,6 +683,9 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Max Reads In Region Per Sample: ']),
 					createElement('input', ['id', 'class', 'type', 'value'], ['text_5_'+num, 'form-control', 'text', '10000'])] ]);
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Custom Bed (Full Path):']),
+					createElement('input', ['id', 'class', 'type', 'value'], ['text_6_'+num, 'form-control', 'text', ''])] ]);
 			divAdj = mergeTidy(divAdj, 12,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Use Chip Peaks: ']),
 					createElement('input', ['id', 'type', 'class'], ['checkbox_7_'+num, 'checkbox', 'margin'])] ]);
@@ -1891,7 +1895,7 @@ function findPipelineValues(){
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'peaks'];
+	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'custombed', 'peaks'];
 	
 	var JSON_ARRAY =  [];
 	console.log(currentPipelineID);

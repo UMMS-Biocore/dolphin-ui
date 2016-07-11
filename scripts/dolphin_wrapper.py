@@ -395,6 +395,8 @@ class Dolphin:
                  print >>fp, '@MERGEALL=%s'%(pipe['merge'])
                if ('peaks' in pipe and pipe['peaks'] != "none"):
                  print >>fp, '@PEAKS=%s'%(pipe['peaks'])
+               if ('custombed' in pipe and pipe['custombed'] != "none"):
+                 print >>fp, '@CUSTOMBED=%s'%(pipe['custombed'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -595,8 +597,6 @@ class Dolphin:
                  self.prf( fp, '%s'%(stepDiffMeth % locals()) )             
 
               if (pipe['Type'] == "HaplotypeCaller"):
-                #if (pipe['merge'] == "yes"):
-                    #self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
                 type="haplotypecaller"
 
