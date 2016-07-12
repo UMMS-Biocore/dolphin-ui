@@ -992,6 +992,51 @@ class funcs
       }
 
       //#######################################
-
+      //For stepMD5Sum ######################
+      
+      function getAllFastqInfo($params){
+        $sql = 'SELECT backup_dir, file_name, clusteruser FROM ngs_dirs, ngs_fastq_files LEFT JOIN users ON users.id = ngs_fastq_files.owner_id WHERE ngs_fastq_files.dir_id = ngs_dirs.id AND ngs_dirs.amazon_bucket IS NOT NULL AND ngs_dirs.amazon_bucket != ""';
+        
+        return $this->queryTable($sql);
+      }
+      
+      function runMD5SumUpdate($params){
+        $this->readINI();
+        $clusteruser  = $params['clusteruser'];
+        $backup_dir   = $params['backup_dir'];
+        $file_name    = $params['file_name'];
+        $command      = $this->python . " " . $this->tool_path."/../tools/Dolphinv1.3/stepMD5Sum.py -o $backup_dir -f $file_name -u $clusteruser -c ".$this->config;
+        $command=str_replace("\"", "\\\"", $command);
+        if($this->schedular == "LSF" || $this->schedular == "SGE")
+        {
+           $command=str_replace("\\\"", "\\\\\"", $command);
+        }
+        $com = $this->python . " " . $this->tool_path . "/runService.py -f ".$this->config." -u $clusteruser -o $backup_dir -k ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ -c \"$command\" -n stepMD5Sum_".explode(",",$file_name)[0]." -s stepMD5Sum_".explode(",",$file_name)[0];
+        $com = $this->getCMDs($com);
+        $retval = $this->sysback($com);
+        if (preg_match('/Error/', $retval)) {
+            return "ERROR: $retval : $com";
+        }
+        return "RUNNING: $retval : $com";
+      }
+      
+      function dbMd5sumUpdate($params){
+        $this->readINI();
+        $backup_dir   = $params['backup_dir'];
+        $file_name    = $params['file_name'];
+        $md5sum       = $params['md5sum'];
+        
+        $sql = "UPDATE ngs_fastq_files
+                SET checksum = '$md5sum',
+                cron_update_date = NOW()
+                WHERE file_name = '$file_name'
+                AND dir_id = (
+                    SELECT id
+                    FROM ngs_dirs
+                    WHERE backup_dir = '$backup_dir'
+                )";
+        
+        return $this->runSQL($sql);
+      }
 }
 ?>
