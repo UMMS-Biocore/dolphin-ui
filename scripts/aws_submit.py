@@ -6,6 +6,8 @@ import json
 import boto3
 import MySQLdb
 import ConfigParser
+from binascii import hexlify, unhexlify
+from simplecrypt import encrypt, decrypt
 from boto3.s3.transfer import S3Transfer
 from botocore.client import Config
 from sys import argv, exit, stderr
@@ -139,9 +141,12 @@ class botoSubmit:
     
     def uploadFile(self, amazon, amazon_bucket, fastq_dir, filename):
         try:
+            config = ConfigParser.ConfigParser()
+            config.readfp(open('../config/.salt'))
+            password = config.get('Dolphin', 'AMAZON')
             s3 = boto3.resource('s3', 'us-east-1',
-            aws_access_key_id=amazon['aws_access_key_id'],
-            aws_secret_access_key=amazon['aws_secret_access_key'])
+            aws_access_key_id=decrypt(password, unhexlify(amazon['aws_access_key_id'])),
+            aws_secret_access_key=decrypt(password, unhexlify(amazon['aws_secret_access_key'])))
             
             p = amazon_bucket.split("/")
             s3_file_name = "%s/%s"%(str(re.sub(p[0]+'/', '', amazon_bucket)), filename)
