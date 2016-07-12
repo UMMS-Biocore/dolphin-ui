@@ -1001,17 +1001,17 @@ class funcs
       }
       
       function runMD5SumUpdate($params){
+        $this->username=$params['clusteruser'];
         $this->readINI();
-        $clusteruser  = $params['clusteruser'];
         $backup_dir   = $params['backup_dir'];
         $file_name    = $params['file_name'];
-        $command      = $this->python . " " . $this->tool_path."/../tools/Dolphinv1.3/stepMD5Sum.py -o $backup_dir -f $file_name -u $clusteruser -c ".$this->config;
+        $command      = $this->python . " " . $this->tool_path."/../tools/Dolphinv1.3/stepMD5Sum.py -o $backup_dir -f $file_name -u " . $this->username ." -c ".$this->config;
         $command=str_replace("\"", "\\\"", $command);
         if($this->schedular == "LSF" || $this->schedular == "SGE")
         {
            $command=str_replace("\\\"", "\\\\\"", $command);
         }
-        $com = $this->python . " " . $this->tool_path . "/runService.py -f ".$this->config." -u $clusteruser -o $backup_dir -k ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ -c \"$command\" -n stepMD5Sum_".explode(",",$file_name)[0]." -s stepMD5Sum_".explode(",",$file_name)[0];
+        $com = $this->python . " " . $this->tool_path . "/runService.py -f ".$this->config." -u " . $this->username . " -o $backup_dir -k ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ -c \"$command\" -n stepMD5Sum_".explode(",",$file_name)[0]." -s stepMD5Sum_".explode(",",$file_name)[0];
         $com = $this->getCMDs($com);
         $retval = $this->sysback($com);
         if (preg_match('/Error/', $retval)) {
