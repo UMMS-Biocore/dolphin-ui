@@ -51,7 +51,10 @@ $(function() {
 		document.getElementById('run_types').setAttribute('onChange', 'changeRunType(this.value)');
 		document.getElementById('run_types').options[run_type].setAttribute('selected', 'true');
 		var runparams = $('#jsontable_runparams').dataTable( {
-			stateSave: true
+			stateSave: true,
+			"columnDefs": [
+							{ className: "directory-col", "targets": [ 2 ] }
+						  ]
 		});
 		
 		$.ajax({ type: "GET",

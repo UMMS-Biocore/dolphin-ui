@@ -17,7 +17,7 @@
 						<div class="col-md-12">
 						<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4><b>Run:</b> <?php echo $run_id?> <b>Directory:</b> <?php echo $outdir?></h4>
+					<h4 style="word-break: break-all;"><b>Run:</b> <?php echo $run_id?> <b>Directory:</b> <?php echo $outdir?></h4>
 				</div>
 				<div class="panel-body">
 					<div id='empty_div'>
