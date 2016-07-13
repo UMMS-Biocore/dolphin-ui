@@ -97,6 +97,7 @@ if($p == "experiments"){
 			You may add more than one custom sequence set.
 			<br><br>
 			In order to map your reads to a custom sequence, you first must create an index file and that fasta must be in the same folder.
+			Please remove all spacing from the naming of sequences within your fasta file in order for our pipeline to properly prepare quantification tables.
 			<br><br>
 			The index directory must include the full path and the name of the index file must only be the prefix of the fasta. Index files and Fasta files
 			also need to have the same prefix.
@@ -366,6 +367,9 @@ if($p == "experiments"){
 			or view a link showing the data in a specific format.";
 }else if($p == "rseqc"){
 	$data = "To view RSeQC results, Expand this box and select the results file you wish to view.
+			<br><br>
+			For more information on the RSeQC reports, you can view the program used, 'read-distribution.py' for RSeQC, 
+			<a href=\"http://rseqc.sourceforge.net/#read-distribution-py\" style=\"color:blue\">here.</a>
 			<br><br>
 			Once you have selected the results to view, a button will appear where you can download the specific file, clear the selected table,
 			or view a link showing the data in a specific format.";
