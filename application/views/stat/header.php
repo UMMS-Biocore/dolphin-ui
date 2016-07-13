@@ -27,6 +27,12 @@
 		<script src="<?php echo BASE_PATH?>/js/plugins/respond/1.3.0/respond.min.js"></script>
 		<![endif]-->
         <?php echo $html->getBasePath(BASE_PATH, API_PATH); ?>
+		<style>
+			.directory-col	{
+				word-break: break-all;
+				min-width:300px
+			}
+		</style>
 	</head>
 	<body class="skin-blue">
 		<!-- header logo: style can be found in header.less -->
