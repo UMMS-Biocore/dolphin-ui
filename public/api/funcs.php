@@ -1005,7 +1005,7 @@ class funcs
         $this->readINI();
         $backup_dir   = $params['backup_dir'];
         $file_name    = $params['file_name'];
-        $command      = $this->python . " " . $this->tool_path."/../tools/Dolphinv1.3/stepMD5Sum.py -o $backup_dir -f $file_name -u " . $this->username ." -c ".$this->config;
+        $command      = $this->python . " " . $this->tool_path."/checkMD5Sum.py -o $backup_dir -f $file_name -u " . $this->username ." -c ".$this->config;
         $command=str_replace("\"", "\\\"", $command);
         if($this->schedular == "LSF" || $this->schedular == "SGE")
         {
