@@ -16,11 +16,22 @@ var table_data = {};
 var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_RNA = [];
+<<<<<<< HEAD
 var summary_dictionary = ['Sample','Total Reads','Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem',
 						  'Reads Aligned rsem','Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat',
 						  'Reads Aligned tophat','Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip'];
 var html_summary_dictionary = ['File','total_reads','unmapped','rsem_dedup','rsem_multimap','rsem_unique','rsem',
 							   'tophat_dedup','tophat_multimap','tophat_unique','tophat','chip_dedup','chip_multimap','chip_unique','chip'];
+=======
+var summary_dictionary = ['Sample','Total Reads', 'Total align',
+						  'Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem',
+						  'Reads Aligned rsem','Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat',
+						  'Reads Aligned tophat','Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip'];
+var html_summary_dictionary = ['File','total_reads','unmapped',
+							   'rsem_dedup','rsem_multimap','rsem_unique','rsem',
+							   'tophat_dedup','tophat_multimap','tophat_unique','tophat',
+							   'chip_dedup','chip_multimap','chip_unique','chip'];
+>>>>>>> 2a6e99e91bcf272039aadcce304042e9d8ff3d1b
 var initial_mapping_table = [];
 
 function parseSummary(url_path){
@@ -1210,9 +1221,12 @@ $(function() {
 		summary_dictionary.splice.apply(summary_dictionary, [2, 0].concat(summary_RNA));
 		html_summary_dictionary.splice.apply(html_summary_dictionary, [2, 0].concat(summary_RNA));
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		
 >>>>>>> 100f831ab9842fdc8c84a421a83de02c8014de68
+=======
+>>>>>>> 2a6e99e91bcf272039aadcce304042e9d8ff3d1b
 		//	Gather/organize sample data
 		populateTable(summary_files, samplenames, libraries, read_counts);
 
