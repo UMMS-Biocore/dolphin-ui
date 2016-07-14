@@ -16,11 +16,11 @@ var table_data = {};
 var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_RNA = [];
-var summary_dictionary = ['Sample','Total Reads', 'rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc',
+var summary_dictionary = ['Sample','Total Reads', 'Total align',
 						  'Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem',
 						  'Reads Aligned rsem','Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat',
 						  'Reads Aligned tophat','Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip'];
-var html_summary_dictionary = ['File','total_reads','rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc','unmapped',
+var html_summary_dictionary = ['File','total_reads','unmapped',
 							   'rsem_dedup','rsem_multimap','rsem_unique','rsem',
 							   'tophat_dedup','tophat_multimap','tophat_unique','tophat',
 							   'chip_dedup','chip_multimap','chip_unique','chip'];
