@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 import os, re, string, sys
 import warnings
+import ConfigParser
 import json
 import time
 import urllib,urllib2
 from sys import argv, exit, stderr
-sys.path.insert(0, sys.argv[2])
-from config import *
-from funcs import *
 
 class cronMD5Sum:
     url=""
@@ -27,16 +25,18 @@ class cronMD5Sum:
     
 def main():
     try:
-        CONFIG = sys.argv[1]
-        TOOLS_DIR = sys.argv[2]
-        print CONFIG
-        print TOOLS_DIR
+        params_section = sys.argv[1]
+        print params_section
     except:
-        print "cronMD5Sum.py takes in two arguments <Config type> <Dolphin tools/src directory>"
+        print "cronMD5Sum.py takes in 1 argument <params section>"
         sys.exit(2)
+    configparse = ConfigParser.ConfigParser()
+    configparse.read("../config/config.ini")
+    print configparse.get(params_section, 'DOLPHIN_TOOLS_SRC_PATH')
+    sys.path.insert(0, configparse.get(params_section, 'DOLPHIN_TOOLS_SRC_PATH'))
     
-    f = funcs()
-    config = getConfig(CONFIG)
+    f = __import__('funcs').funcs()
+    config = __import__('config').getConfig(params_section)
     md5sum = cronMD5Sum(config['url'], f)
     
     filelist = md5sum.getAllFastqInfo()
