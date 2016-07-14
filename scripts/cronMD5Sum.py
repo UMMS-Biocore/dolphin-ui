@@ -32,7 +32,6 @@ def main():
         sys.exit(2)
     configparse = ConfigParser.ConfigParser()
     configparse.read("../config/config.ini")
-    print configparse.get(params_section, 'DOLPHIN_TOOLS_SRC_PATH')
     sys.path.insert(0, configparse.get(params_section, 'DOLPHIN_TOOLS_SRC_PATH'))
     
     f = __import__('funcs').funcs()
