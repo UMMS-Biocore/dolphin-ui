@@ -1207,12 +1207,12 @@ $(function() {
 		});
 		
 		//	Merge RNA summary
-		summary_dictionary.splice.apply(summary_dictionary, [2, 0].concat(summary_RNA));
-		html_summary_dictionary.splice.apply(html_summary_dictionary, [2, 0].concat(summary_RNA));
-<<<<<<< HEAD
-=======
-		
->>>>>>> 100f831ab9842fdc8c84a421a83de02c8014de68
+		for (var k = 0; k < summary_RNA.length; k++){
+			if (summary_dictionary.indexOf(summary_RNA[k]) == -1) {
+				summary_dictionary.splice(2, 0, summary_RNA[k]);
+				html_summary_dictionary.splice(2, 0, summary_RNA[k]);
+			}
+		}
 		//	Gather/organize sample data
 		populateTable(summary_files, samplenames, libraries, read_counts);
 
