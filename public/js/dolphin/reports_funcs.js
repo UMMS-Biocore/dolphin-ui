@@ -762,7 +762,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			if (table_data[samplenames[0]].hasOwnProperty('tophat')) {
 				document.getElementById('Tophat (>1)').remove();
 				document.getElementById('Tophat (=1)').remove();
-			}else if(table_data[samplenames[0].Sample].hasOwnProperty('tophat_unique')){
+			}else if(table_data[samplenames[0]].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
 			if (table_data[samplenames[0]].hasOwnProperty('chip')) {
