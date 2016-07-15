@@ -255,12 +255,6 @@ function rerunLoad() {
 								if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
 									document.getElementById('checkbox_4_'+i).checked = true;
 								}
-								if (splt1[i].CustomGenomeIndex != 'None' || splt1[i].CustomGenomeAnnotation != 'None') {
-									tophatCustomOptions(i);
-									document.getElementById('checkbox_5_'+i).checked = true;
-									document.getElementById('textarea_3_'+i).value = splt1[i].CustomGenomeIndex;
-									document.getElementById('textarea_4_'+i).value = splt1[i].CustomGenomeAnnotation;
-								}
 							}else if (splt1[i].Type == pipelineDict[4]){
 								//Chipseq
 								additionalPipes();
