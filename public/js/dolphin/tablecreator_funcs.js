@@ -158,16 +158,17 @@ function sendToTableGen(){
 		ids = getBasketInfo().split(",");
 	}
 	for(var y = 0; y < ids.length; y++){
+		console.log(ids)
+		console.log(runIDHelper)
 		var keys = Object.keys(runIDHelper);
-		for (var x = 0; x < keys.length; x++) {
-			if (run_array[runIDHelper[keys[x]]] == undefined) {
-				run_array[runIDHelper[keys[x]]] = ids[y];
-			}else{
-				run_array[runIDHelper[keys[x]]] += "," + ids[y];
-			}
+		console.log(keys)
+		if (run_array[runIDHelper[ids[y]]] == undefined) {
+			run_array[runIDHelper[ids[y]]] = ids[y];
+		}else{
+			run_array[runIDHelper[ids[y]]] += "," + ids[y];
 		}
 	}
-	
+	console.log(run_array);
 	var samples_send = 'samples=';
 	for(var key in run_array){
 		samples_send += run_array[key].toString() + ';' + key + ':';
