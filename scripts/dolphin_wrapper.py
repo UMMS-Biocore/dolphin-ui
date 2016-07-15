@@ -326,10 +326,17 @@ class Dolphin:
                    print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name, indexsuffix,indexname,bowtie_params,indexname,filter_out,previous)
                    
              if (pipe['Type']=="Tophat"):
-               paramstophat=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+               tophatparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@TSIZE=50';
-               print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(paramstophat))
-               
+               print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(tophatparams))
+             
+             if (pipe['Type']=="STAR"):  
+               starparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+               print >>fp, '@PARAMSSTAR=%s'%(self.parse_content(starparams))
+             
+             if (pipe['Type']=="Hisat2"):
+               hisatparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+               print >>fp, '@PARAMSHISAT2=%s'%(self.parse_content(hisatparams))
              
              if (pipe['Type']=="DESeq"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -537,8 +544,8 @@ class Dolphin:
               if (pipe['Type']=="Tophat"):
                  gtf = (pipe['CustomGenomeAnnotation'] if ('CustomGenomeAnnotation' in pipe and pipe['CustomGenomeAnnotation'].lower()!="none") else "@GTF" )
                  bowtie2index = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@BOWTIE2INDEX" )
-                 self.prf( fp, stepTophat % locals() )
                  type="tophat"
+                 self.prf( fp, stepTophat % locals() )
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                     type="mergetophat"
