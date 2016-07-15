@@ -543,12 +543,48 @@ class Dolphin:
               
               if (pipe['Type']=="Tophat"):
                  gtf = (pipe['CustomGenomeAnnotation'] if ('CustomGenomeAnnotation' in pipe and pipe['CustomGenomeAnnotation'].lower()!="none") else "@GTF" )
-                 bowtie2index = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@BOWTIE2INDEX" )
+                 indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@BOWTIE2INDEX" )
                  type="tophat"
-                 self.prf( fp, stepTophat % locals() )
+                 script_command = "@RUNTOPHAT2"
+                 run_command = "@COMMANDTOPHAT2"
+                 self.prf( fp, stepAlignment % locals() )
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
                     type="mergetophat"
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
+                 
+              if (pipe['Type']=="STAR"):
+                 type="star"
+                 gtf=""
+                 indexref=""
+                 script_command = "@RUNSTAR"
+                 run_command = "@COMMANDSTAR"
+                 self.prf( fp, stepAlignment % locals() )
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergestar"
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
+                 
+              if (pipe['Type']=="Hisat2"):
+                 type="hisat2"
+                 script_command = "@RUNHISAT2"
+                 run_command = "@COMMANDHISAT2"
+                 self.prf( fp, stepAlignment % locals() )
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergehisat2"
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
