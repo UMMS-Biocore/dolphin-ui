@@ -19,10 +19,14 @@ var summary_RNA = [];
 var summary_dictionary = ['Sample','Total Reads', 'Total align',
 						  'Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem',
 						  'Reads Aligned rsem','Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat',
+						  'Reads Aligned rsem','Duplicated Reads star','Multimapped Reads Aligned star','Unique Reads Aligned star',
+						  'Reads Aligned rsem','Duplicated Reads hisat2','Multimapped Reads Aligned hisat2','Unique Reads Aligned hisat2',
 						  'Reads Aligned tophat','Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip'];
 var html_summary_dictionary = ['File','total_reads','unmapped',
 							   'rsem_dedup','rsem_multimap','rsem_unique','rsem',
 							   'tophat_dedup','tophat_multimap','tophat_unique','tophat',
+							   'star_dedup','star_multimap','star_unique','star',
+							   'hisat2_dedup','hisat2_multimap','hisat2_unique','hisat2',
 							   'chip_dedup','chip_multimap','chip_unique','chip'];
 var initial_mapping_table = [];
 
@@ -670,6 +674,18 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 			}else if(table_data[table_array[0].Sample].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
 			}
+			if (table_data[table_array[0].Sample].hasOwnProperty('star')) {
+				document.getElementById('STAR (>1)').remove();
+				document.getElementById('STAR (=1)').remove();
+			}else if(table_data[table_array[0].Sample].hasOwnProperty('star_unique')){
+				document.getElementById('Reads Aligned (STAR)').remove();
+			}
+			if (table_data[table_array[0].Sample].hasOwnProperty('hisat2')) {
+				document.getElementById('Hisat2 (>1)').remove();
+				document.getElementById('Hisat2 (=1)').remove();
+			}else if(table_data[table_array[0].Sample].hasOwnProperty('hisat2_unique')){
+				document.getElementById('Reads Aligned (Hisat2)').remove();
+			}
 			if (table_data[table_array[0].Sample].hasOwnProperty('chip')) {
 				document.getElementById('Chip (>1)').remove();
 				document.getElementById('Chip (=1)').remove();
@@ -726,6 +742,16 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 							if (headers.indexOf('Duplicated Reads tophat') == -1) {
 								headers.push('Duplicated Reads tophat');
 							}
+						}else if (/star/.test(summary_files[z]['file'])){
+							table_data[samplenames[k]]['star_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
+							if (headers.indexOf('Duplicated Reads star') == -1) {
+								headers.push('Duplicated Reads star');
+							}
+						}else if (/hisat2/.test(summary_files[z]['file'])){
+							table_data[samplenames[k]]['hisat2_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
+							if (headers.indexOf('Duplicated Reads hisat2') == -1) {
+								headers.push('Duplicated Reads hisat2');
+							}	
 						}else if (/chip/.test(summary_files[z]['file'])){
 							table_data[samplenames[k]]['chip_dedup'] = Math.floor(dedup[samplenames[k]] * table_data[samplenames[k]]['total_reads']);
 							if (headers.indexOf('Duplicated Reads chip') == -1) {
@@ -743,6 +769,16 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['tophat'] = parseFlagstat(summary_files[z]['file']);
 						if (headers.indexOf('Reads Aligned tophat') == -1) {
 							headers.push('Reads Aligned tophat');
+						}
+					}else if (/star/.test(summary_files[z]['file'])){
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['star'] = parseFlagstat(summary_files[z]['file']);
+						if (headers.indexOf('Reads Aligned star') == -1) {
+							headers.push('Reads Aligned star');
+						}
+					}else if (/hisat2/.test(summary_files[z]['file'])){
+						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['hisat2'] = parseFlagstat(summary_files[z]['file']);
+						if (headers.indexOf('Reads Aligned hisat2') == -1) {
+							headers.push('Reads Aligned hisat2');
 						}
 					}else if (/chip/.test(summary_files[z]['file'])){
 						table_data[summary_files[z]['file'].split("/")[1].split(".flagstat")[0]]['chip'] = parseFlagstat(summary_files[z]['file']);
@@ -764,6 +800,18 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				document.getElementById('Tophat (=1)').remove();
 			}else if(table_data[samplenames[0]].hasOwnProperty('tophat_unique')){
 				document.getElementById('Reads Aligned (Tophat)').remove();
+			}
+			if (table_data[table_array[0].Sample].hasOwnProperty('star')) {
+				document.getElementById('STAR (>1)').remove();
+				document.getElementById('STAR (=1)').remove();
+			}else if(table_data[table_array[0].Sample].hasOwnProperty('star_unique')){
+				document.getElementById('Reads Aligned (STAR)').remove();
+			}
+			if (table_data[table_array[0].Sample].hasOwnProperty('hisat2')) {
+				document.getElementById('Hisat2 (>1)').remove();
+				document.getElementById('Hisat2 (=1)').remove();
+			}else if(table_data[table_array[0].Sample].hasOwnProperty('hisat2_unique')){
+				document.getElementById('Reads Aligned (Hisat2)').remove();
 			}
 			if (table_data[samplenames[0]].hasOwnProperty('chip')) {
 				document.getElementById('Chip (>1)').remove();
@@ -792,6 +840,14 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				row_array = checkTableOutput(sample_data['tophat_multimap'], 'Tophat (>1)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_unique'], 'Tophat (=1)', row_array);
 				row_array = checkTableOutput(sample_data['tophat'], 'Reads Aligned (Tophat)', row_array);
+				row_array = checkTableOutput(sample_data['star_dedup'], 'Duplicated Reads (STAR)', row_array);
+				row_array = checkTableOutput(sample_data['star_multimap'], 'STAR (>1)', row_array);
+				row_array = checkTableOutput(sample_data['star_unique'], 'STAR (=1)', row_array);
+				row_array = checkTableOutput(sample_data['star'], 'Reads Aligned (STAR)', row_array);
+				row_array = checkTableOutput(sample_data['hisat2_dedup'], 'Duplicated Reads (Hisat2)', row_array);
+				row_array = checkTableOutput(sample_data['hisat2_multimap'], 'Hisat2 (>1)', row_array);
+				row_array = checkTableOutput(sample_data['hisat2_unique'], 'Hisat2 (=1)', row_array);
+				row_array = checkTableOutput(sample_data['hisat2'], 'Reads Aligned (Hisat2)', row_array);
 				row_array = checkTableOutput(sample_data['chip_dedup'], 'Duplicated Reads (Chip)', row_array);
 				row_array = checkTableOutput(sample_data['chip_multimap'], 'Chip (>1)', row_array);
 				row_array = checkTableOutput(sample_data['chip_unique'], 'Chip (=1)', row_array);
@@ -1078,14 +1134,6 @@ $(function() {
 			}
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
-				/*
-				if (/adapter/.test(summary_files[z]['file'])) {
-					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
-					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
-				}else if (/quality/.test(summary_files[z]['file'])) {
-					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
-					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
-				}else */
 				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_RNA.push(RNA);
@@ -1114,6 +1162,20 @@ $(function() {
 						}else{
 							non_rna_object['tophat'] = true;
 						}
+					}else if (/star/.test(summary_files[z]['file'])){
+						if (summary_check) {
+							non_rna_object['star_multimap'] = true;
+							non_rna_object['star_unique'] = true;
+						}else{
+							non_rna_object['star'] = true;
+						}
+					}else if (/hisat2/.test(summary_files[z]['file'])){
+						if (summary_check) {
+							non_rna_object['hisat2_multimap'] = true;
+							non_rna_object['hisat2_unique'] = true;
+						}else{
+							non_rna_object['hisat2'] = true;
+						}	
 					}else if (/chip/.test(summary_files[z]['file'])){
 						if (summary_check) {
 							non_rna_object['chip_multimap'] = true;
@@ -1127,6 +1189,10 @@ $(function() {
 						non_rna_object['rsem_dedup'] = true;
 					}else if (/tophat/.test(summary_files[z]['file'])){
 						non_rna_object['tophat_dedup'] = true;
+					}else if (/star/.test(summary_files[z]['file'])){
+						non_rna_object['star_dedup'] = true;
+					}else if (/hisat2/.test(summary_files[z]['file'])){
+						non_rna_object['hisat2_dedup'] = true;
 					}else if (/chip/.test(summary_files[z]['file'])){
 						non_rna_object['chip_dedup'] = true;
 					}
@@ -1158,6 +1224,30 @@ $(function() {
 			document.getElementById('Tophat (=1)').innerHTML = 'Tophat (=1)';
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Tophat)']));
 			document.getElementById('Reads Aligned (Tophat)').innerHTML = 'Reads Aligned (Tophat)';
+		}
+		if (non_rna_object['star_dedup']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (STAR)']));
+			document.getElementById('Duplicated Reads (STAR)').innerHTML = 'Duplicated Reads (STAR)';
+		}
+		if (non_rna_object['star']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['STAR (>1)']));
+			document.getElementById('STAR (>1)').innerHTML = 'STAR (>1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['STAR (=1)']));
+			document.getElementById('STAR (=1)').innerHTML = 'STAR (=1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (STAR)']));
+			document.getElementById('Reads Aligned (STAR)').innerHTML = 'Reads Aligned (STAR)';
+		}
+		if (non_rna_object['hisat2_dedup']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Hisat2)']));
+			document.getElementById('Duplicated Reads (Hisat2)').innerHTML = 'Duplicated Reads (Hisat2)';
+		}
+		if (non_rna_object['hisat2']){
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Hisat2 (>1)']));
+			document.getElementById('Hisat2 (>1)').innerHTML = 'Hisat2 (>1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Hisat2 (=1)']));
+			document.getElementById('Hisat2 (=1)').innerHTML = 'Hisat2 (=1)';
+			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (Hisat2)']));
+			document.getElementById('Reads Aligned (Hisat2)').innerHTML = 'Reads Aligned (Hisat2)';
 		}
 		if (non_rna_object['chip_dedup']){
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (Chip)']));

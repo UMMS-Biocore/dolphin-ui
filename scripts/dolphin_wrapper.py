@@ -326,17 +326,7 @@ class Dolphin:
                    print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name, indexsuffix,indexname,bowtie_params,indexname,filter_out,previous)
                    
              if (pipe['Type']=="Tophat"):
-               tophatparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@TSIZE=50';
-               print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(tophatparams))
-             
-             if (pipe['Type']=="STAR"):  
-               starparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
-               print >>fp, '@PARAMSSTAR=%s'%(self.parse_content(starparams))
-             
-             if (pipe['Type']=="Hisat2"):
-               hisatparams=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
-               print >>fp, '@PARAMSHISAT2=%s'%(self.parse_content(hisatparams))
              
              if (pipe['Type']=="DESeq"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -542,9 +532,10 @@ class Dolphin:
                  self.prf( fp, stepAlignmentCount % locals() )
               
               if (pipe['Type']=="Tophat"):
+                 type="tophat"
                  gtf = (pipe['CustomGenomeAnnotation'] if ('CustomGenomeAnnotation' in pipe and pipe['CustomGenomeAnnotation'].lower()!="none") else "@GTF" )
                  indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@BOWTIE2INDEX" )
-                 type="tophat"
+                 addparameters=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                  script_command = "@RUNTOPHAT2"
                  run_command = "@COMMANDTOPHAT2"
                  self.prf( fp, stepAlignment % locals() )
@@ -561,8 +552,9 @@ class Dolphin:
                  
               if (pipe['Type']=="STAR"):
                  type="star"
-                 gtf=""
-                 indexref=""
+                 gtf = ""
+                 addparameters=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+                 indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@STARINDEX" )
                  script_command = "@RUNSTAR"
                  run_command = "@COMMANDSTAR"
                  self.prf( fp, stepAlignment % locals() )
@@ -579,6 +571,9 @@ class Dolphin:
                  
               if (pipe['Type']=="Hisat2"):
                  type="hisat2"
+                 gtf = ""
+                 addparameters=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+                 indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@HISAT2INDEX" )
                  script_command = "@RUNHISAT2"
                  run_command = "@COMMANDHISAT2"
                  self.prf( fp, stepAlignment % locals() )
