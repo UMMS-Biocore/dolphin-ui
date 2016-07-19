@@ -485,7 +485,7 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 		//	BisulphiteMapping
 		}else if (name == 'BisulphiteMapping') {
 			//	Digestion Site is empty
-			if (checkFieldsEmpty('text_1_'+pipeline_index[x])) {
+			if (checkFieldsEmpty('text_1_'+pipeline_index[x]) && checkFieldCheckboxChecked(pipeline_index[x]+'_WGBS')) {
 				displayErrorModal('#errorModal', 'Digestion Site field cannot be empty within BisulphiteMapping');
 				return true;
 			//	extFactor is empty and selected
