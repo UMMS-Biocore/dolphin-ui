@@ -27,25 +27,26 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 			delete queryData['CATEGORY'];
 		}
 		for (var y = 0; y < keys.length; y++) {
+			keys[y] = keys[y].replace(/./g,"_");
 			if (table_params.parameters.indexOf('.summary.') > -1) {
 				if (!queryData[Object.keys(queryData)[0]][keys[y]].match(/[^$,.\d]/)) {
-					new_header += '<th data-sort="'+keys[y].replace(/ /g,"_").replace(/>/g,"_")+'::number" onclick="shiftColumns(this)">'+
+					new_header += '<th data-sort="'+keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_")+'::number" onclick="shiftColumns(this)">'+
 								keys[y]+'<i id="'+y+'" class="pull-right fa fa-unsorted"></i></th>';
-					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_");
+					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_");
 				}else{
-					new_header += '<th data-sort="'+keys[y].replace(/ /g,"_").replace(/>/g,"_")+'::string" onclick="shiftColumns(this)">'+
+					new_header += '<th data-sort="'+keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_")+'::string" onclick="shiftColumns(this)">'+
 								keys[y]+'<i id="'+y+'" class="pull-right fa fa-unsorted"></i></th>';
-					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_");
+					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_");
 				}
 			}else{
 				if (!queryData[Object.keys(queryData)[0]][keys[y]].match(/[^$,.\d]/)) {
 					new_header += '<th data-sort="'+keys[y]+'::number" onclick="shiftColumns(this)">'+
 								keys[y]+'<i id="'+y+'" class="pull-right fa fa-unsorted"></i></th>';
-					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_");
+					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_");
 				}else{
 					new_header += '<th data-sort="'+keys[y]+'::string" onclick="shiftColumns(this)">'+
 								keys[y]+'<i id="'+y+'" class="pull-right fa fa-unsorted"></i></th>';
-					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_");
+					keys[y] = keys[y].replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_");
 				}
 			}
 		}
@@ -63,7 +64,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 			}else{
 				obj = {};
 				for (var title in queryData[key]) {
-					obj[title.replace(/ /g,"_").replace(/>/g,"_")] = queryData[key][title];
+					obj[title.replace(/ /g,"_").replace(/>/g,"_").replace(/\./g,"_")] = queryData[key][title];
 				}
 				obj_conversion.push(obj);
 			}
