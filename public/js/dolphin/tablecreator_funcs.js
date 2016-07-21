@@ -190,7 +190,11 @@ function sendToTableGen(){
 	var common_send = '';
 	var key_send = '';
 	var keepcols_send = '';
-	if (file_send.indexOf('.counts.') > -1) {
+	if (file_send.indexOf('RSeQC') > -1) {
+		//RSeQC
+		common_send = '&common=region'
+		key_send = '&key=region';
+	}else if (file_send.indexOf('.counts.') > -1) {
 		//counts
 		common_send = '&common=id,len'
 		key_send = '&key=id';
@@ -216,10 +220,6 @@ function sendToTableGen(){
 			common_send = '&common=metric';
 			key_send = '&key=metric';
 		}
-	}else if (file_send.indexOf('RSeQC') > -1) {
-		//RSeQC
-		common_send = '&common=region'
-		key_send = '&key=region';
 	}
 	
 	var filter_send = '';
