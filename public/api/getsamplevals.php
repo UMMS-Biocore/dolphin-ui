@@ -70,11 +70,12 @@ foreach ($a as $i => $row){
     if ($type!="summary"){
         $fields="&fields=";
         if($commonfields != ""){
-            $fields.="$commonfields,".str_replace("-", "_", $row);
+            $fields.="$commonfields,";
         }
         if($keepcols != ""){
-            $fields.="$keepcols,".str_replace("-", "_", $row);
+            $fields.="$keepcols,";
         }
+        $fields.=str_replace("-", "_", $row);
     }
         $sample_breakdown = explode(",",$b[$i]);
     array_pop($sample_breakdown);
