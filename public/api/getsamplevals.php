@@ -53,11 +53,16 @@ $dat=json_decode($data);
 $sample_array=array();
 $multi_run_array = array();
 for ($i=0; $i<sizeof($dat); $i++)
-{   
+{
     $c[$dat[$i]->wkey] = $dat[$i]->id;
     $b[$dat[$i]->wkey].=$dat[$i]->samplename . "_run" . $dat[$i]->id.",";
-    $a[$dat[$i]->wkey].=$dat[$i]->samplename.",";
-    array_push($sample_array, $dat[$i]->samplename);
+    if(strpos($file,"RSeQC") > -1){
+        $a[$dat[$i]->wkey].=$dat[$i]->samplename.".bam,";
+        array_push($sample_array, $dat[$i]->samplename.".bam");
+    }else{
+        $a[$dat[$i]->wkey].=$dat[$i]->samplename.",";
+        array_push($sample_array, $dat[$i]->samplename);
+    }
 }
 $new_data=array();
 $title=array();
@@ -65,10 +70,10 @@ foreach ($a as $i => $row){
     if ($type!="summary"){
         $fields="&fields=";
         if($commonfields != ""){
-            $fields.="$commonfields,".replace(".","_",$row).str_replace("-", "_", $row);
+            $fields.="$commonfields,".str_replace("-", "_", $row);
         }
         if($keepcols != ""){
-            $fields.="$keepcols,".replace(".","_",$row).str_replace("-", "_", $row);
+            $fields.="$keepcols,".str_replace("-", "_", $row);
         }
     }
         $sample_breakdown = explode(",",$b[$i]);
