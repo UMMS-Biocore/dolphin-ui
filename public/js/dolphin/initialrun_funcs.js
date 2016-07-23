@@ -39,7 +39,17 @@ $(function() {
 			}else{
 				var barcodes = {};
 				barcodes['distance'] = barcode_array.split(',')[0];
-				barcodes['format'] = barcode_array.split(",")[1];
+				if (barcode_array.split(",")[1]=='5 end read 1') {
+                    barcodes['format'] = '5';
+                }else if(barcode_array.split(",")[1]=='3 end read 2 (or 3 end on single end)'){
+					barcode['format'] = '3';
+				}else if(barcode_array.split(",")[1]=='barcode is in header (illumina casava)'){
+					barcode['format'] = 'H';
+				}else if(barcode_array.split(",")[1]=='no barcode on read 1 of a pair (read 2 must have on 5 end)'){
+					barcode['format'] = 'N 5'
+				}else if(barcode_array.split(",")[1]=='paired end both reads 5 end'){
+					barcode['format'] = '5 5';
+				}
 				JSON_OBJECT['barcodes'] = [barcodes];
 				
 				var names_list = [];var names = initial_split[initial_split.length - 3].split(":");
@@ -80,7 +90,7 @@ $(function() {
 			if (initial_split[3] == 'lane') {
 				var barcodes = {};
 				barcodes['distance'] = '1';
-				barcodes['format'] = '5 end read 1';
+				barcodes['format'] = '5';
 				JSON_OBJECT['barcodes'] = [barcodes];
 			}else{
 				JSON_OBJECT['barcodes'] = 'none';
