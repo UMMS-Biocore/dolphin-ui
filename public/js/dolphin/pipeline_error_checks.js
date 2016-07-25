@@ -407,6 +407,9 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			}else if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
 				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
 				return true;
+			}else if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && !checkFieldCheckboxChecked('checkbox_3_'+pipeline_index[x])){
+				displayErrorModal('#errorModal', 'You cannot perform RNA-Seq QC while No Genome BAM is selected.');
+				return true;
 			}
 		//	Tophat
 		}else if (name == 'Tophat') {
