@@ -659,6 +659,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 					}
 				}
 			}
+			console.log(parsed)
 			initial_mapping_table.push(parsed);
 			parsed = [];
 		}
