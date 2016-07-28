@@ -626,28 +626,35 @@ function addPercentageArray(array){
 
 function populateTable(summary_files, samplenames, libraries, read_counts) {
 	var summary_bool = false;
+	var summary_index = 0;
 	for(var x = 0; x < summary_files.length; x++){
 		if (summary_files[x]['file'] == 'summary/summary.tsv') {
+			summary_index = x;
 			summary_bool = true;
 		}
 	}
 	console.log(summary_files);
 	if (summary_bool) {
-		var table_array = parseSummary(summary_files[summary_files.length - 1]['file']);
+		var table_array = parseSummary(summary_files[summary_index]['file']);
 		console.log(table_array);
 		var parsed = [];
 		for( var j = 0; j < table_array.length; j++){
+			var rsem_combo = 0;
 			for( var i = 0; i < summary_dictionary.length; i++){
 				if (table_array[j][summary_dictionary[i]] != undefined) {
-					parsed.push(table_array[j][summary_dictionary[i]]);
 					if (table_data[table_array[j]['Sample']] == undefined) {
 						table_data[table_array[j]['Sample']] = {};
-						if (summary_dictionary[i] != 'Sample') {
-							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
-						}
+						parsed.push(table_array[j][summary_dictionary[i]]);
 					}else{
-						if (summary_dictionary[i] != 'Sample') {
+						if (summary_dictionary[i] == 'Multimapped Reads Aligned rsem') {
+							rsem_combo = parseInt(table_array[j][summary_dictionary[i]]);
+						}else if (summary_dictionary[i] == 'Unique Reads Aligned rsem') {
+							rsem_combo += parseInt(table_array[j][summary_dictionary[i]]);
+							table_data[table_array[j]['Sample']]['rsem'] = rsem_combo.toString();
+							parsed.push(rsem_combo.toString());
+						}else if (summary_dictionary[i] != 'Sample') {
 							table_data[table_array[j]['Sample']][html_summary_dictionary[i]] = table_array[j][summary_dictionary[i]];
+							parsed.push(table_array[j][summary_dictionary[i]]);
 						}
 					}
 				}
@@ -658,12 +665,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 		console.log(table_data)
 		console.log(initial_mapping_table);
 		if (table_array.length > 0) {
-			if (table_data[table_array[0].Sample].hasOwnProperty('rsem')) {
-				document.getElementById('RSEM (>1)').remove();
-				document.getElementById('RSEM (=1)').remove();
-			}else if(table_data[table_array[0].Sample].hasOwnProperty('rsem_unique')){
-				document.getElementById('Reads Aligned (RSEM)').remove();
-			}
 			if (table_data[table_array[0].Sample].hasOwnProperty('tophat')) {
 				document.getElementById('Tophat (>1)').remove();
 				document.getElementById('Tophat (=1)').remove();
@@ -753,12 +754,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				}
 			}
 			console.log(table_data);
-			if (table_data[samplenames[0]].hasOwnProperty('rsem')) {
-				document.getElementById('RSEM (>1)').remove();
-				document.getElementById('RSEM (=1)').remove();
-			}else if(table_data[samplenames[0]].hasOwnProperty('rsem_unique')){
-				document.getElementById('Reads Aligned (RSEM)').remove();
-			}
 			if (table_data[samplenames[0]].hasOwnProperty('tophat')) {
 				document.getElementById('Tophat (>1)').remove();
 				document.getElementById('Tophat (=1)').remove();
@@ -785,8 +780,6 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 				}
 				if (sample_data['unmapped'] != undefined) { row_array.push(sample_data['unmapped']) }
 				row_array = checkTableOutput(sample_data['rsem_dedup'], 'Duplicated Reads (RSEM)', row_array);
-				row_array = checkTableOutput(sample_data['rsem_multimap'], 'RSEM (>1)', row_array);
-				row_array = checkTableOutput(sample_data['rsem_unique'], 'RSEM (=1)', row_array);
 				row_array = checkTableOutput(sample_data['rsem'], 'Reads Aligned (RSEM)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_dedup'], 'Duplicated Reads (Tophat)', row_array);
 				row_array = checkTableOutput(sample_data['tophat_multimap'], 'Tophat (>1)', row_array);
@@ -848,10 +841,6 @@ function summaryPlotSetup(table_data){
 							name = 'reads mapped'
 						}else if (data == 'rsem_dedup') {
 							name = 'dedup reads'
-						}else if (data == 'rsem_multimap') {
-							name = 'multimapped reads'
-						}else if (data == 'rsem_unique') {
-							name = 'uniquely mapped reads'
 						}
 						var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
 						rsem_series[data] = {name: name, data: [parseInt(num)]}
@@ -1078,14 +1067,6 @@ $(function() {
 			}
 			console.log(summary_files[z]['file'])
 			if (!/summary.summary/.test(summary_files[z]['file'])) {
-				/*
-				if (/adapter/.test(summary_files[z]['file'])) {
-					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Adapter Reads Removed']));
-					document.getElementById('Adapter Reads Removed').innerHTML = 'Adapter Reads Removed';
-				}else if (/quality/.test(summary_files[z]['file'])) {
-					document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Quality Filtered Reads']));
-					document.getElementById('Quality Filtered Reads').innerHTML = 'Quality Filtered Reads';
-				}else */
 				if (!/flagstat/.test(summary_files[z]['file']) && !/pcrdups/.test(summary_files[z]['file'])) {
 					var RNA = summary_files[z]['file'].split("/")[summary_files[z]['file'].split("/").length - 1].split(".")[0];
 					summary_RNA.push(RNA);
@@ -1140,10 +1121,6 @@ $(function() {
 			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
 		}
 		if (non_rna_object['rsem']){
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['RSEM (>1)']));
-			document.getElementById('RSEM (>1)').innerHTML = '<span title="Reads mapped to more than one location for RSEM">RSEM (>1)</span>';
-			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['RSEM (=1)']));
-			document.getElementById('RSEM (=1)').innerHTML = '<span title="Uniquely mapped reads for RSEM">RSEM (=1)</span>';
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Reads Aligned (RSEM)']));
 			document.getElementById('Reads Aligned (RSEM)').innerHTML = 'Reads Aligned (RSEM)';
 		}
