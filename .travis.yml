@@ -65,7 +65,7 @@ before_script:
   # other dependencies
   - printf "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\n" > config/.salt
   - cat config/.salt
-  - ln -s $(pwd) /var/www/dolphin
+  - sudo ln -s $(pwd) /var/www/dolphin
   - curl http://localhost/dolphin
  
 script:
