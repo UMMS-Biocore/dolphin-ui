@@ -672,14 +672,10 @@ class Dolphin:
             receiver = email_check[0][1]
             subject = 'Your Dolphin run has completed!'
             body = 'Your Dolphin run #%s has completed successfully!' % run_id
-        elif (end_email_check[0][0] == 3):
+        else:
             receiver =  email_err_receiver
             subject = 'There has been an error in run: %s' % run_id
-            body = 'Run %s has ended with an error in: %s' % (run_id, config_type);
-        elif (end_email_check[0][0] == 4):
-            receiver =  email_err_receiver
-            subject = 'The run: %s, has been stopped' % run_id
-            body = 'Run %s has stopped in: %s' % (run_id, config_type);
+            body = 'Run %s has ended with an error in: %s.  Error type: %s' % (run_id, config_type, end_email_check[0][0]);
         p = os.popen("%s -t" % "/usr/sbin/sendmail", "w")
         p.write("From: %s\n" % email_sender)
         p.write("To: %s\n" % receiver)
