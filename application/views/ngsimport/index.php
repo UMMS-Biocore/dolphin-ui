@@ -45,6 +45,8 @@
 										</div>
 										<div class="callout callout-info">
 											<h4>Before Submission:</h4>
+											<p>If submitting a completely new run, please make sure that the process directory does not match an already used process directory.</p>
+											<p>If you are submitting over 100 samples with one import, it is advised that you split that import into two separate imports with different process directories.</p>
 											<p>If re-submitting an old import with different data, make sure all the samples you wish to keep are still within the import.</p>
 											<p>Any old sample information will be lost if you have removed that data from the excel spreadsheet.</p>
 										</div>
