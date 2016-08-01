@@ -11,9 +11,15 @@ $query = new dbfuncs();
 if (isset($_GET['p'])){$p = $_GET['p'];}
 $data = '';
 
-if($p == '')
+if($p == 'getDonors')
 {
-	
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	$data=$query->queryTable("
+		SELECT *
+		FROM ngs_donor
+		WHERE id
+		IN (SELECT ngs_samples.donor_id FROM ngs_samples WHERE id IN ($samples))
+		");
 }
 
 header('Cache-Control: no-cache, must-revalidate');

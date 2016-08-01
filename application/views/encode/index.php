@@ -18,11 +18,11 @@
 					?>
 					<?php
 						#Donors
-						echo $html->getRespBoxTable_ng("Donors", "donors", "<th>id</th><th>Donor</th><th>Award</th><th>Lab</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
+						echo $html->getRespBoxTable_ng("Donors", "donors", "<th>id</th><th>Donor</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
 					?>
 					<?php
 						#Experiments
-						echo $html->getRespBoxTable_ng("Experiments", "experiments", "<th>id</th><th>Assay Term Name</th><th>Assay Term Id</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Description</th>");
+						echo $html->getRespBoxTable_ng("Experiments", "experiments", "<th>id</th><th>Lab</th><th>Award</th><th>Assay Term Name</th><th>Assay Term Id</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Description</th>");
 					?>
 					<?php
 						#Treatments
