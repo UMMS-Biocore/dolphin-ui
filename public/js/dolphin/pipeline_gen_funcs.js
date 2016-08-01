@@ -1074,7 +1074,7 @@ function manageChecklistsBulk(names){
 		if ( checklist_samples.indexOf( name ) > -1 ){
 			//remove
 			remove_bool = true;
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
 					for(var x = 0; x < lane_samples.length; x++){
 						if (lane_samples[x] == undefined) {
@@ -1134,7 +1134,7 @@ function manageChecklistsBulk(names){
 					check.checked = !check.checked;
 				}
 			}
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (document.getElementById('clear_basket').disabled) {
 					document.getElementById('clear_basket').disabled = false;
 				}

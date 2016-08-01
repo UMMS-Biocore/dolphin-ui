@@ -837,6 +837,11 @@ $(function() {
 							manageChecklistsBulk(selected_samples)
 						}
 					});
+				}else if (segment == "encode") {
+					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+					var basket = basket_info.split(",");
+					basket = basket.filter(function(e){return e}); 
+					manageChecklistsBulk(basket);
 				}else{
 					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
 				}
