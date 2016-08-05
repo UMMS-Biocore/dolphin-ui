@@ -11,6 +11,10 @@ var element_highlighted_uid;
 var element_highlighted_id;
 var element_highlighted_type;
 var element_highlighted_onclick;
+
+var element_parent_table = '';
+var element_parent_table_id = '';
+
 var experimentPerms = [];
 var lanePerms = [];
 var samplePerms = [];
@@ -19,38 +23,48 @@ var normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organiza
 				  'biosample_type', 'instrument_model', 'treatment_manufacturer'];
 var fileDatabaseDict = ['ngs_dirs', 'ngs_temp_sample_files', 'ngs_temp_lane_files', 'ngs_fastq_files'];
 
-function editBox(uid, id, type, table, element){
+function editBox(uid, id, type, table, element, parent_table, parent_table_id){
 	var havePermission = 0;
 	console.log([uid, id, type, table, element]);
 	$.ajax({ type: "GET",
-					url: BASE_PATH+"/public/ajax/browse_edit.php",
-					data: { p: 'checkPerms', id: id, uid: uid, table: table},
-					async: false,
-					success : function(r)
-					{
-						havePermission = r;
-					}
-				});
+		url: BASE_PATH+"/public/ajax/browse_edit.php",
+		data: { p: 'checkPerms', id: id, uid: uid, table: table},
+		async: false,
+		success : function(r)
+		{
+			havePermission = r;
+		}
+	});
 	
 	if (havePermission == 1) {
 		if (element_highlighted != null) {
-			element_highlighted.innerHTML = element_highlighted_value;
+			if (element_highlighted_value != ""){
+				element_highlighted.innerHTML = element_highlighted_value;
+			}else{
+				element_highlighted.innerHTML = '<br>';
+			}
 			element_highlighted.onclick = element_highlighted_onclick;
 			if (fileDatabaseDict.indexOf(table) > -1) {
 				document.getElementById('submit_file_changes').remove();
 				document.getElementById('cancel_file_changes').remove();
 			}
-		}else{
-			
 		}
 		element_highlighted = element;
-		element_highlighted_value = element.innerHTML;
+		if (element.innerHTML != "<br>"){
+			element_highlighted_value = element.innerHTML;
+		}else{
+			element_highlighted_value = '';
+		}
 		element_highlighted_uid = uid;
 		element_highlighted_id = id;
 		element_highlighted_type = type;
 		element_highlighted_table = table;
 		element_highlighted_onclick = element.onclick;
 		element.innerHTML = '';
+		if (parent_table != '') {
+			element_parent_table = parent_table;
+			element_parent_table_id = parent_table_id;
+		}
 
 		if (normalized.indexOf(type) > -1) {
 			
@@ -201,17 +215,36 @@ function submitChanges(ele, event = event) {
 			ele = document.getElementById('inputTextBox');
 			console.log(ele.value);
 		}
-        $.ajax({ type: "GET",
-					url: BASE_PATH+"/public/ajax/browse_edit.php",
-					data: { p: 'updateDatabase', id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value},
-					async: false,
-					success : function(r)
-					{
-						if (r == 1) {
-							successBool = true;
-						}
+		if (element_parent_table != '') {
+			console.log(element_parent_table)
+			console.log(element_parent_table_id)
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: 'insertDatabase', id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id},
+				async: false,
+				success : function(r)
+				{
+					console.log(r)
+					if (r == 1) {
+						successBool = true;
+						element_parent_table = '';
+						element_parent_table_id = '';
 					}
-				});
+				}
+			});
+		}else{
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: 'updateDatabase', id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value},
+				async: false,
+				success : function(r)
+				{
+					if (r == 1) {
+						successBool = true;
+					}
+				}
+			});
+		}
 		if (successBool) {
 			element_highlighted.innerHTML = ele.value;
 			element_highlighted.onclick = element_highlighted_onclick;

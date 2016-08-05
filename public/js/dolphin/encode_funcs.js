@@ -909,13 +909,6 @@ function encodePost(subType){
 	if (subType == "patch" && replicate_json[1].toString() != "") {
 		responseOutput += encodeSubmission('replicate', replicate_json[1], subType, "replicate", "ngs_samples");
 	}
-	
-	//	FILE SUBMISSION
-	if (submission) {
-		encodeFilePost();
-	}else{
-		responseOutput += "File submission halted due to meta-data errors<br><br>";
-	}
 
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
@@ -925,4 +918,8 @@ function encodePost(subType){
 	document.getElementById('cancelDeleteButton').innerHTML = "OK";
 	document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
 	document.getElementById('confirmPatchButton').setAttribute('style', 'display:none');
+}
+
+function encodePostFiles(){
+	encodeFilePost();
 }

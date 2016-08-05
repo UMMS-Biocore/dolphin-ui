@@ -1267,7 +1267,7 @@ function manageChecklists(name, type){
 					check.checked = !check.checked;
 				}
 			}
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (document.getElementById('clear_basket').disabled) {
 					document.getElementById('clear_basket').disabled = false;
 				}
@@ -1363,6 +1363,9 @@ function manageChecklists(name, type){
 			console.log(lane_samples_to_add)
 			manageChecklistsBulk(lane_samples_to_add);
 		}
+	}
+	if (window.location.href.split("/").indexOf("encode") != -1) {
+		loadInEncodeTables();
 	}
 }
 
