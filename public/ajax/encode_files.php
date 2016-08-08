@@ -98,29 +98,25 @@ foreach($file_query as $fq){
 		);
 		if($fq->file_type == 'fastq'){
 			$data['output_type'] = 'reads';
-			if(strpos($fn, "seqmapping") > -1){
-				$step = "step3";
-			}else{
-				$step = "step1";
-			}
+			$step = "step1";
 			if(count($file_names) == 2){
 				//	FASTQ PAIRED
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "paired-ended";
 				if(end($file_names) == $fn){
-					$data["aliases"] = array($my_lab.':'.$step.'_fastq_p2_'.$sample_name);
+					$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
 					$data["paired_end"] = '2';
 					$data["paired_with"] = $paired;
 				}else{
-					$data["aliases"] = array($my_lab.':'.$step.'_fastq_p1_'.$sample_name);
+					$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
 					$data["paired_end"] = '1';
-					$paired = $my_lab.':'.$step.'_fastq_p1_'.$sample_name;
+					$paired = $my_lab.':fastq_p1_'.$sample_name;
 				}
 			}else if (count($file_names) == 1){
 				//	FASTQ SINGLE
 				$data["file_format"] = 'fastq';
 				$data["run_type"] = "single-ended";
-				$data["aliases"] = array($my_lab.':'.$step.'_fastq_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
 				if($step != 'step1'){
 					$data['derived_from'] = explode(",",$step_list['step1']);
 				}
