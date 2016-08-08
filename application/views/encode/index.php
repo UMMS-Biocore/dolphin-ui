@@ -1,3 +1,30 @@
+				<!-- Content Header (Page header) -->
+				<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myModalLabel">Encode Submission</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="deleteLabel"></label>
+										<br>
+										<p id="deleteAreas"></p>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmPatchButton" class="btn btn-success" data-dismiss="modal" onclick="" style="display:none">Confirm</button>
+							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="confirmDeletePressed()">Confirm</button>
+							  <button type="button" id="cancelDeleteButton" class="btn btn-default" data-dismiss="modal" onclick="cancelDeletePressed()">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End modal -->
 				<section class="content-header">
 					<h1>
 						Encode Viewing/Submission
@@ -22,7 +49,7 @@
 					?>
 					<?php
 						#Experiments
-						echo $html->getRespBoxTable_ng("Experiments", "experiments", "<th>Sample</th><th>Lab</th><th>Award</th><th>Assay Term Name</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th>");
+						echo $html->getRespBoxTable_ng("Experiments", "experiments", "<th>Sample</th><th>Lab</th><th>Award</th><th>Organism</th><th>Assay Term Name</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th>");
 					?>
 					<?php
 						#Treatments
@@ -30,7 +57,7 @@
 					?>
 					<?php
 						#Biosamples
-						echo $html->getRespBoxTable_ng("Biosamples", "biosamples", "<th>Sample</th><th>Donor</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Obtained</th>");
+						echo $html->getRespBoxTable_ng("Biosamples", "biosamples", "<th>Sample</th><th>Donor</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th>");
 					?>
 					<?php
 						#Libraries
@@ -48,8 +75,8 @@
 				</section>
 				<section>
 					<div class="margin">
-						<input type="button" id="submitMeta" class="btn btn-primary" name="pipeline_send_button" value="Submit Meta-data" onClick=""/>
-						<input type="button" id="submitFiles" class="btn btn-primary" name="pipeline_send_button" value="Submit Files" onClick=""/>
-						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit Both" onClick=""/>
+						<input type="button" id="submitMeta" class="btn btn-primary" name="pipeline_send_button" value="Submit Meta-data" onClick="checkForEncodeSubmission('metadata')"/>
+						<input type="button" id="submitFiles" class="btn btn-primary" name="pipeline_send_button" value="Submit Files" onClick="checkForEncodeSubmission('files')"/>
+						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit Both" onClick="checkForEncodeSubmission('both')"/>
 					</div>
 				</section>

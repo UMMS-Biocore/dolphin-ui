@@ -27,8 +27,11 @@ else if($p == 'getExperiments')
 	$data=$query->queryTable("
 		SELECT DISTINCT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_lab.lab, ngs_experiment_series.`grant`, ngs_library_strategy.library_strategy,
 		ngs_lab.id as lab_id, ngs_protocols.id as protocol_id, ngs_samples.description, ngs_samples.experiment_acc, ngs_samples.experiment_uuid,
-		ngs_library_strategy.id as library_strategy_id, ngs_experiment_series.id as experiment_series_id
+		ngs_library_strategy.id as library_strategy_id, ngs_experiment_series.id as experiment_series_id,
+		ngs_organism.organism, ngs_samples.organism_id
 		FROM ngs_samples
+		LEFT JOIN ngs_organism
+		ON ngs_samples.organism_id = ngs_organism.id
 		LEFT JOIN ngs_experiment_series
 		ON ngs_experiment_series.id = ngs_samples.series_id
 		LEFT JOIN ngs_lab
@@ -58,7 +61,8 @@ else if($p == 'getBiosamples')
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_donor.donor, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
-		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_donor.id as donor_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received
+		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_donor.id as donor_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
+		ngs_lanes.date_submitted
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id

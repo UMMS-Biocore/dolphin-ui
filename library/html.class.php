@@ -708,7 +708,7 @@ e range"><i class="fa fa-calendar"></i></button>
 						<li><a name="export_excel_button" onClick="exportExcel()">Export to Excel</a></li>';
 	if($_SESSION['uid'] == 1){
 		$html.=			'<li><a name="send_to_GEO_button" onClick="exportGeo()" disabled>Export Geo Spreadsheet</a></li>
-						<li><a name="send_to_ENCODE_button" onClick="checkForEncodeSubmission()" disabled>Send to ENCODE</a></li>
+						<li><a name="send_to_ENCODE_button" onClick="sendToEncode()" disabled>Send to ENCODE</a></li>
 						<li><a name="refresh_aws" onClick="resubmitAmazon()">Amazon Re-upload</a></li>
 						<li><a name="refresh_aws" onClick="recheckChecksum()">Checksum Re-check</a></li>';
 	}

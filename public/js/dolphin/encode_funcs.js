@@ -39,7 +39,7 @@ var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
  *	Check reponses are output into a modal
  */
 
-function checkForEncodeSubmission(){
+function checkForEncodeSubmission(type){
 	var boolPass = true;
 	var errorMsg = '';
 	
@@ -199,11 +199,12 @@ function checkForEncodeSubmission(){
 			});
 			document.getElementById('myModalLabel').innerHTML = 'Encode Checks';
 			document.getElementById('deleteLabel').innerHTML = 'Checking for proper ENCODE submission...';
-			document.getElementById('deleteAreas').innerHTML = '<b>Database checks passed without error for ENCODE submission';
+			document.getElementById('deleteAreas').innerHTML = '<b>Database checks passed without error for ENCODE submission'+
+				'<br><br>Submission might take a few minutes to process after hitting submit, please be patient</b>';
 				
 			document.getElementById('cancelDeleteButton').innerHTML = "Cancel";
 			document.getElementById('confirmDeleteButton').innerHTML = "Submit";
-			document.getElementById('confirmDeleteButton').setAttribute('onclick', 'encodeCheckForPatch()');
+			document.getElementById('confirmDeleteButton').setAttribute('onclick', 'encodeCheckForPatch("'+type+'")');
 			document.getElementById('confirmDeleteButton').setAttribute('data-dismiss', '');
 			document.getElementById('confirmDeleteButton').setAttribute('class', 'btn btn-success');
 			document.getElementById('confirmDeleteButton').setAttribute('style', 'display:show');
@@ -231,7 +232,7 @@ function checkForEncodeSubmission(){
  *	added already.
  */
 
-function encodeCheckForPatch(){
+function encodeCheckForPatch(type){
 	var boolPass = false;
 	for ( var x = 0; x < sample_info.length; x++ ){
 		if (sample_info[x].donor_acc != null || sample_info[x].donor_uuid != null) {
@@ -253,19 +254,23 @@ function encodeCheckForPatch(){
 	}
 	
 	if (boolPass) {
-		document.getElementById('myModalLabel').innerHTML = 'Encode Patch';
-		document.getElementById('deleteLabel').innerHTML = 'Some encode information has already been entered.';
-		document.getElementById('deleteAreas').innerHTML = 'Would you like to request to patch the current information?<br><br>Submission/Patching may take a minute to fully submit to ENCODE';
-		document.getElementById('cancelDeleteButton').innerHTML = "Cancel";
-		document.getElementById('confirmDeleteButton').innerHTML = "No";
-		document.getElementById('confirmDeleteButton').setAttribute('onclick', 'encodePost(\'post\')');
-		document.getElementById('confirmDeleteButton').setAttribute('data-dismiss', '');
-		document.getElementById('confirmDeleteButton').setAttribute('class', 'btn btn-success');
-		document.getElementById('confirmDeleteButton').setAttribute('style', 'display:show');
-		document.getElementById('confirmPatchButton').setAttribute('style', 'display:show');
-		document.getElementById('confirmPatchButton').setAttribute('onclick', 'encodePost(\'patch\')');
+		if (type == 'metadata') {
+			encodePost('patch')
+		}else if (type == 'files') {
+			encodePostFiles()
+		}else{
+			encodePost('patch')
+			encodePostFiles()
+		}
 	}else{
-		encodePost('post');
+		if (type == 'metadata') {
+			encodePost('post')
+		}else if (type == 'files') {
+			encodePostFiles()
+		}else{
+			encodePost('post')
+			encodePostFiles()
+		}
 	}
 }
 
@@ -660,6 +665,7 @@ function encodeFilePost(){
 	console.log(biosample_ids);
 	console.log(experiment_accs);
 	console.log(replicate_uuids);
+	var response = '';
 	for(var x = 0; x < biosample_ids.length; x++){
 		$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/ajax/encode_files.php",
@@ -667,14 +673,18 @@ function encodeFilePost(){
 			async: false,
 			success : function(s)
 			{
+				response = s;
 				//	Print out server response
+				/*
 				var file_post_string = "[" + s + "]";
 				console.log(file_post_string);
 				var file_response = JSON.parse(file_post_string);
 				console.log(file_response);
+				*/
 			}
 		});
 	}
+	return response
 }
 
 /*
@@ -921,5 +931,14 @@ function encodePost(subType){
 }
 
 function encodePostFiles(){
-	encodeFilePost();
+	var file_response = encodeFilePost();
+	
+	//	Report Errors/Successes to modal
+	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
+	document.getElementById('deleteLabel').innerHTML = 'Response from ENCODE servers:';
+	document.getElementById('deleteAreas').innerHTML += "<br><br>File Submission reponse:<br>" + file_response;
+		
+	document.getElementById('cancelDeleteButton').innerHTML = "OK";
+	document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');
+	document.getElementById('confirmPatchButton').setAttribute('style', 'display:none');
 }

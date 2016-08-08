@@ -449,3 +449,7 @@ function recheckChecksum() {
 		}
 	});
 }
+
+function sendToEncode() {
+	window.location.href = BASE_PATH+"/public/encode"
+}
