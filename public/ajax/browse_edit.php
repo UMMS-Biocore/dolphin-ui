@@ -19,16 +19,16 @@ if (isset($_GET['p'])){$p = $_GET['p'];}
 if($p == 'insertDatabase')
 {
 
-	if (isset($_GET['id'])){$id = $_GET['id'];}
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	if (isset($_GET['table'])){$table = $_GET['table'];}
 	if (isset($_GET['value'])){$value = $_GET['value'];}
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
+	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
 	
-	$query->runSQL("INSERT INTO ngs_".$table." ($type) VALUES ('$value')");
-	$insert_id= json_decode($query->queryTable("SELECT id FROM ngs_".$table." WHERE $type = '$value'"));
-	$data=$query->runSQL("UPDATE $parent SET ".$table."_id = '".$insert_id[0]->id."' WHERE id = $parent_id");
+	$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
+	$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+	$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id = $parent_id");
 }
 if($p == 'updateDatabase')
 {
@@ -39,7 +39,7 @@ if($p == 'updateDatabase')
 	if (isset($_GET['value'])){$value = $_GET['value'];}
 	
 	if(in_array($type, $normalized)){
-		$type_list = json_decode($query->queryTable("SELECT id FROM ngs_".$type." WHERE $type = '$value'"));
+		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
 		if($type_list != array()){
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = ".$type_list[0]->id." WHERE id = $id"); 	
 		}else{

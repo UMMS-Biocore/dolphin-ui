@@ -38,7 +38,7 @@
 					?>
 					<?php
 						#Antibody Lots
-						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Targets<th>");
+						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Targets</th>");
 					?>
 					<?php
 						#Replicates

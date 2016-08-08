@@ -32,12 +32,12 @@ function loadInEncodeTables(){
 				for(var x = 0; x < s.length; x++){
 					s[x] = responseCheck(s[x]);
 					donortable.fnAddData([
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor', 'donor', this, '', '')\">"+s[x].donor+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'life_stage', 'donor', this, '', '')\">"+s[x].life_stage+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'age', 'donor', this, '', '')\">"+s[x].age+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'sex', 'donor', this, '', '')\">"+s[x].sex+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor_acc', 'donor', this, '', '')\">"+s[x].donor_acc+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor_uuid', 'donor', this, '', '')\">"+s[x].donor_uuid+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor', 'ngs_donor', this, '', '', '')\">"+s[x].donor+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'life_stage', 'ngs_donor', this, '', '', '')\">"+s[x].life_stage+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'age', 'ngs_donor', this, '', '', '')\">"+s[x].age+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'sex', 'ngs_donor', this, '', '', '')\">"+s[x].sex+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor_acc', 'ngs_donor', this, '', '', '')\">"+s[x].donor_acc+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'donor_uuid', 'ngs_donor', this, '', '', '')\">"+s[x].donor_uuid+"</p>"
 					]);
 				}
 			}
@@ -56,12 +56,12 @@ function loadInEncodeTables(){
 					s[x] = responseCheck(s[x]);
 					experimenttable.fnAddData([
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'experiment_series, '"+s[x].experiment_series_id+"')\">"+s[x].lab+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'experiment_series', this, '', '')\">"+s[x].grant+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'library_strategy', this, 'ngs_protocols, '"+s[x].protocol_id+"')\">"+s[x].library_strategy+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'samples', this, '', '')\">"+s[x].description+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'samples', this, '', '')\">"+s[x].experiment_acc+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'samples', this, '', '')\">"+s[x].experiment_uuid+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'ngs_library_strategy', this, 'ngs_protocols', '"+s[x].protocol_id+"', library_strategy_id')\">"+s[x].library_strategy+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>"
 					]);
 				}
 			}
@@ -79,13 +79,13 @@ function loadInEncodeTables(){
 				for(var x = 0; x < s.length; x++){
 					s[x] = responseCheck(s[x]);
 					treatmenttable.fnAddData([
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_name', 'treatment', this, '', '')\">"+s[x].treatment_term_name+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_id', 'treatment', this, '', '')\">"+s[x].treatment_term_id+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_type', 'treatment', this, '', '')\">"+s[x].treatment_type+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration', 'treatment', this, '', '')\">"+s[x].concentration+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration_units', 'treatment', this, '', '')\">"+s[x].concentration_units+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration', 'treatment', this, '', '')\">"+s[x].duration+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration_units', 'treatment', this, '', '')\">"+s[x].duration_units+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_name', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_name+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_id', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_id+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_type', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_type+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration', 'ngs_treatment', this, '', '', '')\">"+s[x].concentration+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].concentration_units+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration', 'ngs_treatment', this, '', '', '')\">"+s[x].duration+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].duration_units+"</p>"
 					]);
 				}
 			}
@@ -104,11 +104,11 @@ function loadInEncodeTables(){
 					s[x] = responseCheck(s[x]);
 					biosampletable.fnAddData([
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor', 'donor', this, '', '')\">"+s[x].donor+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].biosample_term_id+"', 'biosample_term_name', 'biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"')\">"+s[x].biosample_term_name+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].biosample_term_id+"', 'biosample_term_id', 'biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"')\">"+s[x].biosample_term_id+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].biosample_term_id+"', 'biosample_type', 'biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"')\">"+s[x].biosample_type+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_received', 'lanes', this, '', '')\">"+s[x].date_received+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, '', '', '')\">"+s[x].donor+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id')\">"+s[x].biosample_term_name+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id')\">"+s[x].biosample_term_id+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id')\">"+s[x].biosample_type+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_received', 'ngs_lanes', this, '', '', '')\">"+s[x].date_received+"</p>"
 					]);
 				}
 			}
@@ -127,9 +127,9 @@ function loadInEncodeTables(){
 					s[x] = responseCheck(s[x]);
 					librarytable.fnAddData([
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'molecule', this, 'ngs_samples', '"+s[x].sample_id+"')\">"+s[x].molecule+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'protocols', this, '', '')\">"+s[x].extraction+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'samples', this, '', '')\">"+s[x].read_length+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>"
 					]);
 				}
 			}
@@ -147,11 +147,11 @@ function loadInEncodeTables(){
 				for(var x = 0; x < s.length; x++){
 					s[x] = responseCheck(s[x]);
 					antybodytable.fnAddData([
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'source', 'antibody_target', this, '', '')\">"+s[x].source+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'product_id', 'antibody_target', this, '', '')\">"+s[x].product_id+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'lot_id', 'antibody_target', this, '', '')\">"+s[x].lot_id+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'host_organism', 'antibody_target', this, '', '')\">"+s[x].host_organism+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'target', 'antibody_target', this, '', '')\">"+s[x].target+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'source', 'ngs_antibody_target', this, '', '', '')\">"+s[x].source+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'product_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].product_id+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'lot_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].lot_id+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'host_organism', 'ngs_antibody_target', this, '', '', '')\">"+s[x].host_organism+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '')\">"+s[x].target+"</p>",
 					]);
 				}
 			}
@@ -176,8 +176,8 @@ function loadInEncodeTables(){
 					s[x] = responseCheck(s[x]);
 					replicatetable.fnAddData([
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'biological_replica', 'samples', this, '', '')\">"+s[x].biological_replica+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'technical_replica', 'samples', this, '', '')\">"+s[x].technical_replica+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'biological_replica', 'ngs_samples', this, '', '', '')\">"+s[x].biological_replica+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'technical_replica', 'ngs_samples', this, '', '', '')\">"+s[x].technical_replica+"</p>"
 					]);
 				}
 			}

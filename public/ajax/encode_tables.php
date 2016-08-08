@@ -58,7 +58,7 @@ else if($p == 'getBiosamples')
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_donor.donor, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
-		ngs_biosample_term.id as biosample_term_id, ngs_lanes.id as lane_id, ngs_donor.id as donor_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received
+		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_donor.id as donor_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id

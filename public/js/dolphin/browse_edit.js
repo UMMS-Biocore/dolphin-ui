@@ -14,6 +14,7 @@ var element_highlighted_onclick;
 
 var element_parent_table = '';
 var element_parent_table_id = '';
+var element_parent_child = '';
 
 var experimentPerms = [];
 var lanePerms = [];
@@ -23,7 +24,7 @@ var normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organiza
 				  'biosample_type', 'instrument_model', 'treatment_manufacturer'];
 var fileDatabaseDict = ['ngs_dirs', 'ngs_temp_sample_files', 'ngs_temp_lane_files', 'ngs_fastq_files'];
 
-function editBox(uid, id, type, table, element, parent_table, parent_table_id){
+function editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child){
 	var havePermission = 0;
 	console.log([uid, id, type, table, element]);
 	$.ajax({ type: "GET",
@@ -64,9 +65,10 @@ function editBox(uid, id, type, table, element, parent_table, parent_table_id){
 		if (parent_table != '') {
 			element_parent_table = parent_table;
 			element_parent_table_id = parent_table_id;
+			element_parent_child = parent_child;
 		}
-
-		if (normalized.indexOf(type) > -1) {
+		
+		if (normalized.indexOf(type) > -1 && window.location.href.split("/").indexOf('encode') == -1) {
 			
 			element.onclick = '';
 			
@@ -132,7 +134,6 @@ function editBox(uid, id, type, table, element, parent_table, parent_table_id){
 				element.parentNode.parentNode.parentNode.appendChild(cancelButton);
 				element.parentNode.parentNode.parentNode.appendChild(submitButton);
 			}
-			console.log(element_highlighted_value);
 			textarea.innerHTML = element_highlighted_value;
 			element.onclick = '';
 			element_highlighted.onclick = '';
@@ -199,9 +200,6 @@ function submitChangesFiles(){
 }
 
 function submitChanges(ele, event = event) {
-	console.log(ele);
-	console.log(ele.value);
-	console.log(event.keyCode);
 	var successBool = false;
     if (ele == 'details_cancel') {
 		element_highlighted.innerHTML = element_highlighted_value;
@@ -210,17 +208,20 @@ function submitChanges(ele, event = event) {
 		document.getElementById('cancel_file_changes').remove();
 		clearElementHighlighted();
 	}else if((event.keyCode == 13 && ele.value != '' && ele.value != null) || ele == 'dir_element') {
-		console.log('test');
 		if (ele == "dir_element") {
 			ele = document.getElementById('inputTextBox');
 			console.log(ele.value);
 		}
-		if (element_parent_table != '') {
+		if (element_parent_table != '' && element_highlighted_id == '<br>') {
+			console.log(element_highlighted_id);
+			console.log(element_highlighted_type);
+			console.log(element_highlighted_table);
+			console.log(ele.value);
 			console.log(element_parent_table)
 			console.log(element_parent_table_id)
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
-				data: { p: 'insertDatabase', id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id},
+				data: { p: 'insertDatabase', type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
 				async: false,
 				success : function(r)
 				{
@@ -229,6 +230,7 @@ function submitChanges(ele, event = event) {
 						successBool = true;
 						element_parent_table = '';
 						element_parent_table_id = '';
+						element_parent_child = '';
 					}
 				}
 			});
@@ -239,6 +241,7 @@ function submitChanges(ele, event = event) {
 				async: false,
 				success : function(r)
 				{
+					console.log(r)
 					if (r == 1) {
 						successBool = true;
 					}
@@ -246,6 +249,7 @@ function submitChanges(ele, event = event) {
 			});
 		}
 		if (successBool) {
+			console.log("Success!")
 			element_highlighted.innerHTML = ele.value;
 			element_highlighted.onclick = element_highlighted_onclick;
 			if (document.getElementById('submit_file_changes') != undefined) {
@@ -257,6 +261,9 @@ function submitChanges(ele, event = event) {
 			clearElementHighlighted();
 		}
     }else if(event.keyCode == 27) {
+		if (element_highlighted_value == '') {
+			element_highlighted_value = '<br>';
+		}
 		element_highlighted.innerHTML = element_highlighted_value;
 		element_highlighted.onclick = element_highlighted_onclick;
 		
