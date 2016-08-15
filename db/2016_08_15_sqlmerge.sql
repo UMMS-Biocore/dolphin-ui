@@ -324,9 +324,9 @@ INSERT INTO datafields
 UPDATE `datafields` SET `fieldname`='samplename' WHERE `id`='44';
 
 INSERT INTO `sidebar`
-	(`id`, `name`, `parent_name`, `link`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user`)
+	(`name`, `parent_name`, `link`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user`)
 	VALUES
-	('15', 'DEBrowser', 'NGS Tracking', 'debrowser/index/index', '1', '1', '63', NOW(), NOW(), '1');
+	('DEBrowser', 'NGS Tracking', 'debrowser/index/index', '1', '1', '63', NOW(), NOW(), '1');
 
 DROP TABLE IF EXISTS `ngs_genome`;
 CREATE TABLE IF NOT EXISTS `ngs_genome` (
