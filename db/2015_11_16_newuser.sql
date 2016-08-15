@@ -1,3 +1,0 @@
-ALTER TABLE `biocore`.`users` 
-ADD COLUMN `pass_hash` VARCHAR(100) NULL DEFAULT NULL AFTER `lab`,
-ADD COLUMN `verification` VARCHAR(45) NULL DEFAULT NULL AFTER `pass_hash`;
