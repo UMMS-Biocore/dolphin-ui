@@ -307,7 +307,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
         $params['username'] = 'kucukura';
         $params['wkey'] = '3pl8cmzYJ4ezgX2a9RevZxHmihpOA';
         $params['servicename'] = 'stepCheck';
-		$this->assertEquals($funcs->checkAllJobsFinished($params), 1);
+		$this->assertEquals($funcs->checkAllJobsFinished($params), 0);
 		#$this->assertEquals(explode("\n", $funcs->checkAllJobsFinished($params))[0], 'Should be still running 1 [1:0]');
 		ob_end_clean();
 	}
