@@ -278,7 +278,7 @@ PRIMARY KEY (`id`));
 
 ALTER TABLE `ngs_donor` 
 ADD COLUMN `donor_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `donor`,
-ADD COLUMN `donor_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `donot_acc`;
+ADD COLUMN `donor_uuid` VARCHAR(100) NULL DEFAULT NULL AFTER `donor_acc`;
 
 ALTER TABLE `ngs_samples` 
 ADD COLUMN `biosample_acc` VARCHAR(45) NULL DEFAULT NULL AFTER `notes`,
