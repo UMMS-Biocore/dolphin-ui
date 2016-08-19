@@ -134,6 +134,10 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
+							<div class="callout callout-info">
+								<h4>Before Submission:</h4>
+								<p>If submitting a completely new run, please make sure that the process directory does not match an already used process directory.</p>
+							</div>
 							<input type="submit" name="submitted_fastlane" id="submit_fastlane" class="btn btn-primary" onclick="submitFastlaneButton()" innerHTML="Submit Fastlane"/>
 						</div>
 					</div><!-- /.row -->
