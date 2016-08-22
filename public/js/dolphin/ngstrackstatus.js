@@ -143,13 +143,13 @@ $(function() {
 			}
 		});
 		
-	wkey = getWKey(run_id);
-	document.getElementById('send_to_reports').name = run_id;
-	var runparams = $('#jsontable_services').dataTable();
-	console.log(wkey);	
-	var progress_bars = progressBars();
-	
-	$.ajax({ type: "GET",
+		wkey = getWKey(run_id);
+		document.getElementById('send_to_reports').name = run_id;
+		var runparams = $('#jsontable_services').dataTable();
+		console.log(wkey);	
+		var progress_bars = progressBars();
+		
+		$.ajax({ type: "GET",
 			 url: BASE_PATH + "/public/ajax/dataservice.php?wkey=" + wkey,
 			 async: false,
 			 success : function(s)
@@ -180,6 +180,8 @@ $(function() {
 		});
 		runparams.fnSort( [ [4,'asc'] ] );
 		//runparams.fnAdjustColumnSizing(true);
+	}else if (segment == "reroute") {
+		window.location.href = BASE_PATH+'/stat/advstatus';
 	}
 	
 	$('#jsontable_runparams').on( 'page.dt', function () {

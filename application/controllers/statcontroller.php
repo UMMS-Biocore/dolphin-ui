@@ -11,9 +11,9 @@ class StatController extends VanillaController {
 	}
 	
 	function status(){
-		$this->set('field','NGS Excel Import');
+		$this->set('field','Status');
 		$this->username=$_SESSION['user'];
-		$this->set('title','NGS Excel Import');
+		$this->set('title','Status');
 		$this->set('groups',$this->Stat->getGroups($this->username));
         
         $this->set('uid', $_SESSION['uid']);
@@ -25,11 +25,19 @@ class StatController extends VanillaController {
         $this->set('uid', $_SESSION['uid']);
         $gids = $this->Stat->getGroup($_SESSION['user']);
         $this->set('gids', $gids);
-        $this->set('field', 'Status');
+        $this->set('field', 'Adv Status');
 		$run_id = $this->Stat->getRunId();
 		$this->set('run_id', $run_id);
 		$this->set('outdir', $this->Stat->getRunDirectory($run_id));
     }
+	
+	function reroute($run_id){
+		$this->set('uid', $_SESSION['uid']);
+        $gids = $this->Stat->getGroup($_SESSION['user']);
+        $this->set('gids', $gids);
+        $this->set('field', 'Reroute');
+		$this->set('run_id', $run_id);
+	}
 	
 	function afterAction(){
 		
