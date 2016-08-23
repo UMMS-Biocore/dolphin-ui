@@ -675,8 +675,8 @@ class Dolphin:
         elif (end_email_check[0][0] != 1):
             receiver =  email_err_receiver
             subject = 'There has been an error in run: %s' % run_id
-            body = "Run %s has ended with an error in: %s.  Error type: %s" % (run_id, config_type, end_email_check[0][0]);
-            body +="\nYou may visit the status page by clicking this link.\nhttp://dolphin.umassmed.edu/dolphin/stat/reroute/" + run_id
+            body = "Run %s has ended with an error in: %s.  Error type: %s" % (run_id, config_type, end_email_check[0][0])
+            body +="\nYou may visit the status page by clicking this link.\nhttp://dolphin.umassmed.edu/dolphin/stat/reroute/%s" % run_id
         p = os.popen("%s -t" % "/usr/sbin/sendmail", "w")
         p.write("From: %s\n" % email_sender)
         p.write("To: %s\n" % receiver)
