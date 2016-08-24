@@ -174,7 +174,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 				row += '<td>'+record[keys[key]]+'</td>';
 			}
 			return row + '</tr>';
-		}else if (tableToggle == 'extend') {
+		}else if (tableToggle == 'extend' && ( window.location.href.indexOf("/search") > -1 || window.location.href.indexOf("/pipeline") > -1 ) ) {
 			if (type == 'samples') {
 				if (queryType == 'getSamples') {
 					return 	"<tr>"+
@@ -311,6 +311,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'source', 'ngs_samples', this, '', '', '')\">"+record.source+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'organism', 'ngs_samples', this, '', '', '')\">"+record.organism+"</td>"+
 						"<td onclick=\"editBox("+uid+", "+record.id+", 'molecule', 'ngs_samples', this, '', '', '')\">"+record.molecule+"</td>"+
+						record.backup+
 						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" onClick=\"manageCreateChecklists(this.name, this)\" " + checked + "></td>"+
 						"</tr>";
 				}else{

@@ -1056,9 +1056,9 @@ Single End Example:
 					$html.= $this->getInitialMapping();
 				}else if ($id == 'table_create'){
 					if(!isset($_SESSION['ngs_samples'])){	
-						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Selected"], ["id","name","title","source","organism","molecule","total_reads"]);
+						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 					}else if($_SESSION['ngs_samples'] == ''){
-						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Selected"], ["id","name","title","source","organism","molecule","total_reads"]);
+						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 					}else{
 						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Barcode","Description","Avg Insert Size","Read Length",
 																				"Concentration","Time","Biological Replica","Technical Replica","Spike-ins","Adapter",
