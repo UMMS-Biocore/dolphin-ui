@@ -573,9 +573,17 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "donor") {
 				json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
 			}else if (terms[y] == "source" && json_type == "antibody") {
-				json['source'] = antibody_info[x].source;
+				if (antibody_info[x].source != null) {
+					json['source'] = "unknown";
+				}else{
+					json['source'] = antibody_info[x].source;
+				}
 			}else if (terms[y] == "source") {
-				json['source'] = "unknown";
+				if (sample_info[x].source != null) {
+					json['source'] = "unknown";
+				}else{
+					json['source'] = sample_info[x].source
+				}
 			}else if (terms[y] == "treatments") {
 				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
 			}else if (terms[y] == "date_obtained") {

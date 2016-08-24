@@ -53,23 +53,23 @@
 					?>
 					<?php
 						#Treatments
-						echo $html->getRespBoxTable_ng("Treatments", "treatments", "<th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th>");
+						echo $html->getRespBoxTable_ng("Treatments", "treatments", "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th>");
 					?>
 					<?php
 						#Biosamples
-						echo $html->getRespBoxTable_ng("Biosamples", "biosamples", "<th>Sample</th><th>Donor</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th>");
+						echo $html->getRespBoxTable_ng("Biosamples", "biosamples", "<th>Sample</th><th>Donor</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th>");
 					?>
 					<?php
 						#Libraries
-						echo $html->getRespBoxTable_ng("Libraries", "libraries", "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th>");
+						echo $html->getRespBoxTable_ng("Libraries", "libraries", "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th><th>Library Acc</th><th>Library UUID</th>");
 					?>
 					<?php
 						#Antibody Lots
-						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th>");
+						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th>");
 					?>
 					<?php
 						#Replicates
-						echo $html->getRespBoxTable_ng("Replicates", "replicates", "<th>Sample</th><th>Biological Replicate Number</th><th>Technical Replicate Number</th><thLlibrary</th>");
+						echo $html->getRespBoxTable_ng("Replicates", "replicates", "<th>Sample</th><th>Antibody</th><th>Biological Replicate Number</th><th>Technical Replicate Number</th><th>Replicate UUID</th>");
 					?>
 					</div>
 				</section>
