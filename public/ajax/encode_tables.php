@@ -78,10 +78,13 @@ else if($p == 'getLibraries')
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_molecule.molecule, ngs_protocols.extraction, ngs_samples.read_length,
-		ngs_molecule.id as molecule_id, ngs_protocols.id as protocol_id
+		ngs_molecule.id as molecule_id, ngs_protocols.id as protocol_id, ngs_samples.instrument_model_id as imid, instrument_model,
+		ngs_samples.spike_ins, ngs_protocols.crosslinking_method, ngs_protocols.fragmentation_method
 		FROM ngs_samples
 		LEFT JOIN ngs_molecule
 		ON ngs_samples.molecule_id = ngs_molecule.id
+		LEFT JOIN ngs_instrument_model
+		ON ngs_samples.instrument_model_id = ngs_instrument_model.id
 		LEFT JOIN ngs_protocols
 		ON ngs_samples.protocol_id = ngs_protocols.id
 		WHERE ngs_samples.id in ($samples)

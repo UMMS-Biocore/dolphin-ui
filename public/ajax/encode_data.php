@@ -17,7 +17,7 @@ if($p == 'getSampleDataInfo')
 	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
 							 read_length, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
-							 time, ngs_donor.id as did, donor, donor_acc, donor_uuid, series_id,
+							 time, ngs_donor.id as did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism,
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
 							 experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,

@@ -61,11 +61,11 @@
 					?>
 					<?php
 						#Libraries
-						echo $html->getRespBoxTable_ng("Libraries", "libraries", "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Extraction Method</th><th>Size Range</th>");
+						echo $html->getRespBoxTable_ng("Libraries", "libraries", "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th>");
 					?>
 					<?php
 						#Antibody Lots
-						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Targets</th>");
+						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th>");
 					?>
 					<?php
 						#Replicates

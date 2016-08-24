@@ -10,8 +10,8 @@ var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
 var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
 var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
 var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
-var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "award", "size_range", "lab"];
-var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets"];
+var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "crosslinking_method", "spike-ins", "fragmentation_method", "instrument_model", "award", "size_range", "lab"];
+var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets", "clonality", "isotype", "purifications", "url"];
 var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
 //	IDs/accessions/uuid arrays
 var donor_ids = [];
@@ -507,11 +507,23 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "organism") {
 				json['organism'] = sample_info[x].organism;
 			}else if (terms[y] == "life_stage") {
-				json['life_stage'] = "unknown";
+				if (sample_info[x].life_stage != null) {
+					json['life_stage'] = sample_info[x].life_stage;
+				}else{
+					json['life_stage'] = "unknown";
+				}
 			}else if (terms[y] == "age") {
-				json['age'] = "unknown";
+				if (sample_info[x].age != null) {
+					json['age'] = sample_info[x].age;
+				}else{
+					json['age'] = "unknown";
+				}
 			}else if (terms[y] == "sex") {
-				json['sex'] = "unknown";
+				if (sample_info[x].sex != null) {
+					json['sex'] = sample_info[x].sex;
+				}else{
+					json['sex'] = "unknown";
+				}
 			}else if (terms[y] == "assay_term_name") {
 				if (protocol_info[proto_lib_type].library_strategy != null) {
 					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
@@ -606,6 +618,22 @@ function createEncodeJson(json_type){
 				json['host_organism'] = antibody_info[x].host_organism;
 			}else if (terms[y] == "targets") {
 				json['targets'] = [antibody_info[x].target];
+			}else if (terms[y] == "clonality") {
+				if (antibody_info[x].clonality != null) {
+					json['clonality'] = antibody_info[x].clonality;
+				}
+			}else if (terms[y] == "isotype") {
+				if (antibody_info[x].isotype != null) {
+					json['isotype'] = antibody_info[x].isotype;
+				}
+			}else if (terms[y] == "purifications") {
+				if (antibody_info[x].purifications != null) {
+					json['purifications'] = antibody_info[x].purifications;
+				}
+			}else if (terms[y] == "url") {
+				if (antibody_info[x].url != null) {
+					json['url'] = antibody_info[x].url;
+				}
 			}else if (terms[y] == "experiment") {
 				if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
 					if (protocol_info[proto_lib_type].library_strategy != null) {

@@ -1,13 +1,9 @@
 function responseCheck(data) {
-	console.log(data)
-	console.log(Object.keys(data))
 	for(var x = 0; x < Object.keys(data).length; x++){
-		console.log(data[Object.keys(data)[x]])
 		if (data[Object.keys(data)[x]] == null) {
 			data[Object.keys(data)[x]] = '<br>';
 		}
 	}
-	console.log(data)
 	return data;
 }
 
@@ -130,8 +126,12 @@ function loadInEncodeTables(){
 					librarytable.fnAddData([
 						s[x].samplename,
 						"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'crosslinking_method', 'ngs_protocols', this, '', '', '')\">"+s[x].crosslinking_method+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'spike_ins', 'ngs_samples', this, '', '', '')\">"+s[x].spike_ins+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>"
+						"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'fragmentation_method', 'ngs_protocols', this, '', '', '')\">"+s[x].fragmentation_method+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].imid+"', 'instrument_model', 'ngs_instrument_model', this, '', '', '')\">"+s[x].instrument_model+"</p>"
 					]);
 				}
 			}
@@ -149,11 +149,15 @@ function loadInEncodeTables(){
 				for(var x = 0; x < s.length; x++){
 					s[x] = responseCheck(s[x]);
 					antybodytable.fnAddData([
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '')\">"+s[x].target+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'source', 'ngs_antibody_target', this, '', '', '')\">"+s[x].source+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'product_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].product_id+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'lot_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].lot_id+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'host_organism', 'ngs_antibody_target', this, '', '', '')\">"+s[x].host_organism+"</p>",
-						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '')\">"+s[x].target+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'clonality', 'ngs_antibody_target', this, '', '', '')\">"+s[x].clonality+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'isotype', 'ngs_antibody_target', this, '', '', '')\">"+s[x].isotype+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'purifications', 'ngs_antibody_target', this, '', '', '')\">"+s[x].purifications+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'url', 'ngs_antibody_target', this, '', '', '')\">"+s[x].url+"</p>"
 					]);
 				}
 			}
