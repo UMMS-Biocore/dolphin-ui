@@ -1,10 +1,3 @@
-//	Query data array arrays
-var sample_info = [];
-var lane_info = [];
-var protocol_info = [];
-var experiment_info = [];
-var treatment_info = [];
-var antibody_info = [];
 //	JSON Tables
 var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
 var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
@@ -13,6 +6,13 @@ var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "bio
 var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "crosslinking_method", "spike-ins", "fragmentation_method", "instrument_model", "award", "size_range", "lab"];
 var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets", "clonality", "isotype", "purifications", "url"];
 var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
+//	Query data array arrays
+var sample_info = [];
+var lane_info = [];
+var protocol_info = [];
+var experiment_info = [];
+var treatment_info = [];
+var antibody_info = [];
 //	IDs/accessions/uuid arrays
 var donor_ids = [];
 var donor_accs = [];
@@ -32,6 +32,30 @@ var submission = true;
 	
 //	RNA, DNA
 var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
+
+function resetGlobals(){
+	sample_info = [];
+	lane_info = [];
+	protocol_info = [];
+	experiment_info = [];
+	treatment_info = [];
+	antibody_info = [];
+	donor_ids = [];
+	donor_accs = [];
+	experiment_ids = [];
+	experiment_accs = [];
+	treatment_ids = [];
+	treatment_uuid = [];
+	biosample_ids = [];
+	biosample_accs = [];
+	library_ids = [];
+	library_accs = [];
+	antibody_ids = [];
+	antibody_accs = [];
+	replicate_ids = [];
+	replicate_uuids = [];
+}
+
 
 /*
  *	Check the current sample selection with the index search page for proper submission requirements
@@ -279,6 +303,8 @@ function encodeCheckForPatch(type){
  */
 
 function getDataInfo(){
+	resetGlobals();
+	
 	//	Sample Info
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_data.php",
@@ -457,8 +483,9 @@ function createEncodeJson(json_type){
 			terms = treatment_terms;
 			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
 			treatment_ids.push(treatment_info[x].id);
-			treatment_uuid.push(treatment_info[x].treatment_uuid);
-			if (treatment_info[x].treatment_uuid != null) {
+			treatment_uuid.push(treatment_info[x].uuid);
+			console.log(treatment_info[x].uuid)
+			if (treatment_info[x].uuid != undefined) {
 				post_bool = false;
 			}
 		}else if (json_type == 'biosample') {
@@ -573,17 +600,18 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "donor") {
 				json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
 			}else if (terms[y] == "source" && json_type == "antibody") {
-				if (antibody_info[x].source != null) {
+				if (antibody_info[x].source == undefined) {
 					json['source'] = "unknown";
 				}else{
 					json['source'] = antibody_info[x].source;
 				}
 			}else if (terms[y] == "source") {
-				if (sample_info[x].source != null) {
+				if (sample_info[x].source == undefined) {
 					json['source'] = "unknown";
 				}else{
 					json['source'] = sample_info[x].source
 				}
+				console.log(json['source'])
 			}else if (terms[y] == "treatments") {
 				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
 			}else if (terms[y] == "date_obtained") {
@@ -681,7 +709,9 @@ function createEncodeJson(json_type){
 			post.push(json);
 		}else{
 			//	Patch
-			patch.push(json);
+			if (json_type != 'treatment') {
+				patch.push(json);
+			}
 		}
 	}
 	/*
@@ -825,7 +855,7 @@ function encodeSubmission(name, json, subType, type, table){
 			}
 		}else{
 			//	ERROR
-			if (response[x].status.toLowerCase() == 'error') {
+			if (response[x].status.toLowerCase() == 'error' || response[x].status.toLowerCase() == 'errors') {
 				output += 'Error<br>';
 			}
 			if (response[x].code == 403) {
@@ -848,9 +878,11 @@ function encodeSubmission(name, json, subType, type, table){
 				}
 				output += response[x].description + '<br><br>';
 			}
+			/*
 			if (type != "treatment" && type != "antibody_lot") {
 				submission=false;
 			}
+			*/
 		}	
 	}
 	return output;
@@ -896,6 +928,7 @@ function encodePost(subType){
 	var antibody_lot_json = createEncodeJson("antibody");
 	var replicate_json = createEncodeJson("replicate");
 	
+	console.log(treatment_json)
 	
 	//	DONOR SUBMISSION
 	if (donor_json[0].toString() != "") {
@@ -915,11 +948,11 @@ function encodePost(subType){
 	//	TREATMENT SUBMISSION
 	if (treatment_json[0].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('treatment', treatment_json[0], "post", "treatment", "ngs_treatment");
+		responseOutput += encodeSubmission('treatment', treatment_json[0], "post", "treatment", "ngs_treatment");
 	}
 	if (subType == "patch" && treatment_json[1].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('treatment', treatment_json[1], subType, "treatment", "ngs_treatment");
+		responseOutput += encodeSubmission('treatment', treatment_json[1], subType, "treatment", "ngs_treatment");
 	}
 	
 	//	BIOSAMPLE SUBMISSION
@@ -941,11 +974,11 @@ function encodePost(subType){
 	//	ANTIBODY_LOT SUBMISSION
 	if (antibody_lot_json[0].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('antibody_lot', antibody_lot_json[0], "post", "antibody_lot", "ngs_antibody_target");
+		responseOutput += encodeSubmission('antibody_lot', antibody_lot_json[0], "post", "antibody_lot", "ngs_antibody_target");
 	}
 	if (subType == "patch" && antibody_lot_json[1].toString() != "") {
 		//responseOutput +=
-		encodeSubmission('antibody_lot', antibody_lot_json[1], subType, "antibody_lot", "ngs_antibody_target");
+		responseOutput += encodeSubmission('antibody_lot', antibody_lot_json[1], subType, "antibody_lot", "ngs_antibody_target");
 	}
 	
 	//	REPLICATE SUBMISSION

@@ -217,8 +217,8 @@ function submitChanges(ele, event = event) {
 			console.log(element_highlighted_type);
 			console.log(element_highlighted_table);
 			console.log(ele.value);
-			console.log(element_parent_table)
-			console.log(element_parent_table_id)
+			console.log(element_parent_table);
+			console.log(element_parent_table_id);
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: 'insertDatabase', type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
@@ -235,9 +235,20 @@ function submitChanges(ele, event = event) {
 				}
 			});
 		}else{
+			var updateType = 'updateDatabase';
+			if (window.location.href.split("/").indexOf("encode") > -1 ){
+				updateType = 'updateDatabaseEncode';
+			}
+			console.log(updateType)
+			console.log(element_highlighted_id);
+			console.log(element_highlighted_type);
+			console.log(element_highlighted_table);
+			console.log(ele.value);
+			console.log(element_parent_table);
+			console.log(element_parent_table_id);
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
-				data: { p: 'updateDatabase', id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value},
+				data: { p: updateType, id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
 				async: false,
 				success : function(r)
 				{
