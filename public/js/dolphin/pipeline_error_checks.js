@@ -111,6 +111,14 @@ function checkFieldsEmpty(input){
 	return check;
 }
 
+function checkInitialRunDirectory(input){
+	var check = false;
+	if (document.getElementById(input).value.indexOf("/initial_run") > -1 ) {
+		check = true;
+	}
+	return check;
+}
+
 function checkFieldIsNotInt(input){
 	var check = false;
 	if (isNaN(document.getElementById(input).value) || document.getElementById(input).value.toString().indexOf('.') > -1) {
@@ -320,6 +328,10 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 	//	Run outdir empty
 	if (checkFieldsEmpty('outdir')) {
 		displayErrorModal('#errorModal', 'Output Directory field cannot be empty');
+		return true;
+	}
+	if (checkInitialRunDirectory('outdir')) {
+		displayErrorModal('#errorModal', 'Output Directory cannot be a previously used initial run directory');
 		return true;
 	}
 	//	Run outdir nonnumeric
