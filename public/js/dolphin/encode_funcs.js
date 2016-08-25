@@ -739,17 +739,18 @@ function encodeFilePost(){
 			async: false,
 			success : function(s)
 			{
-				response = s;
 				//	Print out server response
-				/*
-				var file_post_string = "[" + s + "]";
-				console.log(file_post_string);
+				var file_post_string = "[" + s + "]";;
 				var file_response = JSON.parse(file_post_string);
 				console.log(file_response);
-				*/
+				for(var x = 0; x < file_response.length; x=x+2){
+					response += "<b>File Metadata reponse:</b><br>" + JSON.stringify(file_response[x]) + "<br><br>";
+					response += "<b>File Transfer status reponse:</b><br>" + JSON.stringify(file_response[x+1]) + "<br><br>";
+				}
 			}
 		});
 	}
+	
 	return response
 }
 
@@ -878,11 +879,6 @@ function encodeSubmission(name, json, subType, type, table){
 				}
 				output += response[x].description + '<br><br>';
 			}
-			/*
-			if (type != "treatment" && type != "antibody_lot") {
-				submission=false;
-			}
-			*/
 		}	
 	}
 	return output;
@@ -1005,7 +1001,7 @@ function encodePostFiles(){
 	//	Report Errors/Successes to modal
 	document.getElementById('myModalLabel').innerHTML = 'Encode Submission';
 	document.getElementById('deleteLabel').innerHTML = 'Response from ENCODE servers:';
-	document.getElementById('deleteAreas').innerHTML += "<br><br>File Submission reponse:<br>" + file_response;
+	document.getElementById('deleteAreas').innerHTML += "<br><br><b>File Submission reponse:</b><br>" + file_response;
 		
 	document.getElementById('cancelDeleteButton').innerHTML = "OK";
 	document.getElementById('confirmDeleteButton').setAttribute('style', 'display:none');

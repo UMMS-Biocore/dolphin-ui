@@ -16,7 +16,7 @@ secret_key = sys.argv[3]
 upload = sys.argv[4]
 upload_path = upload[18:]
 session_token = sys.argv[5]
-bucket = sys.argv[7]
+bucket = sys.argv[6]
 
 host = 'https://www.encodeproject.org/'
 encoded_access_key = "SU45FB2Q"
@@ -34,7 +34,6 @@ r = requests.post(
 try:
     r.raise_for_status()
 except:
-    print('Submission failed: %s %s' % (r.status_code, r.reason))
     print(r.text)
     raise
 
@@ -44,13 +43,10 @@ secret_key = item['upload_credentials']['secret_key'];
 session_token = item['upload_credentials']['session_token'];
 upload = item['upload_credentials']['upload_url'];
 upload_path = upload[18:];
-print (item['upload_credentials']);
 
 #connect
 conn = S3Connection(access_key, secret_key, security_token=session_token)
-print conn
 Bucket = conn.get_bucket(bucket, validate=False)
-print Bucket
 """
 # Get file info
 source_path = file_path

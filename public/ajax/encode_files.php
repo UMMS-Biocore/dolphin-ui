@@ -11,6 +11,12 @@ if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 if (isset($_GET['replicate'])){$replicate = $_GET['replicate'];}
 
+//testing
+/*
+$sample_id = 1;
+$experiment = 'TSTSR295244';
+$replicate = 'b150d4e9-7d5c-4f79-87b3-e5dec3f0c524';
+*/
 //Obtain database variables
 $experiment_info = json_decode($query->queryTable("
 	SELECT `lab`, `grant`
@@ -19,25 +25,21 @@ $experiment_info = json_decode($query->queryTable("
 	ON ngs_lab.id = ngs_experiment_series.lab_id
 	WHERE ngs_experiment_series.id =
 	(SELECT series_id FROM ngs_samples WHERE id = $sample_id)"));
-$file_query = json_decode($query->queryTable("
-	SELECT DISTINCT ngs_file_submissions.id, ngs_file_submissions.dir_id, ngs_file_submissions.run_id,
-	ngs_file_submissions.sample_id, ngs_file_submissions.file_name, ngs_file_submissions.file_type,
-	ngs_file_submissions.file_md5, ngs_file_submissions.file_uuid, ngs_file_submissions.file_acc, outdir
-	FROM ngs_file_submissions
-	LEFT JOIN ngs_runparams
-	ON ngs_runparams.id = ngs_file_submissions.run_id
-	WHERE sample_id = " . $sample_id . "
-	AND type = 'fastq'
-	ORDER BY ngs_file_submissions.id"));
+$fastq_data = json_decode($query->queryTable("
+	SELECT *
+	FROM ngs_fastq_files
+	WHERE sample_id = $sample_id
+	"));
 $dir_query=json_decode($query->queryTable("
 	SELECT fastq_dir, backup_dir, amazon_bucket
 	FROM ngs_dirs
-	WHERE id = " . $file_query[0]->dir_id));
+	WHERE id = " . $fastq_data[0]->dir_id
+	));
 $sample_name = $query->queryAVal("
 	SELECT samplename
 	FROM ngs_samples
-	WHERE id = " . $sample_id
-	);
+	WHERE id = $sample_id
+	");
 
 //Encoded access information
 $encoded_access_key = ENCODE_ACCESS;
@@ -57,7 +59,7 @@ $replicate = "/replicates/" . $replicate . "/";
 
 $step_list = array();
 //For each file (single or paired end)
-foreach($file_query as $fq){
+foreach($fastq_data as $fq){
 	$inserted = false;
 	$file_accs = array();
 	$file_uuids = array();
@@ -67,23 +69,16 @@ foreach($file_query as $fq){
 	//	Fill out file metadata to submit before actual file submission
 	foreach($file_names as $fn){
 		//File path
-		if($fq->file_type == 'fastq' && strpos($fn, "/") == false){
-			$directory = $dir_query[0]->backup_dir;
-			if(substr($directory, -1) != '/'){
-				$directory = $directory . "/";
-			}
-		}else{
-			$directory = $fq->outdir;
-			if(substr($directory, -1) != '/'){
-				$directory = $directory . "/";
-			}
+		$directory = $dir_query[0]->backup_dir;
+		if(substr($directory, -1) != '/'){
+			$directory = $directory . "/";
 		}
 		$file_size = filesize($directory . $fn);
 		//File checksum
 		if(end($file_names) == $fn){
-			$md5sum = end(explode(",",$fq->file_md5));
+			$md5sum = end(explode(",",$fq->checksum));
 		}else{
-			$md5sum = explode(",",$fq->file_md5)[0];
+			$md5sum = explode(",",$fq->checksum)[0];
 		}
 		$data = array(
 			"dataset" => $dataset_acc,
@@ -96,70 +91,32 @@ foreach($file_query as $fq){
 			"lab" => $my_lab,
 			"award" => $my_award,
 		);
-		if($fq->file_type == 'fastq'){
-			$data['output_type'] = 'reads';
-			$step = "step1";
-			if(count($file_names) == 2){
-				//	FASTQ PAIRED
-				$data["file_format"] = 'fastq';
-				$data["run_type"] = "paired-ended";
-				if(end($file_names) == $fn){
-					$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
-					$data["paired_end"] = '2';
-					$data["paired_with"] = $paired;
-				}else{
-					$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
-					$data["paired_end"] = '1';
-					$paired = $my_lab.':fastq_p1_'.$sample_name;
-				}
-			}else if (count($file_names) == 1){
-				//	FASTQ SINGLE
-				$data["file_format"] = 'fastq';
-				$data["run_type"] = "single-ended";
-				$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
-				if($step != 'step1'){
-					$data['derived_from'] = explode(",",$step_list['step1']);
-				}
+			
+		$data['output_type'] = 'reads';
+		$step = "step1";
+		if(count($file_names) == 2){
+			//	FASTQ PAIRED
+			$data["file_format"] = 'fastq';
+			$data["run_type"] = "paired-ended";
+			if(end($file_names) == $fn){
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+				$data["paired_end"] = '2';
+				$data["paired_with"] = $paired;
+			}else{
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+				$data["paired_end"] = '1';
+				$paired = $my_lab.':fastq_p1_'.$sample_name;
+			}
+		}else if (count($file_names) == 1){
+			//	FASTQ SINGLE
+			$data["file_format"] = 'fastq';
+			$data["run_type"] = "single-ended";
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+			if($step != 'step1'){
+				$data['derived_from'] = explode(",",$step_list['step1']);
 			}
 		}
-		/*
-		else if($fq->file_type == 'bam'){
-			//	BAM
-			$data['output_type'] = 'alignments';
-			if(strpos($fn, "tdf") > -1){
-				$step = "step3";
-				$data["aliases"] = array($my_lab.':tophat_'.$sample_name);
-			}else{
-				$step = "step4";
-				$data["aliases"] = array($my_lab.':rsem_'.$sample_name);
-			}
-			$data["file_format"] = 'bam';
-			$data['assembly'] = "hg19";
-			$data['derived_from'] = explode(",",$step_list['step1']);;
-		}else if($fq->file_type == 'bigwig'){
-			//	BIGWIG
-			$step = 'step6';
-			$data['output_type'] = 'signal of all reads';
-			$data["aliases"] = array($my_lab.':bigwig_'.$sample_name);
-			$data["file_format"] = 'bigWig';
-			$data['assembly'] = "hg19";
-			$data['derived_from'] = explode(",",$step_list['step3']);;
-		}else if($fq->file_type == 'tsv'){
-			//	TSV
-			$step = 'step7';
-			$data["file_format"] = 'tsv';
-			$data['assembly'] = "hg19";
-			$data['derived_from'] = explode(",",$step_list['step4']);
-			if(strpos($fn, "gene")){
-				$data["aliases"] = array($my_lab.':gene_exp_'.$sample_name);
-				$data['output_type'] = 'gene quantifications';
-			}else{
-				$data["aliases"] = array($my_lab.':iso_exp_'.$sample_name);
-				$data['output_type'] = 'transcript quantifications';
-			}
-			$data["file_size"] = filesize($directory . $fn);
-		}
-		*/
+		
 		$gzip_types = array(
 			"CEL",
 			"bam",
@@ -174,7 +131,7 @@ foreach($file_query as $fq){
 			"sam",
 			"wig"
 		);
-		if(in_array($data['file_format'], $gzip_types) && explode('.',$file_name)[count(explode('.',$file_name))] == '.gz'){
+		if(in_array($data['file_format'], $gzip_types) && explode('.',$fn)[count(explode('.',$fn))] == '.gz'){
 			$is_gzipped = 'Expected gzipped file';
 		}else{
 			$is_gzipped = 'Expected un-gzipped file';
@@ -238,12 +195,14 @@ foreach($file_query as $fq){
 			'hdf5' => array(null => array(null)),
 			'gff' => array(null => array(null))
 		);
+		/*
 		$validate_args = $validate_map[$data['file_format']][null];
 		$cmd = ENCODE_VALIDATE."/validateFiles " . $validate_args[0] . " " . $directory . $fn;
 		$VALIDATE = popen( $cmd, "r" );
 		$VALIDATE_READ =fread($VALIDATE, 2096);
 		pclose($VALIDATE);
-		//$VALIDATE_READ = "Error count 0\n";
+		*/
+		$VALIDATE_READ = "Error count 0\n";
 		if($VALIDATE_READ == "Error count 0\n"){
 			//	File Validation Passed
 			$headers = array('Content-Type' => 'application/json', 'Accept' => 'application/json');
@@ -295,28 +254,25 @@ foreach($file_query as $fq){
 			
 			$item = $body->{'@graph'}[0];
 			
-			echo $response->body;
-			if(end($file_query) != $fq){
-				echo ',';
-			}
+			echo $response->body.',';
 			
 			####################
 			# POST file to S3
-			if($step != 'step1'){
-				$creds = $item->{'upload_credentials'};
-				$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-					$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . $data['md5sum'] . " " . ENCODE_BUCKET .
-					" &";
-				$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
-				$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
-				pclose($AWS_COMMAND_DO);
-				echo $cmd_aws_launch . "\n\n";
-				echo $AWS_COMMAND_OUT;
+			$creds = $item->{'upload_credentials'};
+			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
+				$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . ENCODE_BUCKET; #. " &";
+			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
+			$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
+			pclose($AWS_COMMAND_DO);
+			//echo $cmd_aws_launch . "\n\n";
+			echo $AWS_COMMAND_OUT;
+			
+			if(end($file_names) != $fn){
+				echo ',';
 			}
-			echo $cmd_aws_launch.',';
 		}else{
 			//	File Validation Failed
-			if(end($file_names) == $fn && end($file_query) == $fq){
+			if(end($file_names) == $fn){
 				echo '{"error":"'.$fn.' not validated"}';
 			}else{
 				echo '{"error":"'.$fn.' not validated"}' . ',';
@@ -325,7 +281,7 @@ foreach($file_query as $fq){
 		//	Store uuid/acc in database
 		if($inserted && implode(",",$file_accs) != ","){
 			$file_update = json_decode($query->runSQL("
-			UPDATE ngs_file_submissions
+			UPDATE ngs_fastq_files
 			SET `file_acc` = '" . implode(",",$file_accs) . "',
 			`file_uuid` = '" . implode(",",$file_uuids) . "' 
 			WHERE id = " . $fq->id));
