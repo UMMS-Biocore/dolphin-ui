@@ -41,8 +41,34 @@ function resetSelection(){
 }
 
 function submitFastlaneButton() {
+	var value_check = checkNewRun(document.getElementById('backup_dir').value);
+	if (value_check == true) {
+		realSubmit();
+	}else{
+		$('#dircheckModal').modal({
+			show: true
+		});
+		document.getElementById('dircheckLabel').innerHTML = 'The Process directory you wish to create already exists.  Do you still wish to continue?';
+		document.getElementById('dircheckAreas').innerHTML = '';
+	}
+}
+
+function realSubmit(){
+	submission();
+	document.getElementById('fastlane_form').submit();
+	document.getElementById('hidden_submit_fastlane').click();
+}
+
+function backToFastlane(){
+	window.history.back();
+}
+
+function fastlaneToPipeline(sample_ids){
+	window.location.href = BASE_PATH+"/pipeline/selected/" + sample_ids + "$";
+}
+
+function submission(){
 	var value_array = [];
-	//	genomebuild placeholder
 	value_array.push("human,hg19");
 	for(var x = 0; x < id_array.length; x++){
 		if (id_array[x] == 'input_files'){
@@ -94,7 +120,7 @@ function submitFastlaneButton() {
 				console.log(value_str);
 				value_array.push(value_str);
 			}
-        }else if (document.getElementById(id_array[x]) != null) {
+		}else if (document.getElementById(id_array[x]) != null) {
 			//	obtain value and trim and replace commas and tabs
 			var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
 			//	push to array
@@ -106,7 +132,6 @@ function submitFastlaneButton() {
 		}
 	}
 	sendProcessData(value_array, 'fastlane_values');
-	
 	var barcode_array = [];
 	barcode_array.push(document.getElementById('bar_distance').value);
 	barcode_array.push(document.getElementById('bar_format').value);
@@ -119,12 +144,25 @@ function submitFastlaneButton() {
 	sendProcessData(bad_samples, 'bad_samples');
 }
 
-function backToFastlane(){
-	window.history.back();
-}
-
-function fastlaneToPipeline(sample_ids){
-	window.location.href = BASE_PATH+"/pipeline/selected/" + sample_ids + "$";
+function checkNewRun(outdir) {
+	var perms = '';
+	$.ajax({
+		type: 	'GET',
+		url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
+				data:  	{ p: 'checkNewRun', outdir:outdir },
+		async:	false,
+		success: function(s)
+		{
+			console.log(s);
+			if (s[0] == undefined) {
+				perms = true;
+			}else{
+				perms = false;
+			}
+			console.log(perms);
+		}
+	});
+	return perms;
 }
 
 $(function() {

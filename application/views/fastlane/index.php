@@ -67,14 +67,40 @@
 							</fieldset>   
 						</div>
 						<div class="modal-footer">
-						  <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+						  <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+						  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				  </div>
+				</div>
+			</div><!-- End Error modal -->
+			<div class="modal fade" id="dircheckModal" tabindex="-1" role="dialog" aria-labelledby="myDircheckLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					  <h4 class="modal-title" id="myDircheckLabel">Warning</h4>
+					</div>
+					<form name="dircheckForm" role="form" method="post">
+						<div class="modal-body">
+							<fieldset>
+								<div class="form-group" style="overflow:scroll">
+									<label id="dircheckLabel"></label>
+									<br>
+									<p id="dircheckAreas"></p>
+								</div>
+							</fieldset>   
+						</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="realSubmit()">OK</button>
+						  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 						</div>
 					</form>
 				  </div>
 				</div>
 			</div><!-- End Error modal -->
 			
-			<form role="form" enctype="multipart/form-data" action="fastlane/process" method="post">
+			<form role="form" id="fastlane_form" enctype="multipart/form-data" action="fastlane/process" method="post">
 				<section class="content">
 					<div class="row">
 						<div id="static_info_selection" class="col-md-12">
@@ -138,7 +164,8 @@
 								<h4>Before Submission:</h4>
 								<p>If submitting a completely new run, please make sure that the process directory does not match an already used process directory.</p>
 							</div>
-							<input type="submit" name="submitted_fastlane" id="submit_fastlane" class="btn btn-primary" onclick="submitFastlaneButton()" innerHTML="Submit Fastlane"/>
+							<input type="button" name="submitted_fastlane" id="submit_fastlane" class="btn btn-primary" onclick="submitFastlaneButton()" value="Submit Fastlane"/>
+							<input type="submit" id="hidden_submit_fastlane" class="btn btn-primary" style="display:none"/>
 						</div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->

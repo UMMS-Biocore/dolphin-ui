@@ -167,7 +167,15 @@ else if ($p == 'getDirectory')
 	WHERE id = $run_id
 	");
 }
-
+else if ($p == 'checkNewRun')
+{
+	if (isset($_GET['outdir'])){$outdir = $_GET['outdir'];}
+	$data=$query->queryTable("
+	SELECT id
+	FROM ngs_runparams
+	WHERE outdir = '$outdir/initial_run' OR outdir = '$outdir//initial_run' OR outdir = '".$outdir."initial_run'
+	");
+}
 
 if (!headers_sent()) {
    header('Cache-Control: no-cache, must-revalidate');
