@@ -10,7 +10,7 @@
 								</div><!-- /.box-header -->
 								<div class="box-body">
 									  <div>
-						<?php echo $mytext; ?>
+											<?php echo $mytext; ?>
 									  </div>
 									</div><!-- /.box-body -->
 								</div><!-- /.box -->

@@ -124,6 +124,16 @@ class funcs
         }
         return "{\"Result\":\"Ok\"}";
     }
+    function checkNewRun($params){
+        $directory = $params['outdir'];
+        $this->readINI();
+        $sql = "SELECT id FROM ngs_runparams WHERE outdir = '$directory/initial_run' OR outdir = '$directory//initial_run' OR outdir = '".$directory."initial_run'";
+        $res=$this->queryTable($sql);
+        if (count($res) > 0){
+            return "{\"ERROR\": \"Run already exists: ".$params['outdir']."\"}";
+        }
+        return "{\"Result\":\"Ok\"}";
+    }
     function directoryContents($params){
         $this->username=$params['username'];
         $this->readINI();

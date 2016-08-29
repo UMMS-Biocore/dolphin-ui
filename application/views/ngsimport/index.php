@@ -11,7 +11,7 @@
 									<div>				
 				<!-- form start -->
 							<?php echo $html->sendJScript("excel import", "", "", "", $uid, $gids); ?>
-								<form role="form" enctype="multipart/form-data" action="ngsimport/process" method="post">
+								<form role="form" enctype="multipart/form-data" action="ngsimport/check" method="post">
 									<div class="box-body">
 										<div class="form-group">
 											<label for="excelInputFile">Excel file input</label>

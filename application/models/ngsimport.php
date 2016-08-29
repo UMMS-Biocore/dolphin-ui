@@ -427,6 +427,19 @@ class Ngsimport extends VanillaModel {
 	}
 	
 	/*
+	 * checkNewRun
+	 */
+	function checkNewRun($dir){
+		$request = API_PATH.'/api/service.php?func=checkNewRun&outdir='.$this->directoryCheck($dir);
+		$valid_dir = json_decode('['.json_decode(file_get_contents($request)).']');
+		if(isset($valid_dir[0]->ERROR)){
+			$this->final_check = false;
+			return $valid_dir[0]->ERROR;
+		}
+		return 'pass';
+	}
+	
+	/*
 	* checkFilePermissions
 	*
 	* Runs the service api to find if use has permissions over a specific file
