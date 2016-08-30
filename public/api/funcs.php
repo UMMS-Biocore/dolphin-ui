@@ -127,13 +127,7 @@ class funcs
     function checkNewRun($params){
         $directory = $params['outdir'];
         $this->readINI();
-        $sql = "SELECT id
-                FROM ngs_runparams
-                WHERE outdir = '$directory/initial_run'
-                OR outdir = '$directory//initial_run'
-                OR outdir = '".$directory."initial_run'
-                OR outdir = '$directory'
-                OR outdir = '$directory/'";
+        $sql = "SELECT id FROM ngs_runparams WHERE outdir = '$directory/initial_run' OR outdir = '$directory//initial_run' OR outdir = '".$directory."initial_run' OR outdir = '$directory' OR outdir = '$directory/'";
         $res=$this->queryTable($sql);
         if (count($res) > 0){
             return "{\"ERROR\": \"Run already exists: ".$params['outdir']."\"}";
