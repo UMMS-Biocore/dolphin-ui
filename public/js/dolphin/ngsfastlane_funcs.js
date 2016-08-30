@@ -41,7 +41,8 @@ function resetSelection(){
 }
 
 function submitFastlaneButton() {
-	var value_check = checkNewRun(document.getElementById('backup_dir').value);
+	var outdir_value = document.getElementById('backup_dir').value;
+	var value_check = checkNewRun(outdir_value);
 	if (value_check == true) {
 		realSubmit();
 	}else{
@@ -148,18 +149,16 @@ function checkNewRun(outdir) {
 	var perms = '';
 	$.ajax({
 		type: 	'GET',
-		url: 	BASE_PATH+'/public/ajax/initialmappingdb.php',
-				data:  	{ p: 'checkNewRun', outdir:outdir },
+		url: 	API_PATH+'/public/ajax/service.php?func=checkNewRun&outdir='+outdir,
 		async:	false,
 		success: function(s)
 		{
 			console.log(s);
-			if (s[0] == undefined) {
+			if (s.ERROR == undefined) {
 				perms = true;
 			}else{
 				perms = false;
 			}
-			console.log(perms);
 		}
 	});
 	return perms;
