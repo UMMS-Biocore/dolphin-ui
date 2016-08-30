@@ -36,41 +36,99 @@
 						<li class="active"><?php echo $field?></li>
 					</ol>
 				</section>
-				<section>
-					<?php echo $html->sendJScript("encode", "", "", "", $uid, $gids); ?>
-					<div class="margin">
-					<?php
-						#Samples
-						echo $html->getRespBoxTableStreamNoExpand("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
-					?>
-					<?php
-						#Donors
-						echo $html->getRespBoxTable_ng("Donors", "donors", "<th>Donor</th><th>Lab</th><th>Award</th><th>Organism</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
-					?>
-					<?php
-						#Experiments
-						echo $html->getRespBoxTable_ng("Experiments", "experiments", "<th>Sample</th><th>Assay Term Name</th><th>Source</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th>");
-					?>
-					<?php
-						#Treatments
-						echo $html->getRespBoxTable_ng("Treatments", "treatments", "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th>");
-					?>
-					<?php
-						#Biosamples
-						echo $html->getRespBoxTable_ng("Biosamples", "biosamples", "<th>Sample</th><th>Donor</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th>");
-					?>
-					<?php
-						#Libraries
-						echo $html->getRespBoxTable_ng("Libraries", "libraries", "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th><th>Library Acc</th><th>Library UUID</th>");
-					?>
-					<?php
-						#Antibody Lots
-						echo $html->getRespBoxTable_ng("Antibodies", "antibodies", "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th>");
-					?>
-					<?php
-						#Replicates
-						echo $html->getRespBoxTable_ng("Replicates", "replicates", "<th>Sample</th><th>Antibody</th><th>Biological Replicate Number</th><th>Technical Replicate Number</th><th>Replicate UUID</th>");
-					?>
+				<?php echo $html->sendJScript("encode", "", "", "", $uid, $gids); ?>
+				<section class="content">
+					<div class="row">
+						<div class="col-md-12">
+							<!-- general form elements -->
+							<div class="nav-tabs-custom">
+								<ul id="tabList" class="nav nav-tabs">
+									<li class="active">
+										<a href="#samples_tab" data-toggle="tab" aria-expanded="true">Sample Selection</a>
+									</li>
+									<li class>
+										<a href="#donors_tab" data-toggle="tab" aria-expanded="true">Donors</a>
+									</li>
+									<li class>
+										<a href="#experiments_tab" data-toggle="tab" aria-expanded="true">Experiments</a>
+									</li>
+									<li class>
+										<a href="#treatments_tab" data-toggle="tab" aria-expanded="true">Treatments</a>
+									</li>
+									<li class>
+										<a href="#biosamples_tab" data-toggle="tab" aria-expanded="true">Biosamples</a>
+									</li>
+									<li class>
+										<a href="#libraries_tab" data-toggle="tab" aria-expanded="true">Libraries</a>
+									</li>
+									<li class>
+										<a href="#antibodies_tab" data-toggle="tab" aria-expanded="true">Antibodies</a>
+									</li>
+									<li class>
+										<a href="#replicates_tab" data-toggle="tab" aria-expanded="true">Replicates</a>
+									</li>
+								</ul>
+								<div class="tab-content margin">
+									<div class="tab-pane active" id="samples_tab">
+											<?php
+												#Samples
+												echo $html->getRespBoxTableStreamNoExpand("Samples", "samples",
+																						  ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"],
+																						  ["id","name","title","source","organism","molecule","backup","total_reads"]);
+											?>
+									</div>
+									<div class="tab-pane" id="donors_tab">
+										<?php
+											#Donors
+											echo $html->getRespBoxTable_ng("Donors", "donors",
+																		   "<th>Donor</th><th>Lab</th><th>Award</th><th>Organism</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="experments_tab">
+										<?php
+											#Experiments
+											echo $html->getRespBoxTable_ng("Experiments", "experiments",
+																		   "<th>Sample</th><th>Assay Term Name</th><th>Source</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="treatments_tab">
+										<?php
+											#Treatments
+											echo $html->getRespBoxTable_ng("Treatments", "treatments",
+																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="biosamples_tab">
+										<?php
+											#Biosamples
+											echo $html->getRespBoxTable_ng("Biosamples", "biosamples",
+																		   "<th>Sample</th><th>Donor</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="libraries_tab">
+										<?php
+											#Libraries
+											echo $html->getRespBoxTable_ng("Libraries", "libraries",
+																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th><th>Library Acc</th><th>Library UUID</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="antibodies_tab">
+										<?php
+											#Antibody Lots
+											echo $html->getRespBoxTable_ng("Antibodies", "antibodies",
+																		   "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th>");
+										?>
+									</div>
+									<div class="tab-pane" id="replicates_tab">
+										<?php
+											#Replicates
+											echo $html->getRespBoxTable_ng("Replicates", "replicates",
+																		   "<th>Sample</th><th>Antibody</th><th>Biological Replicate Number</th><th>Technical Replicate Number</th><th>Replicate UUID</th>");
+										?>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</section>
 				<section>
