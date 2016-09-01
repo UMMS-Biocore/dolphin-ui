@@ -295,10 +295,10 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					return "<tr>"+
 						"<td>"+record.id+"</td>"+
 						"<td><a href=\""+BASE_PATH+"/search/details/samples/"+record.id+'/'+theSearch+"\">"+sample_name+"</a></td>"+
-						"<td onclick=\"editBox("+uid+", "+record.id+", 'title', 'ngs_samples', this, '', '', '')\">"+record.title+"</td>"+
-						"<td onclick=\"editBox("+uid+", "+record.id+", 'source', 'ngs_samples', this, '', '', '')\">"+record.source+"</td>"+
-						"<td onclick=\"editBox("+uid+", "+record.id+", 'organism', 'ngs_samples', this, '', '', '')\">"+record.organism+"</td>"+
-						"<td onclick=\"editBox("+uid+", "+record.id+", 'molecule', 'ngs_samples', this, '', '', '')\">"+record.molecule+"</td>"+
+						"<td>"+record.title+"</td>"+
+						"<td>"+record.source+"</td>"+
+						"<td>"+record.organism+"</td>"+
+						"<td>"+record.molecule+"</td>"+
 						record.backup+
 						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" "+checklist_type+"></td>"+
 						"</tr>";
@@ -745,7 +745,7 @@ $(function() {
 		//	Log data path
 		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
-	}else if (phpGrab.theSegment != 'report' && phpGrab.theSegment != 'table_viewer') {
+	}else if (phpGrab.theSegment != 'report' && phpGrab.theSegment != 'table_viewer' && phpGrab.theSegment != "encode_submissions") {
 		var experiment_series_data = [];
 		var lane_data = [];
 		var sample_data = [];
@@ -892,10 +892,6 @@ $(function() {
 			reloadBasket();
 		}
 	}
-	console.log(qvar);
-	console.log(rvar);
-	console.log(segment);
-	console.log(theSearch);
 	//Rerun Check
 	if (window.location.href.split("/").indexOf('selected') > -1 || window.location.href.split("/").indexOf('rerun') > -1) {
 		rerunLoad();

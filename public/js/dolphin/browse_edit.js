@@ -232,6 +232,7 @@ function submitChanges(ele, event = event) {
 						element_parent_table_id = '';
 						element_parent_child = '';
 					}
+					updateEncodeSubmissions();
 				}
 			});
 		}else{
@@ -256,6 +257,7 @@ function submitChanges(ele, event = event) {
 					if (r == 1) {
 						successBool = true;
 					}
+					updateEncodeSubmissions();
 				}
 			});
 		}
@@ -280,6 +282,18 @@ function submitChanges(ele, event = event) {
 		
 		clearElementHighlighted();
 	}
+}
+
+function updateEncodeSubmissions(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/browse_edit.php",
+		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, sample_id:element_highlighted_id },
+		async: false,
+		success : function(r)
+		{
+			console.log(r)
+		}
+	});
 }
 
 function deleteButton(){

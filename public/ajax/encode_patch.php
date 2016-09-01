@@ -5,6 +5,10 @@ if (isset($_GET['json_name'])){$json_name = $_GET['json_name'];}
 if (isset($_GET['json_passed'])){$json_passed = $_GET['json_passed'];}
 if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 
+if(!isset($_SESSION['encode_log'])){
+	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+}
+
 $accs = explode(",", $accession);
 $server_start = ENCODE_URL;
 $server_end = "/";
@@ -48,6 +52,10 @@ foreach ($accs as $acc) {
 		}else{
 			echo $response->body . ",";	
 		}
+		
+		$logfile = fopen($_SESSION['encode_log'], "a") or die("Unable to open file!");
+		fwrite($logfile, $response->body . "\n\n");
+		fclose($logfile);
 	}
 }
 ?>

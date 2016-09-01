@@ -71,6 +71,8 @@
 								<div class="tab-content margin">
 									<div class="tab-pane active" id="samples_tab">
 											<?php
+												echo $html->getRespBoxTable_ng("Selected Samples", "selected_samples",
+																		   "<th>id</th><th>Sample Name</th><th>Source</th><th>Organism</th><th>Molecule</th><th>Removal</th>");
 												#Samples
 												echo $html->getRespBoxTableStreamNoExpand("Samples", "samples",
 																						  ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"],
@@ -81,10 +83,10 @@
 										<?php
 											#Donors
 											echo $html->getRespBoxTable_ng("Donors", "donors",
-																		   "<th>Donor</th><th>Lab</th><th>Award</th><th>Organism</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
+																		   "<th>Sample</th><th>Donor</th><th>Lab</th><th>Award</th><th>Organism</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th>");
 										?>
 									</div>
-									<div class="tab-pane" id="experments_tab">
+									<div class="tab-pane" id="experiments_tab">
 										<?php
 											#Experiments
 											echo $html->getRespBoxTable_ng("Experiments", "experiments",
@@ -102,7 +104,7 @@
 										<?php
 											#Biosamples
 											echo $html->getRespBoxTable_ng("Biosamples", "biosamples",
-																		   "<th>Sample</th><th>Donor</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th>");
+																		   "<th>Sample</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th>");
 										?>
 									</div>
 									<div class="tab-pane" id="libraries_tab">

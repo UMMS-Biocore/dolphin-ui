@@ -260,6 +260,115 @@ else if ($p == "checksum_recheck")
 	pclose($PID_COMMAND);
 	$data = json_encode($cmd);
 }
+else if($p == 'encodeSampleEdit')
+{
+	$table_list = ['ngs_molecule','ngs_organism','ngs_source','ngs_donor','ngs_library_type','ngs_instrument_model','ngs_biosample_term','ngs_library_strategy'];
+	$table_sample_link = ['molecule_id','organism_id','source_id','donor_id','library_type_id','instrument_model_id','biosample_term_id','library_strategy_id'];
+	$experiment_series = ['grant'];
+	$lanes = ['date_submitted','date_received'];
+	$protocols = ['extraction', 'fragmentation_method'];
+	$lab = ['lab'];
+	$treatment = ['treatment_term_name','treatment_term_id','treatment_type','concentration','concentration_units','duration'.'duration_units'];
+	$antibody_target = ['target','source','product_id','lot_id','host_organism','clonality','isotype','purifications','url'];
+	if (isset($_GET['table'])){$table = $_GET['table'];}
+	if (isset($_GET['field'])){$field = $_GET['field'];}
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+	if($table == 'ngs_samples'){
+		$data = $query->runSQL("
+			UPDATE encode_submissions
+			SET sub_status = 'Needs Resubmission'
+			WHERE sample_id = $sample_id
+		");
+	}else if (in_array($table,$table_list)){
+		$field = $table_sample_link[array_search($table,$table_array)];
+		$data = $query->runSQL("
+			UPDATE encode_submissions
+			SET sub_status = 'Needs Resubmission'
+			WHERE sample_id in (
+				SELECT id
+				FROM ngs_samples
+				WHERE $field = $sample_id
+			)
+		");
+		$data = json_decode($field);
+	}else if ($table == "ngs_experiment_series"){
+		if(in_array($field,$experiment_series)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE series_id = $sample_id
+				)
+			");
+		}
+	}else if ($table == "ngs_lanes"){
+		if(in_array($field,$lanes)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE lane_id = $sample_id
+				)
+			");
+		}
+	}else if ($table == "ngs_protocols"){
+		if(in_array($field,$protocols)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE protocol_id = $sample_id
+				)
+			");
+		}
+	}else if ($table == "ngs_lab"){
+		if(in_array($field,$lab)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE series_id in (
+						SELECT lab_id
+						FROM ngs_experiment_series
+						WHERE lab_id = $sample_id
+					)
+				)
+			");
+		}
+	}else if ($table == "ngs_treatment"){
+		if(in_array($field,$treatment)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE treatment_id = $sample_id
+				)
+			");
+		}
+	}else if ($table == "ngs_antibody_target"){
+		if(in_array($field,$antibody_target)){
+			$data = $query->runSQL("
+				UPDATE encode_submissions
+				SET sub_status = 'Needs Resubmission'
+				WHERE sample_id in (
+					SELECT id
+					FROM ngs_samples
+					WHERE antibody_lot_id = $sample_id
+				)
+			");
+		}
+	}
+}
 
 if (!headers_sent()) {
    header('Cache-Control: no-cache, must-revalidate');

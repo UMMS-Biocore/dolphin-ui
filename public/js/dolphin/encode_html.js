@@ -7,14 +7,55 @@ function responseCheck(data) {
 	return data;
 }
 
-function insertIntoDatabase(table, linking_table, value){
-	
+function loadInEncodeSubmissions(){
+	$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/encode_tables.php",
+			data: { p: "getSubmissions" },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				var subtable = $('#jsontable_submissions_table').dataTable();
+				subtable.fnClearTable();
+				for(var x = 0; x < s.length; x++){
+					subtable.fnAddData([
+						s[x].id,
+						s[x].sample_id,
+						s[x].sub_status,
+						s[x].output_file
+					]);
+				}
+			}
+		});
 }
 
 function loadInEncodeTables(){
 	basket_info = getBasketInfo();
 	if (basket_info != '') {
 		console.log(basket_info);
+		//Samples
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/encode_tables.php",
+			data: { p: "getSamples", samples:basket_info },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				var sampletable = $('#jsontable_selected_samples').dataTable();
+				sampletable.fnClearTable();
+				for(var x = 0; x < s.length; x++){
+					s[x] = responseCheck(s[x]);
+					sampletable.fnAddData([
+						s[x].id,
+						s[x].samplename,
+						"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].id+"', 'source_id')\">"+s[x].source+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].id+"', 'organism_id')\">"+s[x].organism+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+						"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>"
+					]);
+				}
+			}
+		});
 		//Donors
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -28,6 +69,7 @@ function loadInEncodeTables(){
 				for(var x = 0; x < s.length; x++){
 					s[x] = responseCheck(s[x]);
 					donortable.fnAddData([
+						s[x].samplename,
 						"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id')\">"+s[x].donor+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
@@ -103,7 +145,6 @@ function loadInEncodeTables(){
 					s[x] = responseCheck(s[x]);
 					biosampletable.fnAddData([
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, '', '', '')\">"+s[x].donor+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id')\">"+s[x].biosample_term_name+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
@@ -202,5 +243,9 @@ function loadInEncodeTables(){
 }
 
 $( function(){
-	loadInEncodeTables();
+	if (phpGrab.theSegment == "encode_submissions") {
+		loadInEncodeSubmissions();
+	}else{
+		loadInEncodeTables();
+	}
 });

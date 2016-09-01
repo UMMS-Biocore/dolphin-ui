@@ -11,11 +11,35 @@ $query = new dbfuncs();
 if (isset($_GET['p'])){$p = $_GET['p'];}
 $data = '';
 
-if($p == 'getDonors')
+if ($p == 'getSubmissions')
+{
+	$data=$query->queryTable("
+		SELECT *
+		FROM encode_submissions
+	");
+}
+else if ($p == 'getSamples')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_donor.id as donor_id, ngs_donor.donor, ngs_donor.life_stage, ngs_donor.age,
+		SELECT ngs_samples.id, ngs_samples.samplename, ngs_samples.source_id,
+		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule
+		FROM ngs_samples
+		LEFT JOIN ngs_source
+		ON ngs_samples.source_id = ngs_source.id
+		LEFT JOIN ngs_organism
+		ON ngs_samples.organism_id = ngs_organism.id
+		LEFT JOIN ngs_molecule
+		ON ngs_samples.molecule_id = ngs_molecule.id
+		WHERE ngs_samples.id IN ($samples);
+	");
+}
+else if($p == 'getDonors')
+{
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	$data=$query->queryTable("
+		SELECT DISTINCT ngs_donor.id as donor_id, ngs_donor.donor,
+		ngs_samples.samplename, ngs_donor.life_stage, ngs_donor.age,
 		ngs_donor.sex, ngs_donor.donor_acc, ngs_donor.donor_uuid, ngs_samples.id as sample_id,
 		ngs_lab.lab, ngs_lab.id as lab_id, ngs_organism.organism, ngs_samples.organism_id, 
 		ngs_experiment_series.id as experiment_series_id, ngs_experiment_series.`grant`
@@ -67,8 +91,8 @@ else if($p == 'getBiosamples')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_donor.donor, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
-		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_donor.id as donor_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
+		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
+		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_samples.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
@@ -77,8 +101,6 @@ else if($p == 'getBiosamples')
 		ON ngs_samples.treatment_id = ngs_treatment.id
 		LEFT JOIN ngs_lanes
 		ON ngs_samples.lane_id = ngs_lanes.id
-		LEFT JOIN ngs_donor
-		ON ngs_samples.donor_id = ngs_donor.id
 		WHERE ngs_samples.id in ($samples)
 		");
 }
