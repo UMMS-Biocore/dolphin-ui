@@ -272,12 +272,13 @@ else if($p == 'encodeSampleEdit')
 	$antibody_target = ['target','source','product_id','lot_id','host_organism','clonality','isotype','purifications','url'];
 	if (isset($_GET['table'])){$table = $_GET['table'];}
 	if (isset($_GET['field'])){$field = $_GET['field'];}
+	if (isset($_GET['id'])){$id = $_GET['id'];}
 	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 	if($table == 'ngs_samples'){
 		$data = $query->runSQL("
 			UPDATE encode_submissions
 			SET sub_status = 'Needs Resubmission'
-			WHERE sample_id = $sample_id
+			WHERE sample_id = $id
 		");
 	}else if (in_array($table,$table_list)){
 		$field = $table_sample_link[array_search($table,$table_array)];
@@ -287,7 +288,7 @@ else if($p == 'encodeSampleEdit')
 			WHERE sample_id in (
 				SELECT id
 				FROM ngs_samples
-				WHERE $field = $sample_id
+				WHERE id = $sample_id
 			)
 		");
 		$data = json_decode($field);
@@ -299,7 +300,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE series_id = $sample_id
+					WHERE series_id = $id
 				)
 			");
 		}
@@ -311,7 +312,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE lane_id = $sample_id
+					WHERE lane_id = $id
 				)
 			");
 		}
@@ -323,7 +324,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE protocol_id = $sample_id
+					WHERE protocol_id = $id
 				)
 			");
 		}
@@ -338,7 +339,7 @@ else if($p == 'encodeSampleEdit')
 					WHERE series_id in (
 						SELECT lab_id
 						FROM ngs_experiment_series
-						WHERE lab_id = $sample_id
+						WHERE lab_id = $id
 					)
 				)
 			");
@@ -351,7 +352,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE treatment_id = $sample_id
+					WHERE treatment_id = $id
 				)
 			");
 		}
@@ -363,7 +364,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE antibody_lot_id = $sample_id
+					WHERE antibody_lot_id = $id
 				)
 			");
 		}

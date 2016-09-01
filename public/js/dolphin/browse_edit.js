@@ -285,9 +285,12 @@ function submitChanges(ele, event = event) {
 }
 
 function updateEncodeSubmissions(){
+	console.log(element_highlighted_table)
+	console.log(element_highlighted_type)
+	console.log(element_highlighted_id)
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/browse_edit.php",
-		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, sample_id:element_highlighted_id },
+		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, id:element_highlighted_id, sample_id:element_parent_table_id  },
 		async: false,
 		success : function(r)
 		{
