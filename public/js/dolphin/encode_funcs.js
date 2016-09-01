@@ -145,6 +145,37 @@ function checkForEncodeSubmission(type){
 				boolBreak = false;
 				errorMsg += '<b>Molecule</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
+			if (sample_info[x].source == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Source</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			if (sample_info[x].notes == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Description</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			if (sample_info[x].read_length == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Read Length</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			if (sample_info[x].biosample_term_name == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Biosample Term Name</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			if (sample_info[x].biosample_term_id == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Biosample Term ID</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			if (sample_info[x].biosample_type == undefined) {
+				boolPass = false;
+				boolBreak = false;
+				errorMsg += '<b>Biosample Type</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
+			}
+			
 			if (!boolBreak) {
 				errorMsg += '<br>';
 			}
@@ -254,7 +285,7 @@ function checkForEncodeSubmission(type){
 			document.getElementById('confirmPatchButton').setAttribute('style', 'display:none');
 			document.getElementById('confirmPatchButton').setAttribute('data-dismiss', '');
 		}else{
-			errorMsg += '<b>Database checks did not pass inspection, submission to ENCODE has been halted.  See errors above for more details.</b>'
+			errorMsg += '<b>Database checks did not pass inspection, submission to ENCODE has been halted.  The entries listed above must have values in order to submit to ENCODE.</b>'
 			$('#deleteModal').modal({
 				show: true
 			});

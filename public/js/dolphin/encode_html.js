@@ -40,7 +40,6 @@ function loadInEncodeTables(){
 			async: false,
 			success : function(s)
 			{
-				console.log(s);
 				var sampletable = $('#jsontable_selected_samples').dataTable();
 				sampletable.fnClearTable();
 				for(var x = 0; x < s.length; x++){
@@ -48,7 +47,7 @@ function loadInEncodeTables(){
 					sampletable.fnAddData([
 						s[x].id,
 						s[x].samplename,
-						"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].id+"', 'source_id')\">"+s[x].source+"</p>",
+						"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].id+"', 'source_id')\">"+s[x].source+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].id+"', 'organism_id')\">"+s[x].organism+"</p>",
 						"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
 						"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>"
