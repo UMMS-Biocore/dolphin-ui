@@ -105,34 +105,37 @@ else if ($p == 'endLog')
 {
 	$current_samps = [];
 	$push_new_samps = [];
+	$file = end(explode("/",$_SESSION['encode_log']));
 	if (isset($_GET['sample_ids'])){$sample_ids = $_GET['sample_ids'];}
 	$update_samps = json_decode($query->queryTable("
-		SELECT id
+		SELECT sample_id
 		FROM encode_submissions
 		WHERE sample_id in (".implode(",",$sample_ids).")
 	"));
 	foreach($update_samps as $us){
-		array_push($current_samps, $us->id);
+		array_push($current_samps, $us->sample_id);
 	}
 	if(count($current_samps) > 0){
 		$query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = 'Up to Date', output_file = '".$_SESSION['encode_log']."'
+			SET sub_status = 'Up to Date', output_file = '$file'
 			WHERE sample_id in (".implode(",",$current_samps).")
 		");	
 	}
 	$new_samps = array_diff($sample_ids, $current_samps);
 	foreach($new_samps as $ns){
-		array_push($push_new_samps, "( $ns, 'Up to Date', '".$_SESSION['encode_log']."' )");
+		array_push($push_new_samps, "( $ns, 'Up to Date', '$file' )");
 	}
-	$query->runSQL("
-		INSERT INTO `encode_submissions`
-		(sample_id, sub_status, output_file)
-		VALUES
-		".implode(",",$push_new_samps)."
-	");
+	if(count($push_new_samps) > 0){
+		$query->runSQL("
+			INSERT INTO `encode_submissions`
+			(sample_id, sub_status, output_file)
+			VALUES
+			".implode(",",$push_new_samps)."
+		");
+	}
 	unset($_SESSION['encode_log']);
-	$data = json_encode('Log closed.');
+	$data = json_encode($file);
 }
 
 header('Cache-Control: no-cache, must-revalidate');
