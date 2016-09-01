@@ -138,5 +138,6 @@
 						<input type="button" id="submitMeta" class="btn btn-primary" name="pipeline_send_button" value="Submit Meta-data" onClick="checkForEncodeSubmission('metadata')"/>
 						<input type="button" id="submitFiles" class="btn btn-primary" name="pipeline_send_button" value="Submit Files" onClick="checkForEncodeSubmission('files')"/>
 						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit Both" onClick="checkForEncodeSubmission('both')"/>
+						<input type="button" class="btn btn-default pull-right" value="View Encode Submissions" onClick="toEncodeSubmissions()"/>
 					</div>
 				</section>

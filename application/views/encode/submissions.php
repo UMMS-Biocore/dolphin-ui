@@ -20,8 +20,8 @@
 						</div>
 						<div class="col-md-12">
 							<div id="generated_table" class="margin col-md-12">
-								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="backToTableIndex()">Submit to Encode</button>
-								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toBrowserPage()">Back to Browser</button>
+								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toSubmitEncode()">Submit to Encode</button>
+								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="backToBrowser()">Back to Browser</button>
 							</div>
 						</div>
 					</div><!-- /.row -->

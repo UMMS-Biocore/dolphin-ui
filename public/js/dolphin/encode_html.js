@@ -242,6 +242,18 @@ function loadInEncodeTables(){
 	}
 }
 
+function toSubmitEncode(){
+	window.location.href = BASE_PATH+"/public/encode"
+}
+
+function toEncodeSubmissions() {
+	window.location.href = BASE_PATH+"/public/encode/submissions"
+}
+
+function backToBrowser(){
+	window.location.href = BASE_PATH+"/public/search"
+}
+
 $( function(){
 	if (phpGrab.theSegment == "encode_submissions") {
 		loadInEncodeSubmissions();
