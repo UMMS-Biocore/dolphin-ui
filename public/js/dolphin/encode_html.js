@@ -137,7 +137,7 @@ function loadTreatments() {
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
 				treatmenttable.fnAddData([
-					"<p onclick=\"editEncodeBox("+1+", '"+s[x].id+"', 'name', 'ngs_treatment', this, '', '', '', 'treatment')\">"+s[x].name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'name', 'ngs_treatment', this, '', '', '')\">"+s[x].name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_name', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_id', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_type', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_type+"</p>",

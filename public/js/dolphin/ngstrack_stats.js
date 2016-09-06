@@ -295,10 +295,10 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					return "<tr>"+
 						"<td>"+record.id+"</td>"+
 						"<td><a href=\""+BASE_PATH+"/search/details/samples/"+record.id+'/'+theSearch+"\">"+sample_name+"</a></td>"+
-						"<td>"+record.title+"</td>"+
-						"<td>"+record.source+"</td>"+
-						"<td>"+record.organism+"</td>"+
-						"<td>"+record.molecule+"</td>"+
+						"<td onclick=\"editBox("+uid+", "+record.id+", 'title', 'ngs_samples', this, '', '', '')\">"+record.title+"</td>"+
+						"<td onclick=\"editBox("+uid+", "+record.id+", 'source', 'ngs_samples', this, '', '', '')\">"+record.source+"</td>"+
+						"<td onclick=\"editBox("+uid+", "+record.id+", 'organism', 'ngs_samples', this, '', '', '')\">"+record.organism+"</td>"+
+						"<td onclick=\"editBox("+uid+", "+record.id+", 'molecule', 'ngs_samples', this, '', '', '')\">"+record.molecule+"</td>"+
 						record.backup+
 						"<td>"+initialRunWarning+"<input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"sample_checkbox_"+record.id+"\" "+checklist_type+"></td>"+
 						"</tr>";

@@ -21,7 +21,7 @@ var lanePerms = [];
 var samplePerms = [];
 
 var normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organization', 'genotype', 'library_type',
-				  'biosample_type', 'instrument_model', 'treatment_manufacturer'];
+				  'instrument_model', 'treatment_manufacturer'];
 var fileDatabaseDict = ['ngs_dirs', 'ngs_temp_sample_files', 'ngs_temp_lane_files', 'ngs_fastq_files'];
 
 var singlecheck_table = '';
@@ -74,7 +74,7 @@ function editBox(uid, id, type, table, element, parent_table, parent_table_id, p
 			element_parent_child = parent_child;
 		}
 		
-		if (normalized.indexOf(type) > -1 && window.location.href.split("/").indexOf('encode') == -1) {
+		if (normalized.indexOf(type) > -1) {
 			
 			element.onclick = '';
 			
@@ -271,6 +271,9 @@ function submitChanges(ele, event = event) {
 		}
 	}else if (event.type=="click") {
 		ele = document.getElementById('inputTextBox');
+		if (ele == null) {
+			ele = document.getElementById('cb_identifier');
+		}
 		
 		if (element_parent_table != '' && element_highlighted_id == '<br>') {
 			$.ajax({ type: "GET",
@@ -295,6 +298,7 @@ function submitChanges(ele, event = event) {
 			console.log(selected_ids.toString())
 			console.log(element_highlighted_type)
 			console.log(element_highlighted_table)
+			console.log(ele)
 			console.log(ele.value)
 			console.log(element_parent_table)
 			console.log(element_parent_table_id)
