@@ -18,17 +18,27 @@ if (isset($_GET['p'])){$p = $_GET['p'];}
 
 if($p == 'insertDatabase')
 {
-
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	if (isset($_GET['table'])){$table = $_GET['table'];}
 	if (isset($_GET['value'])){$value = $_GET['value'];}
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
-	
 	$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
 	$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
 	$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id = '$parent_id'");
+}
+if($p == 'insertDatabaseMulti')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['table'])){$table = $_GET['table'];}
+	if (isset($_GET['value'])){$value = $_GET['value'];}
+	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
+	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
+	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
+	$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
+	$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+	$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id in ($parent_id)");
 }
 if($p == 'updateDatabase')
 {
@@ -76,6 +86,29 @@ if($p == 'updateDatabaseEncode')
 		}
 	}else{
 		$data=$query->runSQL("UPDATE $table SET $table.$type = '$value' WHERE id = '$id'");
+	}
+}
+if($p == 'updateDatabaseMultiEncode')
+{
+
+	if (isset($_GET['id'])){$id = $_GET['id'];}
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['table'])){$table = $_GET['table'];}
+	if (isset($_GET['value'])){$value = $_GET['value'];}
+	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
+	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
+	
+	if(in_array($type, $normalized)){
+		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+		if($type_list != array()){
+			$data=$query->runSQL("UPDATE $parent SET $parent_child = ".$type_list[0]->id." WHERE id in ($id)"); 	
+		}else{
+			$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
+			$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+			$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id in ($id)");
+		}
+	}else{
+		$data=$query->runSQL("UPDATE $table SET $table.$type = '$value' WHERE id in ($id)");
 	}
 }
 else if($p == 'checkPerms')
@@ -278,7 +311,7 @@ else if($p == 'encodeSampleEdit')
 		$data = $query->runSQL("
 			UPDATE encode_submissions
 			SET sub_status = 'Needs Resubmission'
-			WHERE sample_id = $id
+			WHERE sample_id in ($id)
 		");
 	}else if (in_array($table,$table_list)){
 		$field = $table_sample_link[array_search($table,$table_array)];
@@ -288,7 +321,7 @@ else if($p == 'encodeSampleEdit')
 			WHERE sample_id in (
 				SELECT id
 				FROM ngs_samples
-				WHERE id = $sample_id
+				WHERE id in ($sample_id)
 			)
 		");
 		$data = json_decode($field);
@@ -300,7 +333,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE series_id = $id
+					WHERE series_id in ($id)
 				)
 			");
 		}
@@ -312,7 +345,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE lane_id = $id
+					WHERE lane_id in ($id)
 				)
 			");
 		}
@@ -324,7 +357,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE protocol_id = $id
+					WHERE protocol_id in ($id)
 				)
 			");
 		}
@@ -339,7 +372,7 @@ else if($p == 'encodeSampleEdit')
 					WHERE series_id in (
 						SELECT lab_id
 						FROM ngs_experiment_series
-						WHERE lab_id = $id
+						WHERE lab_id in ($id)
 					)
 				)
 			");
@@ -352,7 +385,7 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE treatment_id = $id
+					WHERE treatment_id in ($id)
 				)
 			");
 		}
@@ -364,11 +397,15 @@ else if($p == 'encodeSampleEdit')
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
-					WHERE antibody_lot_id = $id
+					WHERE antibody_lot_id in ($id)
 				)
 			");
 		}
 	}
+}
+else if ($p == 'changeMultiEncode')
+{
+	
 }
 
 if (!headers_sent()) {

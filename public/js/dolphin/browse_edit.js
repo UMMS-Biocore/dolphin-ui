@@ -24,6 +24,12 @@ var normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organiza
 				  'biosample_type', 'instrument_model', 'treatment_manufacturer'];
 var fileDatabaseDict = ['ngs_dirs', 'ngs_temp_sample_files', 'ngs_temp_lane_files', 'ngs_fastq_files'];
 
+var singlecheck_table = '';
+var allcheck = { sample:[], donor:[], experiment:[], treatment:[], biosample:[], library:[], antibody:[], replicate:[] }
+var allcheck_table = '';
+var allcheck_bool = false;
+var selected_ids = [];
+
 function editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child){
 	var havePermission = 0;
 	console.log([uid, id, type, table, element]);
@@ -201,7 +207,7 @@ function submitChangesFiles(){
 
 function submitChanges(ele, event = event) {
 	var successBool = false;
-    if (ele == 'details_cancel') {
+	if (ele == 'details_cancel') {
 		element_highlighted.innerHTML = element_highlighted_value;
 		element_highlighted.onclick = element_highlighted_onclick;
 		document.getElementById('submit_file_changes').remove();
@@ -210,15 +216,8 @@ function submitChanges(ele, event = event) {
 	}else if((event.keyCode == 13 && ele.value != '' && ele.value != null) || ele == 'dir_element') {
 		if (ele == "dir_element") {
 			ele = document.getElementById('inputTextBox');
-			console.log(ele.value);
 		}
 		if (element_parent_table != '' && element_highlighted_id == '<br>') {
-			console.log(element_highlighted_id);
-			console.log(element_highlighted_type);
-			console.log(element_highlighted_table);
-			console.log(ele.value);
-			console.log(element_parent_table);
-			console.log(element_parent_table_id);
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: 'insertDatabase', type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
@@ -240,13 +239,6 @@ function submitChanges(ele, event = event) {
 			if (window.location.href.split("/").indexOf("encode") > -1 ){
 				updateType = 'updateDatabaseEncode';
 			}
-			console.log(updateType)
-			console.log(element_highlighted_id);
-			console.log(element_highlighted_type);
-			console.log(element_highlighted_table);
-			console.log(ele.value);
-			console.log(element_parent_table);
-			console.log(element_parent_table_id);
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: updateType, id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
@@ -263,6 +255,10 @@ function submitChanges(ele, event = event) {
 		}
 		if (successBool) {
 			console.log("Success!")
+			if (singlecheck_table != '') {
+				updateSingleTable(singlecheck_table);
+				singlecheck_table = '';
+			}
 			element_highlighted.innerHTML = ele.value;
 			element_highlighted.onclick = element_highlighted_onclick;
 			if (document.getElementById('submit_file_changes') != undefined) {
@@ -273,7 +269,67 @@ function submitChanges(ele, event = event) {
 			}
 			clearElementHighlighted();
 		}
-    }else if(event.keyCode == 27) {
+	}else if (event.type=="click") {
+		ele = document.getElementById('inputTextBox');
+		
+		if (element_parent_table != '' && element_highlighted_id == '<br>') {
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: 'insertDatabaseMulti', type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: selected_ids.toString(), parent_child: element_parent_child},
+				async: false,
+				success : function(r)
+				{
+					console.log(r)
+					if (r == 1) {
+						successBool = true;
+					}
+					updateEncodeSubmissions();
+				}
+			});
+		}else{
+			var updateType = 'updateDatabaseMulti';
+			if (window.location.href.split("/").indexOf("encode") > -1 ){
+				updateType = 'updateDatabaseMultiEncode';
+			}
+			console.log(updateType)
+			console.log(selected_ids.toString())
+			console.log(element_highlighted_type)
+			console.log(element_highlighted_table)
+			console.log(ele.value)
+			console.log(element_parent_table)
+			console.log(element_parent_table_id)
+			console.log(element_parent_child)
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: updateType, id: selected_ids.toString(), type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_child: element_parent_child},
+				async: false,
+				success : function(r)
+				{
+					console.log(r)
+					if (r == 1) {
+						successBool = true;
+					}
+					updateEncodeSubmissions();
+				},
+				error: function(e)
+				{
+					console.log(e)
+				}
+			});
+		}
+		if (successBool) {
+			console.log("Success!")
+			element_highlighted.innerHTML = ele.value;
+			element_highlighted.onclick = element_highlighted_onclick;
+			if (document.getElementById('submit_file_changes') != undefined) {
+				document.getElementById('submit_file_changes').remove();
+			}
+			if (document.getElementById('cancel_file_changes') != undefined) {
+				document.getElementById('cancel_file_changes').remove();
+			}
+			clearElementHighlighted();
+		}
+	}else if(event.keyCode == 27) {
 		if (element_highlighted_value == '') {
 			element_highlighted_value = '<br>';
 		}
@@ -282,15 +338,18 @@ function submitChanges(ele, event = event) {
 		
 		clearElementHighlighted();
 	}
+	allcheck_table = '';
+	allcheck_bool = false;
 }
 
-function updateEncodeSubmissions(){
-	console.log(element_highlighted_table)
-	console.log(element_highlighted_type)
-	console.log(element_highlighted_id)
+function updateEncodeSubmissions(type){
+	ajax_id = element_highlighted_id
+	if (type == 'multi') {
+		ajax_id = selected_ids.toString();
+	}
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/browse_edit.php",
-		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, id:element_highlighted_id, sample_id:element_parent_table_id  },
+		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, id:ajax_id, sample_id:element_parent_table_id  },
 		async: false,
 		success : function(r)
 		{
@@ -484,4 +543,15 @@ function sendToEncode() {
 
 function sendToEncodeSubmissions() {
 	window.location.href = BASE_PATH+"/public/encode/submissions"
+}
+
+function allCheckboxCheck(id, type){
+	var index = allcheck[type].indexOf(id)
+	//Remove
+	if (index > -1) {
+		allcheck[type].splice(index, 1)
+	//Add
+	}else{
+		allcheck[type].push(id)
+	}
 }
