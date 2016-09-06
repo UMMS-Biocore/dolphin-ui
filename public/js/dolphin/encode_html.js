@@ -57,7 +57,7 @@ function loadSamples(){
 				sampletable.fnAddData([
 					s[x].id,
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].id+"', 'source_id')\">"+s[x].source+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].id+", 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].id+"', 'organism_id')\">"+s[x].organism+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
 					"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
@@ -82,7 +82,7 @@ function loadDonors(){
 				s[x] = responseCheck(s[x]);
 				donortable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id')\">"+s[x].donor+"</p>",
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id', 'donor')\">"+s[x].donor+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
@@ -137,7 +137,7 @@ function loadTreatments() {
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
 				treatmenttable.fnAddData([
-					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'name', 'ngs_treatment', this, '', '', '')\">"+s[x].name+"</p>",
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].id+"', 'name', 'ngs_treatment', this, '', '', '', 'treatment')\">"+s[x].name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_name', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_term_id', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'treatment_type', 'ngs_treatment', this, '', '', '')\">"+s[x].treatment_type+"</p>",
@@ -167,7 +167,7 @@ function loadBiosamples() {
 				biosampletable.fnAddData([
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id')\">"+s[x].biosample_term_name+"</p>",
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_submitted', 'ngs_lanes', this, '', '', '')\">"+s[x].date_submitted+"</p>",
@@ -224,7 +224,7 @@ function loadAntibodies() {
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
 				antybodytable.fnAddData([
-					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '')\">"+s[x].target+"</p>",
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '', 'antibody')\">"+s[x].target+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'source', 'ngs_antibody_target', this, '', '', '')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'product_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].product_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'lot_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].lot_id+"</p>",
