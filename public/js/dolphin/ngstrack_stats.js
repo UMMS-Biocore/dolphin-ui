@@ -745,7 +745,7 @@ $(function() {
 		//	Log data path
 		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
-	}else if (phpGrab.theSegment != 'report' && phpGrab.theSegment != 'table_viewer') {
+	}else if (phpGrab.theSegment != 'report' && phpGrab.theSegment != 'table_viewer' && phpGrab.theSegment != "encode_submissions") {
 		var experiment_series_data = [];
 		var lane_data = [];
 		var sample_data = [];
@@ -892,10 +892,6 @@ $(function() {
 			reloadBasket();
 		}
 	}
-	console.log(qvar);
-	console.log(rvar);
-	console.log(segment);
-	console.log(theSearch);
 	//Rerun Check
 	if (window.location.href.split("/").indexOf('selected') > -1 || window.location.href.split("/").indexOf('rerun') > -1) {
 		rerunLoad();

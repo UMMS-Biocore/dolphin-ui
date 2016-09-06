@@ -11,6 +11,10 @@ if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 if (isset($_GET['replicate'])){$replicate = $_GET['replicate'];}
 
+if(!isset($_SESSION['encode_log'])){
+	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+}
+
 //testing
 /*
 $sample_id = 1;
@@ -251,6 +255,10 @@ foreach($fastq_data as $fq){
 				$response = Requests::patch($url, $headers, json_encode($data), $auth);
 				$body = json_decode($response->body);
 			}
+			
+			$logfile = fopen($_SESSION['encode_log'], "a") or die("Unable to open file!");
+			fwrite($logfile, $response->body . "\n\n");
+			fclose($logfile);
 			
 			$item = $body->{'@graph'}[0];
 			
