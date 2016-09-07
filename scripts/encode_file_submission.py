@@ -14,12 +14,15 @@ file_path = sys.argv[1]
 access_key = sys.argv[2]
 secret_key = sys.argv[3]
 upload = sys.argv[4]
-upload_path = upload[18:]
+split = upload.split("/")
+upload_path = upload.split(split[2])[1]
 session_token = sys.argv[5]
-bucket = sys.argv[6]
-log = sys.argv[7]
+url = sys.argv[6]
+bucket = sys.argv[7]
+log = sys.argv[8]
 
-host = 'https://www.encodeproject.org/'
+host = url
+print upload.split("/")[-1].split(".")[0]
 encoded_access_key = "SU45FB2Q"
 encoded_secret_access_key = 'rae76sr5bntlz5c6'
 headers = {
@@ -27,7 +30,7 @@ headers = {
     'Accept': 'application/json',
 }
 r = requests.post(
-    host + 'files/'+upload[66:77]+'/upload',
+    host + 'files/'+upload.split("/")[-1].split(".")[0]+'/upload',
     auth=(encoded_access_key, encoded_secret_access_key),
     data=json.dumps({}),
     headers=headers
@@ -43,7 +46,8 @@ access_key = item['upload_credentials']['access_key'];
 secret_key = item['upload_credentials']['secret_key'];
 session_token = item['upload_credentials']['session_token'];
 upload = item['upload_credentials']['upload_url'];
-upload_path = upload[18:];
+split = upload.split("/")
+upload_path = upload.split(split[2])[1]
 
 #connect
 conn = S3Connection(access_key, secret_key, security_token=session_token)
@@ -79,8 +83,6 @@ try:
     k = Key(Bucket)
     k.name = upload_path 
     k.set_contents_from_filename(file_path)
-    with open(log, "a") as myfile:
-        myfile.write('{"message":"passed"}')
+    print '{"message":"passed"}'
 except boto.exception.S3ResponseError as e:
-    with open(log, "a") as myfile:
-        myfile.write(e)
+    print e

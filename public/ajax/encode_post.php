@@ -5,7 +5,7 @@ if (isset($_GET['json_name'])){$json_name = $_GET['json_name'];}
 if (isset($_GET['json_passed'])){$json_passed = $_GET['json_passed'];}
 
 if(!isset($_SESSION['encode_log'])){
-	$_SESSION['encode_log'] = "/tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
 $server_start = ENCODE_URL;
@@ -50,7 +50,7 @@ foreach ($json as $json_object) {
 	}else{
 		echo $response->body . ",";	
 	}
-	$logloc = "../..".$_SESSION['encode_log'];
+	$logloc = $_SESSION['encode_log'];
 	$logfile = fopen($logloc, "a") or die("Unable to open file!");
 	fwrite($logfile, $response->body . "\n\n");
 	fclose($logfile);

@@ -189,11 +189,6 @@ function checkForEncodeSubmission(type){
 				boolBreak = false;
 				errorMsg += '<b>Name</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
 			}
-			if (lane_info[x].date_submitted == undefined) {
-				boolPass = false;
-				boolBreak = false;
-				errorMsg += '<b>Date submitted</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
-			}
 			if (lane_info[x].date_received == undefined) {
 				boolPass = false;
 				boolBreak = false;
@@ -670,6 +665,14 @@ function createEncodeJson(json_type){
 					}
 				}
 				json['date_obtained'] = lane_info[lane_id_pos].date_received.split(' ')[0];
+			}else if (terms[y] == "date_submitted") {
+				var lane_id_pos = -1;
+				for(var z = 0; z < lane_info.length; z++){
+					if (lane_info[z].id == sample_info[x].lane_id) {
+						lane_id_pos = z;
+					}
+				}
+				json['date_submitted'] = lane_info[lane_id_pos].date_received.split(' ')[0];
 			}else if (terms[y] == "biosample") {
 				json['biosample'] = experiment_info[0].lab + ':' + sample_info[x].samplename;
 			}else if (terms[y] == "nucleic_acid_term_name") {
@@ -785,6 +788,7 @@ function encodeFilePost(){
 			async: false,
 			success : function(s)
 			{
+				console.log(s)
 				//	Print out server response
 				var file_post_string = "[" + s + "]";;
 				var file_response = JSON.parse(file_post_string);
@@ -877,6 +881,7 @@ function encodeSubmission(name, json, subType, type, table){
 			}
 			if (type == "treatment") {
 				if (response[x]['@graph'][0].uuid != undefined) {
+					console.log("inside treatment")
 					submitAccessionAndUuid(item[id_hash[type]], table, type, "treatment", response[x]['@graph'][0].uuid);
 				}
 			}else if (type == "replicate"){

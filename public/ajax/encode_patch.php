@@ -6,7 +6,7 @@ if (isset($_GET['json_passed'])){$json_passed = $_GET['json_passed'];}
 if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 
 if(!isset($_SESSION['encode_log'])){
-	$_SESSION['encode_log'] = "/tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
 $accs = explode(",", $accession);
@@ -53,7 +53,7 @@ foreach ($accs as $acc) {
 			echo $response->body . ",";	
 		}
 		
-		$logloc = "../..".$_SESSION['encode_log'];
+		$logloc = $_SESSION['encode_log'];
 		$logfile = fopen($logloc, "a") or die("Unable to open file!");
 		fwrite($logfile, $response->body . "\n\n");
 		fclose($logfile);
