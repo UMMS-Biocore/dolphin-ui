@@ -270,7 +270,7 @@ foreach($fastq_data as $fq){
 			$creds = $item->{'upload_credentials'};
 			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $directory.$fn . " " . $creds->{'access_key'} . " " .
 				$creds->{'secret_key'} . " " . $creds->{'upload_url'} . " " . $creds->{'session_token'} . " " .
-				ENCODE_URL . " " . ENCODE_BUCKET . " " . $_SESSION['encode_log']; #. " &";
+				ENCODE_URL . " " . ENCODE_BUCKET . " " . $_SESSION['encode_log'] . " &";
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
 			pclose($AWS_COMMAND_DO);
