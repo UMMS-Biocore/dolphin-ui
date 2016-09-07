@@ -17,6 +17,7 @@ upload = sys.argv[4]
 upload_path = upload[18:]
 session_token = sys.argv[5]
 bucket = sys.argv[6]
+log = sys.argv[7]
 
 host = 'https://www.encodeproject.org/'
 encoded_access_key = "SU45FB2Q"
@@ -78,6 +79,8 @@ try:
     k = Key(Bucket)
     k.name = upload_path 
     k.set_contents_from_filename(file_path)
-    print '{"message":"passed"}'
+    with open(log, "a") as myfile:
+        myfile.write('{"message":"passed"}')
 except boto.exception.S3ResponseError as e:
-    print e
+    with open(log, "a") as myfile:
+        myfile.write(e)

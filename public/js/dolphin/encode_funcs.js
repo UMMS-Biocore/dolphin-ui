@@ -150,7 +150,7 @@ function checkForEncodeSubmission(type){
 				boolBreak = false;
 				errorMsg += '<b>Source</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
 			}
-			if (sample_info[x].notes == undefined) {
+			if (sample_info[x].description == undefined) {
 				boolPass = false;
 				boolBreak = false;
 				errorMsg += '<b>Description</b> for <b>sample id: ' + sample_info[x].id + '</b> is not defined.<br>';
@@ -631,7 +631,7 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "biosample_type") {
 				json['biosample_type'] = sample_info[x].biosample_type;
 			}else if (terms[y] == "description") {
-				json['description'] = sample_info[x].notes;
+				json['description'] = sample_info[x].description;
 			}else if (terms[y] == "treatment_term_name") {
 				json['treatment_term_name'] = treatment_info[treatment_lib_type].treatment_term_name;
 			}else if (terms[y] == "treatment_term_id") {

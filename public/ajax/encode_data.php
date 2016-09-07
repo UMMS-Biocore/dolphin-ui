@@ -21,7 +21,7 @@ if($p == 'getSampleDataInfo')
 							 protocol_id, lane_id, organism, source,
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
 							 experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
-							 biosample_term_name, biosample_term_id, biosample_type
+							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
 							 ON ngs_donor.id = ngs_samples.donor_id

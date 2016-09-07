@@ -12,7 +12,7 @@ if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
 if (isset($_GET['replicate'])){$replicate = $_GET['replicate'];}
 
 if(!isset($_SESSION['encode_log'])){
-	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+	$_SESSION['encode_log'] = "/tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
 //testing
@@ -256,7 +256,8 @@ foreach($fastq_data as $fq){
 				$body = json_decode($response->body);
 			}
 			
-			$logfile = fopen($_SESSION['encode_log'], "a") or die("Unable to open file!");
+			$logloc = "../..".$_SESSION['encode_log'];
+			$logfile = fopen($logloc, "a") or die("Unable to open file!");
 			fwrite($logfile, $response->body . "\n\n");
 			fclose($logfile);
 			
@@ -267,8 +268,8 @@ foreach($fastq_data as $fq){
 			####################
 			# POST file to S3
 			$creds = $item->{'upload_credentials'};
-			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py ".$directory.$fn ." ".$creds->{'access_key'} . " " .
-				$creds->{'secret_key'} . " " .$creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . ENCODE_BUCKET; #. " &";
+			$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $directory.$fn . " " . $creds->{'access_key'} . " " .
+				$creds->{'secret_key'} . " " . $creds->{'upload_url'} . " " . $creds->{'session_token'} . " " . ENCODE_BUCKET . " " . ".." . $_SESSION['encode_log']; #. " &";
 			$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 			$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
 			pclose($AWS_COMMAND_DO);
