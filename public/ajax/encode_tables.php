@@ -52,8 +52,8 @@ else if($p == 'getDonors')
 		ON ngs_experiment_series.id = ngs_samples.series_id
 		LEFT JOIN ngs_lab
 		ON ngs_lab.id = ngs_experiment_series.lab_id
-		WHERE ngs_donor.id
-		IN (SELECT ngs_samples.donor_id FROM ngs_samples WHERE ngs_samples.id IN ($samples))
+		WHERE ngs_samples.id
+		IN ($samples)
 		");
 }
 else if($p == 'getExperiments')
