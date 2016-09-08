@@ -221,11 +221,11 @@ function loadAntibodies() {
 		success : function(s)
 		{
 			console.log(s);
-			var antybodytable = $('#jsontable_antibodies').dataTable();
-			antybodytable.fnClearTable();
+			var antibodytable = $('#jsontable_antibodies').dataTable();
+			antibodytable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
-				antybodytable.fnAddData([
+				antibodytable.fnAddData([
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].id+"', 'target', 'ngs_antibody_target', this, '', '', '', 'antibody')\">"+s[x].target+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'source', 'ngs_antibody_target', this, '', '', '')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'product_id', 'ngs_antibody_target', this, '', '', '')\">"+s[x].product_id+"</p>",

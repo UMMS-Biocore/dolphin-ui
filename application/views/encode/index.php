@@ -11,6 +11,9 @@
 						color: #000;padding: 1px;height: auto;cursor: default}
 					div.combobox	.dropdownlist	a.light	{color: #fff;
 						background-color: #007}
+					.dataTable {
+						width: 100% !Important;
+					}
 				</style>
 				<!-- Content Header (Page header) -->
 				<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
