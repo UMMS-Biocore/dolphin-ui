@@ -147,6 +147,39 @@ else if($p == 'getReplicates')
 		where ngs_samples.id in ($samples)
 		");
 }
+else if ($p == 'createEncodeRow')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['name'])){$name = $_GET['name'];}
+	if($type == 'Treatment'){
+		$table = 'ngs_treatment';
+		$update = 'treatment_id';
+		$rowname = 'name';
+	}else{
+		$table = 'ngs_antibody_target';
+		$update = 'antibody_lot_id';
+		$rowname = 'target';
+	}
+	
+	$data=$query->runSQL("
+		INSERT INTO $table
+		($rowname)
+		VALUES
+		('$name')
+	");
+	$typeID=json_decode($query->queryTable("
+		SELECT id
+		FROM $table
+		WHERE $rowname = '$name'
+		ORDER BY id DESC
+	"));
+	$data=$query->runSQL("
+		UPDATE ngs_samples
+		SET $update = " . $typeID[0]->id . "
+		WHERE id IN ($samples)
+	");
+}
 
 
 header('Cache-Control: no-cache, must-revalidate');

@@ -46,15 +46,21 @@ function loadInEncodeTables(){
 }
 
 function loadSamples(){
+	var treatmentSelect = document.getElementById('addSampleTreatment')
+	var antibodySelect = document.getElementById('addSampleAntibody')
+	
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getSamples", samples:basket_info },
 		async: false,
 		success : function(s)
 		{
+			treatmentSelect.innerHTML = '';
+			antibodySelect.innerHTML = '';
 			var sampletable = $('#jsontable_selected_samples').dataTable();
 			sampletable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
+				//	Datatable
 				s[x] = responseCheck(s[x]);
 				sampletable.fnAddData([
 					s[x].id,
@@ -65,7 +71,12 @@ function loadSamples(){
 					"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].id+", 'sample')\">"
 				]);
+				
+				//	Modal
+				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
+				antibodySelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
 			}
+			
 		}
 	});
 }
@@ -315,17 +326,45 @@ function editEncodeBox(uid, id, type, table, element, parent_table, parent_table
 }
 
 function addTreatment(){
-	$('#addModal').modal({
+	$('#addTreatmentModal').modal({
 		show: true
 	});
 	addModalType = 'treatment'
 }
 
 function addAntibody(){
-	$('#addModal').modal({
+	$('#addAntibodyModal').modal({
 		show: true
 	});
 	addModalType = 'antibody'
+}
+
+function createNewData(type){
+	var selected = document.getElementById('addSample'+type)
+	var samples = []
+	for (var i = 0; i < selected.length; i++) {
+        if (selected.options[i].selected){
+			samples.push(selected.options[i].value);
+		}
+    }
+	var name = document.getElementById('addName'+type).value
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "createEncodeRow", type:type, samples:samples.toString(), name:name },
+		async: false,
+		success : function(s)
+		{
+			console.log(type)
+			console.log(samples.toString())
+			console.log(name)
+			console.log(s)
+			if (type == 'Treatment') {
+				loadTreatments();
+			}else if (type == 'Antibody') {
+				loadAntibodies();
+			}
+		}
+	});
 }
 
 function toSubmitEncode(){

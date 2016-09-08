@@ -42,35 +42,64 @@
 					  </div>
 					</div>
 				</div><!-- End modal -->
-				<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myAddModalLabel" aria-hidden="true">
+				<div class="modal fade" id="addTreatmentModal" tabindex="-1" role="dialog" aria-labelledby="myTreatmentModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
 						<div class="modal-header">
 						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  <h4 class="modal-title" id="myAddModalLabel">Add Data</h4>
+						  <h4 class="modal-title" id="myTreatmentModalLabel">Add Treatment</h4>
 						</div>
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
 								<fieldset>
 									<div class="form-group" style="overflow:scroll">
-										<label id="addSampleLabel"></label>
+										<label id="addSampleTreatmentLabel">Select Samples to add a Treatment to:</label>
 										<br>
-										<input id="addSample" type="text" class="form-control" multiple>
+										<select id="addSampleTreatment" type="select-multiple" multiple size="10" style="width:100%"></select>
 										<br>
-										<label id="addNameLabel"></label>
+										<label id="addNameTreatmentLabel">Name the Treatment:</label>
 										<br>
-										<input id="addName" type="text" class="form-control">
+										<input id="addNameTreatment" type="text" class="form-control">
 									</div>
 								</fieldset>   
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="">Confirm</button>
-							  <button type="button" id="cancelDeleteButton" class="btn btn-default" data-dismiss="modal" onclick="">Cancel</button>
+							  <button type="button" id="treatmentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewData('Treatment')">Add</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>
 						</form>
 					  </div>
 					</div>
-				</div><!-- End Add modal -->
+				</div><!-- End Treatment modal -->
+				<div class="modal fade" id="addAntibodyModal" tabindex="-1" role="dialog" aria-labelledby="myAntibodyModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myAddModalLabel">Add Antibody</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="addSampleAntibodyLabel">Select Samples to add a Antibody to:</label>
+										<br>
+										<select id="addSampleAntibody" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<br>
+										<label id="addNameAntibodyLabel">Name the Antibody:</label>
+										<br>
+										<input id="addNameAntibody" type="text" class="form-control">
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="antibodyConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewData('Antibody')">Add</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Antibody modal -->
 				<section class="content-header">
 					<h1>
 						Encode Viewing/Submission
