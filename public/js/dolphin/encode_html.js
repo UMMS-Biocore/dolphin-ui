@@ -1,3 +1,5 @@
+var addModalType = '';
+
 function responseCheck(data) {
 	for(var x = 0; x < Object.keys(data).length; x++){
 		if (data[Object.keys(data)[x]] == null) {
@@ -310,6 +312,20 @@ function updateSingleTable(table){
 function editEncodeBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child, encode_table){
 	singlecheck_table = encode_table;
 	editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child);
+}
+
+function addTreatment(){
+	$('#addModal').modal({
+		show: true
+	});
+	addModalType = 'treatment'
+}
+
+function addAntibody(){
+	$('#addModal').modal({
+		show: true
+	});
+	addModalType = 'antibody'
 }
 
 function toSubmitEncode(){

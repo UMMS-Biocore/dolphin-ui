@@ -39,6 +39,35 @@
 					  </div>
 					</div>
 				</div><!-- End modal -->
+				<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myAddModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myAddModalLabel">Add Data</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="addSampleLabel"></label>
+										<br>
+										<input id="addSample" type="text" class="form-control" multiple>
+										<br>
+										<label id="addNameLabel"></label>
+										<br>
+										<input id="addName" type="text" class="form-control">
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="">Confirm</button>
+							  <button type="button" id="cancelDeleteButton" class="btn btn-default" data-dismiss="modal" onclick="">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Add modal -->
 				<section class="content-header">
 					<h1>
 						Encode Viewing/Submission
@@ -121,6 +150,7 @@
 											echo $html->getRespBoxTable_ng("Treatments", "treatments",
 																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Selected</th>");
 										?>
+										<input type="button" class="btn btn-primary margin" value="Add Treatment" onClick="addTreatment()"/>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
 									</div>
@@ -148,6 +178,7 @@
 											echo $html->getRespBoxTable_ng("Antibodies", "antibodies",
 																		   "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th><th>Selected</th>");
 										?>
+										<input type="button" class="btn btn-primary margin" value="Add Antibody" onClick="addAntibody()"/>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','antibody',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','antibody',this,event)"/>
 									</div>
@@ -168,8 +199,7 @@
 				<section>
 					<div class="margin">
 						<input type="button" id="submitMeta" class="btn btn-primary" name="pipeline_send_button" value="Submit Meta-data" onClick="checkForEncodeSubmission('metadata')"/>
-						<input type="button" id="submitFiles" class="btn btn-primary" name="pipeline_send_button" value="Submit Files" onClick="checkForEncodeSubmission('files')"/>
-						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit Both" onClick="checkForEncodeSubmission('both')"/>
+						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit With Files" onClick="checkForEncodeSubmission('both')"/>
 						<input type="button" class="btn btn-default pull-right" value="View Encode Submissions" onClick="toEncodeSubmissions()"/>
 					</div>
 				</section>

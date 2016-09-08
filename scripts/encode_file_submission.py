@@ -79,6 +79,7 @@ except boto.exception.S3ResponseError as e:
     print e
 """ 
 #send whole file
+sys.stdout = open(log, 'a')
 try:
     k = Key(Bucket)
     k.name = upload_path 
