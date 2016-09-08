@@ -118,7 +118,6 @@ function editBox(uid, id, type, table, element, parent_table, parent_table_id, p
 			masterDiv.appendChild(button);
 			masterDiv.appendChild(div);
 			var no = new ComboBox('cb_identifier');
-			console.log('test');
 		}else{
 			var submitButton;
 			var cancelButton;
@@ -294,15 +293,6 @@ function submitChanges(ele, event = event) {
 			if (window.location.href.split("/").indexOf("encode") > -1 ){
 				updateType = 'updateDatabaseMultiEncode';
 			}
-			console.log(updateType)
-			console.log(selected_ids.toString())
-			console.log(element_highlighted_type)
-			console.log(element_highlighted_table)
-			console.log(ele)
-			console.log(ele.value)
-			console.log(element_parent_table)
-			console.log(element_parent_table_id)
-			console.log(element_parent_child)
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: updateType, id: selected_ids.toString(), type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_child: element_parent_child},

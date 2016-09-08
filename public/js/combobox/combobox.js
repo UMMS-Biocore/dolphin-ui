@@ -143,7 +143,11 @@ ComboBox = function (object_name) {
 		}else if (e.keyCode == 13) {
 			// enter
 			if (parobject.visiblecount != 0) {
-				var upv = parobject.currentitem.innerHTML;   
+				if (parobject.currentitem == null) {
+					var upv = '';
+				}else{
+					var upv = parobject.currentitem.innerHTML;
+				}
 				upv = upv .replace(/\<b\>/ig, '');
 				upv = upv .replace(/\<\/b\>/ig, '');
 				parobject.edit.value = upv;

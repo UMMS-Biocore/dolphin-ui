@@ -52,8 +52,8 @@ else if($p == 'getDonors')
 		ON ngs_experiment_series.id = ngs_samples.series_id
 		LEFT JOIN ngs_lab
 		ON ngs_lab.id = ngs_experiment_series.lab_id
-		WHERE ngs_donor.id
-		IN (SELECT ngs_samples.donor_id FROM ngs_samples WHERE ngs_samples.id IN ($samples))
+		WHERE ngs_samples.id
+		IN ($samples)
 		");
 }
 else if($p == 'getExperiments')
@@ -146,6 +146,39 @@ else if($p == 'getReplicates')
 		ON ngs_samples.antibody_lot_id = ngs_antibody_target.id
 		where ngs_samples.id in ($samples)
 		");
+}
+else if ($p == 'createEncodeRow')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['name'])){$name = $_GET['name'];}
+	if($type == 'Treatment'){
+		$table = 'ngs_treatment';
+		$update = 'treatment_id';
+		$rowname = 'name';
+	}else{
+		$table = 'ngs_antibody_target';
+		$update = 'antibody_lot_id';
+		$rowname = 'target';
+	}
+	
+	$data=$query->runSQL("
+		INSERT INTO $table
+		($rowname)
+		VALUES
+		('$name')
+	");
+	$typeID=json_decode($query->queryTable("
+		SELECT id
+		FROM $table
+		WHERE $rowname = '$name'
+		ORDER BY id DESC
+	"));
+	$data=$query->runSQL("
+		UPDATE ngs_samples
+		SET $update = " . $typeID[0]->id . "
+		WHERE id IN ($samples)
+	");
 }
 
 
