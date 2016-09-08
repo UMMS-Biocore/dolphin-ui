@@ -360,8 +360,10 @@ function createNewData(type){
 			console.log(s)
 			if (type == 'Treatment') {
 				loadTreatments();
+				loadBiosamples();
 			}else if (type == 'Antibody') {
 				loadAntibodies();
+				loadReplicates();
 			}
 		}
 	});
