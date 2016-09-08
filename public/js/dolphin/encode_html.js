@@ -343,10 +343,10 @@ function createNewData(type){
 	var selected = document.getElementById('addSample'+type)
 	var samples = []
 	for (var i = 0; i < selected.length; i++) {
-        if (selected.options[i].selected){
+		if (selected.options[i].selected){
 			samples.push(selected.options[i].value);
 		}
-    }
+	}
 	var name = document.getElementById('addName'+type).value
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
