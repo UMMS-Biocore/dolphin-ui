@@ -21,7 +21,7 @@ var lanePerms = [];
 var samplePerms = [];
 
 var normalized = ['facility', 'source', 'organism', 'molecule', 'lab', 'organization', 'genotype', 'library_type',
-				  'instrument_model', 'treatment_manufacturer'];
+				  'instrument_model', 'treatment_manufacturer', 'donor', 'name', 'target'];
 var fileDatabaseDict = ['ngs_dirs', 'ngs_temp_sample_files', 'ngs_temp_lane_files', 'ngs_fastq_files'];
 
 var singlecheck_table = '';
@@ -212,7 +212,7 @@ function submitChanges(ele, event = event) {
 		document.getElementById('submit_file_changes').remove();
 		document.getElementById('cancel_file_changes').remove();
 		clearElementHighlighted();
-	}else if((event.keyCode == 13 && ele.value != '' && ele.value != null) || ele == 'dir_element') {
+	}else if((event.keyCode == 13)) {
 		if (ele == "dir_element") {
 			ele = document.getElementById('inputTextBox');
 		}
@@ -258,7 +258,11 @@ function submitChanges(ele, event = event) {
 				updateSingleTable(singlecheck_table);
 				singlecheck_table = '';
 			}
-			element_highlighted.innerHTML = ele.value;
+			if (ele.value == '') {
+				element_highlighted.innerHTML = '<br>';
+			}else{
+				element_highlighted.innerHTML = ele.value;
+			}
 			element_highlighted.onclick = element_highlighted_onclick;
 			if (document.getElementById('submit_file_changes') != undefined) {
 				document.getElementById('submit_file_changes').remove();

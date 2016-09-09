@@ -146,8 +146,8 @@
 								<div class="tab-content margin">
 									<div class="tab-pane active" id="samples_tab">
 											<?php
-												echo $html->getRespBoxTable_ng("Selected Samples", "selected_samples",
-																		   "<th>id</th><th>Sample Name</th><th>Source</th><th>Organism</th><th>Molecule</th><th>Removal</th><th>Selected</th>");
+												echo $html->getRespBoxTable_ng("Selected Samples", "encode_selected_samples",
+																		   "<th>id</th><th>Sample Name</th><th>Donor</th><th>Source</th><th>Organism</th><th>Molecule</th><th>Lab</th><th>Grant</th><th>Removal</th><th>Selected</th>");
 											?>
 												<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','sample',this,event)"/>
 												<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','sample',this,event)"/>
@@ -161,8 +161,8 @@
 									<div class="tab-pane" id="donors_tab">
 										<?php
 											#Donors
-											echo $html->getRespBoxTable_ng("Donors", "donors",
-																		   "<th>Sample</th><th>Donor</th><th>Lab</th><th>Award</th><th>Organism</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th><th>Selected</th>");
+											echo $html->getRespBoxTable_ng("Donors", "encode_donors",
+																		   "<th>Donor</th><th>Life Stage</th><th>Age</th><th>Sex</th><th>Donor Acc</th><th>Donor UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','donor',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','donor',this,event)"/>
@@ -170,7 +170,7 @@
 									<div class="tab-pane" id="experiments_tab">
 										<?php
 											#Experiments
-											echo $html->getRespBoxTable_ng("Experiments", "experiments",
+											echo $html->getRespBoxTable_ng("Experiments", "encode_experiments",
 																		   "<th>Sample</th><th>Assay Term Name</th><th>Source</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','experiment',this,event)"/>
@@ -179,7 +179,7 @@
 									<div class="tab-pane" id="treatments_tab">
 										<?php
 											#Treatments
-											echo $html->getRespBoxTable_ng("Treatments", "treatments",
+											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
 																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Add Treatment" onClick="addTreatment()"/>
@@ -189,7 +189,7 @@
 									<div class="tab-pane" id="biosamples_tab">
 										<?php
 											#Biosamples
-											echo $html->getRespBoxTable_ng("Biosamples", "biosamples",
+											echo $html->getRespBoxTable_ng("Biosamples", "encode_biosamples",
 																		   "<th>Sample</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','biosample',this,event)"/>
@@ -198,7 +198,7 @@
 									<div class="tab-pane" id="libraries_tab">
 										<?php
 											#Libraries
-											echo $html->getRespBoxTable_ng("Libraries", "libraries",
+											echo $html->getRespBoxTable_ng("Libraries", "encode_libraries",
 																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th><th>Library Acc</th><th>Library UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','library',this,event)"/>
@@ -207,7 +207,7 @@
 									<div class="tab-pane" id="antibodies_tab">
 										<?php
 											#Antibody Lots
-											echo $html->getRespBoxTable_ng("Antibodies", "antibodies",
+											echo $html->getRespBoxTable_ng("Antibodies", "encode_antibodies",
 																		   "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Add Antibody" onClick="addAntibody()"/>
@@ -217,7 +217,7 @@
 									<div class="tab-pane" id="replicates_tab">
 										<?php
 											#Replicates
-											echo $html->getRespBoxTable_ng("Replicates", "replicates",
+											echo $html->getRespBoxTable_ng("Replicates", "encode_replicates",
 																		   "<th>Sample</th><th>Antibody</th><th>Biological Replicate Number</th><th>Technical Replicate Number</th><th>Replicate UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','replicate',this,event)"/>

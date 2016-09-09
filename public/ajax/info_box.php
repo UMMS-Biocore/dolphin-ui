@@ -408,6 +408,62 @@ if($p == "experiments"){
 			<br><br>
 			To create a group, simply click the 'Create a New Group' button and give the name of your group to create.  To request to be added to a specific
 			group, click the 'Join a Group' button and select the group you wish to be added to.";
+}else if ($p == "encode_selected_samples"){
+	$data = "This table provides information about samples selected that will be used to send data to ENCODE.
+			<br><br>
+			All of the fields (except for id and Sample Name) are editable.  To edit multiple samples at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the samples you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			selected samples by clicking a field, editing that field, and clicking the \"Change All\" button.
+			<br><br>
+			To add more samples to your selected list, find your sample of interest on the table below and check the selected box.  You can remove samples from
+			your list by either clicking the red X under the \"Removal\" column or un-checking the sample of interest in the table below.";
+}else if ($p == "encode_donors"){
+	$data = "This table displays the donor information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Donor Acc and Donor UUID) are editable.  To edit multiple donors at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the donors you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of the
+			donors by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_experiments"){
+	$data = "This table displays the Experiment information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Sample, Experiment Acc, and Experiment UUID) are editable.  To edit multiple experiments at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the experiments you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			experiments by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_treatments"){
+	$data = "This table displays the Treatment information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields are editable.  To edit multiple treatments at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the treatments you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			treatments by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_biosamples"){
+	$data = "This table displays the Biosample information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Sample, Biosample Acc, and Biosample UUID) are editable.  To edit multiple biosamples at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the biosamples you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			biosamples by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_libraries"){
+	$data = "This table displays the Library information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Sample, Library Acc, and Library UUID) are editable.  To edit multiple libraries at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the libraries you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			libraries by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_antibodies"){
+	$data = "This table displays the Antibody information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Antibody UUID) are editable.  To edit multiple antibodies at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the antibodies you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			antibodies by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "encode_replicates"){
+	$data = "This table displays the Replicate information needed that will be sent to ENCODE used for their metadata.
+			<br><br>
+			All of the fields (except for Replicate UUID) are editable.  To edit multiple replicates at once, click the checkbox under the \"Selection\" column,
+			select a field for one of the replicates you wish to edit, edit that field, then click the \"Change Selected\" button.  You can also change all of your
+			replicates by clicking a field, editing that field, and clicking the \"Change All\" button.";
+}else if ($p == "submissions_table"){
+	$data = "This table displays all of the samples previously submit to ENCODE.
+			<br><br>
+			Within this table you will be able to see the sample id for each submission, the submission status of the sample, and the log file produced by the submission.
+			The Submission status will tell the user whether or not a field has been altered for a given sample after the last submission.";
 }
 
 if (!headers_sent()) {

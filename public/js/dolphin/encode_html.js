@@ -57,19 +57,22 @@ function loadSamples(){
 		{
 			treatmentSelect.innerHTML = '';
 			antibodySelect.innerHTML = '';
-			var sampletable = $('#jsontable_selected_samples').dataTable();
+			var sampletable = $('#jsontable_encode_selected_samples').dataTable();
 			sampletable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				//	Datatable
 				s[x] = responseCheck(s[x]);
 				sampletable.fnAddData([
-					s[x].id,
+					s[x].sample_id,
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].id+", 'source_id')\">"+s[x].source+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].id+"', 'organism_id')\">"+s[x].organism+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
-					"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
-					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].id+", 'sample')\">"
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id', 'donor')\">"+s[x].donor+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].sample_id+", 'source_id')\">"+s[x].source+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
+					"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].sample_id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
+					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'sample')\">"
 				]);
 				
 				//	Modal
@@ -89,21 +92,17 @@ function loadDonors(){
 		success : function(s)
 		{
 			console.log(s);
-			var donortable = $('#jsontable_donors').dataTable();
+			var donortable = $('#jsontable_encode_donors').dataTable();
 			donortable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
 				donortable.fnAddData([
-					s[x].samplename,
-					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id', 'donor')\">"+s[x].donor+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
+					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, '', '', '', 'donor')\">"+s[x].donor+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'life_stage', 'ngs_donor', this, '', '', '')\">"+s[x].life_stage+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'age', 'ngs_donor', this, '', '', '')\">"+s[x].age+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'sex', 'ngs_donor', this, '', '', '')\">"+s[x].sex+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_acc', 'ngs_donor', this, '', '', '')\">"+s[x].donor_acc+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_uuid', 'ngs_donor', this, '', '', '')\">"+s[x].donor_uuid+"</p>",
+					s[x].donor_acc,
+					s[x].donor_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'donor')\">"
 				]);
 			}
@@ -119,7 +118,7 @@ function loadExperiments(){
 		success : function(s)
 		{
 			console.log(s);
-			var experimenttable = $('#jsontable_experiments').dataTable();
+			var experimenttable = $('#jsontable_encode_experiments').dataTable();
 			experimenttable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
@@ -128,8 +127,8 @@ function loadExperiments(){
 					"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'ngs_library_strategy', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'library_strategy_id')\">"+s[x].library_strategy+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].sample_id+"', 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>",
+					s[x].experiment_acc,
+					s[x].experiment_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'experiment')\">"
 				]);
 			}
@@ -145,7 +144,7 @@ function loadTreatments() {
 		success : function(s)
 		{
 			console.log(s);
-			var treatmenttable = $('#jsontable_treatments').dataTable();
+			var treatmenttable = $('#jsontable_encode_treatments').dataTable();
 			treatmenttable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
@@ -173,7 +172,7 @@ function loadBiosamples() {
 		success : function(s)
 		{
 			console.log(s);
-			var biosampletable = $('#jsontable_biosamples').dataTable();
+			var biosampletable = $('#jsontable_encode_biosamples').dataTable();
 			biosampletable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
@@ -185,8 +184,8 @@ function loadBiosamples() {
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_submitted', 'ngs_lanes', this, '', '', '')\">"+s[x].date_submitted+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_received', 'ngs_lanes', this, '', '', '')\">"+s[x].date_received+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_acc', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_acc+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_uuid+"</p>",
+					s[x].biosample_acc,
+					s[x].biosample_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'biosample')\">"
 				]);
 			}
@@ -202,7 +201,7 @@ function loadLibraries() {
 		success : function(s)
 		{
 			console.log(s);
-			var librarytable = $('#jsontable_libraries').dataTable();
+			var librarytable = $('#jsontable_encode_libraries').dataTable();
 			librarytable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
@@ -215,8 +214,8 @@ function loadLibraries() {
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'fragmentation_method', 'ngs_protocols', this, '', '', '')\">"+s[x].fragmentation_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].imid+"', 'instrument_model', 'ngs_instrument_model', this, 'ngs_samples', '"+s[x].sample_id+"', 'instrument_model_id')\">"+s[x].instrument_model+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'library_acc', 'ngs_samples', this, '', '', '')\">"+s[x].library_acc+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'library_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].library_uuid+"</p>",
+					s[x].library_acc,
+					s[x].library_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'library')\">"
 				]);
 			}
@@ -232,7 +231,7 @@ function loadAntibodies() {
 		success : function(s)
 		{
 			console.log(s);
-			var antibodytable = $('#jsontable_antibodies').dataTable();
+			var antibodytable = $('#jsontable_encode_antibodies').dataTable();
 			antibodytable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				s[x] = responseCheck(s[x]);
@@ -262,7 +261,7 @@ function loadReplicates(){
 		success : function(s)
 		{
 			console.log(s);
-			var replicatetable = $('#jsontable_replicates').dataTable();
+			var replicatetable = $('#jsontable_encode_replicates').dataTable();
 			replicatetable.fnClearTable();
 			for(var x = 0; x < s.length; x++){
 				if (s[x].biological_replica == null) {
@@ -277,7 +276,7 @@ function loadReplicates(){
 					"<p onclick=\"editBox("+1+", '"+s[x].antibody_id+"', 'target', 'ngs_antibody_target', this, 'ngs_samples', '"+s[x].sample_id+"', 'antibody_lot_id')\">"+s[x].target+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biological_replica', 'ngs_samples', this, '', '', '')\">"+s[x].biological_replica+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'technical_replica', 'ngs_samples', this, '', '', '')\">"+s[x].technical_replica+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'replicate_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].replicate_uuid+"</p>",
+					s[x].replicate_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'replicate')\">"
 				]);
 			}

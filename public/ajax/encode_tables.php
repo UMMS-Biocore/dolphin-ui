@@ -22,9 +22,17 @@ else if ($p == 'getSamples')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_samples.id, ngs_samples.samplename, ngs_samples.source_id,
-		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule
+		SELECT ngs_samples.id AS sample_id, ngs_samples.samplename, ngs_samples.source_id,
+		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule,
+		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id,
+		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab
 		FROM ngs_samples
+		LEFT JOIN ngs_donor
+		ON ngs_samples.donor_id = ngs_donor.id
+		LEFT JOIN ngs_experiment_series
+		ON ngs_samples.series_id = ngs_experiment_series.id
+		LEFT JOIN ngs_lab
+		ON ngs_experiment_series.lab_id = ngs_lab.id
 		LEFT JOIN ngs_source
 		ON ngs_samples.source_id = ngs_source.id
 		LEFT JOIN ngs_organism
@@ -38,22 +46,16 @@ else if($p == 'getDonors')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT DISTINCT ngs_donor.id as donor_id, ngs_donor.donor,
-		ngs_samples.samplename, ngs_donor.life_stage, ngs_donor.age,
-		ngs_donor.sex, ngs_donor.donor_acc, ngs_donor.donor_uuid, ngs_samples.id as sample_id,
-		ngs_lab.lab, ngs_lab.id as lab_id, ngs_organism.organism, ngs_samples.organism_id, 
-		ngs_experiment_series.id as experiment_series_id, ngs_experiment_series.`grant`
+		SELECT ngs_donor.id as donor_id, ngs_donor.donor,
+		ngs_donor.life_stage, ngs_donor.age,
+		ngs_donor.sex, ngs_donor.donor_acc, ngs_donor.donor_uuid
 		FROM ngs_donor
-		LEFT JOIN ngs_samples
-		ON ngs_samples.donor_id = ngs_donor.id
-		LEFT JOIN ngs_organism
-		ON ngs_samples.organism_id = ngs_organism.id
-		LEFT JOIN ngs_experiment_series
-		ON ngs_experiment_series.id = ngs_samples.series_id
-		LEFT JOIN ngs_lab
-		ON ngs_lab.id = ngs_experiment_series.lab_id
-		WHERE ngs_samples.id
-		IN ($samples)
+		WHERE ngs_donor.id
+		IN (
+			SELECT donor_id
+			FROM ngs_samples
+			WHERE ngs_samples.id IN ($samples)
+		)
 		");
 }
 else if($p == 'getExperiments')
