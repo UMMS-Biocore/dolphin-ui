@@ -138,7 +138,7 @@ ComboBox = function (object_name) {
 	};
 	this.edit.onkeyup = function (e) {
 		e = e || window.event;	
-		if (e.keyCode == 13 && parobject.dropdownlist.style.display == 'none') {
+		if (e.keyCode == 13) {
 				submitChanges(this, e);
 		}else if (e.keyCode == 13) {
 			// enter
