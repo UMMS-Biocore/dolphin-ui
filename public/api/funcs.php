@@ -88,9 +88,9 @@ class funcs
         $file_array = explode(",",$params['file']);
         $com = 'ls ';
         foreach($file_array as $fa){
-            $com .= $fa . " ";
+            $files .= $fa . " ";
         }
-        $com .= " | grep XXXXXXXXXXX";
+        $com .= "$files | grep XXXXXXXXXXX";
         $retval = $this->syscall($this->getCMDs($com));
         if (preg_match('/No such file or directory/', $retval)) {
             return "{\"ERROR\": \"".trim($retval)."\"}";
