@@ -87,6 +87,7 @@ class funcs
         $this->readINI();
         $file_array = explode(",",$params['file']);
         $com = 'ls ';
+        $files = '';
         foreach($file_array as $fa){
             $files .= $fa . " ";
         }
