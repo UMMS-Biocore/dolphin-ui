@@ -118,7 +118,7 @@ else if ($p == 'endLog')
 	if(count($current_samps) > 0){
 		$query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = 'Up to Date', output_file = '$file'
+			SET sub_status = '1', output_file = '$file'
 			WHERE sample_id in (".implode(",",$current_samps).")
 		");	
 	}

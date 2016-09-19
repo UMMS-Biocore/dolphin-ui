@@ -326,14 +326,14 @@ else if($p == 'encodeSampleEdit')
 	if($table == 'ngs_samples'){
 		$data = $query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = 'Needs Resubmission'
+			SET sub_status = '2'
 			WHERE sample_id in ($id)
 		");
 	}else if (in_array($table,$table_list)){
 		$field = $table_sample_link[array_search($table,$table_array)];
 		$data = $query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = 'Needs Resubmission'
+			SET sub_status = '2'
 			WHERE sample_id in (
 				SELECT id
 				FROM ngs_samples
@@ -345,7 +345,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$experiment_series)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -357,7 +357,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$lanes)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -369,7 +369,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$protocols)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -381,7 +381,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$lab)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -397,7 +397,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$treatment)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -409,7 +409,7 @@ else if($p == 'encodeSampleEdit')
 		if(in_array($field,$antibody_target)){
 			$data = $query->runSQL("
 				UPDATE encode_submissions
-				SET sub_status = 'Needs Resubmission'
+				SET sub_status = '2'
 				WHERE sample_id in (
 					SELECT id
 					FROM ngs_samples
@@ -418,10 +418,6 @@ else if($p == 'encodeSampleEdit')
 			");
 		}
 	}
-}
-else if ($p == 'changeMultiEncode')
-{
-	
 }
 
 if (!headers_sent()) {

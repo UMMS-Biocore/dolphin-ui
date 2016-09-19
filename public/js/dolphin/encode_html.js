@@ -20,10 +20,16 @@ function loadInEncodeSubmissions(){
 				var subtable = $('#jsontable_submissions_table').dataTable();
 				subtable.fnClearTable();
 				for(var x = 0; x < s.length; x++){
+					var sub_status;
+					if (s[x].sub_status == 1) {
+						sub_status = "<button class=\"btn btn-success\"></button>";
+					}else if (s[x].sub_status == 2) {
+						sub_status = "<button class=\"btn btn-danger\"></button>";
+					}
 					subtable.fnAddData([
 						s[x].id,
 						s[x].sample_id,
-						s[x].sub_status,
+						sub_status,
 						s[x].output_file
 					]);
 				}
