@@ -124,7 +124,7 @@ else if ($p == 'endLog')
 	}
 	$new_samps = array_diff($sample_ids, $current_samps);
 	foreach($new_samps as $ns){
-		array_push($push_new_samps, "( $ns, 'Up to Date', '$file' )");
+		array_push($push_new_samps, "( $ns, '1', '$file' )");
 	}
 	if(count($push_new_samps) > 0){
 		$query->runSQL("
