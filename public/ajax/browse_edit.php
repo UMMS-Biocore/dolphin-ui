@@ -24,9 +24,13 @@ if($p == 'insertDatabase')
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
-	$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
-	$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
-	$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id = '$parent_id'");
+	if($value == ''){
+		$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = NULL WHERE id = '$parent_id'");
+	}else{
+		$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
+		$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+		$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id = '$parent_id'");
+	}
 }
 if($p == 'insertDatabaseMulti')
 {
@@ -36,9 +40,13 @@ if($p == 'insertDatabaseMulti')
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
-	$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
-	$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
-	$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id in ($parent_id)");
+	if($value == ''){
+		$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = NULL WHERE id in ($parent_id)");
+	}else{
+		$query->runSQL("INSERT INTO ".$table." ($type) VALUES ('$value')");
+		$insert_id= json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+		$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = '".$insert_id[0]->id."' WHERE id in ($parent_id)");
+	}
 }
 if($p == 'updateDatabase')
 {
