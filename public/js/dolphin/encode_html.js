@@ -28,7 +28,7 @@ function loadInEncodeSubmissions(){
 					}
 					subtable.fnAddData([
 						s[x].id,
-						s[x].sample_id,
+						s[x].samplename,
 						sub_status,
 						s[x].output_file
 					]);
