@@ -20,7 +20,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($funcs->tool_path,'/home/travis/build/dolphin_tools/src');
 		$this->assertEquals($funcs->remotehost,'N');
 		$this->assertEquals($funcs->jobstatus,'N');
-		$this->assertEquals($funcs->config,'Docker');
+		$this->assertEquals($funcs->config,'Travis');
 		$this->assertEquals($funcs->python,'python');
 		$this->assertEquals($funcs->schedular,'N');
 		ob_end_clean();
@@ -37,7 +37,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($funcs->tool_path,'/home/travis/build/dolphin_tools/src');
 		$this->assertEquals($funcs->remotehost,'N');
 		$this->assertEquals($funcs->jobstatus,'N');
-		$this->assertEquals($funcs->config,'Docker');
+		$this->assertEquals($funcs->config,'Travis');
 		$this->assertEquals($funcs->python,'python');
 		$this->assertEquals($funcs->schedular,'N');
 		ob_end_clean();
