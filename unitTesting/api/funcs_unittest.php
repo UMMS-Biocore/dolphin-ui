@@ -425,8 +425,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$funcs  = new funcs();
         $params['username'] = 'kucukura';
 		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['id'], '1');
-		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['aws_access_key_id'], 'ngsalterdb new key');
-		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['aws_secret_access_key'], 'ngsalterdb new secret key');
+		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['bucket'], 'test_bucket');
 		ob_end_clean();
 	}
 	
