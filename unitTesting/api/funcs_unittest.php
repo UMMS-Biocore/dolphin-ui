@@ -17,7 +17,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($funcs->db,'biocore');
 		$this->assertEquals($funcs->dbuser,'bioinfo');
 		$this->assertEquals($funcs->dbpass,'bioinfo2013');
-		$this->assertEquals($funcs->tool_path,'/usr/local/share/dolphin_tools/src');
+		$this->assertEquals($funcs->tool_path,'/home/travis/build/dolphin_tools/src');
 		$this->assertEquals($funcs->remotehost,'N');
 		$this->assertEquals($funcs->jobstatus,'N');
 		$this->assertEquals($funcs->config,'Docker');
@@ -34,7 +34,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($funcs->db,'biocore');
 		$this->assertEquals($funcs->dbuser,'bioinfo');
 		$this->assertEquals($funcs->dbpass,'bioinfo2013');
-		$this->assertEquals($funcs->tool_path,'/usr/local/share/dolphin_tools/src');
+		$this->assertEquals($funcs->tool_path,'/home/travis/build/dolphin_tools/src');
 		$this->assertEquals($funcs->remotehost,'N');
 		$this->assertEquals($funcs->jobstatus,'N');
 		$this->assertEquals($funcs->config,'Docker');
