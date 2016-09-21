@@ -26,8 +26,8 @@ if (!empty($_SERVER["HTTP_HOST"])){
    ###########################################
 }
 
-if(strpos(getcwd(),'/home/travis/build/') > 0){
-   $param_section = "Travis";
+if(strpos(getcwd(),'travis/build') > 0){
+   $param_section="Travis";
 }
  
 $ini = parse_ini_file("config.ini", true);
@@ -61,7 +61,8 @@ define('ENCODE_SECRET', $ini_array['ENCODE_SECRET']);
 define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
 define('REQUESTS', $ini_array['REQUESTS']);
 
-$salt = parse_ini_file(".salt", true)['Dolphin'];
+$presalt = parse_ini_file(".salt", true);
+$salt = $presalt['Dolphin'];
 
 define('SALT', $salt['SALT']);
 define('PEPPER', $salt['PEPPER']);
