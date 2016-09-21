@@ -35,7 +35,7 @@ class browse_edit_unittest extends PHPUnit_Framework_TestCase
 		$_GET['p'] = 'getDropdownValues';
         $_GET['type'] = 'organism';
 		include("browse_edit.php");
-		$this->assertEquals(json_decode($data)[0]->organism,'human');
+		$this->assertEquals(json_decode($data)[0]->organism,'mousetest');
 		ob_end_clean();
 	}
 	
