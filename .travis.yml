@@ -20,7 +20,15 @@ before_install:
   - sudo pip install simple-crypt MySQL-python pjson boto numpy boto3
   - git clone https://github.com/UMMS-Biocore/dolphin-bin.git /home/travis/build/dolphin-bin
   - git clone https://github.com/UMMS-Biocore/dolphin-genome-data.git /home/travis/build/dolphin-genome-data
-  - git clone https://github.com/UMMS-Biocore/dolphin-ui.git /home/travis/build/dolphin-ui
+  
+install:
+  ######################
+  # CHANGE BRANCH HERE #
+  # use --branch=      #
+  ######################
+  - git clone --branch=2016_09_21_travis https://github.com/Rhaknam/dolphin-tools.git /home/travis/build/dolphin_tools
+  - git clone --branch=2016_09_21_travis https://github.com/Rhaknam/dolphin-ui.git /home/travis/build/dolphin-ui
+  - cd /home/travis/build/dolphin-ui
 
 before_script:
   - sudo a2enmod actions
