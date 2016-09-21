@@ -28,7 +28,6 @@ install:
   ######################
   - git clone --branch=2016_09_21_travis https://github.com/Rhaknam/dolphin-tools.git /home/travis/build/dolphin_tools
   - git clone --branch=2016_09_21_travis https://github.com/Rhaknam/dolphin-ui.git /home/travis/build/dolphin-ui
-  - cd /home/travis/build/dolphin-ui
 
 before_script:
   - sudo a2enmod actions
