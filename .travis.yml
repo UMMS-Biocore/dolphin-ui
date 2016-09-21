@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get -y install apache2 libapache2-mod-php5 php5-mysqlnd php5-gd php-pear php5-curl lynx-cur libxml2-dev software-properties-common tree perl
   - sudo pip install --upgrade pycrypto urllib3
   - sudo pip install simple-crypt MySQL-python pjson boto numpy boto3
-  - git clone https://github.com/UMMS-Biocore/dolphin-bin.git /usr/local/bin/dolphin-bin
+  - git clone https://github.com/UMMS-Biocore/dolphin-bin.git /home/travis/build/dolphin-bin
   - git clone https://github.com/UMMS-Biocore/dolphin-genome-data.git /home/travis/build/dolphin-genome-data
 
 before_script:
