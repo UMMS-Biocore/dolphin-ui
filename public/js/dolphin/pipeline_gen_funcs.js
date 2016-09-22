@@ -583,17 +583,6 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
-			/*
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Custom Options']),
-					createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_5_'+num, 'checkbox', 'margin', 'tophatCustomOptions('+num+')'])] ]);
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_3_'+num, 'box-title', 'display:none', 'Custom Genome File Path and Index']),
-					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_3_'+num, 'form-control', 'text', 'display:none', 'None'])] ]);
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_4_'+num, 'box-title', 'display:none', 'Custom Genome Annotation File (Full Path)']),
-					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_4_'+num, 'form-control', 'text', 'display:none', 'None'])] ]);
-			*/
 		}else if (pipeType == pipelineDict[3]) {
 			//Hisat2 Pipeline
 			divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'Hisat2 parameters:']));
@@ -616,17 +605,6 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
-			/*
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Custom Options']),
-					createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_5_'+num, 'checkbox', 'margin', 'tophatCustomOptions('+num+')'])] ]);
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_3_'+num, 'box-title', 'display:none', 'Custom Genome File Path and Index']),
-					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_3_'+num, 'form-control', 'text', 'display:none', 'None'])] ]);
-			divAdj = mergeTidy(divAdj, 12,
-					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_4_'+num, 'box-title', 'display:none', 'Custom Genome Annotation File (Full Path)']),
-					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_4_'+num, 'form-control', 'text', 'display:none', 'None'])] ]);
-			*/
 		}else if (pipeType == pipelineDict[4]) {
 			//ChipSeq Pipeline
 			console.log(id);
@@ -1183,7 +1161,7 @@ function manageChecklistsBulk(names){
 		if ( checklist_samples.indexOf( name ) > -1 ){
 			//remove
 			remove_bool = true;
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (checklist_lanes.indexOf(parseInt(lane_check)) > -1) {
 					for(var x = 0; x < lane_samples.length; x++){
 						if (lane_samples[x] == undefined) {
@@ -1243,7 +1221,7 @@ function manageChecklistsBulk(names){
 					check.checked = !check.checked;
 				}
 			}
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (document.getElementById('clear_basket').disabled) {
 					document.getElementById('clear_basket').disabled = false;
 				}
@@ -1376,7 +1354,7 @@ function manageChecklists(name, type){
 					check.checked = !check.checked;
 				}
 			}
-			if (window.location.href.indexOf("/pipeline/") == -1) {
+			if (window.location.href.indexOf("/pipeline/") == -1 && window.location.href.indexOf("/encode") == -1) {
 				if (document.getElementById('clear_basket').disabled) {
 					document.getElementById('clear_basket').disabled = false;
 				}
@@ -1472,6 +1450,9 @@ function manageChecklists(name, type){
 			console.log(lane_samples_to_add)
 			manageChecklistsBulk(lane_samples_to_add);
 		}
+	}
+	if (window.location.href.split("/").indexOf("encode") != -1) {		
+		loadInEncodeTables();		
 	}
 }
 
