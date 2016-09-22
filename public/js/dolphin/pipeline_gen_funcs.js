@@ -18,7 +18,7 @@ var checklist_experiment_series = [];
 var pipelineNum = 0;
 var customSeqNum = 0;
 var customSeqNumCheck = [];
-var pipelineDict = ['RNASeqRSEM', 'Tophat', 'ChipSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
+var pipelineDict = ['RNASeqRSEM', 'Tophat', 'STAR', 'Hisat2', 'ChipSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
 var rnaList = ["ercc","rRNA","miRNA","tRNA","piRNA","snRNA","rmsk","genome","change_params"];
 var qualityDict = ["window size","required quality","leading","trailing","minlen"];
 var trimmingDict = ["single or paired-end", "5 length 1", "3 length 1", "5 length 2", "3 length 2"];
@@ -205,16 +205,60 @@ function rerunLoad() {
 								if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
 									document.getElementById('checkbox_4_'+i).checked = true;
 								}
-								if (splt1[i].CustomGenomeIndex != 'None' || splt1[i].CustomGenomeAnnotation != 'None') {
-									tophatCustomOptions(i);
-									document.getElementById('checkbox_5_'+i).checked = true;
-									document.getElementById('textarea_3_'+i).value = splt1[i].CustomGenomeIndex;
-									document.getElementById('textarea_4_'+i).value = splt1[i].CustomGenomeAnnotation;
-								}
-							}else if (splt1[i].Type == pipelineDict[2]){
-								//Chipseq
+							}else if (splt1[i].Type == pipelineDict[2]) {
+								console.log(splt1[i]);
+								//STAR
 								additionalPipes();
 								document.getElementById('select_'+i).value = pipelineDict[2];
+								pipelineSelect(i);
+								document.getElementById('textarea_'+i).value = splt1[i].Params;
+								document.getElementById('select_1_'+i).value = splt1[i].IGVTDF;
+								document.getElementById('select_2_'+i).value = splt1[i].BAM2BW;
+								if (splt1[i].IGVTDF == 'yes') {
+									IGVTDFSelection('select_1_'+i);
+									document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+								}
+								if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
+									document.getElementById('checkbox_1_'+i).checked = true;
+								}
+								if (splt1[i].CollectRnaSeqMetrics == 'yes' || splt1[i].CollectRnaSeqMetrics == '1') {
+									document.getElementById('checkbox_2_'+i).checked = true;
+								}
+								if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
+									document.getElementById('checkbox_3_'+i).checked = true;
+								}
+								if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
+									document.getElementById('checkbox_4_'+i).checked = true;
+								}
+							}else if (splt1[i].Type == pipelineDict[3]) {
+								console.log(splt1[i]);
+								//Hisat2
+								additionalPipes();
+								document.getElementById('select_'+i).value = pipelineDict[3];
+								pipelineSelect(i);
+								document.getElementById('textarea_'+i).value = splt1[i].Params;
+								document.getElementById('select_1_'+i).value = splt1[i].IGVTDF;
+								document.getElementById('select_2_'+i).value = splt1[i].BAM2BW;
+								if (splt1[i].IGVTDF == 'yes') {
+									IGVTDFSelection('select_1_'+i);
+									document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+								}
+								if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
+									document.getElementById('checkbox_1_'+i).checked = true;
+								}
+								if (splt1[i].CollectRnaSeqMetrics == 'yes' || splt1[i].CollectRnaSeqMetrics == '1') {
+									document.getElementById('checkbox_2_'+i).checked = true;
+								}
+								if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
+									document.getElementById('checkbox_3_'+i).checked = true;
+								}
+								if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
+									document.getElementById('checkbox_4_'+i).checked = true;
+								}
+							}else if (splt1[i].Type == pipelineDict[4]){
+								//Chipseq
+								additionalPipes();
+								document.getElementById('select_'+i).value = pipelineDict[4];
 								pipelineSelect(i);
 								//Chip Input Menus
 								
@@ -252,10 +296,10 @@ function rerunLoad() {
 								if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
 									document.getElementById('checkbox_2_'+i).checked = true;
 								}
-							}else if (splt1[i].Type == pipelineDict[3]) {
+							}else if (splt1[i].Type == pipelineDict[5]) {
 								//DESEQ
 								additionalPipes();
-								document.getElementById('select_'+i).value = pipelineDict[3];
+								document.getElementById('select_'+i).value = pipelineDict[5];
 								pipelineSelect(i);
 								
 								//handle for multiple selections
@@ -298,11 +342,11 @@ function rerunLoad() {
 								document.getElementById('text_2_'+i).value = splt1[i].padj;
 								document.getElementById('text_3_'+i).value = splt1[i].foldChange;
 								document.getElementById('select_5_'+i).value = splt1[i].DataType;
-							}else if (splt1[i].Type == pipelineDict[4]) {
+							}else if (splt1[i].Type == pipelineDict[6]) {
 								//BisulphiteMapping
 								//MMap
 								additionalPipes();
-								document.getElementById('select_'+i).value = pipelineDict[4];
+								document.getElementById('select_'+i).value = pipelineDict[6];
 								pipelineSelect(i);
 								
 								document.getElementById('text_1_'+i).value = splt1[i].Digestion;
@@ -344,10 +388,10 @@ function rerunLoad() {
 								if (splt1[i].StrandSpecific == 'yes' || splt1[i].StrandSpecific == '1') {
 									document.getElementById('checkbox_6_'+i).checked = true;
 								}
-							}else if (splt1[i].Type == pipelineDict[5]) {
+							}else if (splt1[i].Type == pipelineDict[7]) {
 								//DiffMeth
 								additionalPipes();
-								document.getElementById('select_'+i).value = pipelineDict[5];
+								document.getElementById('select_'+i).value = pipelineDict[7];
 								pipelineSelect(i);
 								
 								document.getElementById('text_1_'+i).value = splt1[i].Name;
@@ -380,10 +424,10 @@ function rerunLoad() {
 										select2.options[h].selected = true;
 									}
 								}
-							}else if (splt1[i].Type == pipelineDict[6]) {
+							}else if (splt1[i].Type == pipelineDict[8]) {
 								//HaplotypeCaller
 								additionalPipes();
-								document.getElementById('select_'+i).value = pipelineDict[6];
+								document.getElementById('select_'+i).value = pipelineDict[8];
 								pipelineSelect(i);
 								
 								document.getElementById('text_1_'+i).value = splt1[i].standard_min_confidence_threshold_for_calling;
@@ -517,8 +561,51 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 12,
 					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_4_'+num, 'box-title', 'display:none', 'Custom Genome Annotation File (Full Path)']),
 					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_4_'+num, 'form-control', 'text', 'display:none', 'None'])] ]);
-			
 		}else if (pipeType == pipelineDict[2]) {
+			//STAR Pipeline
+			divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'STAR parameters:']));
+			divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+			divAdj = mergeTidy(divAdj, 6,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
+					createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
+					createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'no', 'yes'])] ]);
+			divAdj = mergeTidy(divAdj, 6,
+					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
+					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+		}else if (pipeType == pipelineDict[3]) {
+			//Hisat2 Pipeline
+			divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'Hisat2 parameters:']));
+			divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+			divAdj = mergeTidy(divAdj, 12,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+					[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
+					createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+			divAdj = mergeTidy(divAdj, 6,
+					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
+					createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
+					[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
+					createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'no', 'yes'])] ]);
+			divAdj = mergeTidy(divAdj, 6,
+					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
+					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+		}else if (pipeType == pipelineDict[4]) {
 			//ChipSeq Pipeline
 			console.log(id);
 			divAdj = mergeTidy(divAdj, 12,
@@ -563,7 +650,7 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 					   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
-		}else if (pipeType == pipelineDict[3]) {
+		}else if (pipeType == pipelineDict[5]) {
 			//DESEQ
 			divAdj = mergeTidy(divAdj, 12,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Name:']),
@@ -586,7 +673,7 @@ function pipelineSelect(num){
 			divAdj = mergeTidy(divAdj, 12,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Select Sequence']),
 					createElement('select', ['id', 'class'], ['select_5_'+num, 'form-control'])] ]);
-		}else if (pipeType == pipelineDict[4]) {
+		}else if (pipeType == pipelineDict[6]) {
 			//MMap
 			var labelDiv = createElement('div', ['class'], ['col-md-12 text-center']);
 			labelDiv.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Run BSMap:']));
@@ -645,7 +732,7 @@ function pipelineSelect(num){
 			labelDiv.appendChild( createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_7_'+num,'box-title margin', 'Strand Specific Information:', 'display:none']));
 			labelDiv.appendChild( createElement('input', ['id', 'type', 'class', 'style'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none']));
 			divAdj.appendChild(labelDiv);
-		}else if (pipeType == pipelineDict[5]) {
+		}else if (pipeType == pipelineDict[7]) {
 			//DiffMeth
 			divAdj = mergeTidy(divAdj, 12,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Name:']),
@@ -655,7 +742,7 @@ function pipelineSelect(num){
 					createElement('select',['id', 'class', 'type', 'multiple', 'size', 'onchange'],['multi_select_1_'+num, 'form-control', 'select-multiple', 'multiple', '8', 'deselectCondition(1, '+num+')'])],
 					[createElement('label', ['class','TEXTNODE'], ['box-title', 'Condition 2']),
 					createElement('select',['id', 'class', 'type', 'multiple', 'size', 'onchange'],['multi_select_2_'+num, 'form-control', 'select-multiple', 'multiple', '8', 'deselectCondition(2, '+num+')'])] ]);
-		}else if (pipeType == pipelineDict[6]) {
+		}else if (pipeType == pipelineDict[8]) {
 			//HaplotypeCaller
 			divAdj = mergeTidy(divAdj, 6,
 					[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Compare Common SNPs: ']),
@@ -692,7 +779,7 @@ function pipelineSelect(num){
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
-		if (pipeType == pipelineDict[3]) {
+		if (pipeType == pipelineDict[5]) {
 			for (var x = 0; x < deseqList.length; x++) {
 				var opt = createElement('option', ['id', 'value'], [deseqList[x], deseqList[x]]);
 				opt.innerHTML = deseqList[x];
@@ -1364,8 +1451,8 @@ function manageChecklists(name, type){
 			manageChecklistsBulk(lane_samples_to_add);
 		}
 	}
-	if (window.location.href.split("/").indexOf("encode") != -1) {
-		loadInEncodeTables();
+	if (window.location.href.split("/").indexOf("encode") != -1) {		
+		loadInEncodeTables();		
 	}
 }
 
@@ -1827,9 +1914,11 @@ function additionalPipes(){
 	var innerDiv = document.createElement( 'div' );
 	//attach children to parent
 	innerDiv.appendChild( createElement('select',
-					['id', 'class', 'onchange', 'OPTION_DIS_SEL', 'OPTION', 'OPTION', 'OPTION', 'OPTION', 'OPTION', 'OPTION', 'OPTION'],
+					['id', 'class', 'onchange', 'OPTION_DIS_SEL', 'OPTION', 'OPTION', 'OPTION', 'OPTION',
+					 'OPTION', 'OPTION', 'OPTION', 'OPTION', 'OPTION'],
 					['select_'+pipelineNum, 'form-control', 'pipelineSelect('+pipelineNum+')', '--- Select a Pipeline ---',
-					pipelineDict[0], pipelineDict[1], pipelineDict[2], pipelineDict[3], pipelineDict[4], pipelineDict[5], pipelineDict[6]]));
+					pipelineDict[0], pipelineDict[1], pipelineDict[2], pipelineDict[3], pipelineDict[4], pipelineDict[5], pipelineDict[6],
+					pipelineDict[7], pipelineDict[8]]));
 	innerDiv.appendChild( createElement('div', ['id'], ['select_child_'+pipelineNum]));
 	outerDiv.appendChild( innerDiv );
 	outerDiv.appendChild( createElement('input', ['id', 'type', 'class', 'style', 'value', 'onclick'],
@@ -1904,6 +1993,8 @@ function findPipelineValues(){
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
 	var CHIPSEQ_JSON_DICT = ['ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+	var STAR_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
+	var HISAT2_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
 	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'custombed', 'peaks'];
@@ -1923,6 +2014,10 @@ function findPipelineValues(){
 			USED_DICT = CHIPSEQ_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'Tophat') {
 			USED_DICT = TOPHAT_JSON_DICT;
+		}else if (currentPipelineVal[y] == 'STAR') {
+			USED_DICT = STAR_JSON_DICT;
+		}else if (currentPipelineVal[y] == 'Hisat2') {
+			USED_DICT = HISAT2_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'BisulphiteMapping') {
 			USED_DICT = BISULPHITE_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'DiffMeth') {
