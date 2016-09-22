@@ -56,8 +56,6 @@ define('SCHEDULAR', $ini_array['SCHEDULAR']);
 define('DEBROWSER_HOST', $ini_array['DEBROWSER_HOST']);
 define('ENCODE_URL', $ini_array['ENCODE_URL']);
 define('ENCODE_BUCKET', $ini_array['ENCODE_BUCKET']);
-define('ENCODE_ACCESS', $ini_array['ENCODE_ACCESS']);
-define('ENCODE_SECRET', $ini_array['ENCODE_SECRET']);
 define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
 define('REQUESTS', $ini_array['REQUESTS']);
 
@@ -68,6 +66,8 @@ define('SALT', $salt['SALT']);
 define('PEPPER', $salt['PEPPER']);
 define('MASTER', $salt['MASTER']);
 define('AMAZON', $salt['AMAZON']);
+define('ENCODE_ACCESS', $salt['ENCODE_ACCESS']);
+define('ENCODE_SECRET', $salt['ENCODE_SECRET']);
 
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))
