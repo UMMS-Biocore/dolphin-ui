@@ -637,7 +637,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 	}
 	console.log(summary_files);
 	if (summary_bool) {
-		var table_array = parseSummary(summary_files[summary_files.length - 1]['file']);
+		var table_array = parseSummary('summary/summary.tsv');
 		console.log(table_array);
 		var parsed = [];
 		for( var j = 0; j < table_array.length; j++){
@@ -1129,6 +1129,7 @@ $(function() {
 		//	Set up summary table headers
 		var non_rna_object = {}
 		for (var z = 0; z < summary_files.length; z++) {
+			summary_check = false;
 			if (summary_files[z]['file'] == "summary/summary.tsv") {
 				summary_check = true;
 			}
@@ -1200,7 +1201,6 @@ $(function() {
 			}
 		}
 		console.log(non_rna_object)
-		console.log(summary_check)
 		if (non_rna_object['rsem_dedup']){
 			document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads (RSEM)']));
 			document.getElementById('Duplicated Reads (RSEM)').innerHTML = 'Duplicated Reads (RSEM)';
