@@ -106,7 +106,6 @@ class funcs
         }
         $com2 = "ls -lshd $files | awk '{print \\\$2}' | grep d";
         $retval = $this->syscall($this->getCMDs($com2));
-        var_dump($retval);
         if(preg_match("/d/", $retval)){
             return "{\"ERROR\":\"Cannot use a directory as a specified file.  Please check your file input for inconsistencies\"}";
         }
