@@ -468,7 +468,8 @@ class Ngsimport extends VanillaModel {
 		$params['username'] = $clustername;
 		$params['file'] = $request;
 		$result = stripslashes($funcs->checkFile($params));
-		$valid_fastq = json_decode('['.str_replace("\n","",$result).']', true);
+		$valid_fastq = json_decode(str_replace("\n","",$result), true);
+		var_dump($valid_fastq);
 		if(isset($valid_fastq[0]['ERROR'])){
 			$this->final_check = false;
 			$error_array = explode("ls: ",$valid_fastq[0]['ERROR']);
