@@ -275,9 +275,7 @@ else if ($p == 'resetWKey'){
 	$wrapper_pid=$table[0]->wrapper_pid;
 	$workflow_pid=$table[0]->runworkflow_pid;
 	$wkey=$table[0]->wkey;
-	
 	killPid($idKey, $query);
-	
 	$data=$query->runSQL("
 	INSERT INTO ngs_wkeylist
 	(run_id, wkey, wrapper_pid, workflow_pid, time_added)
