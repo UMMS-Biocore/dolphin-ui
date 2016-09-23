@@ -11,19 +11,25 @@ var allCurrentSeries = [];
 
 function rerunSelected(runID, groupID){
 	var sample_ids = [];
-	$.ajax({ type: "GET",
-		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
-		data: { p: "getRunSamples", runID: runID },
-		async: false,
-		success : function(s)
-		{
-            console.log(s);
-			for(var i = 0; i < s.length; i++) {
-                sample_ids.push(s[i].sample_id);
+	if (runOwnerCheck(runID) != 'Permission Denied') {
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+			data: { p: "getRunSamples", runID: runID },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				for(var i = 0; i < s.length; i++) {
+					sample_ids.push(s[i].sample_id);
+				}
 			}
-		}
-	});
-	window.location.href = BASE_PATH+"/pipeline/rerun/" + runID + "/" + sample_ids + "$";
+		});
+		window.location.href = BASE_PATH+"/pipeline/rerun/" + runID + "/" + sample_ids + "$";
+	}else{
+		$('#runModal').modal({
+			show: true
+		});
+	}
 }
 
 function reportSelected(runID, groupID){
@@ -327,4 +333,19 @@ function findIfMatePaired(runID){
 		}
 	});
 	return checkMP;
+}
+
+function runOwnerCheck(run_id){
+	var response = '';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngsquerydb.php",
+		data: { p: "runOwnerCheck", run_id: run_id },
+		async: false,
+		success : function(s)
+		{
+			response = s;
+			console.log(s)
+		}
+	});
+	return response;
 }

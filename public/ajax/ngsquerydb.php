@@ -514,6 +514,20 @@ else if ( $p == "clearPreviousSamples")
 	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
 	$data=$query->runSQL("DELETE FROM ngs_runlist WHERE run_id = $run_id");
 }
+else if ($p == 'runOwnerCheck')
+{
+	if (isset($_GET['run_id'])){$run_id = $_GET['run_id'];}
+	$idCheck=$query->queryAVal("
+		SELECT owner_id
+		FROM ngs_runparams
+		where id = $run_id
+	");
+	if($_SESSION['uid'] == '1' || $idCheck == $_SESSION['uid']){
+		$data = json_encode("pass");
+	}else{
+		$data = json_encode('Permission Denied');
+	}
+}
 
 if (!headers_sent()) {
 	header('Cache-Control: no-cache, must-revalidate');

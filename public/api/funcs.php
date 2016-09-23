@@ -104,8 +104,9 @@ class funcs
         }else if (preg_match('/password:/', $retval)){
             return "{\"ERROR\": \"Dolphin cannot access your cluster account.  Please log into the GHPCC cluster and run this script: /project/umw_biocore/bin/addKey.bash\"}";
         }
-        $com2 = "ls -lshd $files | awk '{print \\\$2}' | grep d";
+        $com2 = "ls -lshd $files | awk '{print \$2}' | grep d";
         $retval = $this->syscall($this->getCMDs($com2));
+        var_dump($retval);
         if(preg_match("/d/", $retval)){
             return "{\"ERROR\":\"Cannot use a directory as a specified file.  Please check your file input for inconsistencies\"}";
         }

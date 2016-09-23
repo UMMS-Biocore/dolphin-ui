@@ -142,31 +142,46 @@ function deleteRunparams(run_id) {
 }
 
 function resumeSelected(run_id, groupID){
-    $.ajax({ type: "POST",
-		url: BASE_PATH+"/public/ajax/ngsalterdb.php",
-		data: { p: "noAddedParamsRerun", run_id: run_id },
-		async: false,
-		success : function(s)
-		{
-		}
-	});
-    
-    //   UPDATE THE PAGE
-    location.reload();
+	 if (runOwnerCheck(run_id) != 'Permission Denied') {
+		  $.ajax({ type: "POST",
+			   url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			   data: { p: "noAddedParamsRerun", run_id: run_id },
+			   async: false,
+			   success : function(s)
+			   {
+					console.log(s)
+			   }
+		  });
+		  
+		  //   UPDATE THE PAGE
+		  location.reload();
+	 }else{
+		  $('#runModal').modal({
+			  show: true
+		  });
+	 }
 }
 
 function resetSelected(run_id, groupID){
-	$.ajax({ type: "POST",
-		url: BASE_PATH+"/public/ajax/ngsalterdb.php",
-		data: { p: "resetWKey", id: run_id },
-		async: false,
-		success : function(s)
-		{
-		}
-	});
-    
-    //   UPDATE THE PAGE
-    location.reload();
+	 if (runOwnerCheck(run_id) != 'Permission Denied') {
+		  $.ajax({ type: "POST",
+			   url: BASE_PATH+"/public/ajax/ngsalterdb.php",
+			   data: { p: "resetWKey", id: run_id },
+			   async: false,
+			   success : function(s)
+			   {
+					console.log(s)
+			   }
+		  });
+		 
+		  //   UPDATE THE PAGE
+		  location.reload();
+	 }else{
+		  $('#runModal').modal({
+			  show: true
+		  });
+	 }
+	 
 }
 
 function confirmDeleteRunparams(run_id){

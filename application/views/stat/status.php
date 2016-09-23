@@ -127,6 +127,31 @@
 				  </div>
 				</div>
 			</div><!-- End perms modal -->
+			<div class="modal fade" id="runModal" tabindex="-1" role="dialog" aria-labelledby="myModalrun" aria-hidden="true">
+				<div class="modal-dialog">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					  <h4 class="modal-title" id="myModalrun">Owner Required</h4>
+					</div>
+					<form name="runForm" role="form" method="post">
+						<div class="modal-body" style="overflow:scroll">
+							<fieldset>
+								<div class="form-group">
+									<label id="runLabel">You must be the owner of this run to perform that action.</label>
+									<br>
+									<div id="runDiv">
+									</div>
+								</div>
+							</fieldset>   
+						</div>
+						<div class="modal-footer">
+							<button type="button" id="runButton" class="btn btn-default" data-dismiss="modal">OK</button>
+						</div>
+					</form>
+				  </div>
+				</div>
+			</div><!-- run modal -->
 				<section class="content-header">
 					<h1>
 						NGS Run Status
