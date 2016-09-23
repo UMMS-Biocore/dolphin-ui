@@ -68,6 +68,7 @@ define('MASTER', $salt['MASTER']);
 define('AMAZON', $salt['AMAZON']);
 define('ENCODE_ACCESS', $salt['ENCODE_ACCESS']);
 define('ENCODE_SECRET', $salt['ENCODE_SECRET']);
+define('VERIFY', $salt['VERIFY']);
 
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))

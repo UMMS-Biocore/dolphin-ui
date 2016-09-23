@@ -239,7 +239,7 @@ if(isset($_GET['p']) && $_GET['p'] == "verify"){
 	&& !isset($err_email) && !isset($err_password) && !isset($err_verifypassword)){
 	//	Calc pass hash
 	$pass_hash=hash('md5', $password_val . SALT) . hash('sha256', $password_val . PEPPER);
-	$verify=hash('md5', $username_val . "owien653");
+	$verify=hash('md5', $username_val . VERIFY);
 	//	Add new user to the database
 	$insert_user = $query->runSQL("
     INSERT INTO users
