@@ -56,7 +56,7 @@ before_script:
   - sudo mkdir -p /home/travis/build/pub /home/travis/build/logs tmp/files tmp/logs tmp/logs/run4 tmp/logs/run5 tmp/logs/run6 tmp/logs/run7 tmp/logs/run8
   - sudo ln -s $(pwd) /var/www/dolphin
   - sudo ln -s /home/travis/build/pub public/pub
-  - printf "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\nENCODE_ACCESS=test789\nENCODE_SECRET=test10" > config/.salt
+  - printf "[Dolphin]\nSALT=test123\nPEPPER=test456\nMASTER=travis\nAMAZON=travis\nENCODE_ACCESS=test789\nENCODE_SECRET=test10\nVERYIFY=test11" > config/.salt
   - export PATH=$PATH:/usr/local/bin/dolphin-bin
   - sudo chmod -R 777 /home
   - DOLPHIN_PARAMS_SECTION=Travis
