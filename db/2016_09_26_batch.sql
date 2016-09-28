@@ -1,4 +1,4 @@
-CREATE TABLE `biocore`.`new_table` (
+CREATE TABLE `biocore`.`encode_batch_submissions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `samples` VARCHAR(700) NULL DEFAULT NULL,
   `output_file` VARCHAR(100) NULL DEFAULT NULL,
