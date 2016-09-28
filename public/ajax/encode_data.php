@@ -120,7 +120,7 @@ else if ($p == 'endLog')
 			UPDATE encode_submissions
 			SET sub_status = '1', output_file = '$file'
 			WHERE sample_id in (".implode(",",$current_samps).")
-		");	
+		");
 	}
 	$new_samps = array_diff($sample_ids, $current_samps);
 	foreach($new_samps as $ns){
@@ -135,6 +135,16 @@ else if ($p == 'endLog')
 		");
 	}
 	unset($_SESSION['encode_log']);
+	
+	//batch submissions
+	$query->runSQL("
+		INSERT INTO encode_batch_submissions
+		(samples, output_file)
+		VALUES
+		('".implode(",",$sample_ids)."', '$file')
+		ON DUPLICATE KEY UPDATE output_file = '$file';
+	");
+	
 	$data = json_encode($file);
 }
 

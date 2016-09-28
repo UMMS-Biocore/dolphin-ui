@@ -39,10 +39,12 @@ $dir_query=json_decode($query->queryTable("
 	FROM ngs_dirs
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
-$sample_name = $query->queryAVal("
-	SELECT samplename
+$sample_name_query = $query->queryAVal("
+	SELECT samplename, instrument_model
 	FROM ngs_samples
-	WHERE id = $sample_id
+	LEFT JOIN ngs_instrument_model
+	ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+	WHERE ngs_samples.id = $sample_id
 	");
 
 //Encoded access information
@@ -62,8 +64,10 @@ $assembly = 'hg19';
 $replicate = "/replicates/" . $replicate . "/";
 
 $step_list = array();
+$sample_count = 0;
 //For each file (single or paired end)
 foreach($fastq_data as $fq){
+	$sample_name = $sample_name_query[$sample_count]->samplename;
 	$inserted = false;
 	$file_accs = array();
 	$file_uuids = array();
@@ -298,5 +302,6 @@ foreach($fastq_data as $fq){
 			WHERE id = " . $fq->id));
 		}
 	}
+	$sample_count++;
 }
 ?>

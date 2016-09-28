@@ -20,6 +20,18 @@ if ($p == 'getSubmissions')
 		ON encode_submissions.sample_id = ngs_samples.id
 	");
 }
+else if ($p == 'getBatchSubmissions')
+{
+	$data=$query->queryTable("
+		SELECT encode_batch_submissions.id, encode_batch_submissions.samples, encode_batch_submissions.output_file,
+		CASE
+			WHEN (SELECT COUNT(encode_submissions.id) FROM encode_submissions LEFT JOIN encode_batch_submissions ON encode_batch_submissions.id = encode_submissions.batch_submission 
+				  WHERE encode_submissions.batch_submission = encode_batch_submissions.id AND encode_submissions.sub_status = 2) > 0 THEN 2
+			ELSE 1
+		END AS sub_status
+		FROM encode_batch_submissions
+	");
+}
 else if ($p == 'getSamples')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}

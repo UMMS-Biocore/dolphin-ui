@@ -11,30 +11,57 @@ function responseCheck(data) {
 
 function loadInEncodeSubmissions(){
 	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/encode_tables.php",
-			data: { p: "getSubmissions" },
-			async: false,
-			success : function(s)
-			{
-				console.log(s);
-				var subtable = $('#jsontable_submissions_table').dataTable();
-				subtable.fnClearTable();
-				for(var x = 0; x < s.length; x++){
-					var sub_status;
-					if (s[x].sub_status == 1) {
-						sub_status = "<button class=\"btn btn-success\"></button>";
-					}else if (s[x].sub_status == 2) {
-						sub_status = "<button class=\"btn btn-danger\"></button>";
-					}
-					subtable.fnAddData([
-						s[x].id,
-						s[x].samplename,
-						sub_status,
-						s[x].output_file
-					]);
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getBatchSubmissions" },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			var subbatchtable = $('#jsontable_submissions_batch_table').dataTable();
+			subbatchtable.fnClearTable();
+			for(var x = 0; x < s.length; x++){
+				var sub_status;
+				if (s[x].sub_status == 1) {
+					sub_status = "<button class=\"btn btn-success\"></button>";
+				}else if (s[x].sub_status == 2) {
+					sub_status = "<button class=\"btn btn-danger\"></button>";
 				}
+				subbatchtable.fnAddData([
+					s[x].id,
+					s[x].samples,
+					sub_status,
+					s[x].output_file,
+					"<button class=\"btn btn-primary pull-right\" onclick=\"resubmitEncode('"+s[x].samples+"')\">Resubmit</button>",
+				]);
 			}
-		});
+		}
+	});
+	
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getSubmissions" },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			var subtable = $('#jsontable_submissions_table').dataTable();
+			subtable.fnClearTable();
+			for(var x = 0; x < s.length; x++){
+				var sub_status;
+				if (s[x].sub_status == 1) {
+					sub_status = "<button class=\"btn btn-success\"></button>";
+				}else if (s[x].sub_status == 2) {
+					sub_status = "<button class=\"btn btn-danger\"></button>";
+				}
+				subtable.fnAddData([
+					s[x].id,
+					s[x].samplename,
+					sub_status,
+					s[x].output_file
+				]);
+			}
+		}
+	});
 }
 
 function loadInEncodeTables(){
@@ -384,6 +411,12 @@ function toEncodeSubmissions() {
 
 function backToBrowser(){
 	window.location.href = BASE_PATH+"/public/search"
+}
+
+function resubmitEncode(string_ids){
+	flushBasketInfo();
+	sendBasketInfoBulk(string_ids);
+	toSubmitEncode();
 }
 
 $( function(){
