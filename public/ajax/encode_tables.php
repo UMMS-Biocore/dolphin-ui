@@ -39,7 +39,7 @@ else if ($p == 'getSamples')
 		SELECT ngs_samples.id AS sample_id, ngs_samples.samplename, ngs_samples.source_id,
 		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule,
 		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id,
-		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab
+		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab		
 		FROM ngs_samples
 		LEFT JOIN ngs_donor
 		ON ngs_samples.donor_id = ngs_donor.id
@@ -127,7 +127,7 @@ else if($p == 'getLibraries')
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_molecule.molecule, ngs_protocols.extraction, ngs_samples.read_length,
 		ngs_molecule.id as molecule_id, ngs_protocols.id as protocol_id, ngs_samples.instrument_model_id as imid, instrument_model,
 		ngs_samples.spike_ins, ngs_protocols.crosslinking_method, ngs_protocols.fragmentation_method, ngs_samples.library_acc,
-		ngs_samples.library_uuid
+		ngs_samples.library_uuid, ngs_samples.flowcell_id, machine_name, flowcell, ngs_flowcell.lane
 		FROM ngs_samples
 		LEFT JOIN ngs_molecule
 		ON ngs_samples.molecule_id = ngs_molecule.id
@@ -135,6 +135,8 @@ else if($p == 'getLibraries')
 		ON ngs_samples.instrument_model_id = ngs_instrument_model.id
 		LEFT JOIN ngs_protocols
 		ON ngs_samples.protocol_id = ngs_protocols.id
+		LEFT JOIN ngs_flowcell
+		ON ngs_samples.flowcell_id = ngs_flowcell.id
 		WHERE ngs_samples.id in ($samples)
 		");
 }

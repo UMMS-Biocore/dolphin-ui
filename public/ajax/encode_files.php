@@ -39,13 +39,13 @@ $dir_query=json_decode($query->queryTable("
 	FROM ngs_dirs
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
-$sample_name_query = $query->queryAVal("
-	SELECT samplename, instrument_model
+$sample_name_query = json_decode($query->queryTable("
+	SELECT samplename, machine_name, flowcell, lane
 	FROM ngs_samples
-	LEFT JOIN ngs_instrument_model
-	ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+	LEFT JOIN ngs_flowcell
+	ON ngs_samples.flowcell_id = ngs_flowcell.id
 	WHERE ngs_samples.id = $sample_id
-	");
+	"));
 
 //Encoded access information
 $encoded_access_key = ENCODE_ACCESS;
@@ -68,6 +68,18 @@ $sample_count = 0;
 //For each file (single or paired end)
 foreach($fastq_data as $fq){
 	$sample_name = $sample_name_query[$sample_count]->samplename;
+	$machine_name = $sample_name_query[$sample_count]->machine_name;
+	if($machine_name == 'None'){
+		$machine_name = 'uknown';
+	}
+	$flowcell = $sample_name_query[$sample_count]->flowcell;
+	if($flowcell == 'None'){
+		$flowcell = 'unknown';
+	}
+	$lane = $sample_name_query[$sample_count]->lane;
+	if($lane == 'None'){
+		$lane = 'unknown';
+	}
 	$inserted = false;
 	$file_accs = array();
 	$file_uuids = array();
@@ -98,6 +110,9 @@ foreach($fastq_data as $fq){
 			"submitted_file_name" => end(explode("/",$fn)),
 			"lab" => $my_lab,
 			"award" => $my_award,
+			"flowcell_details" => array(array("machine" => $machine_name),
+										array("flowcell" => $flowcell),
+										array("lane" => $lane))
 		);
 			
 		$data['output_type'] = 'reads';

@@ -88,6 +88,7 @@ function loadSamples(){
 		async: false,
 		success : function(s)
 		{
+			console.log(s);
 			treatmentSelect.innerHTML = '';
 			antibodySelect.innerHTML = '';
 			var sampletable = $('#jsontable_encode_selected_samples').dataTable();
@@ -247,6 +248,9 @@ function loadLibraries() {
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'fragmentation_method', 'ngs_protocols', this, '', '', '')\">"+s[x].fragmentation_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].imid+"', 'instrument_model', 'ngs_instrument_model', this, 'ngs_samples', '"+s[x].sample_id+"', 'instrument_model_id')\">"+s[x].instrument_model+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].flowcell_id+"', 'machine_name', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'machine_name')\">"+s[x].machine_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'flowcell', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'flowcell')\">"+s[x].flowcell+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'lane', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'lane')\">"+s[x].lane+"</p>",
 					s[x].library_acc,
 					s[x].library_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'library')\">"
