@@ -1083,12 +1083,7 @@ $(function() {
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
 					if (/rsem/.test(summary_files[z]['file'])){
-						if (summary_check) {
-							non_rna_object['rsem_multimap'] = true;
-							non_rna_object['rsem_unique'] = true;
-						}else{
-							non_rna_object['rsem'] = true;
-						}
+						non_rna_object['rsem'] = true;
 					}else if (/tophat/.test(summary_files[z]['file'])){
 						if (summary_check) {
 							non_rna_object['tophat_multimap'] = true;
