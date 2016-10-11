@@ -691,7 +691,7 @@ function createEncodeJson(json_type){
 					json['extraction_method'] = protocol_info[proto_lib_type].extraction;
 				}
 			}else if (terms[y] == "size_range") {
-				json['size_range'] = sample_info[x].read_length;
+				json['size_range'] = sample_info[x].avg_insert_size;
 			}else if (terms[y] == "product_id") {
 				json['product_id'] = antibody_info[x].product_id;
 			}else if (terms[y] == "lot_id") {
