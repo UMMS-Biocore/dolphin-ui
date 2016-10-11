@@ -15,7 +15,7 @@ if($p == 'getSampleDataInfo')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
-							 avg_insert_size, biological_replica, technical_replica, spike_ins,
+							 avg_insert_size, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
 							 time, ngs_donor.id as did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism, source,

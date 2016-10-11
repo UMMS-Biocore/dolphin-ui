@@ -199,7 +199,7 @@
 										<?php
 											#Libraries
 											echo $html->getRespBoxTable_ng("Libraries", "encode_libraries",
-																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Sequencing Platform</th><th>Machine Name</th><th>Flowcell</th><th>Flowcell Lane</th><th>Library Acc</th><th>Library UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Read Size</th><th>Sequencing Platform</th><th>Machine Name</th><th>Flowcell</th><th>Flowcell Lane</th><th>Library Acc</th><th>Library UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','library',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','library',this,event)"/>

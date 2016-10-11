@@ -247,6 +247,7 @@ function loadLibraries() {
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'fragmentation_method', 'ngs_protocols', this, '', '', '')\">"+s[x].fragmentation_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'avg_insert_size', 'ngs_samples', this, '', '', '')\">"+s[x].avg_insert_size+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].imid+"', 'instrument_model', 'ngs_instrument_model', this, 'ngs_samples', '"+s[x].sample_id+"', 'instrument_model_id')\">"+s[x].instrument_model+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].flowcell_id+"', 'machine_name', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'machine_name')\">"+s[x].machine_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'flowcell', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'flowcell')\">"+s[x].flowcell+"</p>",
