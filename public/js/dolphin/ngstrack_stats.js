@@ -736,10 +736,12 @@ $(function() {
 		}
 		
 		//	Function within report_fincs.js
-		summaryPlotSetup(table_data);
-		console.log(table_data);
-		createSummaryHighchart();
-		showHighchart('plots');
+		if (Object.keys(table_data).length > 0) {
+			summaryPlotSetup(table_data);
+			console.log(table_data);
+			createSummaryHighchart();
+			showHighchart('plots');
+		}
 		
 		console.log(table_params);
 		//	Log data path
