@@ -40,7 +40,7 @@ $dir_query=json_decode($query->queryTable("
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
 $sample_name_query = json_decode($query->queryTable("
-	SELECT samplename, machine_name, flowcell, lane
+	SELECT samplename, machine_name, flowcell, lane, read_length
 	FROM ngs_samples
 	LEFT JOIN ngs_flowcell
 	ON ngs_samples.flowcell_id = ngs_flowcell.id
@@ -70,7 +70,7 @@ foreach($fastq_data as $fq){
 	$sample_name = $sample_name_query[$sample_count]->samplename;
 	$machine_name = $sample_name_query[$sample_count]->machine_name;
 	if($machine_name == 'None'){
-		$machine_name = 'uknown';
+		$machine_name = 'unknown';
 	}
 	$flowcell = $sample_name_query[$sample_count]->flowcell;
 	if($flowcell == 'None'){
@@ -79,6 +79,10 @@ foreach($fastq_data as $fq){
 	$lane = $sample_name_query[$sample_count]->lane;
 	if($lane == 'None'){
 		$lane = 'unknown';
+	}
+	$read_length = $sample_name_query[$sample_count]->read_length;
+	if($read_length == 'None'){
+		$read_length = 'unknown';
 	}
 	$inserted = false;
 	$file_accs = array();
@@ -105,7 +109,7 @@ foreach($fastq_data as $fq){
 			"replicate" => $replicate,
 			"file_size" => $file_size,
 			"md5sum" => $md5sum,
-			"read_length" => 101,
+			"read_length" => (int)$read_length,
 			"platform" => "ENCODE:HiSeq2000",
 			"submitted_file_name" => end(explode("/",$fn)),
 			"lab" => $my_lab,
