@@ -168,10 +168,10 @@ else if ($p == 'convertToTSV')
 {       
 	if (isset($_GET['url'])){$url = $_GET['url'];}
 	$json_data_string = substr(file_get_contents($url), 1, -1);
-	$json_string_array = explode($json_data_string, "},");
+	$json_string_array = explode("},", $json_data_string);
 	$json_data = array();
 	foreach($json_string_array as $json_string_frag){
-		if(end($json_string_array) == $json_string_frag){
+		if(end($json_string_array) != $json_string_frag){
 			array_push($json_data, json_decode($json_string_frag . "}"));
 		}else{
 			array_push($json_data, json_decode($json_string_frag));
