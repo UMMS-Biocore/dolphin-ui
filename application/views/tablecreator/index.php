@@ -67,6 +67,7 @@
 								?>
 							</div>
 							<div class="margin col-md-12">
+								<button class="btn btn-primary pull-left" onclick="">Select Like Runs</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toBrowserPage()">Back to Browser</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="tableCreatorPage()">Generate Table</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toTableListing()">To Created Tables</button>
