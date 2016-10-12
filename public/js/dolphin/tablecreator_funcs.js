@@ -65,7 +65,7 @@ function manageCreateChecklists(id, tablerow){
 							s[i].id,
 							s[i].samplename,
 							run_select,
-							'<button class="btn btn-primary pull-left" onclick="">Select Like Runs</button>',
+							'<button class="btn btn-primary pull-left" onclick="selectSimilarRuns(\''+s[i].id+'\')">Select Like Runs</button>',
 							'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeTableSamples(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
 							]);
 						runHelper.push(s[i].id);
