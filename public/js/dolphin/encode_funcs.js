@@ -629,9 +629,9 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "treatment_type") {
 				json['treatment_type'] = treatment_info[treatment_lib_type].treatment_type;
 			}else if (terms[y] == "concentration") {
-				json['concentration'] = parseInt(treatment_info[treatment_lib_type].concentration);
+				json['amount'] = parseInt(treatment_info[treatment_lib_type].concentration);
 			}else if (terms[y] == "concentration_units") {
-				json['concentration_units'] = treatment_info[treatment_lib_type].concentration_units;
+				json['amount_units'] = treatment_info[treatment_lib_type].concentration_units;
 			}else if (terms[y] == "duration") {
 				json['duration'] = parseInt(treatment_info[treatment_lib_type].duration);
 			}else if (terms[y] == "duration_units") {
