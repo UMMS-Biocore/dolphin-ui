@@ -30,8 +30,8 @@ $json = $json_passed;
 
 #Cycle through array and post objects
 foreach ($json as $json_object) {
-	if(isset($json_object['concentration'])){
-		$json_object['concentration'] = intval($json_object['concentration']);
+	if(isset($json_object['amount'])){
+		$json_object['amount'] = intval($json_object['amount']);
 	}
 	if(isset($json_object['duration'])){
 		$json_object['duration'] = intval($json_object['duration']);
