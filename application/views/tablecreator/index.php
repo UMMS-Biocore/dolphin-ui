@@ -41,7 +41,7 @@
 						<div class="col-md-12">
 							<div class="col-md-8">
 								<?php 
-									echo $html->getRespBoxTable_ng("Samples Selected", "selected_samples", "<th>id</th><th>Sample Name</th><th>Run ID</th><th>Delete</th>");
+									echo $html->getRespBoxTable_ng("Samples Selected", "selected_samples", "<th>id</th><th>Sample Name</th><th>Run ID</th><th>Select</th><th>Delete</th>");
 								?>
 							</div>
 							<div class="col-md-4">
@@ -67,7 +67,6 @@
 								?>
 							</div>
 							<div class="margin col-md-12">
-								<button class="btn btn-primary pull-left" onclick="">Select Like Runs</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toBrowserPage()">Back to Browser</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="tableCreatorPage()">Generate Table</button>
 								<button class="btn btn-box-tool btn-primary margin pull-right" onclick="toTableListing()">To Created Tables</button>

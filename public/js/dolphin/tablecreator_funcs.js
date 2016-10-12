@@ -65,6 +65,7 @@ function manageCreateChecklists(id, tablerow){
 							s[i].id,
 							s[i].samplename,
 							run_select,
+							'<button class="btn btn-primary pull-left" onclick="">Select Like Runs</button>',
 							'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeTableSamples(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
 							]);
 						runHelper.push(s[i].id);
@@ -555,6 +556,27 @@ function sendToSavedTable(id){
 	});
 }
 
+function selectSimilarRuns(sample_id){
+	var run_select = document.getElementById(sample_id + "_run_select");
+	var selected_option = run_select.options[run_select.selectedIndex]
+	if (selected_option != undefined) {
+		var table = $('#jsontable_selected_samples').dataTable();
+		var wkey = selected_option.value;
+		console.log(wkey)
+		var table_data = table.fnGetNodes()
+		for (var x = 0; x < table_data.length; x++) {
+			var select = table_data[x].children[2].children[0]
+			var options = select.children
+			for (var y = 0; y < options.length; y++) {
+				if (options[y].value == wkey) {
+					select.value = wkey
+					optionChange(select)
+				}
+			}
+		}
+	}
+}
+
 $(function() {
 	"use strict";
 	if(window.location.href.split("/").indexOf('table') < 0 && window.location.href.split("/").indexOf('tablereports') < 0 &&
@@ -627,6 +649,7 @@ $(function() {
 							s[i].id,
 							s[i].samplename,
 							run_select,
+							'<button class="btn btn-primary pull-left" onclick="selectSimilarRuns(\''+s[i].id+'\')">Select Like Runs</button>',
 							'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="manageCreateChecklists(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
 						]);
 					}
