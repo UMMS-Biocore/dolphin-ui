@@ -31,8 +31,8 @@ $json = $json_passed;
 $count = 0;
 foreach ($accs as $acc) {
 	if($acc != null){
-		if(isset($json[$count]['concentration'])){
-			$json[$count]['concentration'] = intval($json[$count]['concentration']);
+		if(isset($json[$count]['amount'])){
+			$json[$count]['amount'] = intval($json[$count]['amount']);
 		}
 		if(isset($json[$count]['duration'])){
 			$json[$count]['duration'] = intval($json[$count]['duration']);
