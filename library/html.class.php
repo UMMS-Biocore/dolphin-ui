@@ -847,69 +847,66 @@ e range"><i class="fa fa-calendar"></i></button>
 		</div><!-- /.col -->';
 	return $html;
 	}
-	function fastlaneManualFileInput(){
-		$html ='<div class="box-body">
-						<div class="input-group margin col-md-11">
-							<form role="form"><textarea id="input_files" type="text" class="form-control" rows="5" placeholder="Paired End Example:
-	library_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz
-Single End Example:
-	library_name_rep1 lib_rep1.fastq.gz"></textarea>
-							</form>
-						</div>
-					</div>';
-		return $html;
-	}
 	function fastlaneDirectoryFileInput(){
 		$html = "";
-		$html .= 	'<div class="box-body">
-						<div class="input-group margin col-md-12">
-							<div class="col-md-12">
-								<div id="input_file1" class="col-md-12">
-									<div class="col-md-12 margin">
-										<label>Read Files</label>
-										<select id="file_select" type="select-multiple" multiple size="10" style="width:100%"></select>
-									</div>
-									<div class="col-md-12 margin">
-										<div class="col-md-8">
-											<div class="col-md-9">
-												<input id="regex_add_field" type="text" class="form-control" placeholder="Adv Regex Select">
-											</div>
-											<div class="col-md-3">
-												<button id="regex_add_file" type="button" class="btn btn-primary pull-left" onclick="addSelection(\'adv\')">Adv Regex Select</i></button>
-											</div>
+		$html .= 	'<div class="col-md-12">
+					<div class="box box-default">
+						<div class="box-header with-border">
+							<h3 class="box-title">Input File Selection</h3>';
+		$html.= $this->getInfoBox('input_file_fastlane');
+						
+		$html.= 	'</div>
+						<div class="box-body">
+							<div class="input-group col-md-12">
+								<div class="col-md-12">
+									<div id="input_file1" class="col-md-12">
+										<div class="col-md-12 margin">
+											<label>Read Files</label>
+											<select id="file_select" type="select-multiple" multiple size="10" style="width:100%"></select>
 										</div>
-										<div class="col-md-4">
-											<button id="add_selection_file" type="button" class="btn btn-primary pull-right" onclick="addSelection(\'standard\')">Add Selection</i></button>
-											<button id="smart_add_file" type="button" class="btn btn-primary pull-right" onclick="smartSelection()">Add All</i></button>
-											<button id="clear_selection" type="button" class="btn btn-warning pull-right" onclick="clearSelection()">Reset</i></button>
+										<div class="col-md-12 margin">
+											<div class="col-md-8">
+												<div class="col-md-9">
+													<input id="regex_add_field" type="text" class="form-control" placeholder="Adv Regex Select">
+												</div>
+												<div class="col-md-3">
+													<button id="regex_add_file" type="button" class="btn btn-primary pull-left" onclick="addSelection(\'adv\')">Adv Regex Select</i></button>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<button id="add_selection_file" type="button" class="btn btn-primary pull-right" onclick="addSelection(\'standard\')">Add Selection</i></button>
+												<button id="smart_add_file" type="button" class="btn btn-primary pull-right" onclick="smartSelection()">Add All</i></button>
+												<button id="clear_selection" type="button" class="btn btn-warning pull-right" onclick="clearSelection()">Reset</i></button>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-12">
-								<div id="nobarcodes_div" style="display:none">
-									<table id="jsontable_dir_files" class="table table-hover table-bordered compact">
-										<thead>
-											<tr id="tablerow">
-												<th>Sample Name</th>
-												<th>Files Used</th>
-												<th>Remove</th>
-											</tr>
-										</thead>
-									</table>
-								</div>
-								<div id="barcodes_div" style="display:none">
-									<table id="jsontable_barcode_files" class="table table-hover table-bordered compact">
-										<thead>
-											<tr id="tablerow">
-												<th>Files Used</th>
-												<th>Remove</th>
-											</tr>
-										</thead>
-									</table>
+								<div class="col-md-12">
+									<div id="nobarcodes_div" style="display:none">
+										<table id="jsontable_dir_files" class="table table-hover table-bordered compact">
+											<thead>
+												<tr id="tablerow">
+													<th>Sample Name</th>
+													<th>Files Used</th>
+													<th>Remove</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
+									<div id="barcodes_div" style="display:none">
+										<table id="jsontable_barcode_files" class="table table-hover table-bordered compact">
+											<thead>
+												<tr id="tablerow">
+													<th>Files Used</th>
+													<th>Remove</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 					</div>';
 		return $html;
 	}

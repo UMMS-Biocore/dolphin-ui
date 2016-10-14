@@ -136,9 +136,7 @@
 						</div>
 						<div id="input_files_div" class="col-md-12">
 							<?php
-							$manual = $html->fastlaneManualFileInput();
-							$directory = $html->fastlaneDirectoryFileInput();
-							echo $html->getStaticTabbedSelectionBox("Input Files", "input_files", ['Manual', 'Directory'], [$manual, $directory], 12);
+							echo $html->fastlaneDirectoryFileInput();
 							?>
 						</div>
 						<div id="output_files" class="col-md-12">

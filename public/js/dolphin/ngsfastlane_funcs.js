@@ -22,22 +22,17 @@ function expandBarcodeSep(){
 	if (expandType == 'yes') {
 		barcodeDiv.style.display = 'inline';
 		barcodeOptDiv.style.display = 'inline';
-		document.getElementById('input_files').placeholder = "Paired End Example:\nlane_001_R1.fastq.gz lane_001_R2.fastq\nSingle End Example:\nlane_001.fastq.gz";
 	}else{
 		barcodeDiv.style.display = 'none';
 		barcodeOptDiv.style.display = 'none';
-		document.getElementById('input_files').placeholder = "Paired End Example:\nlibrary_name_rep1 lib_rep1_R1.fastq.gz lib_rep1_R2.fastq.gz\nSingle End Example:\nlibrary_name_rep1 lib_rep1.fastq.gz";
 	}
 }
 
 function resetSelection(){
-	document.getElementById('Directory_toggle').setAttribute('data-toggle', 'none');
 	var files = $('#jsontable_dir_files').dataTable();
 	files.fnClearTable();
 	var barcodes = $('#jsontable_barcode_files').dataTable();
 	barcodes.fnClearTable();
-	
-	$('.nav-tabs a[href="#Manual"]').tab('show')
 }
 
 function submitFastlaneButton() {
@@ -73,54 +68,44 @@ function submission(){
 	value_array.push("human,hg19");
 	for(var x = 0; x < id_array.length; x++){
 		if (id_array[x] == 'input_files'){
-			//      Manual Text box
-			if (document.getElementById('Manual_toggle').parentNode.className == "active") {
-				//      obtain value and trim and replace commas and tabs
-				var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
-				//      push to array
-				console.log(value_str);
-				value_array.push(value_str);
-			//      File-Directory Selection
+			var barcode_bool = false;
+			if (document.getElementById('barcode_sep').value == 'yes') {
+				barcode_bool = true;
+				var files = $('#jsontable_barcode_files').dataTable();
 			}else{
-				var barcode_bool = false;
-				if (document.getElementById('barcode_sep').value == 'yes') {
-					barcode_bool = true;
-					var files = $('#jsontable_barcode_files').dataTable();
-				}else{
-					var files = $('#jsontable_dir_files').dataTable();
-				}
-				var table_data = files.fnGetData();
-				var table_nodes = files.fnGetNodes();
-				var value_str = "";
-				sendProcessDataRaw([''], 'dir_used');
-				//      For every selected entry
-				for(var y = 0; y < table_data.length; y++){
-					if (barcode_bool) {
-						var files_used = table_data[y][0].split(" | ");
-						for(var z = 0; z < files_used.length; z++){
-							if (z == files_used.length - 1 && y == table_data.length - 1) {
-								value_str += files_used[z];
-							}else{
-								value_str += files_used[z] + ':';
-							}
-						}
-					}else{
-						var name = table_nodes[y].children[0].children[0].id
-						var files_used = table_data[y][1].split(" | ");
-						for(var z = 0; z < files_used.length; z++){
-							if (z == files_used.length - 1 && y == table_data.length - 1) {
-								value_str += name + " " + files_used[z];
-							}else{
-								value_str += name + " " + files_used[z] + ':';
-							}
+				var files = $('#jsontable_dir_files').dataTable();
+			}
+			var table_data = files.fnGetData();
+			var table_nodes = files.fnGetNodes();
+			var value_str = "";
+			sendProcessDataRaw([''], 'dir_used');
+			//      For every selected entry
+			for(var y = 0; y < table_data.length; y++){
+				if (barcode_bool) {
+					var files_used = table_data[y][0].split(" | ");
+					for(var z = 0; z < files_used.length; z++){
+						if (z == files_used.length - 1 && y == table_data.length - 1) {
+							value_str += files_used[z];
+						}else{
+							value_str += files_used[z] + ':';
 						}
 					}
-					
+				}else{
+					var name = table_nodes[y].children[0].children[0].id
+					var files_used = table_data[y][1].split(" | ");
+					for(var z = 0; z < files_used.length; z++){
+						if (z == files_used.length - 1 && y == table_data.length - 1) {
+							value_str += name + " " + files_used[z];
+						}else{
+							value_str += name + " " + files_used[z] + ':';
+						}
+					}
 				}
-				value_str = value_str.replace(/[\t\,]+/g, " ");
-				console.log(value_str);
-				value_array.push(value_str);
+				
 			}
+			value_str = value_str.replace(/[\t\,]+/g, " ");
+			console.log(value_str);
+			value_array.push(value_str);
 		}else if (document.getElementById(id_array[x]) != null) {
 			//	obtain value and trim and replace commas and tabs
 			var value_str = document.getElementById(id_array[x]).value.trim().replace(/[\t\,]+/g, " ");
