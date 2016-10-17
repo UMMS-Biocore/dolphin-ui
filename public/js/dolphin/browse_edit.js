@@ -212,7 +212,7 @@ function submitChanges(ele, event = event) {
 		document.getElementById('submit_file_changes').remove();
 		document.getElementById('cancel_file_changes').remove();
 		clearElementHighlighted();
-	}else if((event.keyCode == 13)) {
+	}else if((event.keyCode == 13) || event == 13) {
 		if (ele == "dir_element") {
 			ele = document.getElementById('inputTextBox');
 		}
