@@ -50,9 +50,11 @@ function submitFastlaneButton() {
 }
 
 function realSubmit(){
-	submission();
-	document.getElementById('fastlane_form').submit();
-	document.getElementById('hidden_submit_fastlane').click();
+	var sub = submission();
+	if (sub != undefined) {
+		document.getElementById('fastlane_form').submit();
+		document.getElementById('hidden_submit_fastlane').click();
+	}
 }
 
 function backToFastlane(){
@@ -125,9 +127,7 @@ function submission(){
 	
 	var checked_values = checkFastlaneInput(value_array);
 	console.log(checked_values);
-	sendProcessData(checked_values, 'pass_fail_values');
-	var bad_samples = getBadSamples();
-	sendProcessData(bad_samples, 'bad_samples');
+	return checked_values;
 }
 
 function checkNewRun(outdir) {

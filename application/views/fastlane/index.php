@@ -97,7 +97,7 @@
 					</form>
 				  </div>
 				</div>
-			</div><!-- End Error modal -->
+			</div><!-- End dircheck modal -->
 			
 			<form role="form" id="fastlane_form" enctype="multipart/form-data" action="fastlane/process" method="post">
 				<section class="content">

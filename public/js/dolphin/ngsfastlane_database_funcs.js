@@ -20,7 +20,6 @@ function checkFastlaneInput(info_array){
 	//	Declare variables
 	var barcode_array = [];
 	var input_array = [];
-	var database_checks = [];
 	var sample_ids = [];
 	var sample_file_check = [];
 	var true_sample_ids = [];
@@ -58,32 +57,25 @@ function checkFastlaneInput(info_array){
 			}else if (id_array[x] == 'backup_dir') {
 				error_out.push("Process Directory cannot be empty.")
 			}
-			database_checks.push(false);
 		//	Check Barcode Separation if selected yes for barcode separation
 		}else if (id_array[x] == 'barcode_sep' && info_array[x] == 'yes') {
-			var split_check = true;
 			//	Split barcode submissioned on new lines
 			var split_barcodes = info_array[id_array.length - 3].split('\n');
 			//	remove blank new lines
 			split_barcodes = split_barcodes.filter(function(n){return n != ''});
 			if (split_barcodes.length == 0) {
 				error_out.push("Barcode Definitions cannot be empty when Barcode Seperation is selected.")
-				split_check = false;
 			}
 			for (var y = 0; y < split_barcodes.length; y++) {
 				//	If proper characters are not being used
 				if (!/^[a-zA-Z 0-9\_\.\-\s\t\,]*$/.test(split_barcodes[y].split(/[\s\t\,]/)[0])) {
 					error_out.push("Sample name " + split_barcodes[y].split(/[\s\t\,]/)[0] + " Does not contain proper characters.<br> Please make sure to use only alpha-numerics with dashes/periods/backslashes/underscores");
-					split_check = false;
 				}else if (split_barcodes[y].split(/[\s\t\,]/).length != 2) {
 					error_out.push("Barcode submission requires both a sample name and a barcode.")
-					split_check = false;
 				}else if (!/^[actgATCG]*$/.test(split_barcodes[y].split(/[\s\t\,]/)[1])) {
 					error_out.push("Barcode " + split_barcodes[y].split(/[\s\t\,]/)[1] + " must contain ATCG only.")
-					split_check = false;
 				}else if (/[0-9]/.test(split_barcodes[y].substring(0,1))){
  					error_out.push("Sample name " + split_barcodes[y].split(/[\s\t\,]/)[0] + " cannot start with a numeric character.");
- 					split_check = false;
 				}else{
 					var single_barcode_array = [split_barcodes[y].split(/[\s\t\,]/)];
 					single_barcode_array = single_barcode_array.filter(function(n){return n != ''});
@@ -91,21 +83,13 @@ function checkFastlaneInput(info_array){
 					barcode_array.push(single_barcode_array);
 				}
 			}
-			//	If a barcode error exists
-			if (split_check) {
-				database_checks.push(true);
-			}else{
-				database_checks.push(false);
-			}
 		//	Input File Checks
 		}else if (id_array[x] == 'input_files'){
 			//	Paired-end libraries
 			var input_bool_check = true;
-			if (document.getElementById('Directory_toggle').parentNode.className == "active") {
-					var split_inputs = info_array[6].split(":");
-			}else{
-					var split_inputs = info_array[6].split("\n");
-			}
+			console.log(info_array[6])
+			var split_inputs = info_array[6].split(":");
+			console.log(split_inputs);
 			//	Check for blank lines and eliminate them
 			split_inputs = split_inputs.filter(function(n){return n != ''});
 			if (split_inputs.length == 0) {
@@ -167,7 +151,7 @@ function checkFastlaneInput(info_array){
 				//	use file check list and check permissions
 				console.log(file_check)
 				$.ajax({
-					type: 	'POST',
+					type: 	'GET',
 					url: 	BASE_PATH+'/public/api/service.php',
 					data: { func: "checkFile", username: username.clusteruser, file: file_check},
 					async:	false,
@@ -176,13 +160,11 @@ function checkFastlaneInput(info_array){
 						var file_check = JSON.parse(s);
 						console.log(file_check);
 						if (file_check.Result != 'Ok' ){
-							input_bool_check = false;
-							error_out.push(file_check.ERROR);
+							error_out.push('(Input Files) ' + file_check.ERROR);
 						}
 					}
 				});
 			}
-			database_checks.push(input_bool_check);
 		//	Directory Checks
 		}else if (id_array[x] == 'input_dir' || id_array[x] == 'backup_dir'){
 			//	Check inputs that should not contain whitespace
@@ -193,25 +175,21 @@ function checkFastlaneInput(info_array){
 				}else{
 					error_out.push("Process Directory must contain only alpha-numerics with dashes/periods/backslashes/underscores");
 				}
-				database_checks.push(false);
 			}else{
 				//	Directory Checks
 				var dir_check_1;
 				$.ajax({
 					type: 	'GET',
-					url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser,
+					url: 	BASE_PATH+'/public/api/service.php',
+					data: { func: "checkPermissions", username: username.clusteruser},
 					async:	false,
 					success: function(s)
 					{
 						console.log(s);
 						dir_check_1 = JSON.parse(s);
-						if (dir_check_1.Result != 'Ok') {
-							error_out.push(dir_check_1.ERROR);
-						}
 					}
 				});
 				var dir_check_2;
-				var used_outdir = false;
 				//	Check if root path was not specified
 				if (info_array[x].substring(0,1) != '/'  && info_array[x].indexOf('/') > -1) {
 					info_array[x] = '/' + info_array[x];
@@ -230,40 +208,33 @@ function checkFastlaneInput(info_array){
 						{
 							console.log(s);
 							dir_check_2 = JSON.parse(s);
-							if (dir_check_2.Result != 'Ok') {
-								error_out.push(dir_check_2.ERROR);
-							}
 						}
 					});
 				}
 				
+				var error_text = '';
+				if (id_array[x] == 'input_dir') {
+					error_text = '(Input Directory) ';
+				}else{
+					error_text = '(Process Directory) ';
+				}
+				
 				if (dir_check_1.Result != 'Ok'){
-					error_out.push(dir_check_1.ERROR);
-					database_checks.push(false);
+					error_out.push(error_text + dir_check_1.ERROR);
 				}else if (dir_check_2.Result != 'Ok') {
 					//	perms errors
-					error_out.push(dir_check_2.ERROR);
-					database_checks.push(false);
-				}else{
-					//	No errors
-					database_checks.push(true);
+					error_out.push(error_text + dir_check_2.ERROR);
 				}
 			}
 		//	Series and import character checks
 		}else if(id_array[x] == 'series_name' || id_array[x] == 'lane_name'){
-			if (/^[a-zA-Z 0-9\_\-\s]*$/.test(info_array[x])) {
-				database_checks.push(true);
-			}else{
+			if (!/^[a-zA-Z 0-9\_\-\s]*$/.test(info_array[x])) {
 				if (id_array[x] == 'series_name') {
 					error_out.push("Series name does not have correct formatting.  Please use Alpha-numerics with dashes/underscores/spaces only.");
 				}else{
 					error_out.push("Import name does not have correct formatting.  Please use Alpha-numerics with dashes/underscores/spaces only.");
 				}
-				database_checks.push(false);
 			}
-		}else{
-			//	No errors
-			database_checks.push(true);
 		}
 	}
 	
@@ -285,16 +256,21 @@ function checkFastlaneInput(info_array){
 				replaced_samples_ids.push(id_check);
 			}
 		}
-		database_checks.push(true);
-	}else{
-		database_checks.push(true);
 	}
 	
-	if (database_checks.indexOf(false) > -1) {
+	//	Output to Modal if Errors Exist
+	if (error_out.length > 0) {
 		//	Error in submission, do not submit into database
 		console.log(error_out);
-		sendProcessData(error_out, 'error_out');
-		return database_checks;
+		$('#errorModal').modal({
+			show: true
+		});
+		document.getElementById('errorLabel').innerHTML = "There was an error in your submission:";
+		document.getElementById('errorAreas').innerHTML = "";
+		for(var x = 0; x < error_out.length; x++){
+			document.getElementById('errorAreas').innerHTML += error_out[x] + "<br><br>";
+		}
+		return undefined;
 	}else{
 		//	Remove sample success files if already exists
 		if (replaced_samples.length > 0) {
