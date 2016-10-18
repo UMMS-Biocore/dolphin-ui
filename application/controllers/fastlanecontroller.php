@@ -28,7 +28,6 @@ class FastlaneController extends VanillaController {
 		
 		if(isset($_SESSION['fastlane_values'])){$fastlane_values = $_SESSION['fastlane_values'];}
 		if(isset($_SESSION['barcode_array'])){$barcode_array = $_SESSION['barcode_array'];}
-		if(isset($_SESSION['pass_fail'])){$pass_fail = $_SESSION['pass_fail'];}
 		if(isset($_SESSION['fastlane_values'])){
 			if(isset($fastlane_values)){
 				$fastlane_values = str_replace("\n", ":", $fastlane_values);
