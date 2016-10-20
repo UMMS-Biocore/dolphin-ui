@@ -1,0 +1,35 @@
+<?php
+//error_reporting(E_ERROR);
+error_reporting(E_ALL);
+ini_set('report_errors','on');
+
+require_once("../../config/config.php");
+require_once("../../includes/dbfuncs.php");
+
+$query = new dbfuncs();
+
+if (isset($_GET['p'])){$p = $_GET['p'];}
+if (isset($_GET['term'])){$term = $_GET['term'];}
+
+if ($p == 'getAccessions'){
+	
+	$cmd = "cd ../../scripts && python parse_geo.py $term";
+	$COMMAND_OPEN = popen( $cmd, "r" );
+	$COMMAND_READ =trim(fread($COMMAND_OPEN, 4096));
+	$data = json_encode(str_replace("'", '"', $COMMAND_READ));
+	pclose($COMMAND_OPEN);
+	$cmd = "cd ../../scripts && rm $term*";
+	$COMMAND_OPEN = popen( $cmd, "r" );
+	pclose($COMMAND_OPEN);
+}
+
+if (!headers_sent()) {
+   header('Cache-Control: no-cache, must-revalidate');
+   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+   header('Content-type: application/json');
+   echo $data;
+   exit;
+}else{
+   echo $data;
+}
+?>

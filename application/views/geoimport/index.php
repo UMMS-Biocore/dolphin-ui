@@ -1,4 +1,49 @@
 <!-- Content Header (Page header) -->
+				<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="myLoadingLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myLoadingLabel">Loading</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group">
+										<label id="loadingLabel">Loading soft metadata...</label>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Loading modal -->
+				<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="myErrorLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myErrorLabel">Error</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group">
+										<label id="errorLabel"></label>
+									</div>
+									<div class="form-group">
+										<p id="errorArea"></p>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Error modal -->
 				<section class="content-header">
 					<h1>
 						GEO Import
@@ -59,14 +104,14 @@
 						<div id="searched_sra_div" class="col-md-12">
 							<div id="searched_inner_div" class="col-md-12" hidden>
 								<?php
-								echo $html->getRespBoxTable_ng("Search GEO values", "geo_searched", "<th>GEO Accession</th><th>SRA Available</th><th>Select</th><th>Remove</th>");
+								echo $html->getRespBoxTable_ng("Search GEO values", "geo_searched", "<th>GEO Accession</th><th>SRA Available</th><th>Select</th>");
 								?>
 							</div>
 						</div>
 						<div id="selected_sra_div" class="col-md-12">
-							<div id="selected_inner_div" hidden>
+							<div id="selected_inner_div" class="col-md-12" hidden>
 								<?php
-								echo $html->getRespBoxTable_ng("Selected GEO samples", "geo_selected", "<th>Sample Name</th><th>SRA File</th><th>Fastq File</th><th>Remove</th>");
+								echo $html->getRespBoxTable_ng("Selected GEO samples", "geo_selected", "<th>Sample Name</th><th>SRA File</th><th>Remove</th>");
 								?>
 							</div>
 						</div>
@@ -89,7 +134,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="col-md-12">
-								<input type="button" id="submit_geo" class="btn btn-primary pull-right" onclick="submitGeo()" value="Submit GEO Import"/>
+								<input type="button" id="submit_geo" class="btn btn-primary pull-right" onclick="submitSRA()" value="Submit GEO Import"/>
 							</div>
 						</div>
 					</div><!-- /.row -->
