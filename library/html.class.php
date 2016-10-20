@@ -201,6 +201,10 @@ class HTML {
 	
  function getRespBoxTable_ng($title, $table, $fields)
 	{
+	$geo_search_button = '';
+	if($table == 'geo_searched'){
+		$geo_search_button = '<input type="button" id="submit_geo" class="btn btn-primary margin pull-right" onclick="selectAllSRA()" value="Select All"/>';
+	}
 	$html='				<div class="box" style="overflow:scroll">
 				<div class="box-header">
 					<h3 class="box-title">'.$title.'</h3>';
@@ -214,6 +218,7 @@ class HTML {
 					</tr>
 					</thead>
 				</table>
+				'.$geo_search_button.'
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
 				

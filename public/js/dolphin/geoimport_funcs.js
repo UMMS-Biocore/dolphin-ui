@@ -55,6 +55,7 @@ function searchGeoTerm(){
 			}
 		}
 		document.getElementById("searched_inner_div").hidden = false;
+		document.getElementById("searched_select_all_div").hidden = false;
 		$('#loadingModal').modal('hide');
 	});	
 }
@@ -72,6 +73,16 @@ function selectSRA(sample, term_count, button){
 		sample+'.sra',
 		'<button class="btn btn-danger pull-right" id="'+sample+'_remove" onclick="removeSRA(\''+sample+'\', '+term_count+', this)">Remove</button>'
 	])
+}
+
+function selectAllSRA() {
+	var searched_table = $('#jsontable_geo_searched').dataTable();
+	var table_nodes = searched_table.fnGetNodes()
+	for(var x = 0; x < table_nodes.length; x++){
+		if (table_nodes[x].children[2].children[0].disabled == false) {
+			table_nodes[x].children[2].children[0].click()
+		}
+	}
 }
 
 function removeSRA(sample, term_count, button){

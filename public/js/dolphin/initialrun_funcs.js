@@ -73,6 +73,37 @@ $(function() {
 			group = initial_split[initial_split.length - 2];
 			perms = initial_split[initial_split.length - 1];
 			
+		}else if (window.location.href.split("/").indexOf('geoimport') > -1) {
+			runname = 'GEO Initial Run';
+			rundesc = 'GEO Initial Run within series: ' + initial_split[0];
+			outdir = initial_split[1] + '/initial_run';
+			experiment_series = initial_split[0];
+			JSON_OBJECT['genomebuild'] = 'human,hg19';
+			if (initial_split[4] == 'paired') {
+				JSON_OBJECT['spaired'] = 'paired';
+			}else{
+				JSON_OBJECT['spaired'] = 'no';
+			}
+			JSON_OBJECT['resume'] = 'no';
+			JSON_OBJECT['fastqc'] = 'no';
+			JSON_OBJECT['barcodes'] = 'none';
+			JSON_OBJECT['adapters'] = 'none';
+			JSON_OBJECT['quality'] = 'none';
+			JSON_OBJECT['trim'] = 'none';
+			JSON_OBJECT['split'] = 'none';
+			JSON_OBJECT['commonind'] = 'none';
+			JSON_OBJECT['submission'] = '2';
+			
+			var names_list = initialNameList.split(",");
+			for(var y = 5; y < initial_split.length - 2; y++ ){
+				if (y == 5){
+					sample_lane = "'" + initial_split[y] + "'";
+				}else{
+					sample_lane = sample_lane + ",'" + initial_split[y] + "'";
+				}
+			}
+			group = initial_split[initial_split.length - 2];
+			perms = initial_split[initial_split.length - 1];
 		}else{
 			runname = 'Import Initial Run';
 			rundesc = 'Import Initial Run within series: ' + initial_split[0];
