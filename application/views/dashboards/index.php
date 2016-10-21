@@ -11,7 +11,10 @@
                 </section>
                 <!-- Main content -->
                 <section class="content">
-                    <?php require_once("../includes/smallboxes.php");?>
+                    <?php
+                        require_once("../includes/globalmessage.php");
+                        require_once("../includes/smallboxes.php");
+                    ?>
 
                     <!-- Main row -->
                     <div class="row">
