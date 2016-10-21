@@ -31,9 +31,7 @@ class GeoimportController extends VanillaController {
 		
 		$text.= "<h3>Successful GEO submission!</h3><br><br>";
 		$text.="<script type='text/javascript'>";
-		if(isset($geo_values)){
-			$text.="var initialSubmission = '" . $geo_values . "';";
-		}
+		if(isset($geo_values)){$text.="var initialSubmission = '" . $geo_values . "';";}
 		$text.="</script>";
 			
 		$text.='<div class="callout callout-info lead"><h4>We are currently processing your samples to obtain read counts and additional information.<br><br>

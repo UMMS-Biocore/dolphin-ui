@@ -6,7 +6,7 @@
 								<!-- general form elements -->
 								<div class="box box-primary">
 									<div class="box-header">
-										<h3 class="box-title">Fastlane Submission</h3>
+										<h3 class="box-title">Fastlane Import</h3>
 									</div><!-- /.box-header -->
 									<div class="box-body">
 										  <div>

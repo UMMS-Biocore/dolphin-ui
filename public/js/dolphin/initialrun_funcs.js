@@ -79,7 +79,7 @@ $(function() {
 			rundesc = 'GEO Initial Run within series: ' + initial_split[0];
 			outdir = initial_split[4] + '/initial_run';
 			experiment_series = initial_split[0];
-			sample_lane = initial_split[1]
+			sample_lane = "'" + initial_split[1] + "'"
 			var names_list = initial_split[3].split(":");
 			group = initial_split[initial_split.length - 2];
 			perms = initial_split[initial_split.length - 1];

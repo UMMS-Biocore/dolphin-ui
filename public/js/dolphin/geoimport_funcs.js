@@ -304,6 +304,10 @@ function backToGeo(){
 	window.location.href = BASE_PATH + "/geoimport"
 }
 
+function sendToStatus(){
+	window.location.href = BASE_PATH + "/stat/status"
+}
+
 $(function() {
 	"use strict";
 	if (window.location.href.split("/").indexOf('process') < 0) {
