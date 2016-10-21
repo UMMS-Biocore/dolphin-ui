@@ -9,10 +9,10 @@ require_once("../../includes/dbfuncs.php");
 $query = new dbfuncs();
 
 if (isset($_GET['p'])){$p = $_GET['p'];}
-if (isset($_GET['term'])){$term = $_GET['term'];}
 
-if ($p == 'getAccessions'){
-	
+if ($p == 'getAccessions')
+{
+	if (isset($_GET['term'])){$term = $_GET['term'];}
 	$cmd = "cd ../../scripts && python parse_geo.py $term";
 	$COMMAND_OPEN = popen( $cmd, "r" );
 	$COMMAND_READ =trim(fread($COMMAND_OPEN, 4096));

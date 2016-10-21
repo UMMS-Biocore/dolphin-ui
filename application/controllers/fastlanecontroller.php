@@ -31,7 +31,6 @@ class FastlaneController extends VanillaController {
 		if(isset($_SESSION['fastlane_values'])){
 			if(isset($fastlane_values)){
 				$fastlane_values = str_replace("\n", ":", $fastlane_values);
-				$fastlane_array = explode(",",$fastlane_values);
 			}
 		}
 		

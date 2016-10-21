@@ -55,7 +55,6 @@ function searchGeoTerm(){
 			}
 		}
 		document.getElementById("searched_inner_div").hidden = false;
-		document.getElementById("searched_select_all_div").hidden = false;
 		$('#loadingModal').modal('hide');
 	});	
 }
@@ -122,7 +121,7 @@ function submitSRA(){
 	var series= document.getElementById('series_name').value
 	var lane = document.getElementById('lane_name').value
 	var sra_dir = document.getElementById('download_sra_dir').value
-	var outdir = document.getElementById('import_process_dir').value	
+	var outdir = document.getElementById('import_process_dir').value
 	
 	//	Basic Checks
 	if ( series == "") {
@@ -138,11 +137,11 @@ function submitSRA(){
 		error_out.push("Import name does not have correct formatting.  Please use Alpha-numerics with dashes/underscores/spaces only.");
 	}
 	var selected_table = $('#jsontable_geo_selected').dataTable();
-	var table_data = selected_table.fnGetData()
 	var table_nodes = selected_table.fnGetNodes()
 	var sample_names = []
 	var sample_files = []
-	if (table_data == []) {
+	var paired = []
+	if (table_nodes == []) {
 		error_out.push("Selected Samples cannot be empty.")
 	}else{
 		for(var x = 0; x < table_nodes.length; x++){
@@ -183,12 +182,11 @@ function submitSRA(){
 				username = s[0];
 			}
 		});
-		
 		var dir_check_1;
 		var dir_check_2;
 		$.ajax({
 			type: 	'GET',
-			url: 	API_PATH+'/public/api/service.php',
+			url: 	BASE_PATH+'/public/api/service.php',
 			data: { func: "checkPermissions", username: username.clusteruser, outdir: sra_dir},
 			async:	false,
 			success: function(s)
@@ -197,10 +195,9 @@ function submitSRA(){
 				dir_check_1 = JSON.parse(s);
 			}
 		});
-		
 		$.ajax({
 			type: 	'GET',
-			url: 	API_PATH+'/public/api/service.php',
+			url: 	BASE_PATH+'/public/api/service.php',
 			data: { func: "checkPermissions", username: username.clusteruser, outdir: outdir},
 			async:	false,
 			success: function(s)
@@ -209,7 +206,6 @@ function submitSRA(){
 				dir_check_2 = JSON.parse(s);
 			}
 		});
-		
 		if (dir_check_1.Result != 'Ok'){
 			error_out.push("(Download SRA Directory) " + dir_check_1.ERROR);
 		}
@@ -232,18 +228,88 @@ function submitSRA(){
 			document.getElementById('errorArea').innerHTML += error_out[x] + "<br><br>";
 		}
 	}else{
-		finalizeSRASubmission();
+		databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, outdir);
+	}
+}
+
+function databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, outdir){
+	var sample_check = true
+	//	Database checks
+	//	Experiment Series
+	var experiment_series_id = experimentSeriesCheck(series);
+	//	Experiments (Lanes)
+	if (experiment_series_id > 0) {
+		var lane_id = laneCheck(experiment_series_id, lane);
+	}
+	
+	if (experiment_series_id > 0 && lane_id > 0) {
+		var bad_samples = []
+		for(z in sample_names){
+			var id_check = sampleCheck(experiment_series_id, lane_id, z)
+			if (id_check > 0) {
+				bad_samples.push(z)
+			}
+		}
+		
+		if (bad_samples.length > 0) {
+			sample_check = false
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML = "There was an error in your submission:";
+			document.getElementById('errorArea').innerHTML = "";
+			for(var x = 0; x < error_out.length; x++){
+				document.getElementById('errorArea').innerHTML += "Sample '" + error_out[x] + "' already exists for this import.<br><br>";
+			}
+		}
+	}
+	if (sample_check) {
+		var sample_ids = []
+		var gid = document.getElementById('groups').value.toString();
+		var perms = obtainPermsFromRadio();
+		insertDirectories(sra_dir, outdir, "", gid, perms);
+		input_directory_id = directoryCheck(sra_dir, outdir, "");
+		
+		//	Insert ES, Import, and Samples
+		if (experiment_series_id > 0) {
+			//	If adding to a experiment series
+			if (!lane_id > 0) {
+				//	If creating a lane
+				insertLane(experiment_series_id, lane, gid, perms);
+				lane_id = laneCheck(experiment_series_id, lane);
+			}
+		}else{
+			//	If creating an experiment series
+			insertExperimentSeries(series, gid, perms);
+			experiment_series_id = experimentSeriesCheck(series);
+			
+			insertLane(experiment_series_id, lane, gid, perms);
+			lane_id = laneCheck(experiment_series_id, lane);
+		}
+		for (var a = 0; a < sample_names.length; a++) {
+				var true_id = insertSample(experiment_series_id, lane_id, sample_names[a], 'nobarcode', gid, perms);
+				sample_ids.push(true_id);
+		}
+		var value_array = [series, lane, sra_dir, sample_names.join(":"), outdir, gid, perms];
+		sendProcessData(value_array, 'geo_values');
+		finalizeSRASubmission()
 	}
 }
 
 function finalizeSRASubmission(){
-	
+	window.location.href = BASE_PATH + "/geoimport/process"
+}
+
+function backToGeo(){
+	window.location.href = BASE_PATH + "/geoimport"
 }
 
 $(function() {
 	"use strict";
-	var selected_table = $('#jsontable_geo_selected').dataTable({"autoWidth":false});
-	selected_table.fnClearTable();
-	var search_table = $('#jsontable_geo_searched').dataTable({"autoWidth":false});
-	search_table.fnClearTable();
+	if (window.location.href.split("/").indexOf('process') < 0) {
+		var selected_table = $('#jsontable_geo_selected').dataTable({"autoWidth":false});
+		selected_table.fnClearTable();
+		var search_table = $('#jsontable_geo_searched').dataTable({"autoWidth":false});
+		search_table.fnClearTable();
+	}
 });

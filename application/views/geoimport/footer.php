@@ -19,5 +19,8 @@
 		<script src='<?php echo BASE_PATH?>/js/dolphin/js_to_html_funcs.js' type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/geoimport_funcs.js' type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/initialrun_funcs.js' type="text/javascript"></script>
+		<script src='<?php echo BASE_PATH?>/js/dolphin/ngsfastlane_funcs.js' type="text/javascript"></script>
+		<script src='<?php echo BASE_PATH?>/js/dolphin/ngsfastlane_database_funcs.js' type="text/javascript"></script>
+		<script src='<?php echo BASE_PATH?>/js/dolphin/ngspost_funcs.js' type="text/javascript"></script>
 	</body>
 </html>

@@ -119,6 +119,7 @@ function submission(){
 			value_array.push(perms);
 		}
 	}
+	console.log(value_array)
 	sendProcessData(value_array, 'fastlane_values');
 	var barcode_array = [];
 	barcode_array.push(document.getElementById('bar_distance').value);
