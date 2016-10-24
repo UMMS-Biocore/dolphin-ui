@@ -40,17 +40,27 @@ function searchGeoTerm(){
 			search_table.fnClearTable();
 			for(var k in sra_avail){
 				var avail_button;
+				var paired_button;
 				var disabled = '';
-				if (sra_avail[k] == "true") {
+				var pair = "None"
+				if (sra_avail[k] != "none") {
 					avail_button = '<button class="btn btn-success" disabled>Available</button>'
+					if (sra_avail[k] == "single") {
+						pair = "Single-End"
+					}else if (sra_avail[k] == "paired") {
+						pair = "Paired-End"
+					}
+					paired_button = '<button class="btn btn-success" disabled>'+pair+'</button>'
 				}else{
 					avail_button = '<button class="btn btn-danger" disabled>Not Available</button>'
+					paired_button = '<button class="btn btn-danger" disabled>No Information</button>'
 					disabled = 'disabled'
 				}
 				search_table.fnAddData([
 					k,
 					avail_button,
-					'<button class="btn btn-primary pull-right" id="'+k+'_select" onclick="selectSRA(\''+k+'\', '+search_term_count+', this)" '+disabled+'>Select</button>'
+					paired_button,
+					'<button class="btn btn-primary pull-right" id="'+k+'_select" onclick="selectSRA(\''+k+'\', '+search_term_count+', \''+pair+'\', this)" '+disabled+'>Select</button>'
 				]);
 			}
 		}
@@ -59,18 +69,18 @@ function searchGeoTerm(){
 	});	
 }
 
-function selectSRA(sample, term_count, button){
+function selectSRA(sample, term_count, pair, button){
 	var searched_table = $('#jsontable_geo_searched').dataTable();
 	var row = $(button).closest('tr');
 	searched_table.fnDeleteRow(row);
 	searched_table.fnDraw();
-	
 	document.getElementById("selected_inner_div").hidden = false;
 	var selected_table = $('#jsontable_geo_selected').dataTable();
 	selected_table.fnAddData([
 		'<input type="text" id="'+term_count+'_'+sample+'" size="50" class="col-mid-12" value="'+sample+'">',
-		sample+'.sra',
-		'<button class="btn btn-danger pull-right" id="'+sample+'_remove" onclick="removeSRA(\''+sample+'\', '+term_count+', this)">Remove</button>'
+		'<button class="btn btn-primary" disabled>'+sample+'.sra</button>',
+		'<button class="btn btn-success" disabled>'+pair+'</button>',
+		'<button class="btn btn-danger pull-right" id="'+sample+'_remove" onclick="removeSRA(\''+sample+'\', '+term_count+', \''+pair+'\', this)">Remove</button>'
 	])
 }
 
@@ -78,13 +88,13 @@ function selectAllSRA() {
 	var searched_table = $('#jsontable_geo_searched').dataTable();
 	var table_nodes = searched_table.fnGetNodes()
 	for(var x = 0; x < table_nodes.length; x++){
-		if (table_nodes[x].children[2].children[0].disabled == false) {
-			table_nodes[x].children[2].children[0].click()
+		if (table_nodes[x].children[3].children[0].disabled == false) {
+			table_nodes[x].children[3].children[0].click()
 		}
 	}
 }
 
-function removeSRA(sample, term_count, button){
+function removeSRA(sample, term_count, pair, button){
 	var selected_table = $('#jsontable_geo_selected').dataTable();
 	var row = $(button).closest('tr');
 	selected_table.fnDeleteRow(row);
@@ -94,7 +104,8 @@ function removeSRA(sample, term_count, button){
 		searched_table.fnAddData([
 			sample,
 			'<button class="btn btn-success" disabled>Available</button>',
-			'<button class="btn btn-primary pull-right" id="'+sample+'_select" onclick="selectSRA(\''+sample+'\', '+term_count+', this)">Select</button>'
+			'<button class="btn btn-success" disabled>'+pair+'</button>',
+			'<button class="btn btn-primary pull-right" id="'+sample+'_select" onclick="selectSRA(\''+sample+'\', '+term_count+', \''+pair+'\', this)">Select</button>'
 		])
 	}
 }
@@ -139,13 +150,14 @@ function submitSRA(){
 	var table_nodes = selected_table.fnGetNodes()
 	var sample_names = []
 	var sample_files = []
-	var paired = []
+	var sample_paired = []
 	if (table_nodes == []) {
 		error_out.push("Selected Samples cannot be empty.")
 	}else{
 		for(var x = 0; x < table_nodes.length; x++){
 			var sample = table_nodes[x].children[0].children[0].value
-			var sra = table_nodes[x].children[1].innerHTML
+			var sra = table_nodes[x].children[1].children[0].innerHTML
+			var pair = table_nodes[x].children[2].children[0].innerHTML
 			if (sample ==  "") {
 				error_out.push("Row " + (x + 1) + " of the samples being submitted has no name assigned to it.")
 			}else if (!/^[a-zA-Z 0-9\_\-\s]*$/.test(sample)) {
@@ -159,6 +171,16 @@ function submitSRA(){
 			}else{
 				sample_names.push(sample)
 				sample_files.push(sra)
+				sample_paired.push(pair)
+			}
+		}
+		if (sample_paired.length > 0) {
+			var pairtest = sample_paired[0]
+			for (var x = 0; x < sample_paired.length; x++) {
+				var sample = table_nodes[x].children[0].children[0].value
+				if (pairtest != sample_paired[x]) {
+					error_out.push("You can only submit samples of one pair-end type.  Please split Single-end and Paired-end samples into two different imports.")
+				}
 			}
 		}
 	}
@@ -209,13 +231,12 @@ function submitSRA(){
 			document.getElementById('errorArea').innerHTML += error_out[x] + "<br><br>";
 		}
 	}else{
-		databaseChecksGEO(series, lane, sample_names, sample_files, outdir);
+		databaseChecksGEO(series, lane, sample_names, sample_files, sample_paired, outdir);
 	}
 }
 
-function databaseChecksGEO(series, lane, sample_names, sample_files, outdir){
+function databaseChecksGEO(series, lane, sample_names, sample_files, sample_paired, outdir){
 	var sample_check = true
-	var paired = document.getElementById("paired_end").value
 	//	Database checks
 	//	Experiment Series
 	var experiment_series_id = experimentSeriesCheck(series);
@@ -273,14 +294,17 @@ function databaseChecksGEO(series, lane, sample_names, sample_files, outdir){
 				sample_ids.push(true_id);
 		}
 		//	Insert temp files
+		var paired = "no"
 		for(var g = 0; g < sample_names.length; g++){
 			var fastq = sample_names[g] + "_1.fastq"
-			if (paired == "yes") {
+			if (sample_paired[g] == "Paired-End") {
+				paired = "paired"
 				fastq += "," + sample_names[g] + "_2.fastq"
 			}
 			insertTempSampleFiles(fastq, sample_ids[g], input_directory_id, gid, perms);
 		}
 		var value_array = [series, lane, paired, sample_names.join(":"), outdir, gid, perms];
+		console.log(value_array)
 		sendProcessData(value_array, 'geo_values');
 		finalizeSRASubmission()
 	}

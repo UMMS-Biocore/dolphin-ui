@@ -1014,26 +1014,6 @@ class funcs
 
         return $this->queryTable($sql); 
       }
-      
-      function updateTempSample($params)
-      {
-        $runparamsid=$params['runparamsid'];
-        $sample_id=$params['sample_id'];
-        $update=$params['update'];
-        
-        $sql = "UPDATE ngs_temp_sample_files SET file_name = '$update' where sample_id = $sample_id";
-        
-        return $this->runSQL($sql); 
-      }
-      
-      function updateGEODirectory($params)
-      {
-        $fastq_dir=$params['fastq_dir'];
-        
-        $sql = "UPDATE ngs_dirs SET fastq_dir = '$fastq_dir/initial_run/input' where fastq_dir = '$fastq_dir'";
-        
-        return $this->runSQL($sql);
-      }
 
       function getGSMs($params)
       {

@@ -10,7 +10,7 @@
 							<div class="modal-body">
 								<fieldset>
 									<div class="form-group">
-										<label id="loadingLabel">Loading soft metadata...</label>
+										<label id="loadingLabel">Downloading GEO metadata...</label>
 									</div>
 								</fieldset>   
 							</div>
@@ -104,14 +104,14 @@
 						<div id="searched_sra_div" class="col-md-12">
 							<div id="searched_inner_div" class="col-md-12" hidden>
 								<?php
-								echo $html->getRespBoxTable_ng("Search GEO values", "geo_searched", "<th>GEO Accession</th><th>SRA Available</th><th>Select</th>");
+								echo $html->getRespBoxTable_ng("Search GEO values", "geo_searched", "<th>GEO Accession</th><th>SRA Available</th><th>Paired</th><th>Select</th>");
 								?>
 							</div>
 						</div>
 						<div id="selected_sra_div" class="col-md-12">
 							<div id="selected_inner_div" class="col-md-12" hidden>
 								<?php
-								echo $html->getRespBoxTable_ng("Selected GEO samples", "geo_selected", "<th>Sample Name</th><th>SRA File</th><th>Remove</th>");
+								echo $html->getRespBoxTable_ng("Selected GEO samples", "geo_selected", "<th>Sample Name</th><th>SRA File</th><th>Paired</th><th>Remove</th>");
 								?>
 							</div>
 						</div>

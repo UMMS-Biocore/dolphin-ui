@@ -84,11 +84,7 @@ $(function() {
 			group = initial_split[initial_split.length - 2];
 			perms = initial_split[initial_split.length - 1];
 			JSON_OBJECT['genomebuild'] = 'human,hg19';
-			if (initial_split[2] == "yes") {
-				JSON_OBJECT['spaired'] = 'paired';
-			}else{
-				JSON_OBJECT['spaired'] = 'no';
-			}
+			JSON_OBJECT['spaired'] = initial_split[2];
 			JSON_OBJECT['resume'] = 'no';
 			JSON_OBJECT['fastqc'] = 'no';
 			JSON_OBJECT['barcodes'] = 'none';
