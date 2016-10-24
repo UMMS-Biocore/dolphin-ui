@@ -95,46 +95,50 @@
 			<?php echo $html->getSubmitBrowserButton()?>
 						<div class="col-md-9">
 				<?php
-				if ($table!=""){
-				echo $html->getBrowserPanel($experiment_series, $experiment_series_fields, "Experiment Series", 'experiment_name');
-				}
-				else{
-					if(!isset($_SESSION['ngs_experiments'])){
-						echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
-					}else if($_SESSION['ngs_experiments'] == ''){
-						echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
+				if($checkPerms == $value){
+					if ($table!=""){
+						echo $html->getBrowserPanel($experiment_series, $experiment_series_fields, "Experiment Series", 'experiment_name');
 					}else{
-						echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
+						if(!isset($_SESSION['ngs_experiments'])){
+							echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
+						}else if($_SESSION['ngs_experiments'] == ''){
+							echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
+						}else{
+							echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
+						}
 					}
-				}
-				if ($table=="experiments" || $table=="samples"){
-					echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL, $dir_array);
-				}
-				else{
-					if(!isset($_SESSION['ngs_lanes'])){
-						echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
-					}else if($_SESSION['ngs_lanes'] == ''){
-						echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+					
+					if ($table=="experiments" || $table=="samples"){
+						echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL, $dir_array);
 					}else{
-						echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Backup", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
-														  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", "backup",""]);
+						if(!isset($_SESSION['ngs_lanes'])){
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+						}else if($_SESSION['ngs_lanes'] == ''){
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+						}else{
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Backup", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
+															  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", "backup",""]);
+						}
 					}
-				}
-				if ($table=="samples"){
-					echo $html->getBrowserPanelMore($samples, $sample_fields, "Sample",'name', $sample_file, $sample_fastq_file, $sample_runs, $sample_tables, $dir_array);
+					
+					if ($table=="samples"){
+						echo $html->getBrowserPanelMore($samples, $sample_fields, "Sample",'name', $sample_file, $sample_fastq_file, $sample_runs, $sample_tables, $dir_array);
+					}else{
+						if(!isset($_SESSION['ngs_samples'])){
+							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
+						}else if($_SESSION['ngs_samples'] == ''){
+							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
+						}else{
+							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
+																					"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
+																					"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
+																					["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
+																					"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
+																					"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
+						}
+					}
 				}else{
-					if(!isset($_SESSION['ngs_samples'])){
-						echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
-					}else if($_SESSION['ngs_samples'] == ''){
-						echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
-					}else{
-						echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
-																				"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-																				"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
-																				["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
-																				"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-																				"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
-					}
+					echo '<div class="callout callout-danger lead"><h4>You do not have permissions to view this data.</h4></div>';
 				}
 				?>
 						</div><!-- /.col (RIGHT) -->

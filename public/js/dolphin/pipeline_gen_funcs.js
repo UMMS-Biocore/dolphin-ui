@@ -1022,11 +1022,11 @@ function backFromDetails(back_type){
 	var type = hrefSplit[hrefSplit.length - 3];
 
 	if (back_type == 'Sample') {
-	hrefSplit[hrefSplit.length - 2] = getLaneIdFromSample(hrefSplit[hrefSplit.length - 2]);
-	hrefSplit[hrefSplit.length - 3] = 'experiments'
-	}else if (back_type == 'Experiment') {
-	hrefSplit[hrefSplit.length - 2] = getSeriesIdFromLane(hrefSplit[hrefSplit.length - 2]);
-	hrefSplit[hrefSplit.length - 3] = 'experiment_series'
+		hrefSplit[hrefSplit.length - 2] = getLaneIdFromSample(hrefSplit[hrefSplit.length - 2]);
+		hrefSplit[hrefSplit.length - 3] = 'experiments'
+	}else if (back_type == 'Import') {
+		hrefSplit[hrefSplit.length - 2] = getSeriesIdFromLane(hrefSplit[hrefSplit.length - 2]);
+		hrefSplit[hrefSplit.length - 3] = 'experiment_series'
 	}else{
 		searchSplit = hrefSplit[hrefSplit.length - 1].split('$');
 		lastSearch = searchSplit[searchSplit.length - 1].split('=');
@@ -1044,11 +1044,11 @@ function backFromDetails(back_type){
 	}
 
 	for (var x = 0; x < hrefSplit.length; x++) {
-	if (x == (hrefSplit.length - 1)) {
-		changeHTML += hrefSplit[x];
-	}else{
-		changeHTML += hrefSplit[x] + '/';
-	}
+		if (x == (hrefSplit.length - 1)) {
+			changeHTML += hrefSplit[x];
+		}else{
+			changeHTML += hrefSplit[x] + '/';
+		}
 	}
 	window.location.href = changeHTML;
 }

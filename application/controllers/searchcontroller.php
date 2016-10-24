@@ -56,14 +56,15 @@ class SearchController extends VanillaController {
         
 		if ($table=='experiment_series')
 		{
-			$this->set('experiment_series', $this->Search->getValues($value, 'ngs_experiment_series'));
 			$this->set('experiment_series_fields', $this->Search->getFields('ngs_experiment_series'));
+			$this->set('checkPerms', $this->Search->checkViewPerms('ngs_experiment_series', $value, $gids));
+			$this->set('experiment_series', $this->Search->getValues($value, 'ngs_experiment_series'));
 		}
 		if ($table=='experiments')
 		{
 			$this->set('experiment_series_fields', $this->Search->getFields('ngs_experiment_series'));
 			$this->set('experiment_fields', $this->Search->getFields('ngs_lanes'));
-
+			$this->set('checkPerms', $this->Search->checkViewPerms('ngs_lanes', $value, $gids));
 			$this->set('experiment_series', $this->Search->getValues($this->Search->getId($value, 'series_id', 'ngs_lanes'), 'ngs_experiment_series'));
 			$this->set('experiments', $this->Search->getValues($value, 'ngs_lanes'));
             $this->set('lane_file', $this->Search->getLaneFileLocation($value));
@@ -74,7 +75,7 @@ class SearchController extends VanillaController {
 			$this->set('experiment_series_fields', $this->Search->getFields('ngs_experiment_series'));
 			$this->set('experiment_fields', $this->Search->getFields('ngs_lanes'));
 			$this->set('sample_fields', $this->Search->getFields('ngs_samples'));
-
+			$this->set('checkPerms', $this->Search->checkViewPerms('ngs_samples', $value, $gids));
 			$this->set('experiment_series', $this->Search->getValues($this->Search->getId($value, 'series_id', 'ngs_samples'), 'ngs_experiment_series'));
 			$this->set('experiments', $this->Search->getValues($this->Search->getId($value, 'lane_id', 'ngs_samples'), 'ngs_lanes'));
             $this->set('lane_file', $this->Search->getLaneFileLocation($this->Search->getId($value, 'lane_id', 'ngs_samples')));

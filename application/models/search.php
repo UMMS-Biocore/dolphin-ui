@@ -188,4 +188,13 @@ class Search extends VanillaModel {
 		$result = $this->query("select ngs_dirs.fastq_dir, ngs_dirs.id from ngs_dirs where id in (select dir_id from ngs_temp_lane_files where lane_id = $value)");
 		return json_decode($result, true);
 	}
+	function checkViewPerms($table, $id, $gids){
+		$uid = $_SESSION['uid'];
+		if($uid != "" && $gids != "" && $_SESSION['uid'] != "1"){
+			$result = $this->query("SELECT id FROM $table WHERE id = $id AND (((group_id in ($gids)) AND (perms >= 15)) OR (owner_id = $uid) OR (perms >= 32))");
+		}else{
+			$result = $id;
+		}
+		return $result;
+	}
 }
