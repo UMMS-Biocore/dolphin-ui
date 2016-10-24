@@ -21,6 +21,32 @@ if ($p == 'getAccessions')
 	$cmd = "cd ../../scripts && rm $term*";
 	$COMMAND_OPEN = popen( $cmd, "r" );
 	pclose($COMMAND_OPEN);
+}else if ($p == 'insertSampleGEO'){
+	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
+	if (isset($_GET['lane'])){$lane = $_GET['lane'];}
+	if (isset($_GET['sample'])){$sample = $_GET['sample'];}
+	if (isset($_GET['file'])){$file = $_GET['file'];}
+	if (isset($_GET['barcode'])){$barcode = $_GET['barcode'];}
+	if (isset($_GET['gids'])){$gids = $_GET['gids'];}
+	if (isset($_GET['perms'])){$perms = $_GET['perms'];}
+	$sample_check=json_decode($query->queryTable("
+		SELECT id
+		FROM ngs_samples
+		WHERE series_id = $experiment
+		AND lane_id = $lane
+		AND samplename = '$sample'
+		"));
+	if(isset($sample_check[0]->id)){
+		$data = $sample_check[0]->id;
+	}else{
+		$data=$query->runSQL("
+		INSERT INTO ngs_samples
+			(series_id, lane_id, name, samplename, title, barcode,
+			owner_id, group_id, perms, date_created, date_modified, last_modified_user)
+			VALUES ($experiment, $lane, '$sample', '$sample', '$file', '$barcode',
+			".$_SESSION['uid'].", $gids, $perms, now(), now(), ".$_SESSION['uid'].");
+		");
+	}
 }
 
 if (!headers_sent()) {

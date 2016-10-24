@@ -115,13 +115,12 @@
 								?>
 							</div>
 						</div>
-						<div id="download_input_div" class="col-md-12">
-							<?php echo $html->getStaticSelectionBox("Download SRA Directory", "download_sra_dir", "TEXT", 12)?>
+						<div id="paired_end_div" class="col-md-12">
+							<?php echo $html->getStaticSelectionBox("Paired End Reads", "paired_end", "<option>no</option><option>yes</option>", 12)?>
 						</div>
 						<div id="import_process_dir_div" class="col-md-12">
 							<?php echo $html->getStaticSelectionBox("Import Process Directory", "import_process_dir", "TEXT", 12)?>
 						</div>
-						
 						<div id="perms_div" class="col-md-12">
 						<?php echo $html->getStaticSelectionBox("Group Selection", "groups", $html->groupSelectionOptions($groups), 6); ?>
 						<?php $radiofields=array(

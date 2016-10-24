@@ -474,6 +474,7 @@ class Dolphin:
         fp = open ( file, 'w')
         sep='\t'          
         resume = (runparams['resume'] if ('resume' in runparams) else "yes")
+        self.prf(fp, stepDownload % locals() if ('submission' in runparams and str(runparams['submission']).lower()=="2") else None )
         self.prf(fp, stepCheck % locals() )
         self.prf(fp, stepBarcode % locals() if ('barcodes' in runparams and str(runparams['barcodes']).lower()!="none") else None )
         self.prf(fp, stepGetTotalReads % locals() if (gettotalreads and gettotalreads.lower()!="none") else None )

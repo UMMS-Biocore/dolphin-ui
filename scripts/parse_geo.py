@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 import GEOparse
 
 accs = sys.argv[1]
@@ -44,6 +45,3 @@ for accession in accs.split(',', 1):
         print 'Can only process GSM or GSE queries.'
 
 print out_dict
-"""
-gse.download_SRA('nicholas.merowsky@umassmed.edu', filetype='sra', directory='./')
-"""

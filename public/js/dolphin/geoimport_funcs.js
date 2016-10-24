@@ -120,7 +120,6 @@ function submitSRA(){
 	var error_out = [];
 	var series= document.getElementById('series_name').value
 	var lane = document.getElementById('lane_name').value
-	var sra_dir = document.getElementById('download_sra_dir').value
 	var outdir = document.getElementById('import_process_dir').value
 	
 	//	Basic Checks
@@ -163,9 +162,6 @@ function submitSRA(){
 			}
 		}
 	}
-	if (sra_dir == "") {
-		error_out.push("Download SRA Directory cannot be empty.")
-	}
 	if (outdir == "") {
 		error_out.push("Import Process Directory cannot be empty.")
 	}
@@ -183,18 +179,6 @@ function submitSRA(){
 			}
 		});
 		var dir_check_1;
-		var dir_check_2;
-		$.ajax({
-			type: 	'GET',
-			url: 	BASE_PATH+'/public/api/service.php',
-			data: { func: "checkPermissions", username: username.clusteruser, outdir: sra_dir},
-			async:	false,
-			success: function(s)
-			{
-				console.log(s);
-				dir_check_1 = JSON.parse(s);
-			}
-		});
 		$.ajax({
 			type: 	'GET',
 			url: 	BASE_PATH+'/public/api/service.php',
@@ -203,14 +187,11 @@ function submitSRA(){
 			success: function(s)
 			{
 				console.log(s);
-				dir_check_2 = JSON.parse(s);
+				dir_check_1 = JSON.parse(s);
 			}
 		});
-		if (dir_check_1.Result != 'Ok'){
-			error_out.push("(Download SRA Directory) " + dir_check_1.ERROR);
-		}
-		if (dir_check_2.Result != 'Ok') {
-			error_out.push("(Import Process Directory) " + dir_check_2.ERROR);
+		if (dir_check_1.Result != 'Ok') {
+			error_out.push("(Import Process Directory) " + dir_check_1.ERROR);
 		}
 	}
 	
@@ -228,12 +209,13 @@ function submitSRA(){
 			document.getElementById('errorArea').innerHTML += error_out[x] + "<br><br>";
 		}
 	}else{
-		databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, outdir);
+		databaseChecksGEO(series, lane, sample_names, sample_files, outdir);
 	}
 }
 
-function databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, outdir){
+function databaseChecksGEO(series, lane, sample_names, sample_files, outdir){
 	var sample_check = true
+	var paired = document.getElementById("paired_end").value
 	//	Database checks
 	//	Experiment Series
 	var experiment_series_id = experimentSeriesCheck(series);
@@ -267,8 +249,8 @@ function databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, ou
 		var sample_ids = []
 		var gid = document.getElementById('groups').value.toString();
 		var perms = obtainPermsFromRadio();
-		insertDirectories(sra_dir, outdir, "", gid, perms);
-		input_directory_id = directoryCheck(sra_dir, outdir, "");
+		insertDirectories(outdir, outdir, "", gid, perms);
+		input_directory_id = directoryCheck(outdir, outdir, "");
 		
 		//	Insert ES, Import, and Samples
 		if (experiment_series_id > 0) {
@@ -287,10 +269,18 @@ function databaseChecksGEO(series, lane, sample_names, sample_files, sra_dir, ou
 			lane_id = laneCheck(experiment_series_id, lane);
 		}
 		for (var a = 0; a < sample_names.length; a++) {
-				var true_id = insertSample(experiment_series_id, lane_id, sample_names[a], 'nobarcode', gid, perms);
+				var true_id = insertSampleGEO(experiment_series_id, lane_id, sample_names[a], sample_files[a], 'nobarcode', gid, perms);
 				sample_ids.push(true_id);
 		}
-		var value_array = [series, lane, sra_dir, sample_names.join(":"), outdir, gid, perms];
+		//	Insert temp files
+		for(var g = 0; g < sample_names.length; g++){
+			var fastq = sample_names[g] + "_1.fastq"
+			if (paired == "yes") {
+				fastq += "," + sample_names[g] + "_2.fastq"
+			}
+			insertTempSampleFiles(fastq, sample_ids[g], input_directory_id, gid, perms);
+		}
+		var value_array = [series, lane, paired, sample_names.join(":"), outdir, gid, perms];
 		sendProcessData(value_array, 'geo_values');
 		finalizeSRASubmission()
 	}
@@ -306,6 +296,25 @@ function backToGeo(){
 
 function sendToStatus(){
 	window.location.href = BASE_PATH + "/stat/status"
+}
+
+function insertSampleGEO(experiment_id, lane_id, sample_name, sample_file, barcode, gid, perms){
+	var id;
+	if (gid == "" || gid == "0") {
+		gid = "1";
+	}
+	$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/geoimport_funcs.php',
+			data:  	{ p: 'insertSampleGEO', experiment: experiment_id, lane: lane_id, sample: sample_name,
+					file: sample_file, barcode: barcode, gids: gid, perms: perms },
+			async:	false,
+			success: function(s)
+			{
+			}
+	});
+	id = sampleCheck(experiment_id, lane_id, sample_name);
+	return id;
 }
 
 $(function() {

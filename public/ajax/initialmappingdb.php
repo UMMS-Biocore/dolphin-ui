@@ -97,7 +97,7 @@ else if ($p == 'checkRunList')
 		(SELECT DISTINCT run_id
 		FROM ngs_runlist
 		WHERE sample_id in ( ".implode(",",$sample_ids)." ))
-	AND (run_name = 'Fastlane Initial Run' OR run_name = 'Import Initial Run')
+	AND (run_name = 'Fastlane Initial Run' OR run_name = 'Import Initial Run' OR run_name = 'GEO Initial Run')
 	"));
 	//	If initial run found
 	if(count($initial_runs) > 0){
