@@ -13,7 +13,12 @@ if (isset($_GET['p'])){$p = $_GET['p'];}
 if ($p == 'getAccessions')
 {
 	if (isset($_GET['term'])){$term = $_GET['term'];}
-	$cmd = "cd ../../scripts && python parse_geo.py $term";
+	if (CONFIG == 'Docker'){
+		$python = "python";
+	}else{
+		$python = "/usr/local/bin/python2";
+	}
+	$cmd = "cd ../../scripts && $python parse_geo.py $term";
 	$COMMAND_OPEN = popen( $cmd, "r" );
 	$COMMAND_READ =trim(fread($COMMAND_OPEN, 4096));
 	$data = json_encode(str_replace("'", '"', $COMMAND_READ));
