@@ -31,5 +31,6 @@
         <script src="<?php echo BASE_PATH?>/js/streamTable/stream_table.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
         <script src='<?php echo BASE_PATH?>/js/dolphin/ngs_help.js' type="text/javascript"></script>
+		<script src='<?php echo BASE_PATH?>/js/dolphin/additional_pipeline_methods.js' type="text/javascript"></script>
 	</body>
 </html>
