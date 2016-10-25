@@ -8,7 +8,7 @@ function searchGeoTerm(){
 	
 	$('#loadingModal').modal('show');
 	$.ajax({ type: "GET",
-		url: BASE_PATH+"/public/ajax/geoImport_funcs.php",
+		url: BASE_PATH+"/public/ajax/geoimport_funcs.php",
 		data: { p:'getAccessions', term:geo_input},
 		async: true,
 		success : function(s)
@@ -114,7 +114,7 @@ function getAccessions(geo_input){
 	var sra_avail;
 	console.log(geo_input)
 	$.ajax({ type: "GET",
-		url: BASE_PATH+"/public/ajax/geoImport_funcs.php",
+		url: BASE_PATH+"/public/ajax/geoimport_funcs.php",
 		data: { p:'getAccessions', term:geo_input},
 		async: true,
 		success : function(s)
@@ -192,7 +192,7 @@ function submitSRA(){
 	if (error_out.length == 0) {
 		$.ajax({
 			type: 	'GET',
-			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
+			url: 	API_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'getClusterName' },
 			async:	false,
 			success: function(s)
@@ -203,7 +203,7 @@ function submitSRA(){
 		var dir_check_1;
 		$.ajax({
 			type: 	'GET',
-			url: 	BASE_PATH+'/public/api/service.php',
+			url: 	API_PATH+'/public/api/service.php',
 			data: { func: "checkPermissions", username: username.clusteruser, outdir: outdir},
 			async:	false,
 			success: function(s)
