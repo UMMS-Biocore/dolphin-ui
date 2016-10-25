@@ -1,4 +1,4 @@
-var pipelineDict = ['RNASeqRSEM', 'Tophat', 'ChipSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller', 'ATACSeq'];
+var pipelineDict = ['RNASeqRSEM', 'Tophat', 'ChipSeq/ATACSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
 var pipelineNum = 0;
 
 function additionalPipes(){
@@ -10,7 +10,7 @@ function additionalPipes(){
 					'OPTION_DIS_SEL',
 					'OPTION',		//RNASeqRSEM
 					'OPTION',		//Tophat
-					'OPTION',		//ChipSeq
+					'OPTION',		//ChipSeq/ATACSeq
 					'OPTION',		//DESeq
 					'OPTION',		//BisulphiteMapping
 					'OPTION',		//DiffMeth
@@ -24,12 +24,11 @@ function additionalPipes(){
 					'--- Select a Pipeline ---',
 					pipelineDict[0],		//RNASeqRSEM
 					pipelineDict[1],		//Tophat
-					pipelineDict[2],		//ChipSeq
+					pipelineDict[2],		//ChipSeq/ATACSeq
 					pipelineDict[3],		//DESeq
 					pipelineDict[4],		//BisulphiteMapping
 					pipelineDict[5],		//DiffMeth
 					pipelineDict[6],		//HaplotypeCaller
-					pipelineDict[7]			//ATACSeq
 					]
 	//find parent div
 	var master = document.getElementById('masterPipeline');
@@ -62,6 +61,7 @@ function pipelineSelect(num){
 	if (pipelineSelectCheck(num, pipeType)){
 		document.getElementById('select_'+num).value = currentPipelineVal[currentPipelineID.indexOf(num)];
 	}else{
+		console.log(pipeType)
 		//pipelineDict: global variable containing selections
 		if (pipeType == pipelineDict[0]) {
 			//RNASeq RSEM
@@ -69,7 +69,7 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[1]) {
 			//Tophat Pipeline
 			divAdj = formTophat(divAdj, num)
-		}else if (pipeType == pipelineDict[2]) {
+		}else if (pipeType == pipelineDict[2] || pipeType == 'ChipSeq') {
 			//ChipSeq Pipeline
 			divAdj, chip_table = formChip(divAdj, num)
 		}else if (pipeType == pipelineDict[3]) {
@@ -84,9 +84,6 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[6]) {
 			//HaplotypeCaller
 			divAdj = formHaplotypeCaller(divAdj, num)
-		}else if (pipeType == pipelineDict[7]) {
-			//HaplotypeCaller
-			divAdj = formATACSeq(divAdj, num)
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
@@ -284,7 +281,12 @@ function tophatCustomOptions(num){
 
 function formChip(divAdj, num){
 	divAdj = mergeTidy(divAdj, 12,
-			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Chip Input Definitions:'])],
+			[[createLabeledDiv(12, 'ChipSeq&nbsp;&nbsp;', '&nbsp;&nbsp;ATACSeq',
+				createElement('input', ['id', 'name', 'type', 'value', 'onClick', 'checked'], [num+'_CHIP', num, 'radio', 'CHIP', '']),
+				createElement('input', ['id', 'name', 'type', 'value', 'onClick',], [num+'_ATAC', num, 'radio', 'ATAC', '']))
+			]])
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Input Definitions:'])],
 			[createElement('div', ['id', 'class'], ['div_chip_'+num, ''])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Samples:']),
@@ -292,7 +294,7 @@ function formChip(divAdj, num){
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'Inputs:']),
 			createElement('select',['id', 'class', 'type', 'multiple', 'size', 'onchange'],['multi_chip_2', 'form-control', 'select-multiple', 'multiple', '4', ''])] ]);
 	divAdj = mergeTidy(divAdj, 12,
-			[ [createElement('button', ['id', 'value', 'type', 'class', 'onclick'], ['div_add', 'Add Chip Input', 'button', 'btn btn-primary pull-left margin', 'addChipSeqInput('+num+')']),
+			[ [createElement('button', ['id', 'value', 'type', 'class', 'onclick'], ['div_add', 'Add Input', 'button', 'btn btn-primary pull-left margin', 'addChipSeqInput('+num+')']),
 			createElement('button', ['id', 'value', 'type', 'class', 'onclick'], ['div_add', 'Add All', 'button', 'btn btn-primary pull-left margin', 'smartAdd()']),
 			createElement('button', ['id', 'value', 'type', 'class', 'onclick'], ['div_rmv', 'Reset', 'button', 'btn btn-danger pull-right margin', 'resetChip()'])] ]);
 	//	Table
@@ -482,6 +484,7 @@ function formDESeq(divAdj, num){
 
 function reloadDESeq(splt1, i){
 	additionalPipes();
+	console.log(i)
 	document.getElementById('select_'+i).value = pipelineDict[3];
 	pipelineSelect(i);
 	//handle for multiple selections
@@ -532,9 +535,10 @@ function formBisulphiteMapping(divAdj, num){
 	divAdj.appendChild(labelDiv);
 	var innerDiv = createTidyDiv(12);
 	divAdj = mergeTidy(divAdj, 12,
-			[[createLabeledDiv(12, 'RRBS&nbsp;&nbsp;', '&nbsp;&nbsp;WGBS', createElement('input', ['id', 'name', 'type', 'value', 'onClick', 'checked'], [num+'_RRBS', num, 'radio', 'RRBS', 'bisulphiteSelect(this.id, '+num+')']),
-				   createElement('input', ['id', 'name', 'type', 'value', 'onClick',], [num+'_WGBS', num, 'radio', 'WGBS', 'bisulphiteSelect(this.id, '+num+')']))
-				],
+			[[createLabeledDiv(12, 'RRBS&nbsp;&nbsp;', '&nbsp;&nbsp;WGBS',
+				createElement('input', ['id', 'name', 'type', 'value', 'onClick', 'checked'], [num+'_RRBS', num, 'radio', 'RRBS', 'bisulphiteSelect(this.id, '+num+')']),
+				createElement('input', ['id', 'name', 'type', 'value', 'onClick',], [num+'_WGBS', num, 'radio', 'WGBS', 'bisulphiteSelect(this.id, '+num+')']))
+			],
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'Digestion Site:']),
 			createElement('input', ['id', 'class', 'type', 'value'], ['text_1_'+num, 'form-control', 'text', 'C-CGG'])]
 			]);
@@ -806,58 +810,5 @@ function reloadHaplotypeCaller(splt1, i){
 	}
 	if (splt1[i].peaks == 'yes' || splt1[i].peaks == '1') {
 		document.getElementById('checkbox_7_'+i).checked = true;
-	}
-}
-
-function formATACSeq(divAdj, num){
-	divAdj = mergeTidy(divAdj, 12,
-			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'MACS parameters:']),
-			   createElement('textarea', ['id', 'class'], ['textarea_1_'+num, 'form-control'])] ]);
-	divAdj = mergeTidy(divAdj, 6,
-			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Multimapper:']),
-			createElement('input', ['id', 'class', 'type', 'value'], ['text_1_'+num, 'form-control', 'text', '1'])],
-			[createElement('label', ['class','TEXTNODE'], ['box-title', 'Tag size(bp) for MACS:']),
-			createElement('input', ['id', 'class', 'type', 'value'], ['text_2_'+num, 'form-control', 'text', '75'])] ]);
-	divAdj = mergeTidy(divAdj, 6,
-			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Band width(bp) for MACS:']),
-			createElement('input', ['id', 'class', 'type', 'value'], ['select_1_'+num, 'form-control', 'text', '230'])],
-			[createElement('label', ['class','TEXTNODE'], ['box-title', 'Effective genome size(bp):']),
-			createElement('input', ['id', 'class', 'type', 'value'], ['select_2_'+num, 'form-control', 'text', '2700000000'])] ]);
-	divAdj = mergeTidy(divAdj, 12,
-			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
-			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])] ]);
-	divAdj = mergeTidy(divAdj, 6,
-			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
-			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_3_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
-			[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
-			createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'no', 'yes'])] ]);
-	divAdj = mergeTidy(divAdj, 6,
-			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
-			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
-	return divAdj
-}
-
-function reloadATACSeq(splt1, i){
-	additionalPipes();
-	document.getElementById('select_'+i).value = pipelineDict[7];
-	pipelineSelect(i);
-	document.getElementById('textarea_1_'+i).value = splt1[i].Params.replace("__cr____cn__", "\n");
-	document.getElementById('text_1_'+i).value = splt1[i].MultiMapper;
-	document.getElementById('text_2_'+i).value = splt1[i].TagSize;
-	document.getElementById('select_1_'+i).value = splt1[i].BandWith;
-	document.getElementById('select_2_'+i).value = splt1[i].EffectiveGenome;
-	document.getElementById('select_3_'+i).value = splt1[i].IGVTDF;
-	document.getElementById('select_4_'+i).value = splt1[i].BAM2BW;
-	if (splt1[i].IGVTDF == 'yes') {
-		IGVTDFSelection('select_3_'+i);
-		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
-	}
-	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
-		document.getElementById('checkbox_1_'+i).checked = true;
-	}
-	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
-		document.getElementById('checkbox_2_'+i).checked = true;
 	}
 }

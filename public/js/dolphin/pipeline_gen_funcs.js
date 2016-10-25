@@ -157,7 +157,7 @@ function rerunLoad() {
 							}else if (splt1[i].Type == pipelineDict[1]) {
 								//Tophat
 								reloadTophat(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[2]){
+							}else if (splt1[i].Type == pipelineDict[2] || splt1[i].Type == 'ChipSeq'){
 								//Chipseq
 								reloadChip(splt1, i)
 							}else if (splt1[i].Type == pipelineDict[3]) {
@@ -172,9 +172,6 @@ function rerunLoad() {
 							}else if (splt1[i].Type == pipelineDict[6]) {
 								//HaplotypeCaller
 								reloadHaplotypeCaller(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[7]) {
-								//ATACSeq
-								reloadATACSeq(splt1, i)
 							}
 						}
 						document.getElementById(jsonTypeList[x]+'_exp_body').setAttribute('style', 'display: block');
@@ -1355,7 +1352,6 @@ function findPipelineValues(){
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
 	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'custombed', 'peaks'];
-	var ATACSEQ_JSON_DICT = ['Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var JSON_ARRAY =  [];
 	console.log(currentPipelineID);
 	console.log(currentPipelineID.length);
