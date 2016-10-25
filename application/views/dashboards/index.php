@@ -12,7 +12,7 @@
                 <!-- Main content -->
                 <section class="content">
                     <?php
-                        require_once("../includes/globalmessage.php");
+                        #require_once("../includes/globalmessage.php");
                         require_once("../includes/smallboxes.php");
                     ?>
 
