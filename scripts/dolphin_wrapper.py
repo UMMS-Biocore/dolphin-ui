@@ -600,6 +600,25 @@ class Dolphin:
               if (pipe['Type'] == "HaplotypeCaller"):
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
                 type="haplotypecaller"
+                
+              if (pipe['Type']=="RNASeqRSEM"):
+                #Arrange ChipSeq mapping step
+                 indexname='Chip'
+                 self.prf( fp, '%s'%(stepSeqMapping % locals()) )
+                 type="atac"
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                     type="merge"+type
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                                  
+                 #Set running macs step
+                 self.prf( fp, '%s'%(stepMACS % locals()) )
+                 self.prf( fp, '%s'%(stepAggregation % locals()) )
+                 self.prf( fp, stepAlignmentCount % locals() )
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
         if(backupS3 == None):

@@ -84,6 +84,9 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[6]) {
 			//HaplotypeCaller
 			divAdj = formHaplotypeCaller(divAdj, num)
+		}else if (pipeType == pipelineDict[7]) {
+			//HaplotypeCaller
+			divAdj = formATACSeq(divAdj, num)
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
@@ -822,9 +825,9 @@ function formATACSeq(divAdj, num){
 			createElement('input', ['id', 'class', 'type', 'value'], ['select_2_'+num, 'form-control', 'text', '2700000000'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])] ]);
+			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
 			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_3_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
@@ -851,10 +854,10 @@ function reloadATACSeq(splt1, i){
 		IGVTDFSelection('select_3_'+i);
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
 	}
-	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
+	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
 		document.getElementById('checkbox_1_'+i).checked = true;
 	}
-	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
+	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
 		document.getElementById('checkbox_2_'+i).checked = true;
 	}
 }
