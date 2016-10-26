@@ -1347,7 +1347,7 @@ function findAdditionalInfoValues(goWord, additionalArray){
 function findPipelineValues(){
 	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
-	var CHIPSEQ_JSON_DICT = ['ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
+	var CHIPSEQ_JSON_DICT = ['MacsType', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
@@ -1362,7 +1362,7 @@ function findPipelineValues(){
 			USED_DICT = RSEM_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'DESeq') {
 			USED_DICT = DESEQ_JSON_DICT;
-		}else if (currentPipelineVal[y] == 'ChipSeq') {
+		}else if (currentPipelineVal[y] == 'ChipSeq/ATACSeq' || currentPipelineVal[y] == 'ChipSeq') {
 			USED_DICT = CHIPSEQ_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'Tophat') {
 			USED_DICT = TOPHAT_JSON_DICT;
@@ -1372,8 +1372,6 @@ function findPipelineValues(){
 			USED_DICT = DIFFMETH_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'HaplotypeCaller') {
 			USED_DICT = HAPLOTYPE_CALLER_DICT;
-		}else if (currentPipelineVal[y] == 'ATACSeq') {
-			USED_DICT = ATACSEQ_JSON_DICT;
 		}
 		
 		var dict_counter = 0;
