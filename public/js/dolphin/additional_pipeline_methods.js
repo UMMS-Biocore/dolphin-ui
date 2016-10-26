@@ -281,9 +281,9 @@ function tophatCustomOptions(num){
 
 function formChip(divAdj, num){
 	divAdj = mergeTidy(divAdj, 12,
-			[[createLabeledDiv(12, 'ChipSeq&nbsp;&nbsp;', '&nbsp;&nbsp;ATACSeq',
-				createElement('input', ['id', 'name', 'type', 'value', 'onClick', 'checked'], [num+'_CHIP', num, 'radio', 'CHIP', '']),
-				createElement('input', ['id', 'name', 'type', 'value', 'onClick',], [num+'_ATAC', num, 'radio', 'ATAC', '']))
+			[[createLabeledDiv(12, 'CHIP&nbsp;&nbsp;', '&nbsp;&nbsp;ATAC',
+				createElement('input', ['id', 'name', 'type', 'value', 'checked'], [num+'_CHIP', num, 'radio', 'CHIP']),
+				createElement('input', ['id', 'name', 'type', 'value'], [num+'_ATAC', num, 'radio', 'ATAC']))
 			]])
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Input Definitions:'])],
@@ -335,6 +335,7 @@ function reloadChip(splt1, i){
 	document.getElementById('select_'+i).value = pipelineDict[2];
 	pipelineSelect(i);
 	//Chip Input Table
+	$("#" + i.toString() + "_" + splt1[i].MacsType).iCheck('check');
 	var chip = splt1[i].ChipInput
 	var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-xs btn-danger text-center pull-right', 'button', 'removeChip(this)']);
 	var icon = createElement('i', ['class'],['fa fa-times']);

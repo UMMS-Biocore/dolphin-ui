@@ -1408,10 +1408,18 @@ function findPipelineValues(){
 							JSON_OBJECT[USED_DICT[dict_counter]].push(chip_object);
 						}
 					}else{
-						dict_counter--;
-						if (e.id.match("textarea_1_")) {
-							chip_bool = false;
-							x--;
+						if (e.type == 'radio') {
+							if (e.checked) {
+								JSON_OBJECT[USED_DICT[dict_counter]] = e.value;
+							}else{
+								dict_counter--;
+							}
+						}else{
+							dict_counter--;
+							if (e.id.match("textarea_1_")) {
+								chip_bool = false;
+								x--;
+							}
 						}
 					}
 				}else if (e.type == "select-multiple") {
@@ -1434,6 +1442,7 @@ function findPipelineValues(){
 						}
 					}
 				}else{
+					console.log(e)
 					if (e.type == 'checkbox') {
 						if (e.checked) {
 							JSON_OBJECT[USED_DICT[dict_counter]] = 'yes';
