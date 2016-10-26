@@ -1,3 +1,7 @@
+VERSION:	0.9.2
+DETAILS:	-Removed unneeded paired-end selection in geo
+		-Selected Samples now scrollable for overflow
+
 VERSION:	0.9.1
 DETAILS:	-Created new global php variable 'PHPPYTHON' for GEOparse
 		-Created NEWS file for update listing

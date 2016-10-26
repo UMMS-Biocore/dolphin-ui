@@ -115,9 +115,6 @@
 								?>
 							</div>
 						</div>
-						<div id="paired_end_div" class="col-md-12">
-							<?php echo $html->getStaticSelectionBox("Paired End Reads", "paired_end", "<option>no</option><option>yes</option>", 12)?>
-						</div>
 						<div id="import_process_dir_div" class="col-md-12">
 							<?php echo $html->getStaticSelectionBox("Import Process Directory", "import_process_dir", "TEXT", 12)?>
 						</div>
