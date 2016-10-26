@@ -191,7 +191,12 @@ class Search extends VanillaModel {
 	function checkViewPerms($table, $id, $gids){
 		$uid = $_SESSION['uid'];
 		if($uid != "" && $gids != "" && $_SESSION['uid'] != "1"){
-			$result = $this->query("SELECT id FROM $table WHERE id = $id AND (((group_id in ($gids)) AND (perms >= 15)) OR (owner_id = $uid) OR (perms >= 32))");
+			$query_result = json_decode($this->query("SELECT id FROM $table WHERE id = $id AND (((group_id in ($gids)) AND (perms >= 15)) OR (owner_id = $uid) OR (perms >= 32))"), true);
+			if(isset($query_result[0]["id"])){
+				$result = $query_result[0]["id"];
+			}else{
+				$result = 0;
+			}
 		}else{
 			$result = $id;
 		}
