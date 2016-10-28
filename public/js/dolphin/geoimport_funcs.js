@@ -151,7 +151,7 @@ function submitSRA(){
 	var sample_names = []
 	var sample_files = []
 	var sample_paired = []
-	if (table_nodes == []) {
+	if (table_nodes.length < 1) {
 		error_out.push("Selected Samples cannot be empty.")
 	}else{
 		for(var x = 0; x < table_nodes.length; x++){
