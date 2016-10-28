@@ -282,9 +282,13 @@ function tophatCustomOptions(num){
 function formChip(divAdj, num){
 	divAdj = mergeTidy(divAdj, 12,
 			[[createLabeledDiv(12, 'CHIP&nbsp;&nbsp;', '&nbsp;&nbsp;ATAC',
-				createElement('input', ['id', 'name', 'type', 'value', 'checked'], [num+'_CHIP', num, 'radio', 'CHIP']),
-				createElement('input', ['id', 'name', 'type', 'value'], [num+'_ATAC', num, 'radio', 'ATAC']))
+				createElement('input', ['id', 'name', 'type', 'value', 'onclick', 'checked'], [num+'_CHIP', num, 'radio', 'CHIP', 'chipTypeSelection(this)']),
+				createElement('input', ['id', 'name', 'type', 'value', 'onclick'], [num+'_ATAC', num, 'radio', 'ATAC', 'chipTypeSelection(this)']))
 			]])
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_4_'+num, '', 'ATAC Options:', 'display:none'])],
+			[createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_3_'+num, 'margin', 'Adjust cut-site centered reads', 'display:none']),
+			createElement('input', ['id', 'type', 'class', 'style'], ['checkbox_3_'+num, 'checkbox', 'margin', 'display:none'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Input Definitions:'])],
 			[createElement('div', ['id', 'class'], ['div_chip_'+num, ''])] ]);
@@ -335,7 +339,13 @@ function reloadChip(splt1, i){
 	document.getElementById('select_'+i).value = pipelineDict[2];
 	pipelineSelect(i);
 	//Chip Input Table
-	$("#" + i.toString() + "_" + splt1[i].MacsType).iCheck('check');
+	var check = document.getElementById(i.toString() + "_" + splt1[i].MacsType);
+	var icheck = $("#" + i.toString() + "_" + splt1[i].MacsType)
+	icheck.iCheck('check');
+	chipTypeSelection(check)
+	if (splt1[i].CutAdjust == 'yes') {
+		document.getElementById('checkbox_3_'+i).checked = true;
+	}
 	var chip = splt1[i].ChipInput
 	var remove_button = createElement('button', ['class', 'type', 'onclick'],['btn btn-xs btn-danger text-center pull-right', 'button', 'removeChip(this)']);
 	var icon = createElement('i', ['class'],['fa fa-times']);
@@ -456,6 +466,23 @@ function resetChip() {
 	var chip_table = $('#json_chiptable').dataTable();
 	chip_table.fnClearTable();
 	populateChipSelection();
+}
+
+function chipTypeSelection(checkbox){
+
+	var label2 = document.getElementById('label_4_'+checkbox.name)
+	var label1 = document.getElementById('label_3_'+checkbox.name)
+	var check1 = document.getElementById('checkbox_3_'+checkbox.name)
+	
+	if (checkbox.id == checkbox.name + "_ATAC" ) {
+		label2.style = 'display:show'
+		label1.style = 'display:show'
+		check1.style = 'display:show'
+	}else{
+		label2.style = 'display:none'
+		label1.style = 'display:none'
+		check1.style = 'display:none'
+	}
 }
 
 function formDESeq(divAdj, num){

@@ -14,6 +14,7 @@ stepRSEMCount='stepRSEMCount%(g_i)s%(t_e)s%(sep)s@RUNRSEMCOUNT -p @PUBDIR -w @WK
 stepTophat='stepTophat2%(sep)s@PERL @RUNTOPHAT2 -o @OUTDIR -g %(gtf)s -d @SPAIRED -pub @PUBDIR -w @WKEY -pa @PARAMSTOPHAT -pr @PREVIOUSPIPE -t @TOPHAT2CMD -b %(bowtie2index)s -sa @SAMTOOLS -se stepTophat2 -j @JOB%(sep)s240'
 stepSplit='stepSplit%(sep)s@PERL @RUNSPLIT -o @OUTDIR -d @SPAIRED -p @PREVIOUSSPLIT -n @SPLIT -se stepSplit -j @JOB%(sep)s50'
 stepMergeBAM='stepMergeBAM%(type)s%(sep)s@PERL @RUNMERGEBAM -o @OUTDIR -mergeall @MERGEALL -t %(type)s -d @SPAIRED -sa @SAMTOOLS -se stepMergeBAM%(type)s -j @JOB%(sep)s50'
+stepATACPrep='stepATACPrep%(sep)s@RUNATACPREP -c @CUTADJUST -b @BEDTOOLSATAC -g @GENOMESIZE -t %(type)s -o @OUTDIR -s stepATACPrep -j @JOB%(sep)s60'
 stepMACS='stepMACS%(sep)s@RUNMACS -a @MACSCMD -i "@CHIPINPUT" -e "@EXTRAPARAMS" -t %(type)s -o @OUTDIR -s stepMACS -j @JOB%(sep)s60'
 stepAggregation='stepAggregation%(sep)s@RUNAGGREGATION -o @OUTDIR -a @ACT -b @BTOOLSGENCOV -c @INTOPDF -t %(type)s -p @PREVIOUSPIPE -g @GENOMESIZE -r @REFACT -s stepAggregation -j @JOB%(sep)s10'
 stepIGVTDF='stepIGVTDF%(type)s%(sep)s@RUNIGVTDF -o @OUTDIR -g @GENOMEFASTA -pa @SPAIRED %(paramExtFactor)s -pu @PUBDIR -w @WKEY -l @TSIZE -sa @SAMTOOLS -t %(type)s -i @IGVTOOLS -se stepIGVTDF%(type)s -j @JOB%(sep)s60'

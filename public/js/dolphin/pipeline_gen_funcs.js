@@ -1347,7 +1347,7 @@ function findAdditionalInfoValues(goWord, additionalArray){
 function findPipelineValues(){
 	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
-	var CHIPSEQ_JSON_DICT = ['MacsType', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
+	var CHIPSEQ_JSON_DICT = ['MacsType', 'CutAdjust', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
@@ -1415,10 +1415,18 @@ function findPipelineValues(){
 								dict_counter--;
 							}
 						}else{
-							dict_counter--;
-							if (e.id.match("textarea_1_")) {
-								chip_bool = false;
-								x--;
+							if (e.type == 'checkbox') {
+								if (e.checked) {
+									JSON_OBJECT[USED_DICT[dict_counter]] = 'yes';
+								}else{
+									JSON_OBJECT[USED_DICT[dict_counter]] = 'no';
+								}
+							}else{
+								dict_counter--;
+								if (e.id.match("textarea_1_")) {
+									chip_bool = false;
+									x--;
+								}
 							}
 						}
 					}
