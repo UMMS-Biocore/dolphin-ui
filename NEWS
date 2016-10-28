@@ -1,3 +1,6 @@
+VERSION		0.9.3
+DETAILS:	-fixed error for no sample selection within geo import submission
+
 VERSION:	0.9.2
 DETAILS:	-Removed unneeded paired-end selection in geo
 		-Selected Samples now scrollable for overflow
