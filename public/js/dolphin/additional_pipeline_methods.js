@@ -15,7 +15,6 @@ function additionalPipes(){
 					'OPTION',		//BisulphiteMapping
 					'OPTION',		//DiffMeth
 					'OPTION',		//HaplotypeCaller
-					'OPTION'		//ATACSeq
 					]
 	VALUE_OPTIONS = [
 					'select_'+pipelineNum,
@@ -136,6 +135,61 @@ function IGVTDFSelection(id){
 	}
 }
 
+function bigwigSelection(id){
+	var value = document.getElementById(id).value;
+	var id_num = id.split("_")[2];
+	console.log(id_num);
+	var label1 = document.getElementById('label_5_'+id_num)
+	var textarea1 = document.getElementById('checkbox_6_'+id_num)
+	if (value == 'yes') {
+		label1.setAttribute("style", "display:show");
+		textarea1.setAttribute("style", "display:show");
+	}else{
+		label1.setAttribute("style", "display:none");
+		textarea1.setAttribute("style", "display:none");
+		textarea1.value = 0;
+	}
+}
+
+function deeptoolsSelect(id){
+	var checked = document.getElementById(id).checked;
+	var id_num = id.split("_")[2];
+	console.log(id_num);
+	var label1 = document.getElementById('label_6_'+id_num)
+	var select1 = document.getElementById('select_3_'+id_num)
+	var label2 = document.getElementById('label_7_'+id_num)
+	var select2 = document.getElementById('select_4_'+id_num)
+	if (checked) {
+		label1.setAttribute("style", "display:show");
+		select1.setAttribute("style", "display:show");
+		if (select1.value == 'reference-point') {
+			label2.setAttribute("style", "display:show");
+			select2.setAttribute("style", "display:show");
+		}
+	}else{
+		label1.setAttribute("style", "display:none");
+		select1.setAttribute("style", "display:none");
+		label2.setAttribute("style", "display:none");
+		select2.setAttribute("style", "display:none");
+	}
+}
+
+function referenceSelect(id){
+	var value = document.getElementById(id).value;
+	var id_num = id.split("_")[2];
+	console.log(id_num);
+	var label1 = document.getElementById('label_7_'+id_num)
+	var textarea1 = document.getElementById('select_4_'+id_num)
+	if (value == 'reference-point') {
+		label1.setAttribute("style", "display:show");
+		textarea1.setAttribute("style", "display:show");
+	}else{
+		label1.setAttribute("style", "display:none");
+		textarea1.setAttribute("style", "display:none");
+		textarea1.value = 0;
+	}
+}
+
 function formRSEM(divAdj, num){
 	divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'RSEM parameters:']));
 	var testText = createElement('textarea', ['id', 'class'], ['textarea_'+num,'form-control'])
@@ -152,13 +206,20 @@ function formRSEM(divAdj, num){
 			   createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
-			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
-
+			   createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
-			createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'no', 'yes'])] ]);
+			   createElement('select', ['id', 'class', 'onChange', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'bigwigSelection(this.id)', 'no', 'yes'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_5_'+num, 'box-title margin', 'Create Deeptools plots:', 'display:none']),
+			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none', 'deeptoolsSelect(this.id)'])] ]);
+	divAdj = mergeTidy(divAdj, 7,
+			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_6_'+num, 'box-title', 'display:none', 'Plot Type:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'onChange'], ['select_3_'+num, 'form-control', 'display:none', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
+			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_7_'+num, 'box-title', 'display:none', 'Reference Point:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Custom Options']),
 			createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_5_'+num, 'checkbox', 'margin', 'tophatCustomOptions('+num+')'])] ]);
@@ -181,6 +242,18 @@ function reloadRSEM(splt1, i){
 	if (splt1[i].IGVTDF == 'yes') {
 		IGVTDFSelection('select_1_'+i);
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+	}
+	if (splt1[i].BAM2BW == 'yes') {
+		bigwigSelection('select_2_'+i)
+		if (splt1[i].Deeptools == 'yes') {
+			document.getElementById('checkbox_6_'+i).checked = true;
+			deeptoolsSelect('checkbox_6_'+i)
+			if (splt1[i].PlotType == 'reference-point') {
+				document.getElementById('select_3_'+i).value = splt1[i].PlotType
+				referenceSelect('select_3_'+i)
+				document.getElementById('select_4_'+i).value = splt1[i].ReferencePoint
+			}
+		}
 	}
 	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
 		document.getElementById('checkbox_1_'+i).checked = true;
@@ -214,12 +287,20 @@ function formTophat(divAdj, num){
 			createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
-			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
+			   createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
-			createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'no', 'yes'])] ]);
+			   createElement('select', ['id', 'class', 'onChange', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'bigwigSelection(this.id)', 'no', 'yes'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_5_'+num, 'box-title margin', 'Create Deeptools plots:', 'display:none']),
+			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none', 'deeptoolsSelect(this.id)'])] ]);
+	divAdj = mergeTidy(divAdj, 7,
+			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_6_'+num, 'box-title', 'display:none', 'Plot Type:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'onChange'], ['select_3_'+num, 'form-control', 'display:none', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
+			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_7_'+num, 'box-title', 'display:none', 'Reference Point:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Custom Options']),
 			createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_5_'+num, 'checkbox', 'margin', 'tophatCustomOptions('+num+')'])] ]);
@@ -242,6 +323,18 @@ function reloadTophat(splt1, i){
 	if (splt1[i].IGVTDF == 'yes') {
 		IGVTDFSelection('select_1_'+i);
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+	}
+	if (splt1[i].BAM2BW == 'yes') {
+		bigwigSelection('select_2_'+i)
+		if (splt1[i].Deeptools == 'yes') {
+			document.getElementById('checkbox_6_'+i).checked = true;
+			deeptoolsSelect('checkbox_6_'+i)
+			if (splt1[i].PlotType == 'reference-point') {
+				document.getElementById('select_3_'+i).value = splt1[i].PlotType
+				referenceSelect('select_3_'+i)
+				document.getElementById('select_4_'+i).value = splt1[i].ReferencePoint
+			}
+		}
 	}
 	if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
 		document.getElementById('checkbox_1_'+i).checked = true;
@@ -325,12 +418,20 @@ function formChip(divAdj, num){
 			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
-			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_3_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
+			   createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_5_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
-			createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'no', 'yes'])] ]);
+			   createElement('select', ['id', 'class', 'onChange', 'OPTION', 'OPTION'], ['select_6_'+num, 'form-control', 'bigwigSelection(this.id)', 'no', 'yes'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_5_'+num, 'box-title margin', 'Create Deeptools plots:', 'display:none']),
+			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none', 'deeptoolsSelect(this.id)'])] ]);
+	divAdj = mergeTidy(divAdj, 7,
+			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_6_'+num, 'box-title', 'display:none', 'Plot Type:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'onChange'], ['select_3_'+num, 'form-control', 'display:none', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
+			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_7_'+num, 'box-title', 'display:none', 'Reference Point:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
 	return divAdj, chip_table
 }
 
@@ -367,11 +468,23 @@ function reloadChip(splt1, i){
 	document.getElementById('text_2_'+i).value = splt1[i].TagSize;
 	document.getElementById('select_1_'+i).value = splt1[i].BandWith;
 	document.getElementById('select_2_'+i).value = splt1[i].EffectiveGenome;
-	document.getElementById('select_3_'+i).value = splt1[i].IGVTDF;
-	document.getElementById('select_4_'+i).value = splt1[i].BAM2BW;
+	document.getElementById('select_5_'+i).value = splt1[i].IGVTDF;
+	document.getElementById('select_6_'+i).value = splt1[i].BAM2BW;
 	if (splt1[i].IGVTDF == 'yes') {
-		IGVTDFSelection('select_3_'+i);
+		IGVTDFSelection('select_5_'+i);
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+	}
+	if (splt1[i].BAM2BW == 'yes') {
+		bigwigSelection('select_2_'+i)
+		if (splt1[i].Deeptools == 'yes') {
+			document.getElementById('checkbox_6_'+i).checked = true;
+			deeptoolsSelect('checkbox_6_'+i)
+			if (splt1[i].PlotType == 'reference-point') {
+				document.getElementById('select_3_'+i).value = splt1[i].PlotType
+				referenceSelect('select_3_'+i)
+				document.getElementById('select_4_'+i).value = splt1[i].ReferencePoint
+			}
+		}
 	}
 	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
 		document.getElementById('checkbox_1_'+i).checked = true;
@@ -581,12 +694,20 @@ function formBisulphiteMapping(divAdj, num){
 			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'IGV/TDF Conversion:']),
-			createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
+			   createElement('select', ['id','class','onChange','OPTION', 'OPTION'], ['select_1_'+num, 'form-control', 'IGVTDFSelection(this.id)','no', 'yes'])],
 			[createElement('label', ['class','TEXTNODE'], ['box-title', 'BigWig Conversion:']),
-			createElement('select', ['id', 'class', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'no', 'yes'])] ]);
+			   createElement('select', ['id', 'class', 'onChange', 'OPTION', 'OPTION'], ['select_2_'+num, 'form-control', 'bigwigSelection(this.id)', 'no', 'yes'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_1_'+num, 'box-title', 'display:none', 'extFactor']),
 			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_2_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_5_'+num, 'box-title margin', 'Create Deeptools plots:', 'display:none']),
+			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none', 'deeptoolsSelect(this.id)'])] ]);
+	divAdj = mergeTidy(divAdj, 7,
+			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_6_'+num, 'box-title', 'display:none', 'Plot Type:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'onChange'], ['select_3_'+num, 'form-control', 'display:none', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
+			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_7_'+num, 'box-title', 'display:none', 'Reference Point:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_4_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
 	//MCALL
 	labelDiv = createElement('div', ['class'], ['col-md-12 text-center']);
 	labelDiv.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title margin', 'Run MCall:']));
@@ -607,13 +728,13 @@ function formBisulphiteMapping(divAdj, num){
 			[createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_3_'+num, 'box-title', 'Step Size:', 'display:none']),
 			createElement('input', ['id', 'class', 'type', 'value', 'style'], ['text_3_'+num, 'form-control', 'text', '300', 'display:none'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
-			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_5_'+num, 'box-title', 'Min Coverage:', 'display:none']),
+			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_8_'+num, 'box-title', 'Min Coverage:', 'display:none']),
 			createElement('input', ['id', 'class', 'type', 'value', 'style'], ['text_4_'+num, 'form-control', 'text', '5', 'display:none'])],
-			[createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_6_'+num, 'box-title', 'Top N Regions:', 'display:none']),
+			[createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_9_'+num, 'box-title', 'Top N Regions:', 'display:none']),
 			createElement('input', ['id', 'class', 'type', 'value', 'style'], ['text_5_'+num, 'form-control', 'text', '2000', 'display:none'])] ]);
 	labelDiv = createElement('div', ['class'], ['col-md-12 text-center']);
-	labelDiv.appendChild( createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_7_'+num,'box-title margin', 'Strand Specific Information:', 'display:none']));
-	labelDiv.appendChild( createElement('input', ['id', 'type', 'class', 'style'], ['checkbox_6_'+num, 'checkbox', 'margin', 'display:none']));
+	labelDiv.appendChild( createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_10_'+num,'box-title margin', 'Strand Specific Information:', 'display:none']));
+	labelDiv.appendChild( createElement('input', ['id', 'type', 'class', 'style'], ['checkbox_7_'+num, 'checkbox', 'margin', 'display:none']));
 	divAdj.appendChild(labelDiv);
 	return divAdj
 }
@@ -634,6 +755,18 @@ function reloadBisulphiteMapping(splt1, i){
 	if (splt1[i].IGVTDF == 'yes') {
 		IGVTDFSelection('select_1_'+i);
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
+	}
+	if (splt1[i].BAM2BW == 'yes') {
+		bigwigSelection('select_2_'+i)
+		if (splt1[i].Deeptools == 'yes') {
+			document.getElementById('checkbox_6_'+i).checked = true;
+			deeptoolsSelect('checkbox_6_'+i)
+			if (splt1[i].PlotType == 'reference-point') {
+				document.getElementById('select_3_'+i).value = splt1[i].PlotType
+				referenceSelect('select_3_'+i)
+				document.getElementById('select_4_'+i).value = splt1[i].ReferencePoint
+			}
+		}
 	}
 	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
 		document.getElementById('checkbox_2_'+i).checked = true;
@@ -660,7 +793,7 @@ function reloadBisulphiteMapping(splt1, i){
 	document.getElementById('text_4_'+i).value = splt1[i].MinCoverage;
 	document.getElementById('text_5_'+i).value = splt1[i].TopN;
 	if (splt1[i].StrandSpecific == 'yes' || splt1[i].StrandSpecific == '1') {
-		document.getElementById('checkbox_6_'+i).checked = true;
+		document.getElementById('checkbox_7_'+i).checked = true;
 	}
 }
 
@@ -685,22 +818,22 @@ function MethylKitSelection(id){
 			document.getElementById('text_2_'+id).setAttribute("style", "display:show");
 			document.getElementById('label_3_'+id).setAttribute("style", "display:show");
 			document.getElementById('text_3_'+id).setAttribute("style", "display:show");
-			document.getElementById('label_5_'+id).setAttribute("style", "display:show");
+			document.getElementById('label_8_'+id).setAttribute("style", "display:show");
 			document.getElementById('text_4_'+id).setAttribute("style", "display:show");
-			document.getElementById('label_6_'+id).setAttribute("style", "display:show");
+			document.getElementById('label_9_'+id).setAttribute("style", "display:show");
 			document.getElementById('text_5_'+id).setAttribute("style", "display:show");
-			document.getElementById('label_7_'+id).setAttribute("style", "display:show");
+			document.getElementById('label_10_'+id).setAttribute("style", "display:show");
 			document.getElementById('checkbox_6_'+id).setAttribute("style", "display:show");
 		}else{
 			document.getElementById('label_2_'+id).setAttribute("style", "display:none");
 			document.getElementById('text_2_'+id).setAttribute("style", "display:none");
 			document.getElementById('label_3_'+id).setAttribute("style", "display:none");
 			document.getElementById('text_3_'+id).setAttribute("style", "display:none");
-			document.getElementById('label_5_'+id).setAttribute("style", "display:none");
+			document.getElementById('label_8_'+id).setAttribute("style", "display:none");
 			document.getElementById('text_4_'+id).setAttribute("style", "display:none");
-			document.getElementById('label_6_'+id).setAttribute("style", "display:none");
+			document.getElementById('label_9_'+id).setAttribute("style", "display:none");
 			document.getElementById('text_5_'+id).setAttribute("style", "display:none");
-			document.getElementById('label_7_'+id).setAttribute("style", "display:none");
+			document.getElementById('label_10_'+id).setAttribute("style", "display:none");
 			document.getElementById('checkbox_6_'+id).setAttribute("style", "display:none");
 		}
 	}else if( document.getElementById('checkbox_5_'+id).checked == true){
