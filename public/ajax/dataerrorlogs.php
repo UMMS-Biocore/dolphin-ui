@@ -59,22 +59,24 @@ if($p == 'getStdOut'){
 	WHERE id = $id
 	"));
 	
-	$workflow_pid = $pids[0]->runworkflow_pid;
-	$wrapper_pid = $pids[0]->wrapper_pid;
-	
-	if($workflow_pid != null){
-		$grep_find_workflow = popen( "ps -ef | grep '[".substr($workflow_pid, 0, 1)."]".substr($workflow_pid,1)."'", "r" );
-		$workflow = fread($grep_find_workflow, 2096);
-		pclose($grep_find_workflow);
-	}else{
-		$workflow = "null";
-	}
-	if($wrapper_pid != null){
-		$grep_find_wrapper = popen( "ps -ef | grep '[".substr($wrapper_pid, 0, 1)."]".substr($wrapper_pid,1)."'", "r" );
-		$wrapper = fread($grep_find_wrapper, 2096);
-		pclose($grep_find_wrapper);
-	}else{
-		$wrapper = "null";
+	if($pids[0]->run_status != '1'){
+		$workflow_pid = $pids[0]->runworkflow_pid;
+		$wrapper_pid = $pids[0]->wrapper_pid;
+		
+		if($workflow_pid != null){
+			$grep_find_workflow = popen( "ps -ef | grep '[".substr($workflow_pid, 0, 1)."]".substr($workflow_pid,1)."'", "r" );
+			$workflow = fread($grep_find_workflow, 2096);
+			pclose($grep_find_workflow);
+		}else{
+			$workflow = "null";
+		}
+		if($wrapper_pid != null){
+			$grep_find_wrapper = popen( "ps -ef | grep '[".substr($wrapper_pid, 0, 1)."]".substr($wrapper_pid,1)."'", "r" );
+			$wrapper = fread($grep_find_wrapper, 2096);
+			pclose($grep_find_wrapper);
+		}else{
+			$wrapper = "null";
+		}
 	}
 	
 	if(($workflow == "") || ($wrapper == "")){
