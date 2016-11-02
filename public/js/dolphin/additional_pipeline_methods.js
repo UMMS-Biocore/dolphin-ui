@@ -152,6 +152,14 @@ function bigwigSelection(id){
 }
 
 function deeptoolsSelect(id){
+	$('#errorModal').modal({
+		show: true
+	});
+	document.getElementById('errorLabel').innerHTML ='You must first add a MCall before adding MethylKit';
+	document.getElementById('errorAreas').innerHTML = '';
+	var check = document.getElementById(id);
+	check.checked = !check.checked;
+	/**
 	var checked = document.getElementById(id).checked;
 	var id_num = id.split("_")[2];
 	console.log(id_num);
@@ -172,9 +180,11 @@ function deeptoolsSelect(id){
 		label2.setAttribute("style", "display:none");
 		select2.setAttribute("style", "display:none");
 	}
+	*/
 }
 
 function referenceSelect(id){
+	/**
 	var value = document.getElementById(id).value;
 	var id_num = id.split("_")[2];
 	console.log(id_num);
@@ -188,6 +198,7 @@ function referenceSelect(id){
 		textarea1.setAttribute("style", "display:none");
 		textarea1.value = 0;
 	}
+	*/
 }
 
 function formRSEM(divAdj, num){
