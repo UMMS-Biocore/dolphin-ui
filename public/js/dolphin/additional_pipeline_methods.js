@@ -152,11 +152,6 @@ function bigwigSelection(id){
 }
 
 function deeptoolsSelect(id){
-	$('#errorModal').modal({
-		show: true
-	});
-	document.getElementById('errorLabel').innerHTML ='You must first add a MCall before adding MethylKit';
-	document.getElementById('errorAreas').innerHTML = '';
 	var checked = document.getElementById(id).checked;
 	var id_num = id.split("_")[2];
 	console.log(id_num);
