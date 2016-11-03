@@ -324,11 +324,15 @@ class Dolphin:
                        indexname="rsem_ref.transcripts"
                        indexsuffix = "@GDB/%s"%(indexname) 
                    print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name, indexsuffix,indexname,bowtie_params,indexname,filter_out,previous)
+               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
                    
              if (pipe['Type']=="Tophat"):
                paramstophat=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@TSIZE=50';
                print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(paramstophat))
+               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
                
              
              if (pipe['Type']=="DESeq"):
@@ -341,19 +345,23 @@ class Dolphin:
                print >>fp, '@FOLDCHANGE%s=%s'%(name, pipe['foldChange'])
                print >>fp, '@DATASET%s=%s'%(name, pipe['DataType'])
     
-             if (pipe['Type']=="ChipSeq"):
+             if (pipe['Type']=="ChipSeq/ATACSeq" or pipe['Type']=="ChipSeq"):
                chipinput=self.chip_parse_input(pipe['ChipInput'])
                bowtie_params=self.remove_space("-k_%s"%(str(pipe['MultiMapper'])))
-               description="Chip_Mapping"
                filter_out="0"
                print >>fp, '@ADVPARAMS=NONE'
                print >>fp, '@CHIPINPUT=%s'%(chipinput)
-               print >>fp, '@PARAMChip=@GCOMMONDB/%s/%s,Chip,%s,%s,%s,%s'%(gb[1],gb[1],bowtie_params,description,filter_out,previous)
+               if(pipe['MacsType'] == "ATAC"):
+                    print >>fp, '@PARAMATAC=@GCOMMONDB/%s/%s,ATAC,%s,%s,%s,%s'%(gb[1],gb[1],bowtie_params,"ATAC_Mapping",filter_out,previous)
+               else:
+                    print >>fp, '@PARAMChip=@GCOMMONDB/%s/%s,Chip,%s,%s,%s,%s'%(gb[1],gb[1],bowtie_params,"Chip_Mapping",filter_out,previous)
                print >>fp, '@GENOMEINDEX=%s'%(genomeindex)
                print >>fp, '@TSIZE=%s'%(self.remove_space(str(pipe['TagSize'])))
                print >>fp, '@BWIDTH=%s'%(self.remove_space(str(pipe['BandWith'])))
                print >>fp, '@GSIZE=%s'%(self.remove_space(str(pipe['EffectiveGenome'])))
                print >>fp, '@EXTRAPARAMS=%s'%(pipe['Params'])
+               print >>fp, '@PLOTTYPE%s=%s'%(name, pipe['PlotType'])
+               print >>fp, '@REFTYPE%s=%s'%(name, pipe['ReferencePoint'])
 
              if (pipe['Type']=="BisulphiteMapping"):
                if ('BSMapStep' in pipe and pipe['BSMapStep'] == "yes"):
@@ -368,6 +376,8 @@ class Dolphin:
                  print >>fp, '@TOPN=%s'%(pipe['TopN'])
                  print >>fp, '@MINCOVERAGE=%s'%(pipe['MinCoverage'])
                  print >>fp, '@GBUILD=%s'%(gb[1])
+                 print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+                 print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
                  
              if (pipe['Type']=="DiffMeth"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -532,6 +542,8 @@ class Dolphin:
                    for t_e in tes:
                      self.prf( fp, stepRSEMCount % locals() )
                  self.writeVisualizationStr( fp, type, pipe, sep )
+                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                    self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.writeRSeQC ( fp, type, pipe, sep )
                  self.prf( fp, stepAlignmentCount % locals() )
               
@@ -548,33 +560,76 @@ class Dolphin:
                     type="dedup"+type
                     self.prf( fp, stepPCRDups % locals())
                  self.writeVisualizationStr( fp, type, pipe, sep )
+                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                    self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.writeRSeQC ( fp, type, pipe, sep )
                  self.prf( fp, stepAlignmentCount % locals() )
 
               if (pipe['Type'] == "DESeq"):
                  deseq_name =( pipe['Name'] if ('Name' in pipe) else '' )
                  self.prf( fp, '%s'%(stepDESeq2 % locals()) )
-
               if (pipe['Type'] == "ChipSeq"):
                  #Arrange ChipSeq mapping step
                  indexname='Chip'
                  self.prf( fp, '%s'%(stepSeqMapping % locals()) )
                  type="chip"
                  if ('split' in runparams and runparams['split'].lower() != 'none'):
-                     self.prf( fp, '%s'%(stepMergeBAM % locals()) )
-                     type="mergechip"
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergechip"
                  self.writePicard (fp, type, pipe, sep )
                  if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
                     type="dedup"+type
                     self.prf( fp, stepPCRDups % locals())
-
                  self.writeVisualizationStr( fp, type, pipe, sep )
-                                  
                  #Set running macs step
                  self.prf( fp, '%s'%(stepMACS % locals()) )
                  self.prf( fp, '%s'%(stepAggregation % locals()) )
+                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.prf( fp, stepAlignmentCount % locals() )
-
+              if ( (pipe['Type'] == "ChipSeq/ATACSeq")):
+                 if (pipe['MacsType'] == 'CHIP'):
+                    #Arrange ChipSeq mapping step
+                    indexname='Chip'
+                    self.prf( fp, '%s'%(stepSeqMapping % locals()) )
+                    type="chip"
+                    if ('split' in runparams and runparams['split'].lower() != 'none'):
+                        self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                        type="mergechip"
+                    self.writePicard (fp, type, pipe, sep )
+                    if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                       type="dedup"+type
+                       self.prf( fp, stepPCRDups % locals())
+                    self.writeVisualizationStr( fp, type, pipe, sep )
+                    #Set running macs step
+                    self.prf( fp, '%s'%(stepMACS % locals()) )
+                    self.prf( fp, '%s'%(stepAggregation % locals()) )
+                    if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
+                    self.prf( fp, stepAlignmentCount % locals() )
+                 elif(pipe['MacsType'] == 'ATAC'):
+                    #Arrange ATACSeq mapping step
+                    indexname='ATAC'
+                    self.prf( fp, '%s'%(stepSeqMapping % locals()) )
+                    type="atac"
+                    if ('split' in runparams and runparams['split'].lower() != 'none'):
+                        self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                        type="merge"+type
+                    self.writePicard (fp, type, pipe, sep )
+                    if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                       type="dedup"+type
+                       self.prf( fp, stepPCRDups % locals())
+                    self.writeVisualizationStr( fp, type, pipe, sep )
+                    #Additional ATAC parameters
+                    if ("CutAdjust" in pipe and pipe['CutAdjust'] == 'yes'):
+                        self.prf( fp, '%s'%(stepATACPrep % locals()) )
+                    #Set running macs step
+                    self.prf( fp, '%s'%(stepMACS % locals()) )
+                    self.prf( fp, '%s'%(stepAggregation % locals()) )
+                    if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
+                    self.prf( fp, stepAlignmentCount % locals() )
+                    
               if (pipe['Type'] == "BisulphiteMapping"):
                  self.prf( fp, '%s'% ( stepBSMap % locals() if ('BSMapStep' in pipe and pipe['BSMapStep'].lower()=="yes") else None ) )
                  
@@ -588,10 +643,12 @@ class Dolphin:
                     type="dedup"+type 
                  
                  self.writeVisualizationStr( fp, type, pipe, sep )
+                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
+                     self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  if ('MCallStep' in pipe and pipe['MCallStep'].lower() == "yes"):    
                      self.prf( fp, '%s'% ( stepMCall % locals() if ('MCallStep' in pipe and pipe['MCallStep'].lower()=="yes") else None ) )
                  if ('MethylKit' in pipe and pipe['MethylKit'].lower() == "yes"): 
-                     self.prf( fp, '%s'%(stepMethylKit % locals()) )   
+                     self.prf( fp, '%s'%(stepMethylKit % locals()) )
              
               if (pipe['Type'] == "DiffMeth"):
                  diffmeth_name =( pipe['Name'] if ('Name' in pipe) else '' )
