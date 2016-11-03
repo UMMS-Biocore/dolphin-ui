@@ -360,8 +360,8 @@ class Dolphin:
                print >>fp, '@BWIDTH=%s'%(self.remove_space(str(pipe['BandWith'])))
                print >>fp, '@GSIZE=%s'%(self.remove_space(str(pipe['EffectiveGenome'])))
                print >>fp, '@EXTRAPARAMS=%s'%(pipe['Params'])
-               print >>fp, '@PLOTTYPE%s=%s'%(name, pipe['PlotType'])
-               print >>fp, '@REFTYPE%s=%s'%(name, pipe['ReferencePoint'])
+               print >>fp, '@PLOTTYPE%s=%s'%(pipe['PlotType'])
+               print >>fp, '@REFTYPE%s=%s'%(pipe['ReferencePoint'])
 
              if (pipe['Type']=="BisulphiteMapping"):
                if ('BSMapStep' in pipe and pipe['BSMapStep'] == "yes"):
