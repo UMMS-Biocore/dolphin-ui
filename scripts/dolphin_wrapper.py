@@ -304,6 +304,8 @@ class Dolphin:
               
        if ('pipeline' in runparams):
            for pipe in runparams['pipeline']:
+             if ("ReferencePoint" in pipe and pipe['ReferencePoint'].lower()==""):
+                pipe['ReferencePoint'] = 'TSS';
              if (pipe['Type']=="RNASeqRSEM"):
                paramsrsem=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@PARAMSRSEM=%s'%(self.parse_content(paramsrsem))

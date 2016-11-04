@@ -1,3 +1,9 @@
+VERSION:	0.9.5
+DETAILS:	-Moved additional pipeline related javascript functions to a seperate file for specifically additional pipeline related functions
+		-Added atacseq to the chip pipeline within the ui
+		-Added deeptools options for whenever bw file is present
+		-Updated workflow for atacseq, cutadjust, and deeptools
+
 VERSION:	0.9.4
 DETAILS:	-Dolphin-ui will now not error out any run listed as 'successsful' after checking the pids
 
