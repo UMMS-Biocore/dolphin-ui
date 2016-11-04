@@ -475,7 +475,7 @@ function reloadChip(splt1, i){
 		document.getElementById('textarea_2_'+i).value = splt1[i].ExtFactor;
 	}
 	if (splt1[i].BAM2BW == 'yes') {
-		bigwigSelection('select_2_'+i)
+		bigwigSelection('select_6_'+i)
 		if (splt1[i].Deeptools == 'yes') {
 			document.getElementById('checkbox_6_'+i).checked = true;
 			deeptoolsSelect('checkbox_6_'+i)
