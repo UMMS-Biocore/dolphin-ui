@@ -358,15 +358,21 @@ function addNewUsers(id){
 }
 
 function confirmAddUser(id) {
-	if (document.querySelector("select").selectedOptions.length > 0) {
+	var selected = document.querySelector("select").selectedOptions;
+	if (selected.length > 0) {
+		var selectedArray = [];
+		for (var x = 0; x < selected.length; x++) {
+			selectedArray.push(selected[x].value)
+		}
 		var result = 0;
 		//	Add request to pending DB table
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/profiledb.php",
-			data: { p: 'addGroupMember', group_id: id, user_id: document.querySelector("select").selectedOptions[0].value },
+			data: { p: 'addGroupMember', group_id: id, user_ids: selectedArray },
 			async: false,
 			success : function(s)
 			{
+				console.log(s)
 				result = s;
 			}
 		});
@@ -377,7 +383,7 @@ function confirmAddUser(id) {
 		if (result == 0) {
 			document.getElementById('groupLabel').innerHTML ='Request did not process, please try again.';
 		}else{
-			document.getElementById('groupLabel').innerHTML ='User has been added to your group!';
+			document.getElementById('groupLabel').innerHTML ='Users has been added to your group!';
 		}
 	}
 }

@@ -271,19 +271,23 @@ else if ($p == 'getGroupMemberAdd')
 else if ($p == 'addGroupMember')
 {
 	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
-	if (isset($_GET['user_id'])){$user_id = $_GET['user_id'];}
-	
+	if (isset($_GET['user_ids'])){$user_ids = $_GET['user_ids'];}
 	$delete_possible_request=$query->runSQL("
 	DELETE FROM user_group_requests
 	WHERE group_id = $group_id
-	AND user_request = $user_id
+	AND user_request in ($user_ids)
 	");
-	$data=$query->runSQL("
-	INSERT INTO user_group
+	$com = "INSERT INTO user_group
 	(`u_id`, `g_id`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user`)
-	VALUES
-	($user_id, $group_id, 1, 1, 15, NOW(), NOW(), ".$_SESSION['uid'].")
-	");
+	VALUES";
+	foreach($user_ids as $uid){
+		if(end($user_ids) == $uid){
+			$com.="($uid, $group_id, 1, 1, 15, NOW(), NOW(), ".$_SESSION['uid'].")";
+		}else{
+			$com.="($uid, $group_id, 1, 1, 15, NOW(), NOW(), ".$_SESSION['uid']."),";
+		}
+	}
+	$data=$query->runSQL($com);
 }
 else if ($p == 'getMemberAdd')
 {
