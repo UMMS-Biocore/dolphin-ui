@@ -78,13 +78,18 @@ else if ($p == 'samplesWithRuns')
 else if ($p == 'getCreatedTables')
 {
 	if (isset($_GET['gids'])){$gids = $_GET['gids'];}
+	if($_SESSION['uid'] == 1){
+		$perms = "";
+	}else{
+		$perms = "WHERE owner_id = " . $_SESSION['uid'] . "
+		OR
+		(group_id in ( $gids )
+		AND perms > 3)";
+	}
 	$data=$query->queryTable("
 		SELECT *
 		FROM ngs_createdtables
-		WHERE owner_id = " . $_SESSION['uid'] . "
-		OR
-		(group_id in ( $gids )
-		AND perms > 3)
+		$perms
 		");
 }
 else if ($p == 'createNewTable')
