@@ -275,8 +275,7 @@ else if ($p == 'addGroupMember')
 	$delete_possible_request=$query->runSQL("
 	DELETE FROM user_group_requests
 	WHERE group_id = $group_id
-	AND user_request in ($user_ids)
-	");
+	AND user_request in (".implode(", ", $user_ids).")");
 	$com = "INSERT INTO user_group
 	(`u_id`, `g_id`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user`)
 	VALUES";
