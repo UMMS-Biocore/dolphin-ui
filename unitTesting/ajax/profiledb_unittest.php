@@ -144,7 +144,7 @@ class profiledb_unittest extends PHPUnit_Framework_TestCase
 		ob_start();
 		$_GET['p'] = 'addGroupMember';
 		$_GET['group_id'] = '1';
-		$_GET['user_ids'] = '3';
+		$_GET['user_ids'] = ['3'];
 		include("profiledb.php");
 		$this->assertEquals(json_decode($data),'1');
 		ob_end_clean();
