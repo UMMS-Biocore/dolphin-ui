@@ -158,7 +158,7 @@ function rerunLoad() {
 								//Tophat
 								reloadTophat(splt1, i)
 							}else if (splt1[i].Type == pipelineDict[2] || splt1[i].Type == 'ChipSeq'){
-								//Chipseq
+								//Chipseq/ATATSeq
 								reloadChip(splt1, i)
 							}else if (splt1[i].Type == pipelineDict[3]) {
 								//DESEQ
@@ -1251,14 +1251,6 @@ function removePipes(num){
 				recursiveRemovePipes(q);
 			}
 		}
-	}else if (currentPipelineVal[index] == 'Tophat') {
-		if (currentPipelineVal.indexOf('Tophat') >= index) {
-			rsem_index = currentPipelineVal.indexOf('RNASeqRSEM');
-			rsem_index_num = currentPipelineID[rsem_index];
-			if (rsem_index > -1) {
-				document.getElementById('checkbox_1_' + rsem_index_num).checked = false;
-			}
-		}
 	}else if (currentPipelineVal[index] == 'BisulphiteMapping') {
 		for(var q = currentPipelineVal.length - 1; q > -1; q--){
 			if (currentPipelineVal[q] == 'DiffMeth') {
@@ -1345,13 +1337,21 @@ function findAdditionalInfoValues(goWord, additionalArray){
 }
 /*##### GENERATE ADDITIONAL PIPELINE STR FOR JSON #####*/
 function findPipelineValues(){
-	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp',
+						   'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
-	var CHIPSEQ_JSON_DICT = ['MacsType', 'CutAdjust', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome', 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'PlotType', 'ReferencePoint'];
-	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
-	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates', 'BAM2BW', 'ExtFactor', 'Deeptools', 'PlotType', 'ReferencePoint', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
+	var CHIPSEQ_JSON_DICT = ['MacsType', 'CutAdjust', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome',
+							 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans',
+							 'PlotType', 'ReferencePoint'];
+	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
+							'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates',
+								'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'MCallStep', 'MCallParams',
+								'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling', 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample', 'custombed', 'peaks'];
+	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling',
+								 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample',
+								 'custombed', 'peaks'];
 	var JSON_ARRAY =  [];
 	console.log(currentPipelineID);
 	console.log(currentPipelineID.length);
@@ -1423,7 +1423,7 @@ function findPipelineValues(){
 								}
 							}else{
 								dict_counter--;
-								if (e.id.match("textarea_1_")) {
+								if (e.id.match("textarea_params_")) {
 									chip_bool = false;
 									x--;
 								}

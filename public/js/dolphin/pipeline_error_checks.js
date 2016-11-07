@@ -412,30 +412,38 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 		//	RSEM
 		if (name == 'RNASeqRSEM') {
 			//	extFactor is empty and selected
-			if (!checkFieldSelection('select_1_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
+			if (!checkFieldSelection('select_igvtdf_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_extf_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_extf_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within RNASeqRSEM');
 				return true;
 			//	single end dedup selected
-			}else if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+			}else if (!checkFieldCheckboxChecked('checkbox_markdup_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
 				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
 				return true;
-			}else if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && !checkFieldCheckboxChecked('checkbox_3_'+pipeline_index[x])){
+			}else if (!checkFieldCheckboxChecked('checkbox_rseqc_'+pipeline_index[x]) && !checkFieldCheckboxChecked('checkbox_nogenbam_'+pipeline_index[x])){
 				displayErrorModal('#errorModal', 'You cannot perform RNA-Seq QC while No Genome BAM is selected.');
+				return true;
+			//	K-means selection
+			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
+				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	Tophat
 		}else if (name == 'Tophat') {
 			//	extFactor is empty and selected
-			if (!checkFieldSelection('select_1_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
+			if (!checkFieldSelection('select_igvtdf_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_extf_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_extf_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within Tophat');
 				return true;
 			//	single end dedup selected
-			}else if (!checkFieldCheckboxChecked('checkbox_4_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+			}else if (!checkFieldCheckboxChecked('checkbox_markdup_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
 				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
+				return true;
+			//	K-means selection
+			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
+				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	ChipSeq
-		}else if (name == 'ChipSeq') {
+		}else if (name == 'ChipSeq' || name == 'ChipSeq/ATACSeq') {
 			//	name
 			if (checkDataTableContentsIDEmpty('#json_chiptable', 0)) {
 				displayErrorModal('#errorModal', 'Chip Input is missing a name within ChipSeq');
@@ -448,40 +456,44 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 				displayErrorModal('#errorModal', 'You must select a Sample input for Chip before you run ChipSeq.');
 				return true;
 			//	single end dedup selected
-			}else if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
+			}else if (!checkFieldCheckboxChecked('checkbox_markdup_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
 				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
 				return true;
 			}
 			
 			//	extFactor is empty and selected
-			if (!checkFieldSelection('select_3_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
+			if (!checkFieldSelection('select_igvtdf_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_extf_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_extf_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within ChipSeq');
 				return true;
 			//	Multimapper is empty
-			}else if (checkFieldIsNotInt('text_1_'+pipeline_index[x]) || checkFieldsEmpty('text_1_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_multimap_'+pipeline_index[x]) || checkFieldsEmpty('text_multimap_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Multimapper field must contain an integer value within ChipSeq');
 				return true;
 			//	Tag size(bp) for MACS is non-int
-			}else if (checkFieldIsNotInt('text_2_'+pipeline_index[x]) || checkFieldsEmpty('text_2_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_tagsize_'+pipeline_index[x]) || checkFieldsEmpty('text_tagsize_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Tag size(bp) for MACS field must contain an integer value within ChipSeq');
 				return true;
 			//	Band width(bp) for MACS is non-int
-			}else if (checkFieldIsNotInt('select_1_'+pipeline_index[x]) || checkFieldsEmpty('select_1_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('select_bandw_'+pipeline_index[x]) || checkFieldsEmpty('select_bandw_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Band width(bp) for MACS field must contain an integer value within ChipSeq');
 				return true;
 			//	Effective genome size(bp) is non-int
-			}else if (checkFieldIsNotInt('select_2_'+pipeline_index[x]) || checkFieldsEmpty('select_2_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('select_genomes_'+pipeline_index[x]) || checkFieldsEmpty('select_genomes_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Effective genome size(bp) field must contain an integer value within ChipSeq');
+				return true;
+			//	K-means selection
+			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
+				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	DESeq
 		}else if (name == 'DESeq') {
 			//	Name is empty
-			if (checkFieldsEmpty('text_1_'+pipeline_index[x])) {
+			if (checkFieldsEmpty('text_name_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Name field cannot be empty within DESeq');
 				return true;
 			//	Check naming
-			}else if (checkFieldAlphaNumericAdditionalChars('text_1_'+pipeline_index[x], '\\_\\-')) {
+			}else if (checkFieldAlphaNumericAdditionalChars('text_name_'+pipeline_index[x], '\\_\\-')) {
 				displayErrorModal('#errorModal', 'DESeq name field must be alpha-numeric characters, dashes, or underscores');
 				return true;
 			//	Check Multiple Selection
@@ -489,49 +501,53 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 				displayErrorModal('#errorModal', 'Conditions 1 and 2 cannot be empty within DESeq');
 				return true;
 			//	padj cutoff is empty or non-float
-			}else if (checkFieldIsNotFloat('text_2_'+pipeline_index[x]) || checkFieldsEmpty('text_2_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotFloat('text_padjcut_'+pipeline_index[x]) || checkFieldsEmpty('text_padjcut_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'pAdj cutoff is not of type float within DESeq');
 				return true;
 			//	Fold Change cutoff is empty or non-int
-			}else if (checkFieldIsNotInt('text_3_'+pipeline_index[x]) || checkFieldsEmpty('text_3_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_foldcut_'+pipeline_index[x]) || checkFieldsEmpty('text_foldcut_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Fold Change cutoff is not of type int within DESeq');
 				return true;
 			}
 		//	BisulphiteMapping
 		}else if (name == 'BisulphiteMapping') {
 			//	Digestion Site is empty
-			if (checkFieldsEmpty('text_1_'+pipeline_index[x]) && checkFieldCheckboxChecked(pipeline_index[x]+'_WGBS')) {
+			if (checkFieldsEmpty('text_digsite_'+pipeline_index[x]) && checkFieldCheckboxChecked(pipeline_index[x]+'_WGBS')) {
 				displayErrorModal('#errorModal', 'Digestion Site field cannot be empty within BisulphiteMapping');
 				return true;
 			//	extFactor is empty and selected
-			}else if (!checkFieldSelection('select_1_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_2_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_2_'+pipeline_index[x]))) {
+			}else if (!checkFieldSelection('select_igvtdf_'+pipeline_index[x], 'yes') && (checkFieldsEmpty('textarea_extf_'+pipeline_index[x]) || checkFieldIsNotInt('textarea_extf_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'extFactor field must be of type int within BisulphiteMapping');
 				return true;
 			//	MethylKit Tile Size
-			}else if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && (checkFieldIsNotInt('text_2_'+pipeline_index[x]) || checkFieldsEmpty('text_2_'+pipeline_index[x])) ) {
+			}else if (!checkFieldCheckboxChecked('checkbox_runmk_'+pipeline_index[x]) && (checkFieldIsNotInt('text_tilesize_'+pipeline_index[x]) || checkFieldsEmpty('text_tilesize_'+pipeline_index[x])) ) {
 				displayErrorModal('#errorModal', 'Tile Size field must be of type int for BisulphiteMapping');
 				return true;
 			//	MethylKit Step Size
-			}else if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && (checkFieldIsNotInt('text_3_'+pipeline_index[x]) || checkFieldsEmpty('text_3_'+pipeline_index[x]))) {
+			}else if (!checkFieldCheckboxChecked('checkbox_runmk_'+pipeline_index[x]) && (checkFieldIsNotInt('text_stepsize_'+pipeline_index[x]) || checkFieldsEmpty('text_stepsize_'+pipeline_index[x]))) {
 				displayErrorModal('#errorModal', 'Step Size field must be of type int for BisulphiteMapping');
 				return true;
 			//	MethylKit Min Coverage
-			}else if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && (checkFieldIsNotInt('text_4_'+pipeline_index[x]) || checkFieldsEmpty('text_4_'+pipeline_index[x])) ) {
+			}else if (!checkFieldCheckboxChecked('checkbox_runmk_'+pipeline_index[x]) && (checkFieldIsNotInt('text_mincov_'+pipeline_index[x]) || checkFieldsEmpty('text_mincov_'+pipeline_index[x])) ) {
 				displayErrorModal('#errorModal', 'Min Coverage field must be of type int for BisulphiteMapping');
 				return true;
 			//	MethylKit Top N Regions
-			}else if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && (checkFieldIsNotInt('text_5_'+pipeline_index[x]) || checkFieldsEmpty('text_5_'+pipeline_index[x])) ) {
+			}else if (!checkFieldCheckboxChecked('checkbox_runmk_'+pipeline_index[x]) && (checkFieldIsNotInt('text_topn_'+pipeline_index[x]) || checkFieldsEmpty('text_topn_'+pipeline_index[x])) ) {
 				displayErrorModal('#errorModal', 'Top N Regions field must be of type int for BisulphiteMapping');
+				return true;
+			//	K-means selection
+			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
+				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	DiffMeth
 		}else if (name == 'DiffMeth') {
 			//	Name is empty
-			if (checkFieldsEmpty('text_1_'+pipeline_index[x])) {
+			if (checkFieldsEmpty('text_name_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Name field cannot be empty within DiffMeth');
 				return true;
 			//	Name characters
-			}else if (checkFieldAlphaNumericAdditionalChars('text_1_'+pipeline_index[x], '\\_\\-')) {
+			}else if (checkFieldAlphaNumericAdditionalChars('text_name_'+pipeline_index[x], '\\_\\-')) {
 				displayErrorModal('#errorModal', 'DiffMeth name field must be alpha-numeric characters, dashes, or underscores');
 				return true;
 			//	Check Multiple Selection
@@ -542,51 +558,51 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 		//	HaplotypeCaller
 		}else if (name == 'HaplotypeCaller') {
 			//	Human only
-			if (!checkFieldCheckboxChecked('checkbox_1_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+			if (!checkFieldCheckboxChecked('checkbox_compcom_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
 				return true;
 			}
 			//	Human only
-			if (!checkFieldCheckboxChecked('checkbox_2_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+			if (!checkFieldCheckboxChecked('checkbox_compclin_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Clinical SNPs option');
 				return true;
 			}
 			//	Human only
-			if (!checkFieldCheckboxChecked('checkbox_3_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+			if (!checkFieldCheckboxChecked('checkbox_compenh_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Enhancers option');
 				return true;
 			}
 			//	Human only
-			if (!checkFieldCheckboxChecked('checkbox_4_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+			if (!checkFieldCheckboxChecked('checkbox_comppro_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
 				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Promoters option');
 				return true;
 			}
 			//	Human only
-			if (!checkFieldCheckboxChecked('checkbox_5_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
-				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common SNPs option');
+			if (!checkFieldCheckboxChecked('checkbox_comparemotif_'+pipeline_index[x]) && checkGenomeType('genomebuild', 'human,hg19')) {
+				displayErrorModal('#errorModal', 'Only Human genomes can use the Compare Common Motifs option');
 				return true;
 			}
 			//	Min Calling Threshold Confidence
-			if (checkFieldIsNotInt('text_1_'+pipeline_index[x]) || checkFieldsEmpty('text_1_'+pipeline_index[x])) {
+			if (checkFieldIsNotInt('text_smctfc_'+pipeline_index[x]) || checkFieldsEmpty('text_smctfc_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Calling Threshold Confidence field must be of type int for HaplotypeCaller');
 				return true;
 			//	Min Emitting Threshold Confidence
-			}else if (checkFieldIsNotInt('text_2_'+pipeline_index[x]) || checkFieldsEmpty('text_2_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_smctfe_'+pipeline_index[x]) || checkFieldsEmpty('text_smctfe_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Emitting Threshold Confidence field must be of type int for HaplotypeCaller');
 				return true;
 			//	Min Base Quality Score
-			}else if (checkFieldIsNotInt('text_3_'+pipeline_index[x]) || checkFieldsEmpty('text_3_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_mbqs_'+pipeline_index[x]) || checkFieldsEmpty('text_mbqs_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Base Quality Score field must be of type int for HaplotypeCaller');
 				return true;
 			//	Min Reads Per Alignment Start
-			}else if (checkFieldIsNotInt('text_4_'+pipeline_index[x]) || checkFieldsEmpty('text_4_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_mrpas_'+pipeline_index[x]) || checkFieldsEmpty('text_mrpas_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Min Reads Per Alignment Start field must be of type int for HaplotypeCaller');
 				return true;
 			//	Max Reads In Region Per Sample
-			}else if (checkFieldIsNotInt('text_5_'+pipeline_index[x]) || checkFieldsEmpty('text_5_'+pipeline_index[x])) {
+			}else if (checkFieldIsNotInt('text_mrirps_'+pipeline_index[x]) || checkFieldsEmpty('text_mrirps_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Max Reads In Region Per Sample field must be of type int for HaplotypeCaller');
 				return true;
-			}else if (!checkFieldsEmpty('text_6_'+pipeline_index[x]) && checkIfFileExists('text_6_'+pipeline_index[x], username)) {
+			}else if (!checkFieldsEmpty('text_custombed_'+pipeline_index[x]) && checkIfFileExists('text_custombed_'+pipeline_index[x], username)) {
 				displayErrorModal('#errorModal', 'You do not have access to this file, or the file does not exist (Haplotype Custom Bed File)');
 				return true;
 			}

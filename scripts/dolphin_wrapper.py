@@ -305,7 +305,7 @@ class Dolphin:
        if ('pipeline' in runparams):
            for pipe in runparams['pipeline']:
              if ("ReferencePoint" in pipe and pipe['ReferencePoint'].lower()==""):
-                pipe['ReferencePoint'] = 'TSS';
+               pipe['ReferencePoint'] = 'TSS';
              if (pipe['Type']=="RNASeqRSEM"):
                paramsrsem=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@PARAMSRSEM=%s'%(self.parse_content(paramsrsem))
@@ -328,6 +328,11 @@ class Dolphin:
                    print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name, indexsuffix,indexname,bowtie_params,indexname,filter_out,previous)
                print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
                print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+               else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
                    
              if (pipe['Type']=="Tophat"):
                paramstophat=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
@@ -335,7 +340,11 @@ class Dolphin:
                print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(paramstophat))
                print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
                print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               
+               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+               else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
              
              if (pipe['Type']=="DESeq"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -364,6 +373,11 @@ class Dolphin:
                print >>fp, '@EXTRAPARAMS=%s'%(pipe['Params'])
                print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
                print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+               else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
 
              if (pipe['Type']=="BisulphiteMapping"):
                if ('BSMapStep' in pipe and pipe['BSMapStep'] == "yes"):
@@ -380,6 +394,11 @@ class Dolphin:
                  print >>fp, '@GBUILD=%s'%(gb[1])
                  print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
                  print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+                 print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+                 if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+                 else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
                  
              if (pipe['Type']=="DiffMeth"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
