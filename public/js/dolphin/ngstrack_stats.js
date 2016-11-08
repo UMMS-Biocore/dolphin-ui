@@ -736,6 +736,7 @@ $(function() {
 		}
 		
 		//	Function within report_fincs.js
+		console.log("@@@@@@@  Highchart Logging Start @@@@@@@")
 		if (Object.keys(table_data).length > 0) {
 			summaryPlotSetup(table_data);
 			console.log(table_data);

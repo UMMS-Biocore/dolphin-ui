@@ -263,7 +263,7 @@ function showTable(type){
 	}else{
 		temp_currentResultSelection = currentResultSelection;
 	}
-	
+	console.log(BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection)
 	$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
 			async: false,
@@ -377,7 +377,7 @@ function showTable(type){
 			lib_checklist = [];
 		}
 		
-		if (type == 'rseqc' && /counts.tsv/.test(currentResultSelection)) {
+		if ((type == 'rseqc' || type == 'plots') && /counts.tsv/.test(currentResultSelection) && /RSeQC/.test(currentResultSelection)) {
 			var name_gather_bool = true;
 			var rseqc_categories = [];
 			var rseqc_series = [];
@@ -398,11 +398,12 @@ function showTable(type){
 				series_object['data'] = data_array;
 				rseqc_series.push(series_object);
 			}
-			
-			document.getElementById('rseqc_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("rseqc_table_div", "rseqc_plot")']))
+			console.log(rseqc_categories)
+			console.log(rseqc_series)
+			document.getElementById(type+'_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("'+type+'_table_div", '+type+'_plot")']))
 			document.getElementById('switch_plot').innerHTML = 'Switch Plot Type';
-			createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', 'rseqc_table_div', 'rseqc_plot', 'percent');
-			showHighchart('rseqc_table_div');
+			createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', type+'_table_div', type+'_plot', 'percent');
+			showHighchart(type+'_table_div');
 		}
 	}else{
 		var masterDiv = document.getElementById('select_'+type+'_div');
