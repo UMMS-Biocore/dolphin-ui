@@ -743,7 +743,7 @@ $(function() {
 			showHighchart('plots');
 		}
 		
-		if (/RSeQC/.test(table_params.parameters)) {
+		if (/RSeQC/.test(table_params.parameters) && /counts.tsv/.test(table_params.parameters)) {
 			rseqcPlotGen('rseqc', json_obj, 'generated_table')
 		}
 		
