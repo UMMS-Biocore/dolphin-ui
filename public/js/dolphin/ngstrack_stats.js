@@ -744,7 +744,7 @@ $(function() {
 		}
 		
 		if (/RSeQC/.test(table_params.parameters)) {
-			rseqcPlotGen('rseqc', json_obj)
+			rseqcPlotGen('rseqc', json_obj, 'generated_table')
 		}
 		
 		//	Log data path
