@@ -288,33 +288,7 @@ function showTable(type){
 	console.log(keys)
 	
 	if(currentResultSelection.split(".")[currentResultSelection.split(".").length - 1] == "tsv" || type_dictionary.indexOf(currentResultSelection) > -1){
-		var masterDiv = document.getElementById(type+'_exp_body');
-		var tableDiv = createElement('div', ['id', 'class', 'style'], [type+'_table_div', 'panel panel-default margin', 'overflow-x:scroll']);
-		var selectDiv = document.getElementById('select_'+type+'_div');
-		if (document.getElementById('jsontable_' + type + '_results') == null) {
-			var previous_button = false;
-			if (document.getElementById('clear_' + type + '_button_div') != null) {
-				previous_button = true;
-			}
-			var buttonDiv = createElement('div', ['id', 'class'], ['clear_' + type + '_button_div', 'margin col-md-4']);
-			buttonDiv.appendChild(createDownloadReportButtons(currentResultSelection, type));
-			if (previous_button) {
-				$('#clear_' + type + '_button_div').replaceWith(buttonDiv);
-			}else{
-				selectDiv.appendChild(buttonDiv);
-			}
-			var table = generateSelectionTable(keys, type);
-			tableDiv.appendChild(table)
-			masterDiv.appendChild(tableDiv);
-		}else{
-			document.getElementById(type+'_table_div').remove();
-			document.getElementById('template_'+type).remove();
-			
-			tableDiv = createElement('div', ['id', 'class', 'style'], [type+'_table_div', 'panel panel-default margin', 'overflow-x:scroll']);
-			var table = generateSelectionTable(keys, type);
-			tableDiv.appendChild(table)
-			masterDiv.appendChild(tableDiv);
-		}
+		highchartDivCreate(type)
 		
 		createStreamScript(keys, type)
 		var data = objList, html = $.trim($("#template_"+type).html()), template = Mustache.compile(html);
@@ -378,31 +352,7 @@ function showTable(type){
 		}
 		
 		if (type == 'rseqc' && /counts.tsv/.test(currentResultSelection)) {
-			var name_gather_bool = true;
-			var rseqc_categories = [];
-			var rseqc_series = [];
-			for (var cat in objList) {
-				var series_object = {};
-				var data_array = [];
-				for (ser in objList[cat]) {
-					if (ser == 'region') {
-						series_object['name'] = objList[cat][ser];
-					}else{
-						if (name_gather_bool) {
-							rseqc_categories.push(ser);
-						}
-						data_array.push(parseInt(objList[cat][ser]));
-					}
-				}
-				name_gather_bool = false;
-				series_object['data'] = data_array;
-				rseqc_series.push(series_object);
-			}
-			
-			document.getElementById('rseqc_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("rseqc_table_div", "rseqc_plot")']))
-			document.getElementById('switch_plot').innerHTML = 'Switch Plot Type';
-			createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', 'rseqc_table_div', 'rseqc_plot', 'percent');
-			showHighchart('rseqc_table_div');
+			rseqcPlotGen(type, objList)
 		}
 	}else{
 		var masterDiv = document.getElementById('select_'+type+'_div');
@@ -423,6 +373,64 @@ function showTable(type){
 		}
 	}
 	
+}
+
+function highchartDivCreate(type) {
+	var masterDiv = document.getElementById(type+'_exp_body');
+	var tableDiv = createElement('div', ['id', 'class', 'style'], [type+'_table_div', 'panel panel-default margin', 'overflow-x:scroll']);
+	var selectDiv = document.getElementById('select_'+type+'_div');
+	if (document.getElementById('jsontable_' + type + '_results') == null) {
+		var previous_button = false;
+		if (document.getElementById('clear_' + type + '_button_div') != null) {
+			previous_button = true;
+		}
+		var buttonDiv = createElement('div', ['id', 'class'], ['clear_' + type + '_button_div', 'margin col-md-4']);
+		buttonDiv.appendChild(createDownloadReportButtons(currentResultSelection, type));
+		if (previous_button) {
+			$('#clear_' + type + '_button_div').replaceWith(buttonDiv);
+		}else{
+			selectDiv.appendChild(buttonDiv);
+		}
+		var table = generateSelectionTable(keys, type);
+		tableDiv.appendChild(table)
+		masterDiv.appendChild(tableDiv);
+	}else{
+		document.getElementById(type+'_table_div').remove();
+		document.getElementById('template_'+type).remove();
+		
+		tableDiv = createElement('div', ['id', 'class', 'style'], [type+'_table_div', 'panel panel-default margin', 'overflow-x:scroll']);
+		var table = generateSelectionTable(keys, type);
+		tableDiv.appendChild(table)
+		masterDiv.appendChild(tableDiv);
+	}
+}
+
+function rseqcPlotGen(type, objList){
+	var name_gather_bool = true;
+	var rseqc_categories = [];
+	var rseqc_series = [];
+	for (var cat in objList) {
+		var series_object = {};
+		var data_array = [];
+		for (ser in objList[cat]) {
+			if (ser == 'region') {
+				series_object['name'] = objList[cat][ser];
+			}else{
+				if (name_gather_bool) {
+					rseqc_categories.push(ser);
+				}
+				data_array.push(parseInt(objList[cat][ser]));
+			}
+		}
+		name_gather_bool = false;
+		series_object['data'] = data_array;
+		rseqc_series.push(series_object);
+	}
+	
+	document.getElementById(type+'_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("'+type+'_table_div", "'+type+'_plot")']))
+	document.getElementById('switch_plot').innerHTML = 'Switch Plot Type';
+	createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', type+'_table_div', type+'_plot', 'percent');
+	showHighchart(type+'_table_div');
 }
 
 function createStreamScript(keys, type){

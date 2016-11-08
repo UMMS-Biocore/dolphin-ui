@@ -743,6 +743,11 @@ $(function() {
 			showHighchart('plots');
 		}
 		
+		if (/RSeQC/.test(table_data.parameters)) {
+			highchartDivCreate('rseqc')
+			rseqcPlotGen('rseqc', json_obj)
+		}
+		
 		//	Log data path
 		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
