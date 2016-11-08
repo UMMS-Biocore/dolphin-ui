@@ -743,8 +743,7 @@ $(function() {
 			showHighchart('plots');
 		}
 		
-		if (/RSeQC/.test(table_data.parameters)) {
-			highchartDivCreate('rseqc')
+		if (/RSeQC/.test(table_params.parameters)) {
 			rseqcPlotGen('rseqc', json_obj)
 		}
 		
