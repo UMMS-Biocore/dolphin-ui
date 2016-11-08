@@ -648,7 +648,6 @@ $(function() {
 		//	If file does exist
 		if (table_params.file != '') {
 			//	Load JSON file
-			console.log(table_params.file);
 			json_obj = undefined;
 			//	Obtain JSON data
 			$.ajax({ type: "GET",
@@ -657,7 +656,6 @@ $(function() {
 				async: false,
 				success : function(s)
 				{
-					console.log(s);
 					json_obj = s;
 				}
 			});
@@ -669,7 +667,6 @@ $(function() {
 					async: false,
 					success : function(s)
 					{
-						console.log(s);
 						json_obj = JSON.parse(s);
 						generateStreamTable('generated', json_obj, phpGrab.theSegment, qvar, rvar, segment, theSearch, uid, gids);
 					}
@@ -697,7 +694,6 @@ $(function() {
 				async: false,
 				success : function(s)
 				{
-					console.log(s);
 					json_obj = JSON.parse(s);
 					generateStreamTable('generated', json_obj, phpGrab.theSegment, qvar, rvar, segment, theSearch, uid, gids);
 				}
@@ -737,6 +733,9 @@ $(function() {
 		
 		//	Function within report_fincs.js
 		console.log("@@@@@@@  Highchart Logging Start @@@@@@@")
+		console.log(table_params);
+		console.log(table_array)
+		
 		if (Object.keys(table_data).length > 0) {
 			summaryPlotSetup(table_data);
 			console.log(table_data);
@@ -744,7 +743,6 @@ $(function() {
 			showHighchart('plots');
 		}
 		
-		console.log(table_params);
 		//	Log data path
 		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
