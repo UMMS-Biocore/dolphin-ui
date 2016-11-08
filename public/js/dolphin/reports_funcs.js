@@ -352,7 +352,7 @@ function showTable(type){
 		}
 		
 		if (type == 'rseqc' && /counts.tsv/.test(currentResultSelection)) {
-			rseqcPlotGen(type, objList)
+			rseqcPlotGen(type, objList, type+'_table_div')
 		}
 	}else{
 		var masterDiv = document.getElementById('select_'+type+'_div');
@@ -405,7 +405,7 @@ function highchartDivCreate(type) {
 	}
 }
 
-function rseqcPlotGen(type, objList){
+function rseqcPlotGen(type, objList, headDiv){
 	var name_gather_bool = true;
 	var rseqc_categories = [];
 	var rseqc_series = [];
@@ -427,10 +427,10 @@ function rseqcPlotGen(type, objList){
 		rseqc_series.push(series_object);
 	}
 	
-	document.getElementById(type+'_table_div').appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("'+type+'_table_div", "'+type+'_plot")']))
+	document.getElementById(headDiv).appendChild(createElement('button', ['id', 'class', 'onclick'], ['switch_plot', 'btn btn-primary margin', 'switchStacking("'+headDiv+'", "'+type+'_plot")']))
 	document.getElementById('switch_plot').innerHTML = 'Switch Plot Type';
-	createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', type+'_table_div', type+'_plot', 'percent');
-	showHighchart(type+'_table_div');
+	createHighchart(rseqc_categories, rseqc_series, 'RSeQC Count Results', 'Comparitive Sample Percentages', headDiv, type+'_plot', 'percent');
+	showHighchart(headDiv);
 }
 
 function createStreamScript(keys, type){
