@@ -105,9 +105,6 @@ function queryDirectory() {
 					files.fnClearTable();
 				}
 				document.getElementById('file_select').innerHTML = selectOptions;
-				//	After successful query
-				document.getElementById('Directory_toggle').setAttribute('data-toggle', 'tab');
-				$('.nav-tabs a[href="#Directory"]').tab('show')
 			}else{
 				$('#errorModal').modal({
 					show: true
