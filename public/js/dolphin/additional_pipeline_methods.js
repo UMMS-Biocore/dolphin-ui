@@ -1,4 +1,4 @@
-var pipelineDict = ['RNASeqRSEM', 'Tophat', 'ChipSeq/ATACSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
+var pipelineDict = ['RNASeqRSEM', 'Tophat',  'STAR', 'Hisat2', 'ChipSeq/ATACSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
 var pipelineNum = 0;
 
 function additionalPipes(){
@@ -10,6 +10,8 @@ function additionalPipes(){
 					'OPTION_DIS_SEL',
 					'OPTION',		//RNASeqRSEM
 					'OPTION',		//Tophat
+					'OPTION',		//STAR
+					'OPTION',		//Hisat2
 					'OPTION',		//ChipSeq/ATACSeq
 					'OPTION',		//DESeq
 					'OPTION',		//BisulphiteMapping
@@ -23,11 +25,13 @@ function additionalPipes(){
 					'--- Select a Pipeline ---',
 					pipelineDict[0],		//RNASeqRSEM
 					pipelineDict[1],		//Tophat
-					pipelineDict[2],		//ChipSeq/ATACSeq
-					pipelineDict[3],		//DESeq
-					pipelineDict[4],		//BisulphiteMapping
-					pipelineDict[5],		//DiffMeth
-					pipelineDict[6],		//HaplotypeCaller
+					pipelineDict[2],		//STAR
+					pipelineDict[3],		//Hisat2
+					pipelineDict[4],		//ChipSeq/ATACSeq
+					pipelineDict[5],		//DESeq
+					pipelineDict[6],		//BisulphiteMapping
+					pipelineDict[7],		//DiffMeth
+					pipelineDict[8],		//HaplotypeCaller
 					]
 	//find parent div
 	var master = document.getElementById('masterPipeline');
@@ -68,25 +72,31 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[1]) {
 			//Tophat Pipeline
 			divAdj = formTophat(divAdj, num)
-		}else if (pipeType == pipelineDict[2] || pipeType == 'ChipSeq') {
+		}else if (pipeType == pipelineDict[2]) {
+			//STAR Pipeline
+			divAdj = formStar(divAdj, num)
+		}else if (pipeType == pipelineDict[3]) {
+			//Hisat2 Pipeline
+			divAdj = formHisat2(divAdj, num)
+		}else if (pipeType == pipelineDict[4] || pipeType == 'ChipSeq') {
 			//ChipSeq Pipeline
 			divAdj, chip_table = formChip(divAdj, num)
-		}else if (pipeType == pipelineDict[3]) {
+		}else if (pipeType == pipelineDict[5]) {
 			//DESEQ
 			divAdj = formDESeq(divAdj, num)
-		}else if (pipeType == pipelineDict[4]) {
+		}else if (pipeType == pipelineDict[6]) {
 			//BisulphiteMapping
 			divAdj = formBisulphiteMapping(divAdj, num)
-		}else if (pipeType == pipelineDict[5]) {
+		}else if (pipeType == pipelineDict[7]) {
 			//DiffMeth
 			divAdj = formDiffMeth(divAdj, num)
-		}else if (pipeType == pipelineDict[6]) {
+		}else if (pipeType == pipelineDict[8]) {
 			//HaplotypeCaller
 			divAdj = formHaplotypeCaller(divAdj, num)
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
-		if (pipeType == pipelineDict[3]) {
+		if (pipeType == pipelineDict[5]) {
 			for (var x = 0; x < deseqList.length; x++) {
 				var opt = createElement('option', ['id', 'value'], [deseqList[x], deseqList[x]]);
 				opt.innerHTML = deseqList[x];
@@ -399,6 +409,80 @@ function tophatCustomOptions(num){
 	}
 }
 
+function formStar(divAdj, num){
+	divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'STAR parameters:']));
+	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+	divAdj = createIGVBigwigOptions(divAdj, num);
+	return divAdj;
+}
+
+function reloadStar(splt1, i) {
+	additionalPipes();
+	document.getElementById('select_'+i).value = pipelineDict[2];
+	pipelineSelect(i);
+	document.getElementById('textarea_params_'+i).value = splt1[i].Params;
+	reloadIGVBigwidOptions(splt1, i)
+	if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
+		document.getElementById('checkbox_rseqc_'+i).checked = true;
+	}
+	if (splt1[i].CollectRnaSeqMetrics == 'yes' || splt1[i].CollectRnaSeqMetrics == '1') {
+		document.getElementById('checkbox_colrna_'+i).checked = true;
+	}
+	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
+		document.getElementById('checkbox_multipicard_'+i).checked = true;
+	}
+	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
+		document.getElementById('checkbox_markdup_'+i).checked = true;
+	}
+}
+
+function formHisat2(divAdj, num){
+	divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'Hisat2 parameters:']));
+	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
+			createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+	divAdj = createIGVBigwigOptions(divAdj, num);
+	return divAdj;
+}
+
+function reloadHisat2(splt1, i) {
+	additionalPipes();
+	document.getElementById('select_'+i).value = pipelineDict[3];
+	pipelineSelect(i);
+	document.getElementById('textarea_params_'+i).value = splt1[i].Params;
+	reloadIGVBigwidOptions(splt1, i)
+	if (splt1[i].RSeQC == 'yes' || splt1[i].RSeQC == '1') {
+		document.getElementById('checkbox_rseqc_'+i).checked = true;
+	}
+	if (splt1[i].CollectRnaSeqMetrics == 'yes' || splt1[i].CollectRnaSeqMetrics == '1') {
+		document.getElementById('checkbox_colrna_'+i).checked = true;
+	}
+	if (splt1[i].CollectMultipleMetrics == 'yes' || splt1[i].CollectMultipleMetrics == '1') {
+		document.getElementById('checkbox_multipicard_'+i).checked = true;
+	}
+	if (splt1[i].MarkDuplicates == 'yes' || splt1[i].MarkDuplicates == '1') {
+		document.getElementById('checkbox_markdup_'+i).checked = true;
+	}
+}
+
 function formChip(divAdj, num){
 	divAdj = mergeTidy(divAdj, 12,
 			[[createLabeledDiv(12, 'CHIP&nbsp;&nbsp;', '&nbsp;&nbsp;ATAC',
@@ -449,7 +533,7 @@ function formChip(divAdj, num){
 
 function reloadChip(splt1, i){
 	additionalPipes();
-	document.getElementById('select_'+i).value = pipelineDict[2];
+	document.getElementById('select_'+i).value = pipelineDict[4];
 	pipelineSelect(i);
 	//Chip Input Table
 	var check = document.getElementById(i.toString() + "_" + splt1[i].MacsType);
@@ -619,7 +703,7 @@ function formDESeq(divAdj, num){
 function reloadDESeq(splt1, i){
 	additionalPipes();
 	console.log(i)
-	document.getElementById('select_'+i).value = pipelineDict[3];
+	document.getElementById('select_'+i).value = pipelineDict[5];
 	pipelineSelect(i);
 	//handle for multiple selections
 	document.getElementById('text_name_'+i).value = splt1[i].Name;
@@ -720,7 +804,7 @@ function formBisulphiteMapping(divAdj, num){
 function reloadBisulphiteMapping(splt1, i){
 	//MMap
 	additionalPipes();
-	document.getElementById('select_'+i).value = pipelineDict[4];
+	document.getElementById('select_'+i).value = pipelineDict[6];
 	pipelineSelect(i);
 	document.getElementById('text_digsite_'+i).value = splt1[i].Digestion;
 	$("#" + i.toString() + "_" + splt1[i].BisulphiteType).iCheck('check');
@@ -833,7 +917,7 @@ function formDiffMeth(divAdj, num){
 
 function reloadDiffMeth(splt1, i){
 	additionalPipes();
-	document.getElementById('select_'+i).value = pipelineDict[5];
+	document.getElementById('select_'+i).value = pipelineDict[7];
 	pipelineSelect(i);
 	document.getElementById('text_name_'+i).value = splt1[i].Name;
 	//handle for multiple selections
@@ -908,7 +992,7 @@ function formHaplotypeCaller(divAdj, num){
 
 function reloadHaplotypeCaller(splt1, i){
 	additionalPipes();
-	document.getElementById('select_'+i).value = pipelineDict[6];
+	document.getElementById('select_'+i).value = pipelineDict[8];
 	pipelineSelect(i);
 	document.getElementById('text_smctfc_'+i).value = splt1[i].standard_min_confidence_threshold_for_calling;
 	document.getElementById('text_smctfe_'+i).value = splt1[i].standard_min_confidence_threshold_for_emitting;

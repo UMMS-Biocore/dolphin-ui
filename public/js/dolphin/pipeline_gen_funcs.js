@@ -157,19 +157,25 @@ function rerunLoad() {
 							}else if (splt1[i].Type == pipelineDict[1]) {
 								//Tophat
 								reloadTophat(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[2] || splt1[i].Type == 'ChipSeq'){
+							}else if (splt1[i].Type == pipelineDict[2]) {
+								//STAR
+								reloadStar(splt1, i)	
+							}else if (splt1[i].Type == pipelineDict[3]) {
+								//Hisat2
+								reloadHisat2(splt1, i)
+							}else if (splt1[i].Type == pipelineDict[4] || splt1[i].Type == 'ChipSeq'){
 								//Chipseq/ATATSeq
 								reloadChip(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[3]) {
+							}else if (splt1[i].Type == pipelineDict[5]) {
 								//DESEQ
 								reloadDESeq(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[4]) {
+							}else if (splt1[i].Type == pipelineDict[6]) {
 								//BisulphiteMapping
 								reloadBisulphiteMapping(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[5]) {
+							}else if (splt1[i].Type == pipelineDict[7]) {
 								//DiffMeth
 								reloadDiffMeth(splt1, i)
-							}else if (splt1[i].Type == pipelineDict[6]) {
+							}else if (splt1[i].Type == pipelineDict[8]) {
 								//HaplotypeCaller
 								reloadHaplotypeCaller(splt1, i)
 							}
@@ -1345,6 +1351,10 @@ function findPipelineValues(){
 							 'PlotType', 'ReferencePoint'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
 							'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+    var STAR_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
+						  'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint'];
+    var HISAT2_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
+							'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates',
 								'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'MCallStep', 'MCallParams',
 								'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
@@ -1366,6 +1376,10 @@ function findPipelineValues(){
 			USED_DICT = CHIPSEQ_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'Tophat') {
 			USED_DICT = TOPHAT_JSON_DICT;
+		}else if (currentPipelineVal[y] == 'STAR') {
+			USED_DICT = STAR_JSON_DICT;
+		}else if (currentPipelineVal[y] == 'Hisat2') {
+			USED_DICT = HISAT2_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'BisulphiteMapping') {
 			USED_DICT = BISULPHITE_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'DiffMeth') {

@@ -17,13 +17,19 @@ var headers = [];
 var type_dictionary = ['rRNA', 'miRNA', 'piRNA', 'tRNA', 'snRNA', 'rmsk', 'ercc'];
 var summary_RNA = [];
 var summary_dictionary = ['Sample','Total Reads', 'Total align',
-						  'Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem',
-						  'Reads Aligned rsem','Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat',
-						  'Reads Aligned tophat','Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip'];
+						  'Duplicated Reads rsem','Multimapped Reads Aligned rsem','Unique Reads Aligned rsem','Reads Aligned rsem',
+						  'Duplicated Reads tophat','Multimapped Reads Aligned tophat','Unique Reads Aligned tophat','Reads Aligned tophat',
+						  'Duplicated Reads chip','Multimapped Reads Aligned chip','Unique Reads Aligned chip','Reads Aligned chip',
+						  'Duplicated Reads atac','Multimapped Reads Aligned atac','Unique Reads Aligned atac','Reads Aligned atac',
+						  'Duplicated Reads star','Multimapped Reads Aligned star','Unique Reads Aligned star','Reads Aligned star',
+						  'Duplicated Reads hisat2','Multimapped Reads Aligned hisat2','Unique Reads Aligned hisat2','Reads Aligned hisat2'];
 var html_summary_dictionary = ['File','total_reads','unmapped',
 							   'rsem_dedup','rsem_multimap','rsem_unique','rsem',
 							   'tophat_dedup','tophat_multimap','tophat_unique','tophat',
-							   'chip_dedup','chip_multimap','chip_unique','chip'];
+							   'chip_dedup','chip_multimap','chip_unique','chip',
+							   'atac_dedup','atac_multimap','atac_unique','atac',
+							   'star_dedup','star_multimap','star_unique','star',
+							   'hisat2_dedup','hisat2_multimap','hisat2_unique','hisat2'];
 var initial_mapping_table = [];
 
 function parseSummary(url_path){
