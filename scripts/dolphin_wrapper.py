@@ -307,6 +307,8 @@ class Dolphin:
              if ("ReferencePoint" in pipe and pipe['ReferencePoint'].lower()==""):
                pipe['ReferencePoint'] = 'TSS';
              if (pipe['Type']=="RNASeqRSEM"):
+               paramsrsem=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+               print >>fp, '@PARAMSRSEM=%s'%(self.parse_content(paramsrsem))
                print >>fp, '@TSIZE=50';
                print >>fp, '@PREVIOUSRSEM=%s'%(previoussplit)
                if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
