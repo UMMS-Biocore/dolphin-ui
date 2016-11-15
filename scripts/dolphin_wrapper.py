@@ -307,8 +307,6 @@ class Dolphin:
              if ("ReferencePoint" in pipe and pipe['ReferencePoint'].lower()==""):
                pipe['ReferencePoint'] = 'TSS';
              if (pipe['Type']=="RNASeqRSEM"):
-               paramsrsem=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
-               print >>fp, '@PARAMSRSEM=%s'%(self.parse_content(paramsrsem))
                print >>fp, '@TSIZE=50';
                print >>fp, '@PREVIOUSRSEM=%s'%(previoussplit)
                if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
@@ -428,6 +426,24 @@ class Dolphin:
                  print >>fp, '@PEAKS=%s'%(pipe['peaks'])
                if ('custombed' in pipe and pipe['custombed'] != "none"):
                  print >>fp, '@CUSTOMBED=%s'%(pipe['custombed'])
+                 
+             if (pipe['Type']=="Star"):
+               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+               else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
+                   
+             if (pipe['Type']=="Hisat"):
+               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+                   print >>fp, '@KMEANS=%s'%('none')
+               else:
+                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -678,6 +694,44 @@ class Dolphin:
               if (pipe['Type'] == "HaplotypeCaller"):
                 self.prf( fp, '%s'%(stepHaplotype % locals()) )
                 type="haplotypecaller"
+                
+              if (pipe['Type']=="STAR"):
+                 type="star"
+                 gtf = "none"
+                 addparameters=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+                 indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@STARINDEX" )
+                 script_command = "@RUNSTAR"
+                 run_command = "@COMMANDSTAR"
+                 self.prf( fp, stepAlignment % locals() )
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergestar"
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
+                 
+              if (pipe['Type']=="Hisat2"):
+                 type="hisat2"
+                 gtf = "none"
+                 addparameters=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
+                 indexref = (pipe['CustomGenomeIndex'] if ('CustomGenomeIndex' in pipe and pipe['CustomGenomeIndex'].lower()!="none") else "@HISAT2INDEX" )
+                 script_command = "@RUNHISAT2"
+                 run_command = "@COMMANDHISAT2"
+                 self.prf( fp, stepAlignment % locals() )
+                 if ('split' in runparams and runparams['split'].lower() != 'none'):
+                    self.prf( fp, '%s'%(stepMergeBAM % locals()) )
+                    type="mergehisat2"
+                 self.writePicard (fp, type, pipe, sep )
+                 if ("MarkDuplicates" in pipe and pipe['MarkDuplicates'].lower()=="yes"):
+                    type="dedup"+type
+                    self.prf( fp, stepPCRDups % locals())
+                 self.writeVisualizationStr( fp, type, pipe, sep )
+                 self.writeRSeQC ( fp, type, pipe, sep )
+                 self.prf( fp, stepAlignmentCount % locals() )
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
         if(backupS3 == None):

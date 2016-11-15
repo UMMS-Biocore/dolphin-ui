@@ -1,6 +1,9 @@
 var rsem_toggle = false;
 var tophat_toggle = false;
 var chip_toggle = false;
+var atac_toggle = false;
+var star_toggle = false;
+var hisat2_toggle = false;
 
 var base_categories = [];
 var base_series = [];
@@ -10,6 +13,12 @@ var tophat_categories = [];
 var tophat_series = {};
 var chip_categories = [];
 var chip_series = {};
+var atac_categories = [];
+var atac_series = {};
+var star_categories = [];
+var star_series = {};
+var hisat2_categories = [];
+var hisat2_series = {};
 
 function createHighchart(categories, series, title, yaxis, master_container, container, stacking) {
 	var master = document.getElementById(master_container);

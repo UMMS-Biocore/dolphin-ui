@@ -411,17 +411,17 @@ function tophatCustomOptions(num){
 
 function formStar(divAdj, num){
 	divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'STAR parameters:']));
-	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_params_'+num, 'form-control']));
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+			createElement('input', ['id', 'type', 'class'], ['checkbox_markdup_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+			createElement('input', ['id', 'type', 'class'], ['checkbox_rseqc_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+			createElement('input', ['id', 'type', 'class'], ['checkbox_colrna_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+			createElement('input', ['id', 'type', 'class'], ['checkbox_multipicard_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = createIGVBigwigOptions(divAdj, num);
 	return divAdj;
 }
@@ -448,17 +448,17 @@ function reloadStar(splt1, i) {
 
 function formHisat2(divAdj, num){
 	divAdj.appendChild( createElement('label', ['class','TEXTNODE'], ['box-title', 'Hisat2 parameters:']));
-	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_'+num, 'form-control']));
+	divAdj.appendChild( createElement('textarea', ['id', 'class'], ['textarea_params_'+num, 'form-control']));
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['margin', 'Mark Duplicates']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_4_'+num, 'checkbox', 'margin'])] ]);
+			createElement('input', ['id', 'type', 'class'], ['checkbox_markdup_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = mergeTidy(divAdj, 12,
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title margin', 'RNA-Seq QC:']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_1_'+num, 'checkbox', 'margin'])],
+			createElement('input', ['id', 'type', 'class'], ['checkbox_rseqc_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect RNA Metrics']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_2_'+num, 'checkbox', 'margin'])],
+			createElement('input', ['id', 'type', 'class'], ['checkbox_colrna_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['class','TEXTNODE'], ['margin', 'Collect Multiple Picard Metrics']),
-			createElement('input', ['id', 'type', 'class'], ['checkbox_3_'+num, 'checkbox', 'margin'])] ]);
+			createElement('input', ['id', 'type', 'class'], ['checkbox_multipicard_'+num, 'checkbox', 'margin'])] ]);
 	divAdj = createIGVBigwigOptions(divAdj, num);
 	return divAdj;
 }
