@@ -15,6 +15,7 @@ if (isset($_GET['end'])){$end = $_GET['end'];}
 
 $username=$_SESSION['user'];
 $userstr=" and g.username in (select u.username from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
+$userstrdol=" and j.username in (select u.username from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
 
 if($p == "getDailyRuns")
 {
