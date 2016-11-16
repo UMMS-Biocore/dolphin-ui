@@ -1023,7 +1023,7 @@ class funcs
         
         return $this->queryTable($sql);
       }
-      //#######################################
+      
       //For stepMD5Sum ######################
       
       function getAllFastqInfo($params){
@@ -1032,6 +1032,7 @@ class funcs
         return $this->queryTable($sql);
       }
       
+      /*
       function runMD5SumUpdate($params){
         $this->username=$params['clusteruser'];
         $this->readINI();
@@ -1051,6 +1052,7 @@ class funcs
         }
         return "RUNNING: $retval : $com";
       }
+      */
       
       function dbMd5sumUpdate($params){
         $this->readINI();
@@ -1070,5 +1072,6 @@ class funcs
         
         return $this->runSQL($sql);
       }
+      //#######################################
 }
 ?>
