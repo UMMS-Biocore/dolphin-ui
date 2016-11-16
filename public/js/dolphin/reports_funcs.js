@@ -294,7 +294,7 @@ function showTable(type){
 	console.log(keys)
 	
 	if(currentResultSelection.split(".")[currentResultSelection.split(".").length - 1] == "tsv" || type_dictionary.indexOf(currentResultSelection) > -1){
-		highchartDivCreate(type)
+		highchartDivCreate(type, keys)
 		
 		createStreamScript(keys, type)
 		var data = objList, html = $.trim($("#template_"+type).html()), template = Mustache.compile(html);
@@ -381,7 +381,7 @@ function showTable(type){
 	
 }
 
-function highchartDivCreate(type) {
+function highchartDivCreate(type, keys) {
 	var masterDiv = document.getElementById(type+'_exp_body');
 	var tableDiv = createElement('div', ['id', 'class', 'style'], [type+'_table_div', 'panel panel-default margin', 'overflow-x:scroll']);
 	var selectDiv = document.getElementById('select_'+type+'_div');
