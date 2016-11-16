@@ -26,7 +26,7 @@
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
                             <?php echo $html->getBoxTable_stat("User", "Dolphin", "<th>Name</th><th>Lab</th><th>Count</th>"); ?>
-                            <?php echo $html->getBoxTable_stat("Tool", "Dolphin", "<th>Tool Name</th><th>Count</th>"); ?>
+                            <?php echo $html->getBoxTable_stat("Service", "Dolphin", "<th>Service Name</th><th>The # of Submitted Services</th>"); ?>
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-6">
                             <!-- BAR CHART -->
