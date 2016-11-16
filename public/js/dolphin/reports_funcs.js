@@ -880,18 +880,18 @@ function summaryPlotSetup(table_data){
 			}
 		}
 		
-		highchartSetup(sample_obj, 'tophat', tophat_toggle, tophat_categories, tophat_series)
-		highchartSetup(sample_obj, 'chip', chip_toggle, chip_categories, chip_series)
-		highchartSetup(sample_obj, 'atac', atac_toggle, atac_categories, atac_series)
-		highchartSetup(sample_obj, 'star', star_toggle, star_categories, star_series)
-		highchartSetup(sample_obj, 'hisat2', hisat2_toggle, hisat2_categories, hisat2_series)
+		highchartSetup(sample_obj, 'tophat', tophat_categories, tophat_series)
+		highchartSetup(sample_obj, 'chip', chip_categories, chip_series)
+		highchartSetup(sample_obj, 'atac', atac_categories, atac_series)
+		highchartSetup(sample_obj, 'star', star_categories, star_series)
+		highchartSetup(sample_obj, 'hisat2', hisat2_categories, hisat2_series)
 		
 		if (table_data[sample_obj]['chip'] == undefined && table_data[sample_obj]['tophat'] == undefined && table_data[sample_obj]['rsem'] == undefined &&
 			table_data[sample_obj]['atac'] == undefined && table_data[sample_obj]['star'] == undefined && table_data[sample_obj]['hisat2'] == undefined) {
 			base_categories.push(sample_obj);
 			for (var data in table_data[sample_obj]) {
 				if (!/rsem/.test(data) && !/tophat/.test(data) && !/chip/.test(data) && !/total_reads/.test(data) &&
-					!/atac/.test(data) && !/star/.tesst(data) && !/hisat2/.test(data)) {
+					!/atac/.test(data) && !/star/.test(data) && !/hisat2/.test(data)) {
 					if (base_series[data] == undefined) {
 						var name = data;
 						console.log(data);
@@ -907,12 +907,12 @@ function summaryPlotSetup(table_data){
 	}
 }
 
-function highchartSetup(sample_obj, type, toggle, categories, series){
+function highchartSetup(sample_obj, type, categories, series){
 	if (table_data[sample_obj][type] != undefined || table_data[sample_obj][type+'_unique'] != undefined) {
-		toggle = true;
 		categories.push(sample_obj);
 		for (var data in table_data[sample_obj]) {
-			if (/type/.test(data)) {
+			var re = new RegExp(type, 'g');
+			if (re.test(data)) {
 				if (series[data] == undefined) {
 					var name = data;
 					if (data == type) {
@@ -922,6 +922,7 @@ function highchartSetup(sample_obj, type, toggle, categories, series){
 					}else if (data == type+'_multimap') {
 						name = 'multimapped reads'
 					}else if (data == type+'_unique') {
+						console.log('corrrect')
 						name = 'uniquely mapped reads'
 					}
 					var num = table_data[sample_obj][data].toString().split(" ")[0].replace(/,/g, "");
@@ -931,6 +932,22 @@ function highchartSetup(sample_obj, type, toggle, categories, series){
 					series[data]['data'].push(parseInt(num))
 				}
 			}
+		}
+		if (type == 'tophat') {
+			tophat_toggle = true;
+			tophat_series = series;
+		}else if (type == 'chip') {
+			chip_toggle = true;
+			chip_series = series;
+		}else if (type == 'atac') {
+			atac_toggle = true;
+			atac_series = series;
+		}else if (type == 'star') {
+			star_toggle = true;
+			star_series = series;
+		}else if (type == 'hisat2') {
+			hisat2_toggle = true;
+			hisat2_series = series;
 		}
 	}
 }
@@ -971,9 +988,10 @@ function createSingleSummaryHighchart(selected_series, selected_categories, lowe
 	for (var series in selected_series) {
 		final_series.push(selected_series[series]);
 	}
+	console.log(selected_series)
 	createHighchart(selected_categories, final_series, 'Distribution of '+upper_type+' Reads', 'Percentage of '+upper_type, 'plots', lower_type+'_plot', 'percent');
 	document.getElementById('plots').appendChild(createElement('button', ['id', 'class', 'onclick', 'style'], [lower_type+'_switch', 'btn btn-primary margin', 'switchStacking("plots", "'+lower_type+'_plot")', 'display:none']))
-	document.getElementById('rsem_switch').innerHTML = 'Switch '+upper_type+' Plot Type';
+	document.getElementById(lower_type+'_switch').innerHTML = 'Switch '+upper_type+' Plot Type';
 }
 
 function checkTableOutput(sample_data, ui_id, row_array) {
