@@ -245,6 +245,4 @@ $(function() {
     });
     
     toolTable.fnSort( [ [1,'desc'] ] );
-
-    
 });
