@@ -34,14 +34,14 @@ $(function() {
     $('.daterange').daterangepicker(
             {
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Today': [moment().subtract('days', 1), moment()],
+                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
                     'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
                     'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
 					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'All Time': [moment('2012-01-01'), moment()],
+					'Total': [moment('2012-01-01'), moment()],
                 },
                 startDate: moment('2012-01-01'),
                 endDate: moment()
@@ -112,8 +112,8 @@ $(function() {
      $('.daterange_User').daterangepicker(
             {
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Today': [moment().subtract('days', 1), moment()],
+                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
                     'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
@@ -169,8 +169,8 @@ $(function() {
     $('.daterange_Lab').daterangepicker(
             {
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Today': [moment().subtract('days', 1), moment()],
+                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
                     'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
@@ -225,8 +225,8 @@ $(function() {
     $('.daterange_Service').daterangepicker(
             {
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Today': [moment().subtract('days', 1), moment()],
+                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
                     'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
@@ -282,8 +282,8 @@ $(function() {
     $('.daterange_Job').daterangepicker(
             {
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Today': [moment().subtract('days', 1), moment()],
+                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
                     'Last 7 Days': [moment().subtract('days', 6), moment()],
                     'Last 30 Days': [moment().subtract('days', 29), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
