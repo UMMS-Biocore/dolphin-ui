@@ -15,7 +15,7 @@ if (isset($_GET['end'])){$end = $_GET['end'];}
 
 $username=$_SESSION['user'];
 $userstr=" and g.username in (select u.username from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
-$userstrdol=" and j.username in (select u.username from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
+$userstrdol=" and u.username in (select u.username from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
 
 if($p == "getDailyRuns")
 {
@@ -35,7 +35,7 @@ else if($p == "getTopUsers")
       select u.name, count(distinct j.workflow_id) count
       from jobs j, users u
       where u.clusteruser=j.username
-      $userstr
+      $userstrdol
       group by j.username
       order by count desc
       limit 20
@@ -62,7 +62,7 @@ else if($p == "getTopUsersTime")
       select u.name, count(distinct j.workflow_id) count
       from jobs j, users u
       where u.clusteruser=j.username
-      $userstr
+      $userstrdol
       $time
       group by j.username
       order by count desc
@@ -91,7 +91,7 @@ else if($p == "getUsersTime")
       select u.name, u.lab, count(distinct j.wkey) count
       from users u, jobs j
       where u.clusteruser=j.username
-      $userstr 
+      $userstrdol 
       $time
       group by j.username
       order by count desc
@@ -118,7 +118,7 @@ else if($p == "getLabsTime")
       select u.lab, count(distinct j.workflow_id) count
       from users u, jobs j
       where u.clusteruser=j.username
-      $userstr
+      $userstrdol
       $time
       group by u.lab
       order by count desc
@@ -156,7 +156,7 @@ else if ($p == "getServiceTime")
    select s.servicename, count(distinct s.service_id) count
    from jobs j, services s
    where j.service_id=s.service_id
-   $userstr
+   $userstrdol
    $time
    group by servicename
    order by count desc
@@ -165,7 +165,6 @@ else if ($p == "getServiceTime")
 else if($p == "getJobTime")
 {
     $userstr=" and j.username in (select u.clusteruser from user_group ug, users u where u.id=ug.u_id and ug.g_id in ( SELECT ug.g_id from user_group ug, users u where u.id=ug.u_id and u.username='$username'))";
-
     $time="";
     if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
     $sql="
