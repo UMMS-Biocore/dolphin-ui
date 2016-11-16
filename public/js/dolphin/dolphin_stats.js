@@ -307,6 +307,7 @@ $(function() {
             });
 
     });
-    
+	
     jobTable.fnSort( [ [1,'desc'] ] );
+	
 });
