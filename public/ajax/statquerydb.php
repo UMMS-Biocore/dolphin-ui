@@ -21,8 +21,8 @@ if($p == "getDailyRuns")
    select * from
    (select * from
    (select a.countTotal, b.countDolphin, a.day from
-   (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where 1=1 '.$userstr.' group by day order by day) a,
-   (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where dolphin=TRUE '.$userstr.' group by day order by day) b
+   (select count(id) countTotal, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where 1=1 group by day order by day) a,
+   (select count(id) countDolphin, DATE_FORMAT(start_time, "%Y-%m-%d") day from galaxy_run g where dolphin=TRUE group by day order by day) b
    where a.day=b.day order by day desc) a limit 30) a order by day asc
    ');
 }
@@ -68,7 +68,7 @@ else if($p == "getTopUsersTime")
       $data=$query->queryTable("
       select u.name, count(g.id) count
       from galaxy_run g, users u
-      where u.username=g.username
+      where u.username=g.username 
       $time
       and dolphin=false
       group by g.username

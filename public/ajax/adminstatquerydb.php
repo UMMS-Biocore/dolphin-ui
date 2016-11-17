@@ -40,6 +40,7 @@ else if($p == "getTopUsers")
       select u.name, count(g.id) count
       from galaxy_run g, users u
       where u.username=g.username
+      and dolphin=false
       group by g.username
       order by count desc
       limit 20
@@ -54,7 +55,7 @@ else if($p == "getTopUsersTime")
       $data=$query->queryTable("
       select u.name, count(distinct j.wkey) count
       from jobs j, users u
-      where u.clusteruser=j.username 
+      where u.clusteruser=j.username
       $time
       group by j.username
       order by count desc
@@ -67,6 +68,7 @@ else if($p == "getTopUsersTime")
       from galaxy_run g, users u
       where u.username=g.username 
       $time
+      and dolphin=false
       group by g.username
       order by count desc
       limit 20
@@ -93,6 +95,7 @@ else if($p == "getUsersTime")
       from galaxy_run g, users u
       where u.username=g.username
       $time
+      and dolphin=false
       group by g.username
       order by count desc
       ");
@@ -118,6 +121,7 @@ else if($p == "getLabsTime")
       from galaxy_run g, users u
       where u.username=g.username
       $time
+      and dolphin=false
       group by u.lab
       order by count desc
       ");
