@@ -44,7 +44,7 @@
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
                             <?php echo $html->getBoxTable_stat("Lab", "Dolphin", "<th>Lab</th><th>Count</th>"); ?>
-                            <?php echo $html->getBoxTable_stat("Job", "Dolphin", "<th>Service Name</th><th>The # of Submitted Jobs</th>"); ?>
+                            <?php echo $html->getBoxTable_stat("Job", "Dolphin", "<th>Job Name</th><th>The # of Submitted Jobs</th>"); ?>
                         </div><!-- /.col (RIGHT) -->
                     </div><!-- /.row -->
 

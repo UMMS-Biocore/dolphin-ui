@@ -109,7 +109,7 @@ else if($p == "getLabsTime")
    if ($type=="Dolphin"){
       if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
-      select u.lab, count(distinct j.workflow_id) count
+      select u.lab, count(distinct j.wkey) count
       from users u, jobs j
       where u.clusteruser=j.username
       $time
@@ -149,7 +149,7 @@ else if ($p == "getServiceTime")
    $time="";
    if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
    $data=$query->queryTable("
-   select s.servicename, count(j.service_id) count
+   select s.servicename, count(distinct j.wkey) count
    from jobs j, services s
    where j.service_id=s.service_id
    $time
@@ -159,16 +159,16 @@ else if ($p == "getServiceTime")
 }
 else if($p == "getJobTime")
 {
-    $time="";
-    if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
-    $data=$query->queryTable("
-    select s.servicename, count(j.job_id) count
-    from jobs j, services s
-    where j.service_id=s.service_id
-    $time 
-    group by servicename
-    order by count desc
-    ");
+   $time="";
+   if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
+   $data=$query->queryTable("
+   select s.servicename, count(j.job_id) count
+   from jobs j, services s
+   where j.service_id=s.service_id
+   $time 
+   group by servicename
+   order by count desc
+   ");
 }
 
 if (!headers_sent()) {
