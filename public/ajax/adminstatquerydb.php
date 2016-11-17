@@ -130,7 +130,7 @@ else if($p == "getToolTime")
    if (isset($start)){$time="g.`start_time`>='$start' and g.`start_time`<='$end' and";}
    $data=$query->queryTable("
    select g.tool_name, count(g.id) count
-   from galaxy_run g
+   from galaxy_run g, users u
    where $time $dolphin
    group by g.tool_name
    order by count desc
@@ -142,7 +142,7 @@ else if ($p == "getServiceTime")
    if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
    $data=$query->queryTable("
    select s.servicename, count(distinct s.service_id) count
-   from jobs j, services s
+   from jobs j, services s, users u
    where j.service_id=s.service_id
    $time
    group by servicename
@@ -155,7 +155,7 @@ else if($p == "getJobTime")
    if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
    $data=$query->queryTable("
    select s.servicename, count(j.job_id) count
-   from jobs j, services s
+   from jobs j, services s, users u
    where j.service_id=s.service_id $time
    group by servicename
    order by count desc
