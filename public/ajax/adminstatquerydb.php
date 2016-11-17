@@ -143,7 +143,7 @@ else if ($p == "getServiceTime")
    $time="";
    if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
    $data=$query->queryTable("
-   select s.servicename, count(s.service_id) count
+   select s.servicename, count(s.wkey) count
    from jobs j, services s
    where j.service_id=s.service_id
    $time
