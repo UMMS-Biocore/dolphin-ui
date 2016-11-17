@@ -101,8 +101,8 @@ else if($p == "getUsersTime")
 else if($p == "getLabsTime")
 {
    $time="";
-   if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
    if ($type=="Dolphin"){
+      if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.lab, count(distinct j.workflow_id) count
       from users u, jobs j
@@ -112,6 +112,7 @@ else if($p == "getLabsTime")
       order by count desc
       ");
    }else{
+      if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.lab, count(g.id) count
       from galaxy_run g, users u

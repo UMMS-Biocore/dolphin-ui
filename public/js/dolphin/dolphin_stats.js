@@ -284,7 +284,7 @@ $(function() {
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
                     'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
 					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'Total': [moment('2012-01-01'), moment()],
+					'All Time': [moment('2012-01-01'), moment()],
                 },
                 startDate: moment('2012-01-01'),
                 endDate: moment()

@@ -56,8 +56,8 @@ else if($p == "getTopUsers")
 else if($p == "getTopUsersTime")
 {
    $time="";
-   if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
    if ($type=="Dolphin"){
+      if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.name, count(distinct j.workflow_id) count
       from jobs j, users u
@@ -69,6 +69,7 @@ else if($p == "getTopUsersTime")
       limit 20
       ");
    }else{
+      if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.name, count(g.id) count
       from galaxy_run g, users u
@@ -85,8 +86,8 @@ else if($p == "getTopUsersTime")
 else if($p == "getUsersTime")
 {
    $time="";
-   if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
    if ($type=="Dolphin"){
+      if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.name, u.lab, count(distinct j.wkey) count
       from users u, jobs j
@@ -97,6 +98,7 @@ else if($p == "getUsersTime")
       order by count desc
       ");
    }else{
+      if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.name, u.lab, count(g.id) count
       from galaxy_run g, users u
@@ -112,8 +114,8 @@ else if($p == "getUsersTime")
 else if($p == "getLabsTime")
 {
    $time="";
-   if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
    if ($type=="Dolphin"){
+      if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.lab, count(distinct j.workflow_id) count
       from users u, jobs j
@@ -124,6 +126,7 @@ else if($p == "getLabsTime")
       order by count desc
       ");
    }else{
+      if (isset($start)){$time="and g.`start_time`>='$start' and g.`start_time`<='$end'";}
       $data=$query->queryTable("
       select u.lab, count(g.id) count
       from galaxy_run g, users u
@@ -152,6 +155,7 @@ else if($p == "getToolTime")
 else if ($p == "getServiceTime")
 {
    $time="";
+   if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
    $data=$query->queryTable("
    select s.servicename, count(distinct s.service_id) count
    from jobs j, services s
