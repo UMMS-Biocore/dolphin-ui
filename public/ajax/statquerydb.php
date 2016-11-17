@@ -161,7 +161,7 @@ else if ($p == "getServiceTime")
    if (isset($start)){$time="and j.`start_time`>='$start' and j.`start_time`<='$end'";}
    $data=$query->queryTable("
    select s.servicename, count(j.service_id) count
-   from jobs j, services s, users u
+   from jobs j, services s
    where j.service_id=s.service_id
    $userstrdol
    $time
@@ -176,7 +176,7 @@ else if($p == "getJobTime")
     if (isset($start)){$time="and j.`submit_time`>='$start' and j.`submit_time`<='$end'";}
     $sql="
     select s.servicename, count(j.job_id) count
-    from jobs j, services s, users u
+    from jobs j, services s
     where j.service_id=s.service_id
     $userstr 
     $time 
