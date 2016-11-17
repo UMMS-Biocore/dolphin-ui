@@ -592,6 +592,7 @@ $(function() {
 		var run_ids = [];
 		var samples_with_runs =[];
 		
+		
 		$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/tablegenerator.php",
 				data: { p: "getTableRuns", search: sample_ids },
@@ -611,8 +612,18 @@ $(function() {
 								run_ids[s[i].sample_id].push(s[i].wkey);
 							}
 						}
+						if (checklist_samples.indexOf(s[i].sample_id) > -1) {
+							checklist_samples.splice(checklist_samples.indexOf(s[i].sample_id), 1)
+						}
+						console.log(checklist_samples)
 					}
 				}});
+		console.log(checklist_samples)
+		for(var i = 0; i < checklist_samples.length; i ++){
+			console.log(checklist_samples[i])
+			removeBasketInfo(checklist_samples[i]);
+		}
+		sample_ids = getBasketInfo();
 		console.log(sample_ids);
 		var sample_ids_array_int = sample_ids.split(',').map(Number);
 		var sample_ids_array = sample_ids_array_int.map(String);
