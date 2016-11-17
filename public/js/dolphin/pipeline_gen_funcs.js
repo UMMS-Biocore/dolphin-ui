@@ -1663,7 +1663,7 @@ function smartAdd(){
 	
 	for(var x = 0; x < name.length; x++){
 		chip_table.fnAddData([
-			'<input id="'+name[x].value+'" class="form-control" type="text" value="'+name[x].value+'" onChange="updateChipName(this)">',
+			'<textarea id="'+name[x].value+'" class="form-control" type="text" value="'+name[x].value+'" onChange="updateChipName(this)">'+name[x].value+'</textarea>',
 			name[x].value,
 			input_string,
 			remove_button.outerHTML

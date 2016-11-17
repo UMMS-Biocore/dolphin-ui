@@ -550,7 +550,7 @@ function reloadChip(splt1, i){
 	for(var z = 0; z < chip.length; z++){
 		var chiptable = $('#json_chiptable').dataTable();
 		chiptable.fnAddData([
-			'<input id="'+chip[z].name+'" class="form-control" type="text" value="'+chip[z].name+'" onChange="updateChipName(this)">',
+			'<textarea id="'+chip[z].name+'" class="form-control" type="text" value="'+chip[z].name+'" onChange="updateChipName(this)">'+chip[z].name+'</textarea>',
 			chip[z].samples.replace(/,/g, ", "),
 			chip[z].input.replace(/,/g, ", "),
 			remove_button.outerHTML
@@ -628,7 +628,7 @@ function addChipSeqInput(id){
 	remove_button.appendChild(icon);
 	
 	chip_table.fnAddData([
-		'<input id="'+ name_first+'" class="form-control" type="text" value="'+name_first+'" onChange="updateChipName(this)">',
+		'<textarea id="'+ name_first+'" class="form-control" type="text" value="'+name_first+'" onChange="updateChipName(this)">'+name_first+'</textarea>',
 		name_string,
 		input_string,
 		remove_button.outerHTML
