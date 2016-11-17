@@ -28,7 +28,7 @@ else if($p == "getTopUsers")
 {
    if ($type=="Dolphin"){
       $data=$query->queryTable("
-      select u.name, count(distinct j.workflow_id) count
+      select u.name, count(distinct j.wkey) count
       from jobs j, users u
       where u.clusteruser=j.username
       group by j.username
