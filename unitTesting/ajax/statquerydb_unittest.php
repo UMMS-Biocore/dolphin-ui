@@ -64,7 +64,7 @@ class statquerydb_unittest extends PHPUnit_Framework_TestCase
 		ob_start();
 		$_GET['p'] = 'getJobTime';
 		include('statquerydb.php');
-		$this->assertEquals(json_decode($data),array());
+		$this->assertNotEmpty(json_decode($data));
 		ob_end_clean();
 	}
 }
