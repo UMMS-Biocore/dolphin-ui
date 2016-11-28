@@ -1,4 +1,6 @@
 var addModalType = '';
+var sampleRuns = {};
+var runParams = {};
 
 function responseCheck(data) {
 	for(var x = 0; x < Object.keys(data).length; x++){
@@ -75,6 +77,7 @@ function loadInEncodeTables(){
 		loadLibraries();
 		loadAntibodies();
 		loadReplicates();
+		loadFiles();
 	}
 }
 
@@ -111,7 +114,7 @@ function loadSamples(){
 				
 				//	Modal
 				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
-				antibodySelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
+				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
 			}
 			
 		}
@@ -322,6 +325,42 @@ function loadReplicates(){
 	});
 }
 
+function loadFiles() {
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getFiles", samples:basket_info },
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+			for(var x = 0; x < s.length; x++){
+				if (sampleRuns[s[x].samplename] == undefined) {
+					sampleRuns[s[x].samplename] = {};
+				}
+				if (runParams[s[x].id] == undefined) {
+					runParams[s[x].id] = JSON.parse(s[x].json_parameters)
+					runParams[s[x].id].run_name = s[x].run_name
+					runParams[s[x].id].run_description = s[x].run_description
+				}
+				sampleRuns[s[x].samplename][s[x].id] = 0
+			}
+		}
+	});
+	
+	var runtable = $('#jsontable_encode_runs').dataTable();
+	var keys = Object.keys(sampleRuns)
+	runtable.fnClearTable();
+	for(var x = 0; x < keys.length; x++){
+		var sample_keys = Object.keys(sampleRuns[keys[x]])
+		runtable.fnAddData([
+			keys[x],
+			"<br>",
+			runParams[sample_keys[0]].run_name,
+			runParams[sample_keys[0]].run_description
+		]);
+	}
+}
+
 function changeValuesEncode(type, table, ele, event = event){
 	//	submitChanges function located within browse_edit.js
 	//	Global variables used within browse_edit.js
@@ -374,6 +413,25 @@ function addAntibody(){
 		show: true
 	});
 	addModalType = 'antibody'
+}
+
+function getSampleFileRuns(){
+	var selected = document.getElementById('addFileSelectSample')
+	var samples = []
+	for (var i = 0; i < selected.length; i++) {
+		if (selected.options[i].selected){
+			samples.push(selected.options[i].value);
+		}
+	}
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getLikeSampleRuns", samples:samples.toString() },
+		async: false,
+		success : function(s)
+		{
+			console.log(s)
+		}
+	});
 }
 
 function createNewData(type){

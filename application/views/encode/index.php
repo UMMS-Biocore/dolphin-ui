@@ -76,7 +76,7 @@
 					  <div class="modal-content">
 						<div class="modal-header">
 						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  <h4 class="modal-title" id="myAddModalLabel">Add Antibody</h4>
+						  <h4 class="modal-title" id="myAntibodyModalLabel">Add Antibody</h4>
 						</div>
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
@@ -84,11 +84,11 @@
 									<div class="form-group" style="overflow:scroll">
 										<label id="addSampleAntibodyLabel">Select Samples to add a Antibody to:</label>
 										<br>
-										<select id="addSampleAntibody" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<select id="addSampleAntibody" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
 										<br>
 										<label id="addNameAntibodyLabel">Name the Antibody:</label>
 										<br>
-										<input id="addNameAntibody" type="text" class="form-control">
+										<input id="addNameAntibody" class="form-control" type="text" class="form-control">
 									</div>
 								</fieldset>   
 							</div>
@@ -142,6 +142,9 @@
 									<li class>
 										<a href="#replicates_tab" data-toggle="tab" aria-expanded="true">Replicates</a>
 									</li>
+									<li class>
+										<a href="#files_tab" data-toggle="tab" aria-expanded="true">Files</a>
+									</li>
 								</ul>
 								<div class="tab-content margin">
 									<div class="tab-pane active" id="samples_tab">
@@ -182,9 +185,9 @@
 											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
 																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Selected</th>");
 										?>
-										<input type="button" class="btn btn-primary margin" value="Add Treatment" onClick="addTreatment()"/>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Add Treatment" onClick="addTreatment()"/>
 									</div>
 									<div class="tab-pane" id="biosamples_tab">
 										<?php
@@ -210,9 +213,9 @@
 											echo $html->getRespBoxTable_ng("Antibodies", "encode_antibodies",
 																		   "<th>Target</th><th>Source</th><th>Product Id</th><th>Lot Id</th><th>Host Organism</th><th>Clonality</th><th>Isotype</th><th>Purifications</th><th>URL</th><th>Antibody UUID</th><th>Selected</th>");
 										?>
-										<input type="button" class="btn btn-primary margin" value="Add Antibody" onClick="addAntibody()"/>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','antibody',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','antibody',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Add Antibody" onClick="addAntibody()"/>
 									</div>
 									<div class="tab-pane" id="replicates_tab">
 										<?php
@@ -223,6 +226,38 @@
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','replicate',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','replicate',this,event)"/>
 									</div>
+									<div class="tab-pane" id="files_tab">
+										<div class="row margin">
+											<?php
+												#Replicates
+												echo $html->getRespBoxTable_ng("Run Selection", "encode_runs",
+																			   "<th>Sample</th><th>Run Selection</th><th>Run Title</th><th>Run Description</th>");
+											?>
+										</div>
+										<div class="row margin">
+											<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','replicate',this,event)"/>
+											<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','replicate',this,event)"/>
+										</div>
+										<div class="row margin">
+											<div class="col-md-3">
+												<div class="box">
+													<div class="box-header">
+														<h3 class="box-title">File Selection</h3>
+													</div>
+													<div class="box-body">
+														<select id="addSampleFiles" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-9">
+												<?php
+													#Replicates
+													echo $html->getRespBoxTable_ng("Submission Order", "encode_file_order",
+																				   "<th>File</th><th>Parent File</th><th>File Type</th>");
+												?>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -232,7 +267,7 @@
 					<div class="margin">
 						<input type="button" id="submitMeta" class="btn btn-primary" name="pipeline_send_button" value="Submit Meta-data" onClick="checkForEncodeSubmission('metadata')"/>
 						<input type="button" id="submitBoth" class="btn btn-primary" name="pipeline_send_button" value="Submit With Files" onClick="checkForEncodeSubmission('both')"/>
-						<input type="button" class="btn btn-default pull-right" value="View Encode Submissions" onClick="toEncodeSubmissions()"/>
+						<input type="button" class="btn btn-primary pull-right" value="View Encode Submissions" onClick="toEncodeSubmissions()"/>
 					</div>
 				</section>
 				

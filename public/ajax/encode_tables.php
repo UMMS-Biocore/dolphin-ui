@@ -198,6 +198,21 @@ else if ($p == 'createEncodeRow')
 		WHERE id IN ($samples)
 	");
 }
+else if ($p == 'getFiles')
+{
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	$data=$query->queryTable("
+		SELECT ngs_runparams.id, samplename, run_name, json_parameters, run_description, sample_id
+		FROM ngs_runlist
+		LEFT JOIN ngs_runparams
+		ON ngs_runparams.id = ngs_runlist.run_id
+		LEFT JOIN ngs_samples
+		ON ngs_samples.id = ngs_runlist.sample_id
+		WHERE sample_id IN ($samples)
+		AND run_status = 1
+		AND run_name NOT LIKE '%Initial Run%'
+		");
+}
 
 
 header('Cache-Control: no-cache, must-revalidate');
