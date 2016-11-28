@@ -499,6 +499,7 @@ function checkUsedDirectory(outputdir){
 				result = s;
 			}
 		});
+	
 	if (result != [] || result != undefined) {
 		return true
 	}else{
