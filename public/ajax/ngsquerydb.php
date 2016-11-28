@@ -528,6 +528,15 @@ else if ($p == 'runOwnerCheck')
 		$data = json_encode('Permission Denied');
 	}
 }
+else if ($p == 'checkFileLocation')
+{
+	if (isset($_GET['outdir'])){$outdir = $_GET['outdir'];}
+	$data=$query->queryTable("
+		SELECT backup_dir
+		FROM ngs_dirs
+		where backup_dir = '$outdir'
+	");
+}
 
 if (!headers_sent()) {
 	header('Cache-Control: no-cache, must-revalidate');

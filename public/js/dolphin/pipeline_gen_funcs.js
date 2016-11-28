@@ -395,6 +395,8 @@ function submitPipeline(type) {
 			dir_tests = true;
 		}
 		
+		var previous_dir = checkUsedDirectory(outputdir);
+		
 		//Check empty multi_selections
 		var tophatCheckIndex = false;
 		var tophatCheckAnnotation = false;
@@ -442,7 +444,15 @@ function submitPipeline(type) {
 				show: true
 			});
 			document.getElementById('errorLabel').innerHTML ='You do not have permissions for the directory:<br><br>'+outputdir+'<br><br>Or you do not have cluster permissions.' +
-				'<br>Please visit <a href="http://umassmed.edu/biocore/resources/galaxy-group/">this website</a> for more help.';
+				'<br><br>Please visit <a href="http://umassmed.edu/biocore/resources/galaxy-group/">this website</a> for more help.';
+			document.getElementById('errorAreas').innerHTML = '';
+		}else if (previous_dir) {
+			$('#errorModal').modal({
+				show: true
+			});
+			document.getElementById('errorLabel').innerHTML ='You cannot use processed directory:<br><br>'+outputdir+'<br><br>as a run directory.' +
+				'<br><br>You can create another directory off this directory, but you cannot use the direct path of saved sample fastq files.' + 
+				'<br><br>Please visit <a href="http://umassmed.edu/biocore/resources/galaxy-group/">this website</a> for more help.';
 			document.getElementById('errorAreas').innerHTML = '';
 		}else if(customSeqSetCheck[1].indexOf(true) > -1){
 			var custom_error = "";
@@ -473,6 +483,26 @@ function submitPipeline(type) {
 				window.location.href = BASE_PATH+"/stat/status";
 			}
 		}
+	}
+}
+
+function checkUsedDirectory(outputdir){
+	var result;
+	$.ajax({
+			type: 	'GET',
+			url: 	BASE_PATH+'/public/ajax/ngsquerydb.php',
+			data:  	{ p: 'checkFileLocation', outdir: outputdir },
+			async:	false,
+			success: function(s)
+			{
+				console.log(s);
+				result = s;
+			}
+		});
+	if (result != [] || result != undefined) {
+		return true
+	}else{
+		return false
 	}
 }
 
