@@ -224,6 +224,19 @@ else if ($p == 'getFileSelection')
 		WHERE ngs_runparams.id in ($runs)
 		");
 }
+else if ($p == 'getSubmittedFiles')
+{
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	$data=$query->queryTable("
+		SELECT ngs_samples.samplename, ngs_runparams.run_name, ngs_runparams.outdir, file_name, file_acc, file_uuid
+		FROM ngs_file_submissions
+		LEFT JOIN ngs_samples
+		ON ngs_samples.id = ngs_file_submissions.sample_id
+		LEFT JOIN ngs_runparams
+		ON ngs_runparams.id = ngs_file_submissions.run_id
+		WHERE sample_id in ($samples)
+		");
+}
 
 
 header('Cache-Control: no-cache, must-revalidate');

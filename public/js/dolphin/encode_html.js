@@ -374,6 +374,28 @@ function loadFiles() {
 	}
 }
 
+function loadPreviousFiles(){
+	var previoustable = $('#jsontable_previous_submissions').dataTable();
+	previoustable.fnClearTable();
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getSubmittedFiles", samples:basket_info },
+		async: false,
+		success : function(s)
+		{
+			for(var x = 0; x < s.length; x++){
+				previoustable.fnAddData([
+					s[x].samplename,
+					s[x].run_name,
+					s[x].outdir + s[x].file_name,
+					s[x].file_acc,
+					s[x].file_uuid
+				])
+			}
+		}
+	});
+}
+
 function runSelectionEncode(select){
 	var id = select.id
 	var id_name = id.split("_select")[0]
@@ -441,6 +463,8 @@ function JSONOptionParse(run_id, options_parse){
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'tophat', options_parse)
 			}else if (pipeline[y].Type == 'ChipSeq' || pipeline[y].Type == 'ChipSeq/ATACSeq') {
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'chip', options_parse)
+			}else if (pipeline[y].Type == 'ATACSeq') {
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'atac', options_parse)
 			}else if (pipeline[y].Type == 'STAR') {
 				//TBA
 			}else if (pipeline[y].Type == 'Hisat2') {
@@ -456,44 +480,95 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 	if (pipeline.MarkDuplicates == "yes") {
 		dedup = true;
 	}
+	var tdf = false;
+	if (pipeline.IGVTDF == "yes") {
+		tdf = true;
+	}
+	var bigwig = false;
+	if (pipeline.BAM2BW == "yes") {
+		bigwig = true;
+	}
 	if (dedup && merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/ .bam', run_id) 
+			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmergersem_ref.transcipts/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmergersem_ref.transcipts/', run_id, ".bw")
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/ .bam', run_id)
+			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
 		}
 	}else if (merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/ .bam', run_id) 
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_mergersem_ref.transcipts/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, ".bw")
 		}else{
-			options_parse = optionsCheck(options_parse, '/merge'+type+'/ .bam', run_id)
+			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
 		}
 	}else if (dedup) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id) 
+			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_deduprsem_ref.transcipts/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_deduprsem_ref.transcipts/', run_id, ".bw")
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedup'+type+'/ .bam', run_id)
+			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
 		}
 	}else{
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/ .bam', run_id) 
-		}else if (type == 'chip'){
-			options_parse = optionsCheck(options_parse, '/seqmapping/chip/ .bam', run_id)
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_rsem_ref.transcipts/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, ".bw")
+		}else if (type == 'chip' || type == 'atac'){
+			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, ".bw")
 		}else{
-			options_parse = optionsCheck(options_parse, '/'+type+'/ .bam', run_id)
+			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id, ".bam")
+			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, ".tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, ".bw")
 		}
 	}
 	return options_parse
 }
 
-function optionsCheck(options_parse, title, run_id){
-	if (options_parse[title] == undefined) {
-		options_parse[title] = []
-		options_parse[title].push(run_id)
+function optionsCheck(options_parse, title, run_id, file){
+	if (options_parse[title+ " " + file] == undefined) {
+		options_parse[title+ " " + file] = []
+		options_parse[title+ " " + file].push(run_id)
 	}else{
-		options_parse[title].push(run_id)
+		options_parse[title+ " " + file].push(run_id)
 	}
 	return options_parse
+}
+
+function submissionSelection(){
+	var select = document.getElementById('addSampleFiles')
+	var options = select.selectedOptions
+	var ordertable = $('#jsontable_encode_file_order').dataTable();
+	ordertable.fnClearTable();
+	var options_html = "<option value=\"1\">1</option>";
+	for (var x = 0; x < options.length; x++) {
+		options_html += "<option value=\""+(x+2)+"\">"+(x+2)+"</option>"
+	}
+	ordertable.fnAddData([
+			1,
+			"<p>Initial Fastq</p>",
+			"<p>/input/</p>",
+			"<p>.fastq</p>"
+		])
+	for (var x = 0; x < options.length; x++) {
+		ordertable.fnAddData([
+			x+2,
+			"<select id=\""+(x+2)+"_orderselect\">"+options_html+"</select>",
+			options[x].value.split(" ")[0],
+			options[x].value.split(" ")[1]
+		])
+	}
 }
 
 function changeValuesEncode(type, table, ele, event = event){

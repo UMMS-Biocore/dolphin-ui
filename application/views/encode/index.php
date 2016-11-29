@@ -229,7 +229,7 @@
 									<div class="tab-pane" id="files_tab">
 										<div class="row margin">
 											<?php
-												#Replicates
+												#Runs
 												echo $html->getRespBoxTable_ng("Run Selection", "encode_runs",
 																			   "<th>Sample</th><th>Run Selection</th><th>Run Directory</th><th>Run Description</th>");
 											?>
@@ -241,17 +241,24 @@
 														<h3 class="box-title">File Selection</h3>
 													</div>
 													<div class="box-body">
-														<select id="addSampleFiles" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+														<select id="addSampleFiles" class="form-control" type="select-multiple" multiple size="10" style="width:100%" onchange="submissionSelection()"></select>
 													</div>
 												</div>
 											</div>
 											<div class="col-md-9">
 												<?php
-													#Replicates
+													#Runorder
 													echo $html->getRespBoxTable_ng("Submission Order", "encode_file_order",
-																				   "<th>File</th><th>Parent File</th><th>File Type</th>");
+																				   "<th>ID</th><th>Parent File ID</th><th>File Location</th><th>File Type</th>");
 												?>
 											</div>
+										</div>
+										<div class="row margin">
+											<?php
+												#Runs
+												echo $html->getRespBoxTable_ng("Previous Files Submitted", "previous_submissions",
+																			   "<th>Sample</th><th>Run</th><th>File</th><th>File Acc</th><th>File UUID</th>");
+											?>
 										</div>
 									</div>
 								</div>
