@@ -368,6 +368,10 @@ function loadFiles() {
 			runParams[sample_keys[0]].run_description
 		]);
 	}
+	
+	if (keys.length > 0) {
+		runSelectionEncode(document.getElementById(keys[0]+'_select'))
+	}
 }
 
 function runSelectionEncode(select){
@@ -454,29 +458,29 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 	}
 	if (dedup && merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id) 
+			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/ .bam', run_id) 
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id)
+			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/ .bam', run_id)
 		}
 	}else if (merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id) 
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/ .bam', run_id) 
 		}else{
-			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id)
+			options_parse = optionsCheck(options_parse, '/merge'+type+'/ .bam', run_id)
 		}
 	}else if (dedup) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id) 
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id)
+			options_parse = optionsCheck(options_parse, '/dedup'+type+'/ .bam', run_id)
 		}
 	}else{
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id) 
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/ .bam', run_id) 
 		}else if (type == 'chip'){
-			options_parse = optionsCheck(options_parse, '/seqmapping/chip/', run_id)
+			options_parse = optionsCheck(options_parse, '/seqmapping/chip/ .bam', run_id)
 		}else{
-			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id)
+			options_parse = optionsCheck(options_parse, '/'+type+'/ .bam', run_id)
 		}
 	}
 	return options_parse
