@@ -231,14 +231,10 @@
 											<?php
 												#Replicates
 												echo $html->getRespBoxTable_ng("Run Selection", "encode_runs",
-																			   "<th>Sample</th><th>Run Selection</th><th>Run Title</th><th>Run Description</th>");
+																			   "<th>Sample</th><th>Run Selection</th><th>Run Directory</th><th>Run Description</th>");
 											?>
 										</div>
-										<div class="row margin">
-											<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','replicate',this,event)"/>
-											<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','replicate',this,event)"/>
-										</div>
-										<div class="row margin">
+										<div class="row">
 											<div class="col-md-3">
 												<div class="box">
 													<div class="box-header">

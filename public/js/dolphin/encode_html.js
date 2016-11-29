@@ -336,13 +336,17 @@ function loadFiles() {
 			for(var x = 0; x < s.length; x++){
 				if (sampleRuns[s[x].samplename] == undefined) {
 					sampleRuns[s[x].samplename] = {};
+					sampleRuns[s[x].samplename][s[x].id] = 1
 				}
 				if (runParams[s[x].id] == undefined) {
 					runParams[s[x].id] = JSON.parse(s[x].json_parameters)
 					runParams[s[x].id].run_name = s[x].run_name
 					runParams[s[x].id].run_description = s[x].run_description
+					runParams[s[x].id].outdir = s[x].outdir
 				}
-				sampleRuns[s[x].samplename][s[x].id] = 0
+				if (sampleRuns[s[x].samplename][s[x].id] == undefined) {
+					sampleRuns[s[x].samplename][s[x].id] = 0
+				}
 			}
 		}
 	});
@@ -351,14 +355,141 @@ function loadFiles() {
 	var keys = Object.keys(sampleRuns)
 	runtable.fnClearTable();
 	for(var x = 0; x < keys.length; x++){
+		var runs = Object.keys(sampleRuns[keys[x]])
+		var sample_options = "";
+		for(var y = 0; y < runs.length; y++){
+			sample_options += "<option value=\""+runs[y]+"___"+runParams[runs[y]].run_name+"\">"+runParams[runs[y]].run_name+"</option>"
+		}
 		var sample_keys = Object.keys(sampleRuns[keys[x]])
 		runtable.fnAddData([
 			keys[x],
-			"<br>",
-			runParams[sample_keys[0]].run_name,
+			"<select id=\""+keys[x]+"_select\" class=\"form-control\" onChange=\"runSelectionEncode(this)\">" + sample_options + "</select>",
+			runParams[sample_keys[0]].outdir,
 			runParams[sample_keys[0]].run_description
 		]);
 	}
+}
+
+function runSelectionEncode(select){
+	var id = select.id
+	var id_name = id.split("_select")[0]
+	var option = select.options[select.selectedIndex].value
+	var option_split = option.split("___")
+	var runs = Object.keys(sampleRuns[id_name])
+	for (var x = 0; x < runs.length; x++) {
+		if (runs[x] == option_split[0]) {
+			sampleRuns[id_name][runs[x]] = 1
+		}else{
+			sampleRuns[id_name][runs[x]] = 0
+		}
+	}
+	var active_runs = gatherFileSelection()
+	var options = createRunOptions(active_runs)
+	var file_select = document.getElementById('addSampleFiles').innerHTML = options
+	
+}
+
+function gatherFileSelection() {
+	var active_runs = []
+	var samples = Object.keys(sampleRuns)
+	for (var x = 0; x < samples.length; x++){
+		var runs = Object.keys(sampleRuns[samples[x]])
+		for (var y = 0; y < runs.length; y++){
+			if (sampleRuns[samples[x]][runs[y]] == 1 && active_runs.indexOf(runs[y]) == -1) {
+				active_runs.push(runs[y])
+			}
+		}
+	}
+	return active_runs
+}
+
+function createRunOptions(active_runs) {
+	var options_parse = {};
+	var options_select = "";
+	
+	for(var x = 0; x < active_runs.length; x++){
+		options_parse = JSONOptionParse(active_runs[x], options_parse)
+	}
+	console.log(options_parse)
+	var runs = Object.keys(options_parse)
+	for (var z = 0; z < runs.length; z++){
+		if (options_parse[runs[z]].length != active_runs.length) {
+			options_select += "<option disabled value=\""+runs[z]+"\">"+runs[z]+"</option>"
+		}else{
+			options_select += "<option value=\""+runs[z]+"\">"+runs[z]+"</option>"
+		}
+	}
+	return options_select
+}
+
+function JSONOptionParse(run_id, options_parse){
+	var pipeline = runParams[run_id].pipeline
+	if (pipeline != undefined || pipeline != []) {
+		for(var y = 0; y < pipeline.length; y++){
+			var merged = false;
+			if (runParams[run_id].split != 'none') {
+				merged = true;
+			}
+			
+			if (pipeline[y].Type == 'RNASeqRSEM') {
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'rsem', options_parse)
+			}else if (pipeline[y].Type == 'Tophat') {
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'tophat', options_parse)
+			}else if (pipeline[y].Type == 'ChipSeq' || pipeline[y].Type == 'ChipSeq/ATACSeq') {
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'chip', options_parse)
+			}else if (pipeline[y].Type == 'STAR') {
+				//TBA
+			}else if (pipeline[y].Type == 'Hisat2') {
+				//TBA
+			}
+		}
+	}
+	return options_parse
+}
+
+function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
+	var dedup = false;
+	if (pipeline.MarkDuplicates == "yes") {
+		dedup = true;
+	}
+	if (dedup && merged) {
+		if (type == 'rsem') {
+			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id) 
+		}else{
+			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id)
+		}
+	}else if (merged) {
+		if (type == 'rsem') {
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id) 
+		}else{
+			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id)
+		}
+	}else if (dedup) {
+		if (type == 'rsem') {
+			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id) 
+		}else{
+			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id)
+		}
+	}else{
+		if (type == 'rsem') {
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id) 
+		}else if (type == 'chip'){
+			options_parse = optionsCheck(options_parse, '/seqmapping/chip/', run_id)
+		}else{
+			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id)
+		}
+	}
+	return options_parse
+}
+
+function optionsCheck(options_parse, title, run_id){
+	if (options_parse[title] == undefined) {
+		options_parse[title] = []
+		options_parse[title].push(run_id)
+	}else{
+		options_parse[title].push(run_id)
+	}
+	return options_parse
 }
 
 function changeValuesEncode(type, table, ele, event = event){

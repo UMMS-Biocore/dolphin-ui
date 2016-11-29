@@ -202,7 +202,7 @@ else if ($p == 'getFiles')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_runparams.id, samplename, run_name, json_parameters, run_description, sample_id
+		SELECT ngs_runparams.id, ngs_runparams.outdir, samplename, run_name, json_parameters, run_description, sample_id
 		FROM ngs_runlist
 		LEFT JOIN ngs_runparams
 		ON ngs_runparams.id = ngs_runlist.run_id
@@ -211,6 +211,17 @@ else if ($p == 'getFiles')
 		WHERE sample_id IN ($samples)
 		AND run_status = 1
 		AND run_name NOT LIKE '%Initial Run%'
+		");
+}
+else if ($p == 'getFileSelection')
+{
+	if (isset($_GET['runs'])){$runs = $_GET['runs'];}
+	$data=$query->queryTable("
+		SELECT ngs_runparams.id, ngs_runparams.wkey, version, type, file
+		FROM ngs_runparams
+		LEFT JOIN report_list
+		ON ngs_runparams.wkey = report_list.wkey
+		WHERE ngs_runparams.id in ($runs)
 		");
 }
 
