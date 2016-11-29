@@ -741,6 +741,7 @@ function populateTable(summary_files, samplenames, libraries, read_counts) {
 						}
 					}
 				}else if (/flagstat/.test(summary_files[z]['file'])){
+					var dedup = ""
 					if (/rsem/.test(summary_files[z]['file'])){
 						populateTableData(dedup, sum_file, 'Reads Aligned rsem', "rsem", 'summary')
 					}else if (/tophat/.test(summary_files[z]['file'])){
