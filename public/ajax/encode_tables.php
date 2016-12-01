@@ -202,13 +202,15 @@ else if ($p == 'getFiles')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_runparams.id, ngs_runparams.outdir, samplename, run_name, json_parameters, run_description, sample_id
+		SELECT ngs_runparams.id, ngs_runparams.outdir, samplename, run_name, json_parameters, run_description, ngs_runlist.sample_id, ngs_fastq_files.dir_id
 		FROM ngs_runlist
 		LEFT JOIN ngs_runparams
 		ON ngs_runparams.id = ngs_runlist.run_id
 		LEFT JOIN ngs_samples
 		ON ngs_samples.id = ngs_runlist.sample_id
-		WHERE sample_id IN ($samples)
+		LEFT JOIN ngs_fastq_files
+		ON ngs_samples.id = ngs_fastq_files.sample_id
+		WHERE ngs_runlist.sample_id IN ($samples)
 		AND run_status = 1
 		AND run_name NOT LIKE '%Initial Run%'
 		");
@@ -228,14 +230,57 @@ else if ($p == 'getSubmittedFiles')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_samples.samplename, ngs_runparams.run_name, ngs_runparams.outdir, file_name, file_acc, file_uuid
+		SELECT ngs_samples.samplename, ngs_runparams.run_name, ngs_runparams.outdir, file_name, file_acc, file_uuid, backup_dir, parent_file
 		FROM ngs_file_submissions
 		LEFT JOIN ngs_samples
 		ON ngs_samples.id = ngs_file_submissions.sample_id
 		LEFT JOIN ngs_runparams
 		ON ngs_runparams.id = ngs_file_submissions.run_id
+		LEFT JOIN ngs_dirs
+		ON ngs_file_submissions.dir_id = ngs_dirs.id
 		WHERE sample_id in ($samples)
 		");
+}
+else if ($p == 'enterFileSubmission')
+{
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['ordertable'])){$ordertable = $_GET['ordertable'];}
+	
+	$submissions=json_decode($query->queryTable("
+		SELECT ngs_file_submissions.*, ngs_samples.samplename
+		FROM ngs_file_submissions
+		LEFT JOIN ngs_samples
+		ON ngs_samples.id = ngs_file_submissions.sample_id
+		WHERE sample_id in (".implode(",",array_keys($samples)).")
+		"));
+	
+	var_dump($submissions);
+	var_dump($ordertable);
+	var_dump($samples);
+	$insertString = '';
+	foreach($ordertable as $step => $subdata){
+		foreach($samples as $id => $sample){
+			$sampleCheck = true;
+			foreach($submissions as $nfs){
+				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == $id &&
+				   $nfs->parent_file == $subdata['p'] && $nfs->file_type == $subdata['t'] && $nfs->file_name == $subdata['l']){
+					$sample_check = false;
+				}
+			}
+			if($sampleCheck){
+				$insertString.="(".$sample['did'].", ".$sample['rid'].", ".$id.", '".$subdata['l']."', '".$subdata['t']."', '".$subdata['p']."'),";
+			}
+		}
+	}
+	if($insertString != ''){
+		$insertString=substr($insertString, 0, -1);
+		$data=json_decode($query->queryTable("
+			INSERT INTO ngs_file_submissions
+			(dir_id, run_id, sample_id, file_name, file_type, parent_file)
+			VALUES
+			$insertString;
+			"));
+	}
 }
 
 

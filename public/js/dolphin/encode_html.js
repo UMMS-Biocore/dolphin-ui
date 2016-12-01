@@ -1,6 +1,7 @@
 var addModalType = '';
 var sampleRuns = {};
 var runParams = {};
+var active_runs = [];
 
 function responseCheck(data) {
 	for(var x = 0; x < Object.keys(data).length; x++){
@@ -326,6 +327,8 @@ function loadReplicates(){
 }
 
 function loadFiles() {
+	sampleRuns = {};
+	runParams = {};
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getFiles", samples:basket_info },
@@ -336,6 +339,9 @@ function loadFiles() {
 			for(var x = 0; x < s.length; x++){
 				if (sampleRuns[s[x].samplename] == undefined) {
 					sampleRuns[s[x].samplename] = {};
+					sampleRuns[s[x].samplename]['sid'] = s[x].sample_id
+					sampleRuns[s[x].samplename]['rid'] = s[x].id
+					sampleRuns[s[x].samplename]['did'] = s[x].dir_id
 					sampleRuns[s[x].samplename][s[x].id] = 1
 				}
 				if (runParams[s[x].id] == undefined) {
@@ -354,18 +360,22 @@ function loadFiles() {
 	var runtable = $('#jsontable_encode_runs').dataTable();
 	var keys = Object.keys(sampleRuns)
 	runtable.fnClearTable();
+	var ordertable = $('#jsontable_encode_file_order').dataTable();
+	ordertable.fnClearTable();
 	for(var x = 0; x < keys.length; x++){
 		var runs = Object.keys(sampleRuns[keys[x]])
+		runs.splice(runs.indexOf('sid'), 1)
+		runs.splice(runs.indexOf('rid'), 1)
+		runs.splice(runs.indexOf('did'), 1)
 		var sample_options = "";
 		for(var y = 0; y < runs.length; y++){
 			sample_options += "<option value=\""+runs[y]+"___"+runParams[runs[y]].run_name+"\">"+runParams[runs[y]].run_name+"</option>"
 		}
-		var sample_keys = Object.keys(sampleRuns[keys[x]])
 		runtable.fnAddData([
 			keys[x],
 			"<select id=\""+keys[x]+"_select\" class=\"form-control\" onChange=\"runSelectionEncode(this)\">" + sample_options + "</select>",
-			runParams[sample_keys[0]].outdir,
-			runParams[sample_keys[0]].run_description
+			runParams[runs[0]].outdir,
+			runParams[runs[0]].run_description
 		]);
 	}
 	
@@ -384,13 +394,23 @@ function loadPreviousFiles(){
 		success : function(s)
 		{
 			for(var x = 0; x < s.length; x++){
-				previoustable.fnAddData([
-					s[x].samplename,
-					s[x].run_name,
-					s[x].outdir + s[x].file_name,
-					s[x].file_acc,
-					s[x].file_uuid
-				])
+				if (s[x].parent_file == 0) {
+					previoustable.fnAddData([
+						s[x].samplename,
+						s[x].run_name,
+						s[x].backup_dir + s[x].file_name,
+						s[x].file_acc,
+						s[x].file_uuid
+					])
+				}else{
+					previoustable.fnAddData([
+						s[x].samplename,
+						s[x].run_name,
+						s[x].outdir + s[x].file_name,
+						s[x].file_acc,
+						s[x].file_uuid
+					])
+				}
 			}
 		}
 	});
@@ -402,6 +422,9 @@ function runSelectionEncode(select){
 	var option = select.options[select.selectedIndex].value
 	var option_split = option.split("___")
 	var runs = Object.keys(sampleRuns[id_name])
+	runs.splice(runs.indexOf('sid'), 1)
+	runs.splice(runs.indexOf('rid'), 1)
+	runs.splice(runs.indexOf('did'), 1)
 	for (var x = 0; x < runs.length; x++) {
 		if (runs[x] == option_split[0]) {
 			sampleRuns[id_name][runs[x]] = 1
@@ -409,7 +432,7 @@ function runSelectionEncode(select){
 			sampleRuns[id_name][runs[x]] = 0
 		}
 	}
-	var active_runs = gatherFileSelection()
+	active_runs = gatherFileSelection()
 	var options = createRunOptions(active_runs)
 	var file_select = document.getElementById('addSampleFiles').innerHTML = options
 	
@@ -418,6 +441,9 @@ function runSelectionEncode(select){
 function gatherFileSelection() {
 	var active_runs = []
 	var samples = Object.keys(sampleRuns)
+	samples.splice(samples.indexOf('sid'), 1)
+	samples.splice(samples.indexOf('rid'), 1)
+	samples.splice(samples.indexOf('did'), 1)
 	for (var x = 0; x < samples.length; x++){
 		var runs = Object.keys(sampleRuns[samples[x]])
 		for (var y = 0; y < runs.length; y++){
@@ -557,9 +583,9 @@ function submissionSelection(){
 	}
 	ordertable.fnAddData([
 			1,
-			"<p>Initial Fastq</p>",
-			"<p>/input/</p>",
-			"<p>.fastq</p>"
+			"Initial Fastq",
+			"/input/",
+			".fastq"
 		])
 	for (var x = 0; x < options.length; x++) {
 		ordertable.fnAddData([
@@ -697,5 +723,6 @@ $( function(){
 		loadInEncodeSubmissions();
 	}else{
 		loadInEncodeTables();
+		loadPreviousFiles();
 	}
 });

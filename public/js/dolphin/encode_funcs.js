@@ -1065,7 +1065,66 @@ function encodePost(){
 	document.getElementById('confirmPatchButton').setAttribute('style', 'display:none');
 }
 
+function gatherSampleRunInfo(){
+	var sample_run_dict = {};
+	var samples = Object.keys(sampleRuns)
+	for(var x = 0; x < samples.length; x++){
+		var selected_run = 0;
+		var runs = Object.keys(sampleRuns[samples[x]])
+		runs.splice(runs.indexOf('sid'), 1)
+		runs.splice(runs.indexOf('rid'), 1)
+		runs.splice(runs.indexOf('did'), 1)
+		for(var y = 0; y < runs.length; y++){
+			if (sampleRuns[samples[x]][runs[y]] == 1) {
+				selected_run = runs[y]
+			}
+		}
+		var sample_obj = {}
+		sample_obj['rid'] = selected_run
+		sample_obj['did'] = sampleRuns[samples[x]].did
+		sample_run_dict[sampleRuns[samples[x]].sid]= sample_obj
+	}
+	return sample_run_dict
+}
+
+function gatherOrderTableInfo(){
+	var ordertable = $('#jsontable_encode_file_order').dataTable();
+	var ordertable_dict = {}
+	var ordertable_nodes = ordertable.fnGetNodes()
+	for(var x = 0; x < ordertable_nodes.length; x++){
+		var id = ordertable_nodes[x].children[0].innerHTML
+		ordertable_dict[id] = {}
+		if (x == 0) {
+			ordertable_dict[id]["p"] = ordertable_nodes[x].children[1].innerHTML
+		}else{
+			ordertable_dict[id]["p"] = ordertable_nodes[x].children[1].children[0].value
+		}
+		ordertable_dict[id]["l"] = ordertable_nodes[x].children[2].innerHTML
+		ordertable_dict[id]["t"] = ordertable_nodes[x].children[3].innerHTML
+ 	}
+	return ordertable_dict
+}
+
+function recordFileSubmissions(ordertable_dict, sample_run_dict){
+	$.ajax({ type: "GET",
+		url: BASE_PATH + "/public/ajax/encode_tables.php",
+		data: { p: 'enterFileSubmission', ordertable: ordertable_dict, samples: sample_run_dict},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+}
+
 function encodePostFiles(){
+	//	FILE DATABASE SUBMISSION
+	console.log('file data submission')
+	//	run table
+	var sample_run_dict = gatherSampleRunInfo()
+	//	order table
+	var ordertable_dict = gatherOrderTableInfo()
+	
 	var file_response = encodeFilePost();
 	
 	//	Report Errors/Successes to modal
