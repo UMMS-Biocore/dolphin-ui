@@ -47,8 +47,10 @@ $sample_name_query = json_decode($query->queryTable("
 	WHERE ngs_samples.id = $sample_id
 	"));
 $file_sub = json_decode($query->queryTable("
-	SELECT *
+	SELECT *, outdir
 	FROM ngs_file_submission
+	LEFT JOIN ngs_runparams
+	ON ngs_file_submission.run_id = ngs_runparams.id
 	WHERE sample_id = $sample_id
 	"));
 
@@ -70,7 +72,123 @@ $replicate = "/replicates/" . $replicate . "/";
 
 $step_list = array();
 $sample_count = 0;
-//For each file (single or paired end)
+//For each file
+foreach($sample_name_query as $snq){
+	$sample_name=$snq->samplename;
+	$machine_name=$snq->machine_name;
+	if($machine_name == 'None'){
+		$machine_name = 'unknown';
+	}
+	$flowcell = $snq->flowcell;
+	if($flowcell == 'None'){
+		$flowcell = 'unknown';
+	}
+	$lane = $snq->lane;
+	if($lane == 'None'){
+		$lane = 'unknown';
+	}
+	$read_length = $snq->read_length;
+	if($read_length == 'None'){
+		$read_length = 'unknown';
+	}
+	$inserted = false;
+	$file_accs = array();
+	$file_uuids = array();
+	$paired = '';
+	$file_names = [];
+	foreach($fastq_data as $fq){
+		if($fq->sample_id == $sample_id){
+			$file_names = explode(",",$fq->file_name);
+		}
+	}
+	
+	$step = "step1";
+	foreach($file_sub as $sub){
+		//File checksum
+		if($sub->parent_file = 0){
+			$directory = $dir_query[0]->backup_dir;
+			if(substr($directory, -1) != '/'){
+				$directory = $directory . "/";
+			}
+			$file_size = filesize($directory . $fn);
+			if(end($file_names) == $fn){
+				$md5sum = end(explode(",",$fq->checksum));
+			}else{
+				$md5sum = explode(",",$fq->checksum)[0];
+			}
+		}else{
+			$directory = $sub->outdir;
+			if(substr($directory, -1) != '/'){
+				$directory = $directory . "/";
+			}
+			$file_size = filesize($directory . $fn);
+			$md5sum = md5_file($directory . $fn);
+		}
+		$data = array(
+			"dataset" => $dataset_acc,
+			"replicate" => $replicate,
+			"file_size" => $file_size,
+			"md5sum" => $md5sum,
+			"read_length" => (int)$read_length,
+			"platform" => "ENCODE:HiSeq2000",
+			"submitted_file_name" => end(explode("/",$fn)),
+			"lab" => $my_lab,
+			"award" => $my_award,
+			"flowcell_details" => array(array("machine" => $machine_name),
+										array("flowcell" => $flowcell),
+										array("lane" => $lane))
+		);
+		if($sub->file_type == 'fastq'){
+			$data['output_type'] = 'reads';
+		}else if ($sub->file_type == 'bam'){
+			$data['output_type'] = 'alignment';
+		}else if ($sub->file_type == 'tsv'){
+			$data['output_type'] = 'tsv';
+		}else if ($sub->file_type == 'bigWig'){
+			$data['output_type'] = 'bigWig';
+		}
+		
+		if($sub->parent_file = 0){
+			if(count($file_names) == 2){
+				//	FASTQ PAIRED
+				$data["file_format"] = 'fastq';
+				$data["run_type"] = "paired-ended";
+				if(end($file_names) == $fn){
+					$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+					$data["paired_end"] = '2';
+					$data["paired_with"] = $paired;
+				}else{
+					$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+					$data["paired_end"] = '1';
+					$paired = $my_lab.':fastq_p1_'.$sample_name;
+				}
+			}else if (count($file_names) == 1){
+				//	FASTQ SINGLE
+				$data["file_format"] = 'fastq';
+				$data["run_type"] = "single-ended";
+				$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+				if($step != 'step1'){
+					$data['derived_from'] = explode(",",$step_list['step1']);
+				}
+			}
+		}else{
+			$data["file_format"] = $sub->file_type;
+			/*
+			 *	THIS SECTION IS IMPORTANT
+			 *	FIGURE THIS OUT FOR THE FILE TYPE PORTION
+			 */
+			$data["run_type"] = "single-ended";
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+			if($step != 'step1'){
+				/*
+				 *	THIS SECTION IS IMPORTANT
+				 *	FIGURE THIS OUT FOR THE DERIVED FROM PORTION
+				 */
+				$data['derived_from'] = explode(",",$step_list['step1']);
+			}
+		}
+		
+/*
 foreach($fastq_data as $fq){
 	$sample_name = $sample_name_query[$sample_count]->samplename;
 	$machine_name = $sample_name_query[$sample_count]->machine_name;
@@ -148,6 +266,7 @@ foreach($fastq_data as $fq){
 				$data['derived_from'] = explode(",",$step_list['step1']);
 			}
 		}
+		*/
 		
 		$gzip_types = array(
 			"CEL",

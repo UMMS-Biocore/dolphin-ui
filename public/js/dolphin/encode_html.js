@@ -530,47 +530,47 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 	}
 	if (dedup && merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmergersem_ref.transcipts/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_dedupmergersem_ref.transcipts/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmergersem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else if (merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_mergersem_ref.transcipts/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_mergersem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
-			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else if (dedup) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_deduprsem_ref.transcipts/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_deduprsem_ref.transcipts/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_deduprsem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_deduprsem_ref.transcipts/', run_id, "bigWig")
 		}else{
-			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else{
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_rsem_ref.transcipts/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_rsem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, "bigWig")
 		}else if (type == 'chip' || type == 'atac'){
-			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, "bigWig")
 		}else{
-			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id, ".bam")
-			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, ".tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, ".bw")
+			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, "bigWig")
 		}
 	}
 	return options_parse
