@@ -375,13 +375,25 @@ function loadFiles() {
 			keys[x],
 			"<select id=\""+keys[x]+"_select\" class=\"form-control\" onChange=\"runSelectionEncode(this)\">" + sample_options + "</select>",
 			runParams[runs[0]].outdir,
-			runParams[runs[0]].run_description
 		]);
 	}
 	
 	if (keys.length > 0) {
 		runSelectionEncode(document.getElementById(keys[0]+'_select'))
 	}
+	
+	var selectLength = keys.length
+	console.log(selectLength)
+	if (selectLength == 0) {
+		document.getElementById("addSampleFiles").size = Math.floor((189)/18);
+	}else if (selectLength == 1) {
+		document.getElementById("addSampleFiles").size = Math.floor((203)/18);
+	}else if (selectLength <= 10 ) {
+		document.getElementById("addSampleFiles").size = Math.floor((((selectLength - 1)  * 51) + 203)/18);
+	}else{
+		document.getElementById("addSampleFiles").size = ((509)/18);
+	}
+	
 }
 
 function loadPreviousFiles(){
@@ -399,6 +411,7 @@ function loadPreviousFiles(){
 						s[x].samplename,
 						s[x].run_name,
 						s[x].backup_dir + s[x].file_name,
+						s[x].step_run,
 						s[x].file_acc,
 						s[x].file_uuid
 					])
@@ -407,6 +420,7 @@ function loadPreviousFiles(){
 						s[x].samplename,
 						s[x].run_name,
 						s[x].outdir + s[x].file_name,
+						s[x].step_run,
 						s[x].file_acc,
 						s[x].file_uuid
 					])
@@ -585,14 +599,18 @@ function submissionSelection(){
 			1,
 			"Initial Fastq",
 			"/input/",
-			".fastq"
+			".fastq",
+			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>",
+			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>"
 		])
 	for (var x = 0; x < options.length; x++) {
 		ordertable.fnAddData([
 			x+2,
 			"<select id=\""+(x+2)+"_orderselect\">"+options_html+"</select>",
 			options[x].value.split(" ")[0],
-			options[x].value.split(" ")[1]
+			options[x].value.split(" ")[1],
+			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>",
+			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>"
 		])
 	}
 }

@@ -227,37 +227,37 @@
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','replicate',this,event)"/>
 									</div>
 									<div class="tab-pane" id="files_tab">
-										<div class="row margin">
-											<?php
-												#Runs
-												echo $html->getRespBoxTable_ng("Run Selection", "encode_runs",
-																			   "<th>Sample</th><th>Run Selection</th><th>Run Directory</th><th>Run Description</th>");
-											?>
-										</div>
-										<div class="row">
-											<div class="col-md-3">
+										<div class="row row-eq-height">
+											<div class="col-xs-9">
+												<?php
+													#Runs
+													echo $html->getRespBoxTable_ng("Run Selection", "encode_runs",
+																				   "<th>Sample</th><th>Run Selection</th><th>Run Directory</th>");
+												?>
+											</div>
+											<div class="col-xs-3">
 												<div class="box">
 													<div class="box-header">
 														<h3 class="box-title">File Selection</h3>
 													</div>
 													<div class="box-body">
-														<select id="addSampleFiles" class="form-control" type="select-multiple" multiple size="10" style="width:100%" onchange="submissionSelection()"></select>
+														<select id="addSampleFiles" class="form-control" type="select-multiple" multiple style="width:100%" onchange="submissionSelection()"></select>
 													</div>
 												</div>
 											</div>
-											<div class="col-md-9">
-												<?php
-													#Runorder
-													echo $html->getRespBoxTable_ng("Submission Order", "encode_file_order",
-																				   "<th>ID</th><th>Parent File ID</th><th>File Location</th><th>File Type</th>");
-												?>
-											</div>
+										</div>
+										<div class="row margin">
+											<?php
+												#Runorder
+												echo $html->getRespBoxTable_ng("Submission Order", "encode_file_order",
+																			   "<th>ID</th><th>Parent File ID</th><th>File Location</th><th>File Type</th><th>Step Run</th><th>Additional Derived From</th>");
+											?>
 										</div>
 										<div class="row margin">
 											<?php
 												#Runs
 												echo $html->getRespBoxTable_ng("Previous Files Submitted", "previous_submissions",
-																			   "<th>Sample</th><th>Run</th><th>File</th><th>File Acc</th><th>File UUID</th>");
+																			   "<th>Sample</th><th>Run</th><th>File</th><th>Step Run</th><th>File Acc</th><th>File UUID</th>");
 											?>
 										</div>
 									</div>

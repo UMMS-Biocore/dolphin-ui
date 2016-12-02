@@ -202,7 +202,7 @@ else if ($p == 'getFiles')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		SELECT ngs_runparams.id, ngs_runparams.outdir, samplename, run_name, json_parameters, run_description, ngs_runlist.sample_id, ngs_fastq_files.dir_id
+		SELECT ngs_runparams.id, ngs_runparams.outdir, samplename, run_name, json_parameters, ngs_runlist.sample_id, ngs_fastq_files.dir_id
 		FROM ngs_runlist
 		LEFT JOIN ngs_runparams
 		ON ngs_runparams.id = ngs_runlist.run_id
@@ -254,32 +254,43 @@ else if ($p == 'enterFileSubmission')
 		WHERE sample_id in (".implode(",",array_keys($samples)).")
 		"));
 	
-	var_dump($submissions);
-	var_dump($ordertable);
-	var_dump($samples);
 	$insertString = '';
 	foreach($ordertable as $step => $subdata){
 		foreach($samples as $id => $sample){
 			$sampleCheck = true;
 			foreach($submissions as $nfs){
-				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == $id &&
+				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == (string)$id &&
 				   $nfs->parent_file == $subdata['p'] && $nfs->file_type == $subdata['t'] && $nfs->file_name == $subdata['l']){
-					$sample_check = false;
+					$sampleCheck = false;
 				}
 			}
 			if($sampleCheck){
-				$insertString.="(".$sample['did'].", ".$sample['rid'].", ".$id.", '".$subdata['l']."', '".$subdata['t']."', '".$subdata['p']."'),";
+				$sub_r = "";
+				$sub_d = "";
+				if($subdata['r'] == "" || $subdata['r'] == "NULL"){
+					$sub_r = "NULL";
+				}else{
+					$sub_r = "'".$subdata['r']."'";
+				}
+				if($subdata['d'] == "" || $subdata['d'] == "NULL"){
+					$sub_d = "NULL";
+				}else{
+					$sub_d = "'".$subdata['d']."'";
+				}
+				$insertString.="(".$sample['did'].", ".$sample['rid'].", ".$id.", '".$subdata['l']."', '".$subdata['t']."', '".$subdata['p']."', ".$sub_r.", ".$sub_d."),";
 			}
 		}
 	}
+	$data = json_encode("no insertion");
 	if($insertString != ''){
 		$insertString=substr($insertString, 0, -1);
-		$data=json_decode($query->queryTable("
+		$insert=$query->queryTable("
 			INSERT INTO ngs_file_submissions
-			(dir_id, run_id, sample_id, file_name, file_type, parent_file)
+			(dir_id, run_id, sample_id, file_name, file_type, parent_file, step_run, additional_derived_from)
 			VALUES
 			$insertString;
-			"));
+			");
+		$data = json_encode("insert occured");
 	}
 }
 

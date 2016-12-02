@@ -46,6 +46,11 @@ $sample_name_query = json_decode($query->queryTable("
 	ON ngs_samples.flowcell_id = ngs_flowcell.id
 	WHERE ngs_samples.id = $sample_id
 	"));
+$file_sub = json_decode($query->queryTable("
+	SELECT *
+	FROM ngs_file_submission
+	WHERE sample_id = $sample_id
+	"));
 
 //Encoded access information
 $encoded_access_key = ENCODE_ACCESS;

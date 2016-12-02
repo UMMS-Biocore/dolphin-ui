@@ -1065,6 +1065,26 @@ function encodePost(){
 	document.getElementById('confirmPatchButton').setAttribute('style', 'display:none');
 }
 
+function gatherOrderTableInfo(){
+	var ordertable = $('#jsontable_encode_file_order').dataTable();
+	var ordertable_dict = {}
+	var ordertable_nodes = ordertable.fnGetNodes()
+	for(var x = 0; x < ordertable_nodes.length; x++){
+		var id = ordertable_nodes[x].children[0].innerHTML
+		ordertable_dict[id] = {}
+		if (x == 0) {
+			ordertable_dict[id]["p"] = "0"
+		}else{
+			ordertable_dict[id]["p"] = ordertable_nodes[x].children[1].children[0].value
+		}
+		ordertable_dict[id]["l"] = ordertable_nodes[x].children[2].innerHTML
+		ordertable_dict[id]["t"] = ordertable_nodes[x].children[3].innerHTML
+		ordertable_dict[id]["r"] = ordertable_nodes[x].children[4].children[0].value
+		ordertable_dict[id]["d"] = ordertable_nodes[x].children[5].children[0].value
+ 	}
+	return ordertable_dict
+}
+
 function gatherSampleRunInfo(){
 	var sample_run_dict = {};
 	var samples = Object.keys(sampleRuns)
@@ -1087,24 +1107,6 @@ function gatherSampleRunInfo(){
 	return sample_run_dict
 }
 
-function gatherOrderTableInfo(){
-	var ordertable = $('#jsontable_encode_file_order').dataTable();
-	var ordertable_dict = {}
-	var ordertable_nodes = ordertable.fnGetNodes()
-	for(var x = 0; x < ordertable_nodes.length; x++){
-		var id = ordertable_nodes[x].children[0].innerHTML
-		ordertable_dict[id] = {}
-		if (x == 0) {
-			ordertable_dict[id]["p"] = ordertable_nodes[x].children[1].innerHTML
-		}else{
-			ordertable_dict[id]["p"] = ordertable_nodes[x].children[1].children[0].value
-		}
-		ordertable_dict[id]["l"] = ordertable_nodes[x].children[2].innerHTML
-		ordertable_dict[id]["t"] = ordertable_nodes[x].children[3].innerHTML
- 	}
-	return ordertable_dict
-}
-
 function recordFileSubmissions(ordertable_dict, sample_run_dict){
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_tables.php",
@@ -1120,10 +1122,13 @@ function recordFileSubmissions(ordertable_dict, sample_run_dict){
 function encodePostFiles(){
 	//	FILE DATABASE SUBMISSION
 	console.log('file data submission')
-	//	run table
-	var sample_run_dict = gatherSampleRunInfo()
 	//	order table
 	var ordertable_dict = gatherOrderTableInfo()
+	//	run table
+	var sample_run_dict = gatherSampleRunInfo()
+	//	database insertion
+	recordFileSubmissions(ordertable_dict, sample_run_dict)
+	
 	
 	var file_response = encodeFilePost();
 	
