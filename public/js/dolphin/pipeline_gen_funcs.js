@@ -500,7 +500,7 @@ function checkUsedDirectory(outputdir){
 			}
 		});
 	
-	if (result != [] || result != undefined) {
+	if (result != [] || result != undefined || result != '') {
 		return true
 	}else{
 		return false
