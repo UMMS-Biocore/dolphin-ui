@@ -52,6 +52,7 @@ class Ngsimport extends VanillaModel {
 	//	FILES
 	public $file_arr = array();
 	public $file_name_arr = array();
+	public $file_name_dict = array();
 	
 	//	Sheet Check bools
 	public $final_check;
@@ -1276,17 +1277,17 @@ class Ngsimport extends VanillaModel {
 			if(isset($file->name)){
 				if($this->checkAlphaNumWithAddChars('\_\-', $file->name)){
 					if(!(isset($this->sample_arr[$file->name])) & !(isset($this->lane_arr[$file->name]))){
-						$text.= $this->errorText("sample/import name does not match the samples/imports given (row " . $i . ")");
+						$text.= $this->errorText("Sample/Import name does not match the samples/imports given (row " . $i . ")");
 						$this->final_check = false;
 						$file_check = false;
 					}
 				}else{
-					$text.= $this->errorText("sample/import name does not contain proper characters, please use alpha-numeric characters, dashes, and underscores (row " . $i . ")");
+					$text.= $this->errorText("Sample/Import name does not contain proper characters, please use alpha-numeric characters, dashes, and underscores (row " . $i . ")");
 					$this->final_check = false;
 					$file_check = false;
 				}
 			}else{
-				$text.= $this->errorText("sample/import name is required for submission (row " . $i . ")");
+				$text.= $this->errorText("Sample/Import name is required for submission (row " . $i . ")");
 				$this->final_check = false;
 				$file_check = false;
 			}
@@ -1300,7 +1301,7 @@ class Ngsimport extends VanillaModel {
 					$meta_check = false;
 				}
 			}else{
-				$text.= $this->errorText("file name is required for submission (row " . $i . ")");
+				$text.= $this->errorText("File name is required for submission (row " . $i . ")");
 				$this->final_check = false;
 				$file_check = false;
 			}
@@ -1324,8 +1325,29 @@ class Ngsimport extends VanillaModel {
 				}else{
 					array_push($this->file_name_arr, $file->fastq_dir . $file->file_name);
 				}
+				$this->file_name_dict[$file->name]=1;
 			}
 		}
+		
+		//	Make sure all samples/lanes are covered
+		if($this->laneArrayCheck = 'sample'){
+			foreach($this->sample_arr as $sample){
+				if(!(isset($this->file_name_dict[$sample->name]))){
+					$text.= $this->errorText("Sample with name '".$sample->name."' has no files associated with it.  Please make sure to add these files on the 'FILES' tab.");
+					$this->final_check = false;
+					$file_check = false;
+				}
+			}
+		}else{
+			foreach($this->lane_arr as $lane){
+				if(!(isset($this->file_name_dict[$lane->name]))){
+					$text.= $this->errorText("Import with name '".$lane->name."' has no files associated with it.  Please make sure to add these files on the 'FILES' tab.");
+					$this->final_check = false;
+					$file_check = false;
+				}
+			}
+		}
+		
 		//	Check All Files for Validity
 		$single_file_check = $this->checkFilePermissions($this->clustername);
 		if($single_file_check != 'pass'){
