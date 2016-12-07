@@ -219,6 +219,9 @@ else if($p == 'deleteSelected')
 		$data = $funcs->removeAllSampleSuccessFiles($outdir[0]->outdir, $samplename_array, $clusteruser[0]->clusteruser);
 	}
 	
+	//	GATHER DIRS
+	$dirs=json_decode($query->queryTable("SELECT id FROM ngs_dirs WHERE id IN (SELECT dir_id FROM ngs_fastq_files WHERE sample_id IN ( $samples ))"));
+	
 	//	EXPERIMENT SERIES
 	if ($experiments != ""){
 		$query->runSQL("DELETE FROM ngs_experiment_series WHERE id IN ($experiments)");
@@ -237,6 +240,14 @@ else if($p == 'deleteSelected')
 	$query->runSQL("DELETE FROM ngs_sample_conds WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_fastq_files WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_samples WHERE id IN ($samples)");
+	
+	//	REMOVE DIRS
+	foreach($dirs as $d){
+		$dir_return=json_decode($query->queryTable("SELECT sample_id FROM ngs_fastq_files WHERE dir_id = ".$d->id));
+		if(sizeof($dir_return) == 0){
+			$query->runSQL("DELETE FROM ngs_dirs WHERE id = ".$d->id);
+		}
+	}
 	
 	//	OBTAIN WKEY INFORMATION FOR REPORT_LIST REMOVAL //
 	$wkeys = array();
