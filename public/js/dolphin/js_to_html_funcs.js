@@ -24,6 +24,8 @@ function createElement(type, fields, options){
 		}else if (fields[x] == 'type' && options[x] == 'button'){
 			element.setAttribute(fields[x], options[x]);
 			element.innerHTML = element.value;
+		}else if (fields[x] == 'INNERHTML'){
+			element.innerHTML = options[x]
 		}else{
 			element.setAttribute(fields[x], options[x]);
 		}

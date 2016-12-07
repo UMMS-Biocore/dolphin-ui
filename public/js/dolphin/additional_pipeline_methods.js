@@ -1,4 +1,4 @@
-var pipelineDict = ['RNASeqRSEM', 'Tophat',  'STAR', 'Hisat2', 'ChipSeq/ATACSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller'];
+var pipelineDict = ['RNASeqRSEM', 'Tophat',  'STAR', 'Hisat2', 'ChipSeq/ATACSeq', 'DESeq', 'BisulphiteMapping', 'DiffMeth', 'HaplotypeCaller', 'Deeptools'];
 var pipelineNum = 0;
 
 function additionalPipes(){
@@ -17,6 +17,7 @@ function additionalPipes(){
 					'OPTION',		//BisulphiteMapping
 					'OPTION',		//DiffMeth
 					'OPTION',		//HaplotypeCaller
+					'OPTION',		//Deeptools
 					]
 	VALUE_OPTIONS = [
 					'select_'+pipelineNum,
@@ -32,6 +33,7 @@ function additionalPipes(){
 					pipelineDict[6],		//BisulphiteMapping
 					pipelineDict[7],		//DiffMeth
 					pipelineDict[8],		//HaplotypeCaller
+					pipelineDict[9],		//Deeptools
 					]
 	//find parent div
 	var master = document.getElementById('masterPipeline');
@@ -93,6 +95,9 @@ function pipelineSelect(num){
 		}else if (pipeType == pipelineDict[8]) {
 			//HaplotypeCaller
 			divAdj = formHaplotypeCaller(divAdj, num)
+		}else if (pipeType == pipelineDict[9]) {
+			//HaplotypeCaller
+			divAdj = formDeeptools(divAdj, num)
 		}
 		//replace div
 		$('#select_child_'+num).replaceWith(divAdj);
@@ -140,50 +145,7 @@ function createIGVBigwigOptions(divAdj, num){
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_extf_'+num, 'box-title', 'display:none', 'extFactor']),
 			   createElement('input', ['id', 'class', 'type', 'style', 'value'], ['textarea_extf_'+num, 'form-control', 'text', 'display:none', '0'])] ]);
-	divAdj = mergeTidy(divAdj, 12,
-			[ [createElement('label', ['id', 'class','TEXTNODE', 'style'], ['label_deeptools_'+num, 'box-title margin', 'Create Deeptools plots:', 'display:none']),
-			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_deeptools_'+num, 'checkbox', 'margin', 'display:none', 'deeptoolsSelect(this.id)'])] ]);
-	divAdj = mergeTidy(divAdj, 7,
-			[ [createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_masamp_'+num, 'box-title', 'display:none', 'Merge All Samples:']),
-			   createElement('input', ['id', 'type', 'class', 'style'], ['checkbox_masamp_'+num, 'checkbox', 'margin', 'display:none'])],
-			[createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_usekm_'+num, 'box-title', 'display:none', 'Use K-means:']),
-			   createElement('input', ['id', 'type', 'class', 'style', 'onClick'], ['checkbox_usekm_'+num, 'checkbox', 'margin', 'display:none', 'kmeansSelect(this.id)'])],
-			[createElement('label', ['id', 'class', 'type', 'style', 'TEXTNODE'], ['label_kmeans_'+num, 'box-title', 'checkbox', 'display:none', 'K-means:']),
-			   createElement('input', ['id', 'class', 'type', 'value', 'style'], ['text_kmeans_'+num, 'form-control', 'text', '4', 'display:none'])],
-			[createElement('label', ['id', 'class', 'style', 'TEXTNODE'], ['label_plottype_'+num, 'box-title', 'display:none', 'Plot Type:']),
-			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'onChange'], ['select_plottype_'+num, 'form-control', 'display:none', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
-			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_refpoint_'+num, 'box-title', 'display:none', 'Reference Point:']),
-			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_refpoint_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
 	return divAdj
-}
-
-function reloadIGVBigwidOptions(splt1, i) {
-	document.getElementById('select_igvtdf_'+i).value = splt1[i].IGVTDF;
-	document.getElementById('select_bigwig_'+i).value = splt1[i].BAM2BW;
-	if (splt1[i].IGVTDF == 'yes') {
-		IGVTDFSelection('select_igvtdf_'+i);
-		document.getElementById('textarea_extf_'+i).value = splt1[i].ExtFactor;
-	}
-	if (splt1[i].BAM2BW == 'yes') {
-		bigwigSelection('select_bigwig_'+i)
-		if (splt1[i].Deeptools == 'yes') {
-			document.getElementById('checkbox_deeptools_'+i).checked = true;
-			deeptoolsSelect('checkbox_deeptools_'+i)
-			if (splt1[i].PlotType == 'reference-point') {
-				document.getElementById('select_plottype_'+i).value = splt1[i].PlotType
-				referenceSelect('select_plottype_'+i)
-				document.getElementById('select_refpoint_'+i).value = splt1[i].ReferencePoint
-			}
-			if (splt1[i].UseKM == 'yes') {
-				document.getElementById('checkbox_usekm_'+i).checked = true;
-				kmeansSelect('checkbox_usekm_'+i);
-				document.getElementById('text_kmeans_'+i).value = splt1[i].KMeans
-			}
-			if (splt1[i].MergeAllSamp == 'yes') {
-				document.getElementById('checkbox_masamp_'+i).checked = true;
-			}
-		}
-	}
 }
 
 function IGVTDFSelection(id){
@@ -200,94 +162,12 @@ function IGVTDFSelection(id){
 	}
 }
 
-function bigwigSelection(id){
-	var value = document.getElementById(id).value;
-	var id_num = id.split("_")[2];
-	console.log(id_num);
-	var label1 = document.getElementById('label_deeptools_'+id_num)
-	var textarea1 = document.getElementById('checkbox_deeptools_'+id_num)
-	if (value == 'yes') {
-		label1.setAttribute("style", "display:show");
-		textarea1.setAttribute("style", "display:show");
-	}else{
-		label1.setAttribute("style", "display:none");
-		textarea1.setAttribute("style", "display:none");
-		textarea1.value = 0;
-	}
-}
-
-function deeptoolsSelect(id){
-	var checked = document.getElementById(id).checked;
-	var id_num = id.split("_")[2];
-	console.log(id_num);
-	var label1 = document.getElementById('label_plottype_'+id_num)
-	var select1 = document.getElementById('select_plottype_'+id_num)
-	var label2 = document.getElementById('label_refpoint_'+id_num)
-	var select2 = document.getElementById('select_refpoint_'+id_num)
-	var label3 = document.getElementById('label_usekm_'+id_num)
-	var check3 = document.getElementById('checkbox_usekm_'+id_num)
-	var label4 = document.getElementById('label_kmeans_'+id_num)
-	var select4 = document.getElementById('text_kmeans_'+id_num)
-	var label5 = document.getElementById('label_masamp_'+id_num)
-	var check5 = document.getElementById('checkbox_masamp_'+id_num)
-	if (checked) {
-		label1.setAttribute("style", "display:show");
-		select1.setAttribute("style", "display:show");
-		if (select1.value == 'reference-point') {
-			label2.setAttribute("style", "display:show");
-			select2.setAttribute("style", "display:show");
-		}
-		label3.setAttribute("style", "display:show");
-		check3.setAttribute("style", "display:show");
-		if (check3.checked) {
-			label4.setAttribute("style", "display:show");
-			select4.setAttribute("style", "display:show");
-		}
-		label5.setAttribute("style", "display:show");
-		check5.setAttribute("style", "display:show");
-	}else{
-		label1.setAttribute("style", "display:none");
-		select1.setAttribute("style", "display:none");
-		label2.setAttribute("style", "display:none");
-		select2.setAttribute("style", "display:none");
-		label3.setAttribute("style", "display:none");
-		check3.setAttribute("style", "display:none");
-		label4.setAttribute("style", "display:none");
-		select4.setAttribute("style", "display:none");
-		label5.setAttribute("style", "display:none");
-		check5.setAttribute("style", "display:none");
-	}
-}
-
-function referenceSelect(id){
-	var value = document.getElementById(id).value;
-	var id_num = id.split("_")[2];
-	console.log(id_num);
-	var label1 = document.getElementById('label_refpoint_'+id_num)
-	var textarea1 = document.getElementById('select_refpoint_'+id_num)
-	if (value == 'reference-point') {
-		label1.setAttribute("style", "display:show");
-		textarea1.setAttribute("style", "display:show");
-	}else{
-		label1.setAttribute("style", "display:none");
-		textarea1.setAttribute("style", "display:none");
-		textarea1.value = 0;
-	}
-}
-
-function kmeansSelect(id){
-	var value = document.getElementById(id).checked;
-	var id_num = id.split("_")[2];
-	console.log(id_num);
-	var label1 = document.getElementById('label_kmeans_'+id_num)
-	var textarea1 = document.getElementById('text_kmeans_'+id_num)
-	if (value) {
-		label1.setAttribute("style", "display:show");
-		textarea1.setAttribute("style", "display:show");
-	}else{
-		label1.setAttribute("style", "display:none");
-		textarea1.setAttribute("style", "display:none");
-		textarea1.value = 4;
+function reloadIGVBigwidOptions(splt1, i) {
+	document.getElementById('select_igvtdf_'+i).value = splt1[i].IGVTDF;
+	document.getElementById('select_bigwig_'+i).value = splt1[i].BAM2BW;
+	if (splt1[i].IGVTDF == 'yes') {
+		IGVTDFSelection('select_igvtdf_'+i);
+		document.getElementById('textarea_extf_'+i).value = splt1[i].ExtFactor;
 	}
 }
 
@@ -1020,5 +900,95 @@ function reloadHaplotypeCaller(splt1, i){
 	}
 	if (splt1[i].peaks == 'yes' || splt1[i].peaks == '1') {
 		document.getElementById('checkbox_chippeaks_'+i).checked = true;
+	}
+}
+
+function formDeeptools(divAdj, num){
+	var optionsString = '';
+	for (var x = 0; x < currentPipelineVal.length; x++) {
+		if (currentPipelineVal[x] == 'RNASeqRSEM' || currentPipelineVal[x] == 'Tophat' || currentPipelineVal[x] == 'STAR' || currentPipelineVal[x] == 'Hisat2' || currentPipelineVal[x] == 'ChipSeq/ATACSeq' || currentPipelineVal[x] == 'BisulphiteMapping') {
+			var bigwigCheck = document.getElementById('select_bigwig_'+x).value
+			if (bigwigCheck == 'yes') {
+				optionsString += '<option value="'+currentPipelineVal[x]+'">'+currentPipelineVal[x]+'</option>';
+			}
+		}
+	}
+	divAdj = mergeTidy(divAdj, 12,
+			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Analysis to Use:']),
+			   createElement('select', ['id', 'class', 'INNERHTML'], ['select_analysis_'+num, 'form-control', optionsString])] ]);
+	divAdj = mergeTidy(divAdj, 7,
+			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_masamp_'+num, 'box-title', 'Merge All Samples:']),
+			   createElement('input', ['id', 'type', 'class'], ['checkbox_masamp_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_usekm_'+num, 'box-title', 'Use K-means:']),
+			   createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_usekm_'+num, 'checkbox', 'margin', 'kmeansSelect(this.id)'])],
+			[createElement('label', ['id', 'class', 'type', 'style', 'TEXTNODE'], ['label_kmeans_'+num, 'box-title', 'checkbox', 'display:none', 'K-means:']),
+			   createElement('input', ['id', 'class', 'type', 'value', 'style'], ['text_kmeans_'+num, 'form-control', 'text', '4', 'display:none'])],
+			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_plottype_'+num, 'box-title', 'Plot Type:']),
+			   createElement('select', ['id', 'class', 'OPTION', 'OPTION', 'onChange'], ['select_plottype_'+num, 'form-control', 'scale-regions', 'reference-point', 'referenceSelect(this.id)'])],
+			[createElement('label', ['id', 'class','style', 'TEXTNODE'], ['label_refpoint_'+num, 'box-title', 'display:none', 'Reference Point:']),
+			   createElement('select', ['id', 'class', 'style', 'OPTION', 'OPTION', 'OPTION'], ['select_refpoint_'+num, 'form-control', 'display:none', 'TSS', 'TES', 'center'])] ]);
+	divAdj = mergeTidy(divAdj, 6,
+			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_beforeregion_'+num, 'box-title', 'Before region start length:']),
+			   createElement('input', ['id', 'class', 'value'], ['input_beforeregion_'+num, 'form-control', '500', 'display:none'])],
+			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_afterregion_'+num, 'box-title', 'After region start length:']),
+			   createElement('input', ['id', 'class', 'value'], ['input_afterregion_'+num, 'form-control', '500'])] ]);
+	divAdj = mergeTidy(divAdj, 6,
+			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_bodyregion_'+num, 'box-title', 'Region body length:']),
+			   createElement('input', ['id', 'class', 'value'], ['input_bodyregion_'+num, 'form-control', '1500'])] ]);
+	return divAdj
+}
+
+function reloadDeeptools(splt1, i){
+	additionalPipes();
+	document.getElementById('select_'+i).value = pipelineDict[9];
+	pipelineSelect(i);
+	document.getElementById('select_analysis_'+i).value = splt1[i].Run;
+	if (splt1[i].MergeAllSamp == 'yes' || splt1[i].MergeAllSamp == '1') {
+		document.getElementById('checkbox_masamp_'+i).checked = true;
+	}
+	if (splt1[i].UseKM == 'yes' || splt1[i].UseKM == '1') {
+		kmeansSelect('checkbox_usekm_'+i);
+		document.getElementById('checkbox_usekm_'+i).checked = true;
+	}
+	document.getElementById('text_kmeans_'+i).value = splt1[i].KMeans;
+	document.getElementById('select_plottype_'+i).value = splt1[i].PlotType;
+	if (document.getElementById('select_plottype_'+i).value == 'reference-point') {
+		referenceSelect('select_plottype_'+i)
+		document.getElementById('select_refpoint_'+i).value = splt1[i].ReferencePoint;
+	}
+	document.getElementById('input_beforeregion_'+i).value = splt1[i].Before;
+	document.getElementById('input_afterregion_'+i).value = splt1[i].After;
+	document.getElementById('input_bodyregion_'+i).value = splt1[i].Body;
+}
+
+function referenceSelect(id){
+	var value = document.getElementById(id).value;
+	var id_num = id.split("_")[2];
+	console.log(id_num);
+	var label1 = document.getElementById('label_refpoint_'+id_num)
+	var textarea1 = document.getElementById('select_refpoint_'+id_num)
+	if (value == 'reference-point') {
+		label1.setAttribute("style", "display:show");
+		textarea1.setAttribute("style", "display:show");
+	}else{
+		label1.setAttribute("style", "display:none");
+		textarea1.setAttribute("style", "display:none");
+		textarea1.value = 0;
+	}
+}
+
+function kmeansSelect(id){
+	var value = document.getElementById(id).checked;
+	var id_num = id.split("_")[2];
+	console.log(id_num);
+	var label1 = document.getElementById('label_kmeans_'+id_num)
+	var textarea1 = document.getElementById('text_kmeans_'+id_num)
+	if (value) {
+		label1.setAttribute("style", "display:show");
+		textarea1.setAttribute("style", "display:show");
+	}else{
+		label1.setAttribute("style", "display:none");
+		textarea1.setAttribute("style", "display:none");
+		textarea1.value = 4;
 	}
 }

@@ -422,10 +422,6 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			}else if (!checkFieldCheckboxChecked('checkbox_rseqc_'+pipeline_index[x]) && !checkFieldCheckboxChecked('checkbox_nogenbam_'+pipeline_index[x])){
 				displayErrorModal('#errorModal', 'You cannot perform RNA-Seq QC while No Genome BAM is selected.');
 				return true;
-			//	K-means selection
-			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
-				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
-				return true;
 			}
 		//	Tophat
 		}else if (name == 'Tophat') {
@@ -436,10 +432,6 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			//	single end dedup selected
 			}else if (!checkFieldCheckboxChecked('checkbox_markdup_'+pipeline_index[x]) && (!checkFieldSelection('spaired', 'no'))){
 				displayErrorModal('#errorModal', 'Deduplication can not be performed on single-end reads');
-				return true;
-			//	K-means selection
-			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
-				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	ChipSeq
@@ -480,10 +472,6 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			//	Effective genome size(bp) is non-int
 			}else if (checkFieldIsNotInt('select_genomes_'+pipeline_index[x]) || checkFieldsEmpty('select_genomes_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Effective genome size(bp) field must contain an integer value within ChipSeq');
-				return true;
-			//	K-means selection
-			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
-				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	DESeq
@@ -534,10 +522,6 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			//	MethylKit Top N Regions
 			}else if (!checkFieldCheckboxChecked('checkbox_runmk_'+pipeline_index[x]) && (checkFieldIsNotInt('text_topn_'+pipeline_index[x]) || checkFieldsEmpty('text_topn_'+pipeline_index[x])) ) {
 				displayErrorModal('#errorModal', 'Top N Regions field must be of type int for BisulphiteMapping');
-				return true;
-			//	K-means selection
-			}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
-				displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
 				return true;
 			}
 		//	DiffMeth
@@ -606,6 +590,13 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 				displayErrorModal('#errorModal', 'You do not have access to this file, or the file does not exist (Haplotype Custom Bed File)');
 				return true;
 			}
+		//	Deeptools
+		}else if (name == 'Deeptools') {
+			//	K-means selection
+			//}else if (!checkFieldCheckboxChecked('checkbox_usekm_'+pipeline_index[x]) && (checkFieldsEmpty('text_kmeans_'+pipeline_index[x]) || checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]))) {
+			//	displayErrorModal('#errorModal', 'K-means selection must be an integer in order to use k-means clustering in Deeptools.');
+			//	return true;
+			//}
 		}
 	}
 	return false;

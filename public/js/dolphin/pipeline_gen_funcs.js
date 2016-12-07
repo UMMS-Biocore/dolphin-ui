@@ -178,6 +178,9 @@ function rerunLoad() {
 							}else if (splt1[i].Type == pipelineDict[8]) {
 								//HaplotypeCaller
 								reloadHaplotypeCaller(splt1, i)
+							}else if (splt1[i].Type == pipelineDict[9]) {
+								//HaplotypeCaller
+								reloadDeeptools(splt1, i)
 							}
 						}
 						document.getElementById(jsonTypeList[x]+'_exp_body').setAttribute('style', 'display: block');
@@ -1374,25 +1377,21 @@ function findAdditionalInfoValues(goWord, additionalArray){
 }
 /*##### GENERATE ADDITIONAL PIPELINE STR FOR JSON #####*/
 function findPipelineValues(){
-	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp',
-						   'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+	var RSEM_JSON_DICT  = ['Params', 'MarkDuplicates', 'RSeQC', 'NoGenomeBAM', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
 	var DESEQ_JSON_DICT = ['Name', 'Columns', 'Conditions', 'FitType', 'HeatMap', 'padj', 'foldChange', 'DataType'];
 	var CHIPSEQ_JSON_DICT = ['MacsType', 'CutAdjust', 'ChipInput', 'Params', 'MultiMapper', 'TagSize', 'BandWith', 'EffectiveGenome',
-							 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans',
-							 'PlotType', 'ReferencePoint'];
+							 'MarkDuplicates', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var TOPHAT_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
-							'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
-    var STAR_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
-						  'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint'];
-    var HISAT2_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor',
-							'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint'];
+							'Custom', 'CustomGenomeIndex', 'CustomGenomeAnnotation'];
+    var STAR_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor' ];
+    var HISAT2_JSON_DICT = ['Params', 'MarkDuplicates', 'RSeQC', 'CollectRnaSeqMetrics', 'CollectMultipleMetrics', 'IGVTDF', 'BAM2BW', 'ExtFactor'];
 	var BISULPHITE_JSON_DICT = ['BSMapStep', 'BisulphiteType', 'Digestion', 'BSMapParams', 'CollectMultipleMetrics', 'IGVTDF', 'MarkDuplicates',
-								'BAM2BW', 'ExtFactor', 'Deeptools', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'MCallStep', 'MCallParams',
-								'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
+								'BAM2BW', 'ExtFactor', 'MCallStep', 'MCallParams', 'MethylKit', 'TileSize', 'StepSize', 'MinCoverage', 'TopN', 'StrandSpecific'];
 	var DIFFMETH_JSON_DICT = [ 'Name', 'Columns', 'Conditions'];
-	var HAPLOTYPE_CALLER_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling',
+	var HAPLOTYPECALLER_JSON_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling',
 								 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample',
 								 'custombed', 'peaks'];
+	var DEEPTOOLS_JSON_DICT = [ 'Run', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Before', 'After', 'Body'];
 	var JSON_ARRAY =  [];
 	console.log(currentPipelineID);
 	console.log(currentPipelineID.length);
@@ -1416,7 +1415,9 @@ function findPipelineValues(){
 		}else if (currentPipelineVal[y] == 'DiffMeth') {
 			USED_DICT = DIFFMETH_JSON_DICT;
 		}else if (currentPipelineVal[y] == 'HaplotypeCaller') {
-			USED_DICT = HAPLOTYPE_CALLER_DICT;
+			USED_DICT = HAPLOTYPECALLER_JSON_DICT;
+		}else if (currentPipelineVal[y] == 'Deeptools') {
+			USED_DICT = DEEPTOOLS_JSON_DICT;
 		}
 		
 		var dict_counter = 0;
