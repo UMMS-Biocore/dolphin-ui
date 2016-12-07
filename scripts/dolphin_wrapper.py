@@ -558,7 +558,8 @@ class Dolphin:
            for pipe in runparams['pipeline']:
               if (pipe['Type']=="RNASeqRSEM"):
                  dedup=False
-                 genome_bam="yes"
+                 if('NoGenomeBAM' in pipe and pipe['NoGenomeBAM'].lower()!="yes"):
+                     genome_bam="yes"
                  bamsupport="no"
                  type="rsem"
                  previousrsem = "@PREVIOUSRSEM"
