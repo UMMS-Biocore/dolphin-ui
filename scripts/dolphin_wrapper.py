@@ -559,6 +559,8 @@ class Dolphin:
               if (pipe['Type']=="RNASeqRSEM"):
                  dedup=False
                  if('NoGenomeBAM' in pipe and pipe['NoGenomeBAM'].lower()!="yes"):
+                     genome_bam="no"
+                 else:
                      genome_bam="yes"
                  bamsupport="no"
                  type="rsem"
