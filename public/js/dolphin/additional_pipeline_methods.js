@@ -907,7 +907,7 @@ function formDeeptools(divAdj, num){
 	var optionsString = '';
 	for (var x = 0; x < currentPipelineVal.length; x++) {
 		if (currentPipelineVal[x] == 'RNASeqRSEM' || currentPipelineVal[x] == 'Tophat' || currentPipelineVal[x] == 'STAR' || currentPipelineVal[x] == 'Hisat2' || currentPipelineVal[x] == 'ChipSeq/ATACSeq' || currentPipelineVal[x] == 'BisulphiteMapping') {
-			var bigwigCheck = document.getElementById('select_bigwig_'+x).value
+			var bigwigCheck = document.getElementById('select_bigwig_'+currentPipelineID[x]).value
 			if (bigwigCheck == 'yes') {
 				optionsString += '<option value="'+currentPipelineVal[x]+'">'+currentPipelineVal[x]+'</option>';
 			}
@@ -947,8 +947,8 @@ function reloadDeeptools(splt1, i){
 		document.getElementById('checkbox_masamp_'+i).checked = true;
 	}
 	if (splt1[i].UseKM == 'yes' || splt1[i].UseKM == '1') {
-		kmeansSelect('checkbox_usekm_'+i);
 		document.getElementById('checkbox_usekm_'+i).checked = true;
+		kmeansSelect('checkbox_usekm_'+i);
 	}
 	document.getElementById('text_kmeans_'+i).value = splt1[i].KMeans;
 	document.getElementById('select_plottype_'+i).value = splt1[i].PlotType;
