@@ -15,12 +15,6 @@ if(!isset($_SESSION['encode_log'])){
 	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
-//testing
-/*
-$sample_id = 1;
-$experiment = 'TSTSR295244';
-$replicate = 'b150d4e9-7d5c-4f79-87b3-e5dec3f0c524';
-*/
 //Obtain database variables
 $experiment_info = json_decode($query->queryTable("
 	SELECT `lab`, `grant`
@@ -72,8 +66,8 @@ $replicate = "/replicates/" . $replicate . "/";
 
 $step_list = array();
 $sample_count = 0;
-//For each file
-foreach($sample_name_query as $snq){
+
+function baselineJSON($filename, $checksum, $platform){
 	$sample_name=$snq->samplename;
 	$machine_name=$snq->machine_name;
 	if($machine_name == 'None'){
@@ -95,6 +89,106 @@ foreach($sample_name_query as $snq){
 	$file_accs = array();
 	$file_uuids = array();
 	$paired = '';
+	if($sub->parent_file = 0){
+		$directory = $dir_query[0]->backup_dir;
+		if(substr($directory, -1) != '/'){
+			$directory = $directory . "/";
+		}
+		$file_size = filesize($directory . $filename);
+		$md5sum = $checksum;
+	}else{
+		$directory = $sub->outdir;
+		if(substr($directory, -1) != '/'){
+			$directory = $directory . "/";
+		}
+		$file_size = filesize($directory . $fn);
+		$md5sum = md5_file($directory . $fn);
+	}
+	$data = array(
+		"dataset" => $dataset_acc,
+		"replicate" => $replicate,
+		"file_size" => $file_size,
+		"md5sum" => $md5sum,
+		"read_length" => (int)$read_length,
+		"platform" => $platform,	//"platform" => "ENCODE:HiSeq2000",
+		"submitted_file_name" => $filename,
+		"lab" => $my_lab,
+		"award" => $my_award,
+		"flowcell_details" => array(array("machine" => $machine_name),
+									array("flowcell" => $flowcell),
+									array("lane" => $lane))
+	);
+	if($sub->file_type == 'fastq'){
+		$data['output_type'] = 'reads';
+	}else if ($sub->file_type == 'bam'){
+		$data['output_type'] = 'alignment';
+	}else if ($sub->file_type == 'tsv'){
+		$data['output_type'] = 'tsv';
+	}else if ($sub->file_type == 'bigWig'){
+		$data['output_type'] = 'bigWig';
+	}
+	
+	return $data;
+}
+
+function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list, $parent){
+	$data["file_format"] = 'fastq';
+	$data["run_type"] = $run_type;
+	//	INITIAL FASTQ
+	if($sub->parent_file = 0){
+		if($run_type == "paired-ended"){
+			//	FASTQ PAIRED
+			if(end($file_names) == $fn){
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+				$data["paired_end"] = '2';
+				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name;
+			}else{
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+				$data["paired_end"] = '1';
+			}
+		}else if (count($file_names) == 1){
+			//	FASTQ SINGLE
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+		}
+	}else{
+		if($run_type == "paired-ended"){
+			//	FASTQ PAIRED
+			if(end($file_names) == $fn){
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+				$data["paired_end"] = '2';
+				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name;
+			}else{
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+				$data["paired_end"] = '1';
+			}
+			if($parent != 'step1'){
+				$data['derived_from'] = explode(",",$step_list[$parent]);
+			}
+		}else{
+			//	FASTQ SINGLE
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+			if($parent != 'step1'){
+				$data['derived_from'] = explode(",",$step_list[$parent]);
+			}
+		}
+	}
+	return $data;
+}
+
+function bamJSON(){
+	
+}
+
+function tdfJSON(){
+	
+}
+
+function bigwigJSON(){
+	
+}
+
+//For each file
+foreach($sample_name_query as $snq){
 	$file_names = [];
 	foreach($fastq_data as $fq){
 		if($fq->sample_id == $sample_id){
@@ -104,49 +198,7 @@ foreach($sample_name_query as $snq){
 	
 	$step = "step1";
 	foreach($file_sub as $sub){
-		//File checksum
-		if($sub->parent_file = 0){
-			$directory = $dir_query[0]->backup_dir;
-			if(substr($directory, -1) != '/'){
-				$directory = $directory . "/";
-			}
-			$file_size = filesize($directory . $fn);
-			if(end($file_names) == $fn){
-				$md5sum = end(explode(",",$fq->checksum));
-			}else{
-				$md5sum = explode(",",$fq->checksum)[0];
-			}
-		}else{
-			$directory = $sub->outdir;
-			if(substr($directory, -1) != '/'){
-				$directory = $directory . "/";
-			}
-			$file_size = filesize($directory . $fn);
-			$md5sum = md5_file($directory . $fn);
-		}
-		$data = array(
-			"dataset" => $dataset_acc,
-			"replicate" => $replicate,
-			"file_size" => $file_size,
-			"md5sum" => $md5sum,
-			"read_length" => (int)$read_length,
-			"platform" => "ENCODE:HiSeq2000",
-			"submitted_file_name" => end(explode("/",$fn)),
-			"lab" => $my_lab,
-			"award" => $my_award,
-			"flowcell_details" => array(array("machine" => $machine_name),
-										array("flowcell" => $flowcell),
-										array("lane" => $lane))
-		);
-		if($sub->file_type == 'fastq'){
-			$data['output_type'] = 'reads';
-		}else if ($sub->file_type == 'bam'){
-			$data['output_type'] = 'alignment';
-		}else if ($sub->file_type == 'tsv'){
-			$data['output_type'] = 'tsv';
-		}else if ($sub->file_type == 'bigWig'){
-			$data['output_type'] = 'bigWig';
-		}
+		
 		
 		if($sub->parent_file = 0){
 			if(count($file_names) == 2){
@@ -177,7 +229,6 @@ foreach($sample_name_query as $snq){
 			 *	THIS SECTION IS IMPORTANT
 			 *	FIGURE THIS OUT FOR THE FILE TYPE PORTION
 			 */
-			$data["run_type"] = "single-ended";
 			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
 			if($step != 'step1'){
 				/*
@@ -187,86 +238,6 @@ foreach($sample_name_query as $snq){
 				$data['derived_from'] = explode(",",$step_list['step1']);
 			}
 		}
-		
-/*
-foreach($fastq_data as $fq){
-	$sample_name = $sample_name_query[$sample_count]->samplename;
-	$machine_name = $sample_name_query[$sample_count]->machine_name;
-	if($machine_name == 'None'){
-		$machine_name = 'unknown';
-	}
-	$flowcell = $sample_name_query[$sample_count]->flowcell;
-	if($flowcell == 'None'){
-		$flowcell = 'unknown';
-	}
-	$lane = $sample_name_query[$sample_count]->lane;
-	if($lane == 'None'){
-		$lane = 'unknown';
-	}
-	$read_length = $sample_name_query[$sample_count]->read_length;
-	if($read_length == 'None'){
-		$read_length = 'unknown';
-	}
-	$inserted = false;
-	$file_accs = array();
-	$file_uuids = array();
-	$paired = '';
-	$file_names = explode(",",$fq->file_name);
-	
-	//	Fill out file metadata to submit before actual file submission
-	foreach($file_names as $fn){
-		//File path
-		$directory = $dir_query[0]->backup_dir;
-		if(substr($directory, -1) != '/'){
-			$directory = $directory . "/";
-		}
-		$file_size = filesize($directory . $fn);
-		//File checksum
-		if(end($file_names) == $fn){
-			$md5sum = end(explode(",",$fq->checksum));
-		}else{
-			$md5sum = explode(",",$fq->checksum)[0];
-		}
-		$data = array(
-			"dataset" => $dataset_acc,
-			"replicate" => $replicate,
-			"file_size" => $file_size,
-			"md5sum" => $md5sum,
-			"read_length" => (int)$read_length,
-			"platform" => "ENCODE:HiSeq2000",
-			"submitted_file_name" => end(explode("/",$fn)),
-			"lab" => $my_lab,
-			"award" => $my_award,
-			"flowcell_details" => array(array("machine" => $machine_name),
-										array("flowcell" => $flowcell),
-										array("lane" => $lane))
-		);
-			
-		$data['output_type'] = 'reads';
-		$step = "step1";
-		if(count($file_names) == 2){
-			//	FASTQ PAIRED
-			$data["file_format"] = 'fastq';
-			$data["run_type"] = "paired-ended";
-			if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
-				$data["paired_end"] = '2';
-				$data["paired_with"] = $paired;
-			}else{
-				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
-				$data["paired_end"] = '1';
-				$paired = $my_lab.':fastq_p1_'.$sample_name;
-			}
-		}else if (count($file_names) == 1){
-			//	FASTQ SINGLE
-			$data["file_format"] = 'fastq';
-			$data["run_type"] = "single-ended";
-			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
-			if($step != 'step1'){
-				$data['derived_from'] = explode(",",$step_list['step1']);
-			}
-		}
-		*/
 		
 		$gzip_types = array(
 			"CEL",
@@ -282,6 +253,7 @@ foreach($fastq_data as $fq){
 			"sam",
 			"wig"
 		);
+		
 		if(in_array($data['file_format'], $gzip_types) && explode('.',$fn)[count(explode('.',$fn))] == '.gz'){
 			$is_gzipped = 'Expected gzipped file';
 		}else{
