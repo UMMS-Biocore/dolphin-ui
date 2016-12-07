@@ -131,60 +131,84 @@ function baselineJSON($filename, $checksum, $platform){
 	return $data;
 }
 
-function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list, $parent){
+function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list){
 	$data["file_format"] = 'fastq';
 	$data["run_type"] = $run_type;
+	if($sub->step_run != NULL && $sub->step_run != ''){
+		$data['step_run'] = $sub->step_run;
+	}
 	//	INITIAL FASTQ
 	if($sub->parent_file = 0){
 		if($run_type == "paired-ended"){
 			//	FASTQ PAIRED
 			if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '2';
-				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name;
+				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file;
 			}else{
-				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '1';
 			}
 		}else if (count($file_names) == 1){
 			//	FASTQ SINGLE
-			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name.'_'.$sub->parent_file);
 		}
 	}else{
 		if($run_type == "paired-ended"){
 			//	FASTQ PAIRED
 			if(end($file_names) == $fn){
-				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '2';
-				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name;
+				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file;
 			}else{
-				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name);
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '1';
 			}
-			if($parent != 'step1'){
-				$data['derived_from'] = explode(",",$step_list[$parent]);
+			if($sub->parent_file != 0){
+				$data['derived_from'] = explode(",",$step_list[$sub->parent_file]);
 			}
 		}else{
 			//	FASTQ SINGLE
-			$data["aliases"] = array($my_lab.':fastq_'.$sample_name);
-			if($parent != 'step1'){
-				$data['derived_from'] = explode(",",$step_list[$parent]);
+			$data["aliases"] = array($my_lab.':fastq_'.$sample_name.'_'.$sub->parent_file);
+			if($sub->parent_file != 0 && isset($step_list[$sub->parent_file])){
+				$data['derived_from'] = explode(",",$step_list[$sub->parent_file]);
 			}
 		}
 	}
 	return $data;
 }
 
-function bamJSON(){
-	
+function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list){
+	//	BAM
+	$data["aliases"] = array($my_lab.':bam_'.$sample_name.'_'.$sub->parent_file);
+	if($sub->step_run != NULL && $sub->step_run != ''){
+		$data['step_run'] = $sub->step_run;
+	}
+	if($sub->parent_file != 0 && isset($step_list[$sub->parent_file])){
+		$data['derived_from'] = explode(",",$step_list[$sub->parent_file]);
+	}
 }
 
-function tdfJSON(){
-	
+function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list){
+	//	TDF
+	$data["aliases"] = array($my_lab.':tdf_'.$sample_name.'_'.$sub->parent_file);
+	if($sub->step_run != NULL && $sub->step_run != ''){
+		$data['step_run'] = $sub->step_run;
+	}
+	if($sub->parent_file != 0 && isset($step_list[$sub->parent_file])){
+		$data['derived_from'] = explode(",",$step_list[$sub->parent_file]);
+	}
 }
 
-function bigwigJSON(){
-	
+function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $file_names, $step_list){
+	//	BIGWIG
+	$data["aliases"] = array($my_lab.':bigwig_'.$sample_name.'_'.$sub->parent_file);
+	if($sub->step_run != NULL && $sub->step_run != ''){
+		$data['step_run'] = $sub->step_run;
+	}
+	if($sub->parent_file != 0 && isset($step_list[$sub->parent_file])){
+		$data['derived_from'] = explode(",",$step_list[$sub->parent_file]);
+	}
 }
 
 //For each file
