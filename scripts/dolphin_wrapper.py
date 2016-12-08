@@ -326,25 +326,11 @@ class Dolphin:
                        indexname="rsem_ref.transcripts"
                        indexsuffix = "@GDB/%s"%(indexname) 
                    print >>fp, '@PARAM%s=%s,%s,%s,%s,%s,%s'%(name, indexsuffix,indexname,bowtie_params,indexname,filter_out,previous)
-               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
-                   print >>fp, '@KMEANS=%s'%('none')
-               else:
-                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
                    
              if (pipe['Type']=="Tophat"):
                paramstophat=pipe['Params'] if ('Params' in pipe and pipe['Params']!="") else "NONE"
                print >>fp, '@TSIZE=50';
                print >>fp, '@PARAMSTOPHAT=%s'%(self.parse_content(paramstophat))
-               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
-                   print >>fp, '@KMEANS=%s'%('none')
-               else:
-                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
              
              if (pipe['Type']=="DESeq"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -371,13 +357,6 @@ class Dolphin:
                print >>fp, '@BWIDTH=%s'%(self.remove_space(str(pipe['BandWith'])))
                print >>fp, '@GSIZE=%s'%(self.remove_space(str(pipe['EffectiveGenome'])))
                print >>fp, '@EXTRAPARAMS=%s'%(pipe['Params'])
-               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
-                   print >>fp, '@KMEANS=%s'%('none')
-               else:
-                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
 
              if (pipe['Type']=="BisulphiteMapping"):
                if ('BSMapStep' in pipe and pipe['BSMapStep'] == "yes"):
@@ -392,13 +371,6 @@ class Dolphin:
                  print >>fp, '@TOPN=%s'%(pipe['TopN'])
                  print >>fp, '@MINCOVERAGE=%s'%(pipe['MinCoverage'])
                  print >>fp, '@GBUILD=%s'%(gb[1])
-                 print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-                 print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-                 print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-                 if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
-                   print >>fp, '@KMEANS=%s'%('none')
-                 else:
-                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
                  
              if (pipe['Type']=="DiffMeth"):
                name = ( pipe['Name'] if ('Name' in pipe) else  "")
@@ -428,24 +400,19 @@ class Dolphin:
                  print >>fp, '@PEAKS=%s'%(pipe['peaks'])
                if ('custombed' in pipe and pipe['custombed'] != "none"):
                  print >>fp, '@CUSTOMBED=%s'%(pipe['custombed'])
-                 
-             if (pipe['Type']=="Star"):
-               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
-                   print >>fp, '@KMEANS=%s'%('none')
-               else:
-                   print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
                    
-             if (pipe['Type']=="Hisat"):
-               print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
-               print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
-               print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
-               if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
+             if (pipe['Type'] == "Deeptools"):
+                print >>fp, '@NAMERUN=%s'%(pipe['Run'])
+                print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+                print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
+                print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
+                if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
                    print >>fp, '@KMEANS=%s'%('none')
-               else:
+                else:
                    print >>fp, '@KMEANS=%s'%(pipe['KMeans'])
+                print >>fp, '@BEFORE=%s'%(pipe['Before'])
+                print >>fp, '@AFTER=%s'%(pipe['After'])
+                print >>fp, '@LENGTHBODY=%s'%(pipe['Body'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -584,8 +551,6 @@ class Dolphin:
                    for t_e in tes:
                      self.prf( fp, stepRSEMCount % locals() )
                  self.writeVisualizationStr( fp, type, pipe, sep )
-                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
-                    self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.writeRSeQC ( fp, type, pipe, sep )
                  self.prf( fp, stepAlignmentCount % locals() )
               
@@ -602,8 +567,6 @@ class Dolphin:
                     type="dedup"+type
                     self.prf( fp, stepPCRDups % locals())
                  self.writeVisualizationStr( fp, type, pipe, sep )
-                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
-                    self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.writeRSeQC ( fp, type, pipe, sep )
                  self.prf( fp, stepAlignmentCount % locals() )
 
@@ -626,8 +589,6 @@ class Dolphin:
                  #Set running macs step
                  self.prf( fp, '%s'%(stepMACS % locals()) )
                  self.prf( fp, '%s'%(stepAggregation % locals()) )
-                 if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
-                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
                  self.prf( fp, stepAlignmentCount % locals() )
               if ( (pipe['Type'] == "ChipSeq/ATACSeq")):
                  if (pipe['MacsType'] == 'CHIP'):
@@ -646,8 +607,6 @@ class Dolphin:
                     #Set running macs step
                     self.prf( fp, '%s'%(stepMACS % locals()) )
                     self.prf( fp, '%s'%(stepAggregation % locals()) )
-                    if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
-                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
                     self.prf( fp, stepAlignmentCount % locals() )
                  elif(pipe['MacsType'] == 'ATAC'):
                     #Arrange ATACSeq mapping step
@@ -668,8 +627,6 @@ class Dolphin:
                     #Set running macs step
                     self.prf( fp, '%s'%(stepMACS % locals()) )
                     self.prf( fp, '%s'%(stepAggregation % locals()) )
-                    if ('Deeptools' in pipe and pipe['Deeptools'].lower()=="yes"):
-                        self.prf( fp, '%s'%(stepDeeptools % locals()) )
                     self.prf( fp, stepAlignmentCount % locals() )
                     
               if (pipe['Type'] == "BisulphiteMapping"):
@@ -737,6 +694,9 @@ class Dolphin:
                  self.writeVisualizationStr( fp, type, pipe, sep )
                  self.writeRSeQC ( fp, type, pipe, sep )
                  self.prf( fp, stepAlignmentCount % locals() )
+                 
+              if (pipe['Type']=="Deeptools"):
+                 self.prf( fp, stepDeeptools % locals() )
 
         level = str(1 if ('clean' in runparams and runparams['clean'].lower() != 'none') else 0)
         if(backupS3 == None):
