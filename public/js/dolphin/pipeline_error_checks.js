@@ -325,16 +325,17 @@ function pipelineSelectCheck(num, type){
 			}
 		}
 	}else if (type == 'Deeptools') {
-		var rsem_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'RNASeqRSEM') || checkPipelineDownstream(num, 'RNASeqRSEM') || checkPipelineReplacing(num, 'RNASeqRSEM'), currentPipelineVal.indexOf('RNASeqRSEM'));
-		var tophat_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'Tophat') || checkPipelineDownstream(num, 'Tophat') || checkPipelineReplacing(num, 'Tophat'), currentPipelineVal.indexOf('Tophat'));
+		//var rsem_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'RNASeqRSEM') || checkPipelineDownstream(num, 'RNASeqRSEM') || checkPipelineReplacing(num, 'RNASeqRSEM'), currentPipelineVal.indexOf('RNASeqRSEM'));
+		//var tophat_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'Tophat') || checkPipelineDownstream(num, 'Tophat') || checkPipelineReplacing(num, 'Tophat'), currentPipelineVal.indexOf('Tophat'));
 		var chipseq_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'ChipSeq') || checkPipelineDownstream(num, 'ChipSeq') || checkPipelineReplacing(num, 'ChipSeq'), currentPipelineVal.indexOf('ChipSeq'));
-		var atacseq_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'ChipSeq/ATACSeq') || checkPipelineDownstream(num, 'ChipSeq/ATACSeq'), currentPipelineVal.indexOf('ChipSeq/ATACSeq'));
-		var chip_atac_check = (chipseq_check || atacseq_check)
-		var star_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'STAR') || checkPipelineDownstream(num, 'STAR') || checkPipelineReplacing(num, 'STAR'), currentPipelineVal.indexOf('STAR'));
-		var hisat2_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'Hisat2') || checkPipelineDownstream(num, 'Hisat2') || checkPipelineReplacing(num, 'Hisat2'), currentPipelineVal.indexOf('Hisat2'));
-		var bis_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'BisulphiteMapping') || checkPipelineDownstream(num, 'BisulphiteMapping') || checkPipelineReplacing(num, 'BisulphiteMapping'), currentPipelineVal.indexOf('BisulphiteMapping'));
-		if (rsem_check && tophat_check && chip_atac_check && star_check && hisat2_check && bis_check) {
-			displayErrorModal('#errorModal', 'A bigwig file needs to be generated from one of your alignment steps in order to select Deeptools');
+		var atacseq_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'ChipSeq/ATACSeq') || checkPipelineDownstream(num, 'ChipSeq/ATACSeq') || checkPipelineReplacing(num, 'ChipSeq/ATACSeq'), currentPipelineVal.indexOf('ChipSeq/ATACSeq'));
+		var chip_atac_check = (chipseq_check && atacseq_check)
+		//var star_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'STAR') || checkPipelineDownstream(num, 'STAR') || checkPipelineReplacing(num, 'STAR'), currentPipelineVal.indexOf('STAR'));
+		//var hisat2_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'Hisat2') || checkPipelineDownstream(num, 'Hisat2') || checkPipelineReplacing(num, 'Hisat2'), currentPipelineVal.indexOf('Hisat2'));
+		//var bis_check = checkBigwigCreated(checkPipelineDoesNotExist(num, 'BisulphiteMapping') || checkPipelineDownstream(num, 'BisulphiteMapping') || checkPipelineReplacing(num, 'BisulphiteMapping'), currentPipelineVal.indexOf('BisulphiteMapping'));
+		//if (rsem_check && tophat_check && chip_atac_check && star_check && hisat2_check && bis_check) {
+		if (chip_atac_check) {
+			displayErrorModal('#errorModal', 'A bigwig file from a ChipSeq/ATACSeq pipeline needs to be generated in order to select Deeptools');
 			return true;
 		}
 	}
@@ -633,6 +634,11 @@ function pipelineSubmitCheck(non_pipeline, non_pipeline_values, pipeline, pipeli
 			}else if (checkFieldIsNotInt('input_bodyregion_'+pipeline_index[x]) || checkFieldsEmpty('input_bodyregion_'+pipeline_index[x])) {
 				displayErrorModal('#errorModal', 'Region body length field must be of type int for Deeptools');
 				return true;
+			//	Quality
+			}else if (checkFieldIsNotInt('input_qualitycut_'+pipeline_index[x]) || checkFieldsEmpty('input_qualitycut_'+pipeline_index[x])) {
+				displayErrorModal('#errorModal', 'Peak cut-off score field must be of type int for Deeptools');
+				return true;
+			//	K-means
 			}else if (checkFieldCheckboxChecked('select_plottype_'+pipeline_index[x])) {
 				if (checkFieldIsNotInt('text_kmeans_'+pipeline_index[x]) || checkFieldsEmpty('text_kmeans_'+pipeline_index[x])) {
 					displayErrorModal('#errorModal', 'K-Means field must be of type int for Deeptools');

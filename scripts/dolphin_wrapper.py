@@ -402,8 +402,8 @@ class Dolphin:
                  print >>fp, '@CUSTOMBED=%s'%(pipe['custombed'])
                    
              if (pipe['Type'] == "Deeptools"):
-                print >>fp, '@NAMERUN=%s'%(pipe['Run'])
                 print >>fp, '@PLOTTYPE=%s'%(pipe['PlotType'])
+                print >>fp, '@STRANDSPEC=%s'%(pipe['StrandSpecific'])
                 print >>fp, '@REFTYPE=%s'%(pipe['ReferencePoint'])
                 print >>fp, '@MERGEALLSAMPS=%s'%(pipe['MergeAllSamp'])
                 if ("UseKM" in pipe and pipe['UseKM'].lower()=="no"):
@@ -413,6 +413,7 @@ class Dolphin:
                 print >>fp, '@BEFORE=%s'%(pipe['Before'])
                 print >>fp, '@AFTER=%s'%(pipe['After'])
                 print >>fp, '@LENGTHBODY=%s'%(pipe['Body'])
+                print >>fp, '@QUALITY=%s'%(pipe['Quality'])
 
        print >>fp, '@MAPNAMES=%s'%(mapnames)
        print >>fp, '@PREVIOUSPIPE=%s'%(previous)
@@ -525,10 +526,7 @@ class Dolphin:
            for pipe in runparams['pipeline']:
               if (pipe['Type']=="RNASeqRSEM"):
                  dedup=False
-                 if('NoGenomeBAM' in pipe and pipe['NoGenomeBAM'].lower()!="yes"):
-                     genome_bam="no"
-                 else:
-                     genome_bam="yes"
+                 genome_bam=pipe['NoGenomeBAM'].lower()
                  bamsupport="no"
                  type="rsem"
                  previousrsem = "@PREVIOUSRSEM"

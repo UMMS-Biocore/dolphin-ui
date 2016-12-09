@@ -1391,7 +1391,7 @@ function findPipelineValues(){
 	var HAPLOTYPECALLER_JSON_DICT = ['common', 'clinical', 'enhancers', 'promoters', 'motifs', 'merge', 'standard_min_confidence_threshold_for_calling',
 								 'standard_min_confidence_threshold_for_emitting', 'min_base_quality_score', 'minReadsPerAlignmentStart', 'maxReadsInRegionPerSample',
 								 'custombed', 'peaks'];
-	var DEEPTOOLS_JSON_DICT = [ 'Run', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Before', 'After', 'Body'];
+	var DEEPTOOLS_JSON_DICT = [ 'Run', 'StrandSpecific', 'MergeAllSamp', 'UseKM', 'KMeans', 'PlotType', 'ReferencePoint', 'Before', 'After', 'Body', 'Quality'];
 	var JSON_ARRAY =  [];
 	console.log(currentPipelineID);
 	console.log(currentPipelineID.length);

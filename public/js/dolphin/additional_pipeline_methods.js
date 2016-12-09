@@ -906,7 +906,8 @@ function reloadHaplotypeCaller(splt1, i){
 function formDeeptools(divAdj, num){
 	var optionsString = '';
 	for (var x = 0; x < currentPipelineVal.length; x++) {
-		if (currentPipelineVal[x] == 'RNASeqRSEM' || currentPipelineVal[x] == 'Tophat' || currentPipelineVal[x] == 'STAR' || currentPipelineVal[x] == 'Hisat2' || currentPipelineVal[x] == 'ChipSeq/ATACSeq' || currentPipelineVal[x] == 'BisulphiteMapping') {
+		//if (currentPipelineVal[x] == 'RNASeqRSEM' || currentPipelineVal[x] == 'Tophat' || currentPipelineVal[x] == 'STAR' || currentPipelineVal[x] == 'Hisat2' || currentPipelineVal[x] == 'ChipSeq/ATACSeq' || currentPipelineVal[x] == 'BisulphiteMapping') {
+		if (currentPipelineVal[x] == 'ChipSeq/ATACSeq') {
 			var bigwigCheck = document.getElementById('select_bigwig_'+currentPipelineID[x]).value
 			if (bigwigCheck == 'yes') {
 				optionsString += '<option value="'+currentPipelineVal[x]+'">'+currentPipelineVal[x]+'</option>';
@@ -917,7 +918,9 @@ function formDeeptools(divAdj, num){
 			[ [createElement('label', ['class','TEXTNODE'], ['box-title', 'Analysis to Use:']),
 			   createElement('select', ['id', 'class', 'INNERHTML'], ['select_analysis_'+num, 'form-control', optionsString])] ]);
 	divAdj = mergeTidy(divAdj, 7,
-			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_masamp_'+num, 'box-title', 'Merge All Samples:']),
+			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_strand_'+num, 'box-title', 'Strand-specific:']),
+			   createElement('input', ['id', 'type', 'class'], ['checkbox_strand_'+num, 'checkbox', 'margin'])],
+			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_masamp_'+num, 'box-title', 'Merge All Samples:']),
 			   createElement('input', ['id', 'type', 'class'], ['checkbox_masamp_'+num, 'checkbox', 'margin'])],
 			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_usekm_'+num, 'box-title', 'Use K-means:']),
 			   createElement('input', ['id', 'type', 'class', 'onClick'], ['checkbox_usekm_'+num, 'checkbox', 'margin', 'kmeansSelect(this.id)'])],
@@ -934,7 +937,9 @@ function formDeeptools(divAdj, num){
 			   createElement('input', ['id', 'class', 'value'], ['input_afterregion_'+num, 'form-control', '500'])] ]);
 	divAdj = mergeTidy(divAdj, 6,
 			[ [createElement('label', ['id', 'class', 'TEXTNODE'], ['label_bodyregion_'+num, 'box-title', 'Region body length:']),
-			   createElement('input', ['id', 'class', 'value'], ['input_bodyregion_'+num, 'form-control', '1500'])] ]);
+			   createElement('input', ['id', 'class', 'value'], ['input_bodyregion_'+num, 'form-control', '1500'])],
+			[createElement('label', ['id', 'class', 'TEXTNODE'], ['label_qualitycut_'+num, 'box-title', 'Peak min integer score:']),
+			   createElement('input', ['id', 'class', 'value'], ['input_qualitycut_'+num, 'form-control', '0'])]]);
 	return divAdj
 }
 
@@ -943,6 +948,9 @@ function reloadDeeptools(splt1, i){
 	document.getElementById('select_'+i).value = pipelineDict[9];
 	pipelineSelect(i);
 	document.getElementById('select_analysis_'+i).value = splt1[i].Run;
+	if (splt1[i].StrandSpecific == 'yes' || splt1[i].StrandSpecific == '1') {
+		document.getElementById('checkbox_strand_'+i).checked = true;
+	}
 	if (splt1[i].MergeAllSamp == 'yes' || splt1[i].MergeAllSamp == '1') {
 		document.getElementById('checkbox_masamp_'+i).checked = true;
 	}
@@ -959,6 +967,7 @@ function reloadDeeptools(splt1, i){
 	document.getElementById('input_beforeregion_'+i).value = splt1[i].Before;
 	document.getElementById('input_afterregion_'+i).value = splt1[i].After;
 	document.getElementById('input_bodyregion_'+i).value = splt1[i].Body;
+	document.getElementById('input_qualitycut_'+i).value = splt1[i].Quality;
 }
 
 function referenceSelect(id){
