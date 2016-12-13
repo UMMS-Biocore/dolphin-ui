@@ -1108,6 +1108,8 @@ function gatherSampleRunInfo(){
 }
 
 function recordFileSubmissions(ordertable_dict, sample_run_dict){
+	console.log(ordertable_dict)
+	console.log(sample_run_dict)
 	$.ajax({ type: "GET",
 		url: BASE_PATH + "/public/ajax/encode_tables.php",
 		data: { p: 'enterFileSubmission', ordertable: ordertable_dict, samples: sample_run_dict},

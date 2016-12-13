@@ -405,13 +405,14 @@ function loadPreviousFiles(){
 		async: false,
 		success : function(s)
 		{
+			console.log(s)
 			for(var x = 0; x < s.length; x++){
 				if (s[x].parent_file == 0) {
 					previoustable.fnAddData([
 						s[x].samplename,
 						s[x].run_name,
 						s[x].backup_dir + s[x].file_name,
-						s[x].step_run,
+						s[x].parent_file,
 						s[x].file_acc,
 						s[x].file_uuid
 					])
@@ -420,7 +421,7 @@ function loadPreviousFiles(){
 						s[x].samplename,
 						s[x].run_name,
 						s[x].outdir + s[x].file_name,
-						s[x].step_run,
+						s[x].parent_file,
 						s[x].file_acc,
 						s[x].file_uuid
 					])
@@ -455,12 +456,18 @@ function runSelectionEncode(select){
 function gatherFileSelection() {
 	var active_runs = []
 	var samples = Object.keys(sampleRuns)
-	samples.splice(samples.indexOf('sid'), 1)
-	samples.splice(samples.indexOf('rid'), 1)
-	samples.splice(samples.indexOf('did'), 1)
+	console.log(samples)
+	console.log(samples.length)
 	for (var x = 0; x < samples.length; x++){
+		console.log(samples[x])
 		var runs = Object.keys(sampleRuns[samples[x]])
+		runs.splice(runs.indexOf('sid'), 1)
+		runs.splice(runs.indexOf('rid'), 1)
+		runs.splice(runs.indexOf('did'), 1)
 		for (var y = 0; y < runs.length; y++){
+			console.log(sampleRuns[samples[x]][runs[y]])
+			console.log(active_runs.indexOf(runs[y]))
+			console.log("@@@@")
 			if (sampleRuns[samples[x]][runs[y]] == 1 && active_runs.indexOf(runs[y]) == -1) {
 				active_runs.push(runs[y])
 			}
@@ -470,6 +477,7 @@ function gatherFileSelection() {
 }
 
 function createRunOptions(active_runs) {
+	console.log(active_runs)
 	var options_parse = {};
 	var options_select = "";
 	
@@ -540,7 +548,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 		}
 	}else if (merged) {
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
 			options_parse = optionsCheck(options_parse, '/tdf_mergersem_ref.transcipts/', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
@@ -560,7 +568,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 		}
 	}else{
 		if (type == 'rsem') {
-			options_parse = optionsCheck(options_parse, '/rsem/pipe.rsem.*/', run_id, "bam")
+			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
 			options_parse = optionsCheck(options_parse, '/tdf_rsem_ref.transcipts/', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, "bigWig")
 		}else if (type == 'chip' || type == 'atac'){

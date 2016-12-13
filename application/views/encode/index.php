@@ -257,7 +257,7 @@
 											<?php
 												#Runs
 												echo $html->getRespBoxTable_ng("Previous Files Submitted", "previous_submissions",
-																			   "<th>Sample</th><th>Run</th><th>File</th><th>Step Run</th><th>File Acc</th><th>File UUID</th>");
+																			   "<th>Sample</th><th>Run</th><th>File</th><th>Parent Step</th><th>File Acc</th><th>File UUID</th>");
 											?>
 										</div>
 									</div>

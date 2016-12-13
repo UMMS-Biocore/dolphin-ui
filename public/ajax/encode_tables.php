@@ -254,9 +254,16 @@ else if ($p == 'enterFileSubmission')
 		WHERE sample_id in (".implode(",",array_keys($samples)).")
 		"));
 	
+	$samplenames=json_decode($query->queryTable("
+		SELECT id, samplename
+		FROM ngs_samples
+		WHERE id in (".implode(",",array_keys($samples)).")
+		"));
+	
 	$insertString = '';
 	foreach($ordertable as $step => $subdata){
 		foreach($samples as $id => $sample){
+			$current_sample_name = "";
 			$sampleCheck = true;
 			foreach($submissions as $nfs){
 				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == (string)$id &&
@@ -264,7 +271,13 @@ else if ($p == 'enterFileSubmission')
 					$sampleCheck = false;
 				}
 			}
+			foreach($samplenames as $sn){
+				if($sn->id == $id){
+					$current_sample_name = $sn->samplename;
+				}
+			}
 			if($sampleCheck){
+				$filename = $subdata['l'];
 				$sub_r = "";
 				$sub_d = "";
 				if($subdata['r'] == "" || $subdata['r'] == "NULL"){
@@ -277,7 +290,55 @@ else if ($p == 'enterFileSubmission')
 				}else{
 					$sub_d = "'".$subdata['d']."'";
 				}
-				$insertString.="(".$sample['did'].", ".$sample['rid'].", ".$id.", '".$subdata['l']."', '".$subdata['t']."', '".$subdata['p']."', ".$sub_r.", ".$sub_d."),";
+				
+				if($subdata['t'] == "tdf"){
+					if(preg_match("/rsem/", $subdata['l']) && !preg_match("/dedup/", $subdata['l'])){
+						$filename = $subdata['l'] . "rsem.out.$current_sample_name.tdf";
+					}else{
+						$filename = $subdata['l'] . "$current_sample_name.sorted.tdf";
+					}
+				}else if($subdata['t'] == 'bigWig'){
+					if(preg_match("/rsem/", $subdata['l']) && !preg_match("/dedup/", $subdata['l'])){
+						$filename = $subdata['l'] . "rsem.out.$current_sample_name.bw";
+					}else{
+						$filename = $subdata['l'] . "$current_sample_name.sorted.bw";
+					}
+				}else if($subdata['t'] == 'bam'){
+					$dedup = false;
+					$merged = false;
+					$sorted;
+					if(preg_match("/dedup/", $subdata['l'])){
+						$dedup = true;
+					}
+					if(preg_match("/merge/", $subdata['l'])){
+						$merge = true;
+					}
+					if($dedup){
+						$filename = $subdata['l'] . "$current_sample_name.bam";
+					}else if(preg_match("/rsem/", $subdata['l'])){
+						if(!$dedup && !$merge){
+							$filename = $subdata['l'] . "pipe.rsem.$current_sample_name/$current_sample_name.bam";
+						}
+					}else if(preg_match("/tophat/", $subdata['l'])){
+						if(!$dedup && !$merge){
+							$filename = $subdata['l'] . "pipe.tophat.$current_sample_name/$current_sample_name.bam";
+						}
+					}else if(preg_match("/chip/", $subdata['l']) || preg_match("/atac/", $subdata['l'])){
+						if(!$dedup && !$merge){
+							$filename = $subdata['l'] . "$current_sample_name.sorted.bam";
+						}
+					}else if(preg_match("/hisat2/", $subdata['l'])){
+						if(!$dedup && !$merge){
+							$filename = $subdata['l'] . "pipe.hisat2.$current_sample_name/$current_sample_name.bam";
+						}
+					}else if(preg_match("/star/", $subdata['l'])){
+						if(!$dedup && !$merge){
+							$filename = $subdata['l'] . "pipe.star.$current_sample_name/$current_sample_name.bam";
+						}
+					}
+				}
+				
+				$insertString.="(".$sample['did'].", ".$sample['rid'].", ".$id.", '".$filename."', '".$subdata['t']."', '".$subdata['p']."', ".$sub_r.", ".$sub_d."),";
 			}
 		}
 	}
