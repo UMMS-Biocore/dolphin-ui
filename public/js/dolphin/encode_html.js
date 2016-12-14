@@ -607,7 +607,7 @@ function submissionSelection(){
 			1,
 			"Initial Fastq",
 			"/input/",
-			".fastq",
+			"fastq",
 			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>",
 			"<textarea type=\"text\" class=\"form-control\" rows=\"1\" style=\"width:100%\"></textarea>"
 		])

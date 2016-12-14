@@ -14,14 +14,14 @@ if(!isset($_SESSION['encode_log'])){
 	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
-function baselineJSON($sub, $filename, $platform){
+function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $filename, $platform, $dir_query){
 	$sample_name=$snq->samplename;
 	$machine_name=$snq->machine_name;
-	if($machine_name == 'None'){
+	if($machine_name == 'None' || $machine_name == NULL){
 		$machine_name = 'unknown';
 	}
 	$flowcell = $snq->flowcell;
-	if($flowcell == 'None'){
+	if($flowcell == 'None' || $flowcell == NULL){
 		$flowcell = 'unknown';
 	}
 	$lane = $snq->lane;
@@ -29,27 +29,24 @@ function baselineJSON($sub, $filename, $platform){
 		$lane = 'unknown';
 	}
 	$read_length = $snq->read_length;
-	if($read_length == 'None'){
+	if($read_length == 'None' || $read_length == NULL){
 		$read_length = 'unknown';
 	}
-	$inserted = false;
-	$file_accs = array();
-	$file_uuids = array();
 	$paired = '';
-	if($sub->parent_file = 0){
+	if($sub->parent_file == 0){
 		$directory = $dir_query[0]->backup_dir;
 		if(substr($directory, -1) != '/'){
 			$directory = $directory . "/";
 		}
 		$file_size = filesize($directory . $filename);
-		$md5sum = md5_file($directory . $fn);
+		$md5sum = md5_file($directory . $filename);
 	}else{
 		$directory = $sub->outdir;
 		if(substr($directory, -1) != '/'){
 			$directory = $directory . "/";
 		}
-		$file_size = filesize($directory . $fn);
-		$md5sum = md5_file($directory . $fn);
+		$file_size = filesize($directory . $sub->file_name);
+		$md5sum = md5_file($directory . $sub->file_name);
 	}
 	$data = array(
 		"dataset" => $dataset_acc,
@@ -67,12 +64,6 @@ function baselineJSON($sub, $filename, $platform){
 	);
 	if($sub->file_type == 'fastq'){
 		$data['output_type'] = 'reads';
-	}else if ($sub->file_type == 'bam'){
-		$data['output_type'] = 'alignment';
-	}else if ($sub->file_type == 'tsv'){
-		$data['output_type'] = 'tsv';
-	}else if ($sub->file_type == 'bigWig'){
-		$data['output_type'] = 'bigWig';
 	}
 	return $data;
 }
@@ -84,7 +75,7 @@ function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file, $file_n
 		$data['step_run'] = $sub->step_run;
 	}
 	//	INITIAL FASTQ
-	if($sub->parent_file = 0){
+	if($sub->parent_file == 0){
 		if($run_type == "paired-ended"){
 			//	FASTQ PAIRED
 			if(end($file_names) == $file){
@@ -126,7 +117,6 @@ function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file, $file_n
 function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 	//	BAM
 	$data["file_format"] = 'bam';
-	$data["run_type"] = $run_type;
 	$data["aliases"] = array($my_lab.':bam_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
@@ -137,12 +127,12 @@ function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 			$data['derived_from'] = array_merge($data['derived_from'], explode(",", $sub->additional_derived_from));
 		}
 	}
+	return $data;
 }
 
 function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 	//	BIGWIG
 	$data["file_format"] = 'bigWig';
-	$data["run_type"] = $run_type;
 	$data["aliases"] = array($my_lab.':bigwig_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
@@ -153,12 +143,12 @@ function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 			$data['derived_from'] = array_merge($data['derived_from'], explode(",", $sub->additional_derived_from));
 		}
 	}
+	return $data;
 }
 
 function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 	//	TDF/TSV
 	$data["file_format"] = 'tsv';
-	$data["run_type"] = $run_type;
 	$data["aliases"] = array($my_lab.':tdf_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
@@ -169,6 +159,7 @@ function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 			$data['derived_from'] = array_merge($data['derived_from'], explode(",", $sub->additional_derived_from));
 		}
 	}
+	return $data;
 }
 
 // ****************  MAIN FUNCTION  *********************
@@ -228,7 +219,7 @@ $step_list = array();
 echo '{"start":"yes"}';
 foreach($sample_name_query as $snq){
 	foreach($file_sub as $sub){
-		$file_names = [];
+		$file_names = array();
 		if($sub->parent_file == 0){
 			foreach($fastq_data as $fq){
 				if($fq->sample_id == $sample_id){
@@ -238,22 +229,22 @@ foreach($sample_name_query as $snq){
 				}
 			}
 			if(count($file_names) == 2){
-				$run_type == 'paired-end';
+				$run_type = 'paired-ended';
 			}else{
-				$run_type == 'single-end';
+				$run_type = 'single-end';
 			}
 		}else{
-			array_push($file_names, explode("/",$sub->file_name)[-1]);
+			array_push($file_names, end(explode("/",$sub->file_name)));
 		}
 		foreach($file_names as $fn){
+			$inserted = false;
+			$file_accs = array();
+			$file_uuids = array();
+			
 			//	Future: Grab 'platform'
-			$data = baselineJSON($sub, $fn, "ENCODE:HiSeq2000");
+			$data = baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $fn, "ENCODE:HiSeq2000", $dir_query);
 			if($sub->file_type == 'fastq'){
-				if($sub->parent_file == 0){
-					$data = fastqJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $fn, $file_names, $step_list);
-				}else{
-					$data = fastqJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $fn, $file_names, $step_list);
-				}
+				$data = fastqJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $fn, $file_names, $step_list);
 			}else if($sub->file_type == 'bam'){
 				$data = bamJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
 			}else if($sub->file_type == 'bigwig'){
@@ -262,6 +253,8 @@ foreach($sample_name_query as $snq){
 				$data = tdfJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
 			}
 			
+			
+			 var_dump($data);
 			$gzip_types = array(
 				"CEL",
 				"bam",
@@ -347,7 +340,7 @@ foreach($sample_name_query as $snq){
 			$VALIDATE = popen( $cmd, "r" );
 			$VALIDATE_READ =fread($VALIDATE, 2096);
 			pclose($VALIDATE);
-			
+			*/
 			
 			$VALIDATE_READ = "Error count 0\n";
 			if($VALIDATE_READ == "Error count 0\n"){
@@ -408,8 +401,10 @@ foreach($sample_name_query as $snq){
 				
 				echo ','.$response->body;
 				
-				####################
-				# POST file to S3
+				###################
+				# POST file to S3 #
+				###################
+				/*
 				if($fq->file_acc == null || $fq->file_acc == ""){
 					$creds = $item->{'upload_credentials'};
 					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $directory.$fn . " " . $creds->{'access_key'} . " " .
@@ -422,6 +417,7 @@ foreach($sample_name_query as $snq){
 					echo ','.$AWS_COMMAND_OUT;
 					echo ','.$cmd_aws_launch;
 				}
+				*/
 			}else{
 				//	File Validation Failed
 				if(end($file_names) == $fn){
@@ -430,17 +426,21 @@ foreach($sample_name_query as $snq){
 					echo ',{"error":"'.$fn.' not validated"}' . ',';
 				}
 			}
-			//	Store uuid/acc in database
-			if($inserted && $sub->parent_file == 0){
-				$file_update = json_decode($query->runSQL("
-				UPDATE ngs_fastq_files
-				SET `file_acc` = '" . implode(",",$file_accs) . "',
-				`file_uuid` = '" . implode(",",$file_uuids) . "' 
-				WHERE id = " . $fq->id));
-			}
-			*/
-			var_dump($data);
-			echo "\n\n";
+		}
+		//	Store uuid/acc in database
+		if($inserted && $sub->parent_file == 0){
+			$file_update = json_decode($query->runSQL("
+			UPDATE ngs_fastq_files
+			SET `file_acc` = '" . implode(",",$file_accs) . "',
+			`file_uuid` = '" . implode(",",$file_uuids) . "' 
+			WHERE id = " . $fq->id));
+		}else if($inserted){
+			$file_update = json_decode($query->runSQL("
+			UPDATE ngs_file_submissions
+			SET `file_md5` = '" . $data['md5sum'] . "', 
+			`file_acc` = '" . implode(",",$file_accs) . "',
+			`file_uuid` = '" . implode(",",$file_uuids) . "' 
+			WHERE id = " . $fq->id));
 		}
 	}
 }
