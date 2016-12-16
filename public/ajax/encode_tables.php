@@ -247,13 +247,14 @@ else if ($p == 'enterFileSubmission')
 	if (isset($_GET['ordertable'])){$ordertable = $_GET['ordertable'];}
 	
 	$submissions=json_decode($query->queryTable("
-		SELECT ngs_file_submissions.*, ngs_samples.samplename
+		SELECT ngs_file_submissions.*, ngs_samples.samplename, ngs_fastq_files.file_name
 		FROM ngs_file_submissions
 		LEFT JOIN ngs_samples
 		ON ngs_samples.id = ngs_file_submissions.sample_id
+		LEFT JOIN ngs_fastq_files
+		WHERE ngs_samples.id = ngs_fastq_files.sample_id
 		WHERE sample_id in (".implode(",",array_keys($samples)).")
 		"));
-	
 	$samplenames=json_decode($query->queryTable("
 		SELECT id, samplename
 		FROM ngs_samples
@@ -266,8 +267,8 @@ else if ($p == 'enterFileSubmission')
 			$current_sample_name = "";
 			$sampleCheck = true;
 			foreach($submissions as $nfs){
-				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == (string)$id &&
-				   $nfs->parent_file == $subdata['p'] && $nfs->file_type == $subdata['t'] && $nfs->file_name == $subdata['l']){
+				if($nfs->dir_id == $sample['did'] && $nfs->run_id == $sample['rid'] && $nfs->sample_id == $id &&
+				   $nfs->parent_file == $subdata['p'] && $nfs->file_type == $subdata['t'] && $nfs->file_type != "tdf"){
 					$sampleCheck = false;
 				}
 			}
@@ -291,11 +292,29 @@ else if ($p == 'enterFileSubmission')
 					$sub_d = "'".$subdata['d']."'";
 				}
 				
-				if($subdata['t'] == "tdf"){
-					if(preg_match("/rsem/", $subdata['l']) && !preg_match("/dedup/", $subdata['l'])){
-						$filename = $subdata['l'] . "rsem.out.$current_sample_name.tdf";
+				if($subdata['t'] == 'fastq' && $subdata['p'] != 0){
+					$file_names = "";
+					foreach($submissions as $nfs){
+						if($nfs->id == $id ){
+							$file_names = $nfs->file_name;
+						}
+					}
+					if(count(explode(",",$file_names)) == 2){
+						$filename = $subdata['l'] . "$current_sample_name.1.fastq," . $subdata['l'] . "$current_sample_name.2.fastq";
 					}else{
-						$filename = $subdata['l'] . "$current_sample_name.sorted.tdf";
+						$filename = $subdata['l'] . "$current_sample_name.fastq";
+					}
+				}else if($subdata['t'] == "tdf"){
+					if(preg_match("/rsem/", $subdata['l'])){
+						if($subdata['l'] == "/rsem/genes"){
+							$filename = "/rsem/pipe.rsem.$current_sample_name/rsem.out.$current_sample_name.genes.results";
+						}else if($subdata['l'] == "/rsem/isoforms"){
+							$filename = "/rsem/pipe.rsem.$current_sample_name/rsem.out.$current_sample_name.isoforms.results";
+						}else{
+							$filename = $subdata['l'];
+						}
+					}else{
+						$filename = $subdata['l'];
 					}
 				}else if($subdata['t'] == 'bigWig'){
 					if(preg_match("/rsem/", $subdata['l']) && !preg_match("/dedup/", $subdata['l'])){
@@ -335,6 +354,8 @@ else if ($p == 'enterFileSubmission')
 						if(!$dedup && !$merge){
 							$filename = $subdata['l'] . "pipe.star.$current_sample_name/$current_sample_name.bam";
 						}
+					}else if($subdata['t'] == 'bed' && (preg_match("/chip/", $subdata['l']) || preg_match("/atac/", $subdata['l']))){
+						$filename = $subdata['l'] . $current_sample_name . "_peaks.narrowPeaks";
 					}
 				}
 				

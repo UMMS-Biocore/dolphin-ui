@@ -411,7 +411,7 @@ function loadPreviousFiles(){
 					previoustable.fnAddData([
 						s[x].samplename,
 						s[x].run_name,
-						s[x].backup_dir + s[x].file_name,
+						"Initial Fastq",
 						s[x].parent_file,
 						s[x].file_acc,
 						s[x].file_uuid
@@ -488,6 +488,9 @@ function createRunOptions(active_runs) {
 	var runs = Object.keys(options_parse)
 	for (var z = 0; z < runs.length; z++){
 		if (options_parse[runs[z]].length != active_runs.length) {
+			console.log(options_parse)
+			console.log(runs[z])
+			console.log(active_runs)
 			options_select += "<option disabled value=\""+runs[z]+"\">"+runs[z]+"</option>"
 		}else{
 			options_select += "<option value=\""+runs[z]+"\">"+runs[z]+"</option>"
@@ -498,21 +501,24 @@ function createRunOptions(active_runs) {
 
 function JSONOptionParse(run_id, options_parse){
 	var pipeline = runParams[run_id].pipeline
+	var commonind = runParams[run_id].commonind
 	if (pipeline != undefined || pipeline != []) {
+		if (runParams[run_id].commonind != "" && runParams[run_id].commonind != "no" && runParams[run_id].commonind != "none") {
+			options_parse = mergeDedupChecks(runParams[run_id], run_id, merged, 'seqmapping', options_parse, commonind)
+		}
 		for(var y = 0; y < pipeline.length; y++){
 			var merged = false;
 			if (runParams[run_id].split != 'none') {
 				merged = true;
 			}
-			
 			if (pipeline[y].Type == 'RNASeqRSEM') {
-				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'rsem', options_parse)
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'rsem', options_parse, commonind)
 			}else if (pipeline[y].Type == 'Tophat') {
-				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'tophat', options_parse)
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'tophat', options_parse, commonind)
 			}else if (pipeline[y].Type == 'ChipSeq' || pipeline[y].Type == 'ChipSeq/ATACSeq') {
-				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'chip', options_parse)
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'chip', options_parse, commonind)
 			}else if (pipeline[y].Type == 'ATACSeq') {
-				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'atac', options_parse)
+				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'atac', options_parse, commonind)
 			}else if (pipeline[y].Type == 'STAR') {
 				//TBA
 			}else if (pipeline[y].Type == 'Hisat2') {
@@ -523,7 +529,7 @@ function JSONOptionParse(run_id, options_parse){
 	return options_parse
 }
 
-function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
+function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commonind){
 	var dedup = false;
 	if (pipeline.MarkDuplicates == "yes") {
 		dedup = true;
@@ -536,48 +542,66 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse){
 	if (pipeline.BAM2BW == "yes") {
 		bigwig = true;
 	}
+	if (type == "seqmapping") {
+		var split_common = commonind.split(",")
+		for ( var x = 0; x < split_common.length; x++) {
+			options_parse = optionsCheck(options_parse, '/seqmapping/'+split_common[x].toLowerCase()+'/', run_id, "fastq")
+		}
+	}
+	
 	if (dedup && merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmergersem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			if (type == 'chip' || type == 'atac') {
+				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else if (merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_mergersem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			if (type == 'chip' || type == 'atac') {
+				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else if (dedup) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_deduprsem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_deduprsem_ref.transcipts/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_dedupmerge'+type+'/', run_id, "tdf")
+			if (type == 'chip' || type == 'atac') {
+				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else{
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_rsem_ref.transcipts/', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, "bigWig")
 		}else if (type == 'chip' || type == 'atac'){
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, "tdf")
+			if (type == 'chip' || type == 'atac') {
+				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+			}
 			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, "bigWig")
-		}else{
+		}else if (type != "seqmapping"){
 			options_parse = optionsCheck(options_parse, '/'+type+'/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/tdf_'+type+'/', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, "bigWig")
 		}
 	}
