@@ -14,8 +14,6 @@ if(!isset($_SESSION['encode_log'])){
 	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
 }
 
-$uni = "b";
-
 $logloc = $_SESSION['encode_log'];
 $logfile = fopen($logloc, "a") or die("Unable to open file!");
 fwrite($logfile,"###########################################\n\n");
@@ -85,6 +83,8 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 		$data['output_type'] = 'alignments';
 	}else if($sub->file_type == 'tdf'){
 		$data['output_type'] = 'gene quantifications';
+	}else if($sub->file_type == 'peaks-bed'){
+		$data['output_type'] = 'alignments';
 	}
 	return $data;
 }
@@ -100,26 +100,26 @@ function fastqJSON($data, $sub, $my_lab, $sample_name, $run_type, $file, $file_n
 		if($run_type == "paired-ended"){
 			//	FASTQ PAIRED
 			if(end($file_names) == $file){
-				$data["aliases"] = array($my_lab.':init_fastq_p2_'.$sample_name.'_'.$uni.$sub->parent_file);
+				$data["aliases"] = array($my_lab.':init_fastq_p2_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '2';
-				$data["paired_with"] = $my_lab.':init_fastq_p1_'.$sample_name.'_'.$uni.$sub->parent_file;
+				$data["paired_with"] = $my_lab.':init_fastq_p1_'.$sample_name.'_'.$sub->parent_file;
 			}else{
-				$data["aliases"] = array($my_lab.':init_fastq_p1_'.$sample_name.'_'.$uni.$sub->parent_file);
+				$data["aliases"] = array($my_lab.':init_fastq_p1_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '1';
 			}
 		}else if (count($file_names) == 1){
 			//	FASTQ SINGLE
-			$data["aliases"] = array($my_lab.':init_fastq_'.$sample_name.'_'.$uni.$sub->parent_file);
+			$data["aliases"] = array($my_lab.':init_fastq_'.$sample_name.'_'.$sub->parent_file);
 		}
 	}else{
 		if($run_type == "paired-ended"){
 			//	FASTQ PAIRED
 			if(end($file_names) == $file){
-				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name.'_'.$uni.$sub->parent_file);
+				$data["aliases"] = array($my_lab.':fastq_p2_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '2';
-				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name.'_'.$uni.$sub->parent_file;
+				$data["paired_with"] = $my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file;
 			}else{
-				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name.'_'.$uni.$sub->parent_file);
+				$data["aliases"] = array($my_lab.':fastq_p1_'.$sample_name.'_'.$sub->parent_file);
 				$data["paired_end"] = '1';
 			}
 			if($sub->parent_file != 0 && isset($step_list[$sub->parent_file - 1])){
@@ -146,7 +146,7 @@ function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $gen
 	//	BAM
 	$data["file_format"] = 'bam';
 	$data['assembly'] = $genome;
-	$data["aliases"] = array($my_lab.':bam_'.$sample_name.'_'.$uni.$sub->parent_file);
+	$data["aliases"] = array($my_lab.':bam_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
 	}
@@ -159,10 +159,10 @@ function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $gen
 	return $data;
 }
 
-function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
+function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $tdfcount){
 	//	TDF/TSV
 	$data["file_format"] = 'tsv';
-	$data["aliases"] = array($my_lab.':tdf_'.$sample_name.'_'.$uni.$sub->parent_file);
+	$data["aliases"] = array($my_lab.':tdf_'.$tdfcount.'_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
 	}
@@ -178,7 +178,7 @@ function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 	//	BIGWIG
 	$data["file_format"] = 'bigWig';
-	$data["aliases"] = array($my_lab.':bigwig_'.$sample_name.'_'.$uni.$sub->parent_file);
+	$data["aliases"] = array($my_lab.':bigwig_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
 	}
@@ -191,10 +191,12 @@ function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 	return $data;
 }
 
-function bedJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
+function bedJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $genome){
 	//	BIGWIG
-	$data["file_format"] = 'bed';
-	$data["aliases"] = array($my_lab.':bed_'.$sample_name.'_'.$uni.$sub->parent_file);
+	$data["file_format"] = 'bigBed';
+	$data['file_format_type'] = 'narrowPeak';
+	$data['assembly'] = $genome;
+	$data["aliases"] = array($my_lab.':bed_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
 	}
@@ -261,29 +263,26 @@ $assembly = 'hg19';
 $replicate = "/replicates/" . $replicate . "/";
 
 $step = 0;
+$tdfcount = 0;
 $step_list = array();
 $run_type = "";
 
 //For each file
-//echo '{"status":"start"}';
+echo '{"status":"start"}';
 foreach($sample_name_query as $snq){
 	$md5_sums = array();
 	foreach($file_sub as $sub){
+		$file_accs = array();
+		$file_uuids = array();
 		$file_names = array();
 		$extended_file_names = array();
 		$fnc = 0;
 		if($sub->parent_file == 0){
-			foreach($fastq_data as $fq){
-				if($fq->sample_id == $sample_id){
-					$file_names = explode(",",$fq->file_name);
-				}else{
-					$file_names = array($fq->file_name);
-				}
-			}
+			$file_names = explode(",",$sub->file_name);
 			if(count($file_names) == 2){
 				$run_type = 'paired-ended';
 			}else{
-				$run_type = 'single-end';
+				$run_type = 'single-ended';
 			}
 		}else{
 			if($run_type == 'paired-ended' && $sub->file_type == 'fastq'){
@@ -298,20 +297,27 @@ foreach($sample_name_query as $snq){
 		}
 		foreach($file_names as $fn){
 			$inserted = false;
-			$file_accs = array();
-			$file_uuids = array();
+			if($sub->parent_file == 0){
+				$submissionfile = $dir_query[0]->backup_dir . "/" . $fn;
+			}else if($sub->parent_file != 0 && $sub->file_type == "fastq"){
+				$submissionfile = $sub->outdir . "/" . $extended_file_names[$fnc];
+			}else{
+				$submissionfile = $sub->outdir . "/" . $sub->file_name;
+			}
 			//	Future: Grab 'platform'
 			$data = baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $fn, "ENCODE:HiSeq2000", $dir_query, $extended_file_names[$fnc]);
+			$fnc++;
 			if($sub->file_type == 'fastq'){
 				$data = fastqJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $fn, $file_names, $step_list);
 			}else if($sub->file_type == 'bam'){
 				$data = bamJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $snq->organism_symbol);
 			}else if($sub->file_type == 'tdf'){
-				$data = tdfJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
+				$data = tdfJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $tdfcount);
+				$tdfcount++;
 			}else if($sub->file_type == 'bigWig'){
 				$data = bigwigJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
-			}else if($sub->file_type == 'bed'){
-				$data = bedJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
+			}else if($sub->file_type == 'peaks-bed'){
+				$data = bedJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $snq->organism_symbol);
 			}
 			array_push($md5_sums, $data["md5sum"]);
 			$gzip_types = array(
@@ -410,12 +416,10 @@ foreach($sample_name_query as $snq){
 				$auth = array('auth' => array($encoded_access_key, $encoded_secret_access_key));
 				//	Set up file links for next step submission
 				$extra_tests = false;
-				if((count($file_names) == 2 && count(explode(",",$sub->file_acc)) == 1)){
-					var_dump(count(explode(",",$sub->file_acc)));
-					var_dump(explode(",",$sub->file_acc)[0]);
+				if(count($file_names) == 2){
 					if($fn == $file_names[0] && explode(",",$sub->file_acc)[0] != ""){
-						var_dump($fn);
-						var_dump($file_names);
+						$extra_tests = false;
+					}else if ($fn == $file_names[1] && explode(",",$sub->file_acc)[1] != ""){
 						$extra_tests = false;
 					}else{
 						$extra_tests = true;
@@ -471,25 +475,23 @@ foreach($sample_name_query as $snq){
 				
 				$item = $body->{'@graph'}[0];
 				
-				//echo ','.$response->body;
+				echo ','.$response->body;
 				
 				###################
 				# POST file to S3 #
 				###################
-				/*
-				if($sub->file_acc == null || $sub->file_acc == ""){
+				//if($inserted){
 					$creds = $item->{'upload_credentials'};
-					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $directory.$fn . " " . $creds->{'access_key'} . " " .
+					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $submissionfile . " " . $creds->{'access_key'} . " " .
 						$creds->{'secret_key'} . " " . $creds->{'upload_url'} . " " . $creds->{'session_token'} . " " .
 						ENCODE_URL . " " . ENCODE_BUCKET . " " . $_SESSION['encode_log'] . " &";
 					$AWS_COMMAND_DO = popen( $cmd_aws_launch, "r" );
 					$AWS_COMMAND_OUT = fread($AWS_COMMAND_DO, 2096);
 					pclose($AWS_COMMAND_DO);
 					//echo $cmd_aws_launch . "\n\n";
-					echo ','.$AWS_COMMAND_OUT;
-					echo ','.$cmd_aws_launch;
-				}
-				*/
+					//echo ','.$AWS_COMMAND_OUT;
+					//echo ','.$cmd_aws_launch;
+				//}
 			}else{
 				//	File Validation Failed
 				if(end($file_names) == $fn){
@@ -498,7 +500,6 @@ foreach($sample_name_query as $snq){
 					echo ',{"error":"'.$fn.' not validated"}' . ',';
 				}
 			}
-			var_dump($data);
 		}
 		//	Store uuid/acc in database
 		if($inserted && end($file_names) == $fn){
@@ -510,8 +511,7 @@ foreach($sample_name_query as $snq){
 			WHERE id = " . $sub->id));
 		}
 		$step++;
-		$fnc++;
 	}
-	//echo ',{"status":"end"}';
+	echo ',{"status":"end"}';
 }
 ?>

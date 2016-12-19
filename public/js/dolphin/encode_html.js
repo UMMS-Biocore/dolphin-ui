@@ -515,9 +515,9 @@ function JSONOptionParse(run_id, options_parse){
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'rsem', options_parse, commonind)
 			}else if (pipeline[y].Type == 'Tophat') {
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'tophat', options_parse, commonind)
-			}else if (pipeline[y].Type == 'ChipSeq' || pipeline[y].Type == 'ChipSeq/ATACSeq') {
+			}else if (pipeline[y].MacsType.toLowerCase() == 'chip') {
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'chip', options_parse, commonind)
-			}else if (pipeline[y].Type == 'ATACSeq') {
+			}else if (pipeline[y].MacsType.toLowerCase() == 'atac') {
 				options_parse = mergeDedupChecks(pipeline[y], run_id, merged, 'atac', options_parse, commonind)
 			}else if (pipeline[y].Type == 'STAR') {
 				//TBA
@@ -558,7 +558,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
-				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
@@ -567,11 +567,11 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
 			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_mergersem_ref.transcipts/', run_id, "bigWig")
+			options_parse = optionsCheck(options_parse, '/ucsc_rsem/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
-				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
@@ -584,7 +584,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
-				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
@@ -597,7 +597,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 		}else if (type == 'chip' || type == 'atac'){
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
-				options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "peaks-bed")
+				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
 			options_parse = optionsCheck(options_parse, '/ucsc_'+type+'/', run_id, "bigWig")
 		}else if (type != "seqmapping"){
