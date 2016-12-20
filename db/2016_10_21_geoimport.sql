@@ -1,1 +1,0 @@
-INSERT INTO `biocore`.`sidebar` (`name`, `parent_name`, `link`, `treeview`, `owner_id`, `group_id`, `perms`, `date_created`, `date_modified`, `last_modified_user`) VALUES ('GEO Import', 'NGS Tracking', 'geoimport', '0', '1', '1', '63', '2016-10-21 16:46:04', '2016-10-21 16:46:04', '1');
