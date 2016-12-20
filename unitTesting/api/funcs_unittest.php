@@ -423,7 +423,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 	public function testGetAmazonCredentials(){
 		ob_start();
 		$funcs  = new funcs();
-        $params['username'] = 'kucukura';
+        $params['username'] = 'docker';
 		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['id'], '1');
 		$this->assertEquals($funcs->getAmazonCredentials($params)[0]['bucket'], 'test_bucket');
 		ob_end_clean();
