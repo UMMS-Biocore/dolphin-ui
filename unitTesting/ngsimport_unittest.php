@@ -9,7 +9,7 @@ include 'library/vanillamodel.class.php';
 
 $_SESSION['uid'] = '1';
 $_SESSION['gids'] = '1';
-$_SESSION['user'] = 'kucukura';
+$_SESSION['user'] = 'docker';
 $_SESSION['group_id'] = '1';
 $_SESSION['security_id'] = '15';
 $_POST['group_id'] = '1';
@@ -58,7 +58,7 @@ class ngsimport_unittest extends PHPUnit_Framework_TestCase
 	public function testGetGroup() {
 		ob_start();
 		$ngsimport = new Ngsimport();
-		$this->assertContains($ngsimport->getGroup('kucukura'),'1');
+		$this->assertContains($ngsimport->getGroup('docker'),'1');
 		ob_end_clean();
 	}
 	

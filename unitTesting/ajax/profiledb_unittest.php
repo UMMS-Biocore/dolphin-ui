@@ -2,7 +2,7 @@
 //	Include files needed to test ngsimport
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $_SESSION['uid'] = '1';
-$_SESSION['user'] = 'kucukura';
+$_SESSION['user'] = 'docker';
 chdir('public/ajax/');
 
 class profiledb_unittest extends PHPUnit_Framework_TestCase
@@ -118,7 +118,7 @@ class profiledb_unittest extends PHPUnit_Framework_TestCase
 		$_GET['group'] = '1';
 		include("profiledb.php");
 		$this->assertEquals(json_decode($data)[0]->id,'1');
-		$this->assertEquals(json_decode($data)[0]->username,'kucukura');
+		$this->assertEquals(json_decode($data)[0]->username,'docker');
 		ob_end_clean();
 	}
 	
