@@ -157,8 +157,8 @@ var getSrc=function(){
 		src = BASE_PATH+'/public/tmp/files/'+src;
 	  }else{
 		src= document.getElementById("source_1").value || document.getElementById("source").placeholder;
-		src = API_PATH+'/public/pub/'+wkey+'/'+src;
-		src = BASE_PATH + "/public/api/?format=json2&source="+src
+		src = BASE_PATH+'/public/pub/'+wkey+'/'+src;
+		src = API_PATH + "/public/api/?format=json2&source="+src
 	  }
 	  console.log(src);
 	  var re=/^http/;
