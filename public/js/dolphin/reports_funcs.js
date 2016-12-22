@@ -34,9 +34,9 @@ var initial_mapping_table = [];
 
 function parseSummary(url_path){
 	var parsedArray = [];
-	console.log(BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path);
+	console.log(API_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path);
 	$.ajax({ type: "GET",
-			url: BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
+			url: API_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
 			async: false,
 			success : function(s)
 			{
@@ -52,7 +52,7 @@ function parseSummary(url_path){
 function parseTSV(jsonName, url_path){
 	var parsedArray = [];
 	$.ajax({ type: "GET",
-			url: BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
+			url: API_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
 			async: false,
 			success : function(s)
 			{
@@ -67,10 +67,10 @@ function parseTSV(jsonName, url_path){
 }
 
 function parseMoreTSV(jsonNameArray, url_path){
-	console.log(BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path);
+	console.log(API_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path);
 	var parsedArray = [];
 	$.ajax({ type: "GET",
-			url: BASE_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
+			url: API_PATH + "/public/api/?source=" + API_PATH + "/public/pub/" + wkey + "/" + url_path,
 			async: false,
 			success : function(s)
 			{
@@ -265,13 +265,13 @@ function showTable(type){
 	
 	if (type == 'initial_mapping') {
 		temp_currentResultSelection = 'counts/' + currentResultSelection + '.counts.tsv&fields=id,' + lib_checklist.toString().replace(/-/g,"_");
-		console.log(BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection);
+		console.log(API_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection);
 	}else{
 		temp_currentResultSelection = currentResultSelection;
 	}
 	
 	$.ajax({ type: "GET",
-			url: BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
+			url: API_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
 			async: false,
 			success : function(s)
 			{
@@ -322,7 +322,7 @@ function showTable(type){
 		st = StreamTable('#jsontable_' + type + '_results',
 		  { view: view, 
 			per_page: 10, 
-			data_url: BASE_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
+			data_url: API_PATH + "/public/api/?source=" + API_PATH + '/public/pub/' + wkey + '/' + temp_currentResultSelection,
 			stream_after: 0.2,
 			fetch_data_limit: 100,
 			callbacks: callbacks,

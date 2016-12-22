@@ -192,7 +192,7 @@ function submitSRA(){
 	if (error_out.length == 0) {
 		$.ajax({
 			type: 	'GET',
-			url: 	API_PATH+'/public/ajax/ngsfastlanedb.php',
+			url: 	BASE_PATH+'/public/ajax/ngsfastlanedb.php',
 			data:  	{ p: 'getClusterName' },
 			async:	false,
 			success: function(s)

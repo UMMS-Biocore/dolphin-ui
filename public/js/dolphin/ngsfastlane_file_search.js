@@ -127,7 +127,7 @@ function directoryGrab(directory){
 	var file_array = [];
 	$.ajax({
 		type: 	'GET',
-		url: 	BASE_PATH+'/public/api/service.php',
+		url: 	API_PATH+'/public/api/service.php',
 		data: { func:'directoryContents', directory:directory, username:username.clusteruser},
 		async:	false,
 		success: function(s)

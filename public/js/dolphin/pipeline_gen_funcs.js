@@ -367,7 +367,7 @@ function submitPipeline(type) {
 		var dir_check_1;
 		$.ajax({
 			type: 	'GET',
-			url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser,
+			url: 	API_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser,
 			async:	false,
 			success: function(s)
 			{
@@ -381,7 +381,7 @@ function submitPipeline(type) {
 		}
 		$.ajax({
 			type: 	'GET',
-			url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&outdir=' + outputdir,
+			url: 	API_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&outdir=' + outputdir,
 			async:	false,
 			success: function(s)
 			{
@@ -410,7 +410,7 @@ function submitPipeline(type) {
 					if(JSON_OBJECT['pipeline'][i].CustomGenomeIndex != 'None' || JSON_OBJECT['pipeline'][i].CustomGenomeAnnotation != 'None'){
 						$.ajax({
 							type: 	'GET',
-							url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+JSON_OBJECT['pipeline'][i].CustomGenomeIndex+'*',
+							url: 	API_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+JSON_OBJECT['pipeline'][i].CustomGenomeIndex+'*',
 							async:	false,
 							success: function(s)
 							{
@@ -426,7 +426,7 @@ function submitPipeline(type) {
 						}
 						$.ajax({
 							type: 	'GET',
-							url: 	BASE_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&file=' + JSON_OBJECT['pipeline'][i].CustomGenomeAnnotation,
+							url: 	API_PATH+'/public/api/service.php?func=checkPermissions&username='+username.clusteruser+'&file=' + JSON_OBJECT['pipeline'][i].CustomGenomeAnnotation,
 							async:	false,
 							success: function(s)
 							{
@@ -1553,7 +1553,7 @@ function findCustomSequenceSets(previous){
 					if (file_check_1 != "") {
 						$.ajax({
 							type: 	'GET',
-							url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file=' + full_path + "/" + file_check_1,
+							url: 	API_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file=' + full_path + "/" + file_check_1,
 							async:	false,
 							success: function(s)
 							{
@@ -1566,7 +1566,7 @@ function findCustomSequenceSets(previous){
 					if (file_check_2 != "") {
 						$.ajax({
 							type: 	'GET',
-							url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file=' + full_path + "/" + file_check_2,
+							url: 	API_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file=' + full_path + "/" + file_check_2,
 							async:	false,
 							success: function(s)
 							{
