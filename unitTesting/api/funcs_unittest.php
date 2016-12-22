@@ -416,7 +416,7 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 		$funcs  = new funcs();
         $params['barcode'] = 'none';
         $params['runparamsid'] = '1';
-		echo $funcs->getSampleList($params);
+		var_dump($funcs->getSampleList($params));
 		$this->assertEquals($funcs->getSampleList($params), array());
 		//ob_end_clean();
 	}
