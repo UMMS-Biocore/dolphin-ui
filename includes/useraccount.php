@@ -2,7 +2,12 @@
   require_once("dbfuncs.php");
   $query=new dbfuncs();
   $line = preg_split("/[,\s\t]+/", $query->getName($_SESSION['user']));
-  $name=$line[1]." ".$line[0];
+  if(count($line) > 1){
+    $name=$line[1]." ".$line[0];  
+  }else{
+    $name=$line[0];
+  }
+  
   $role=$query->getRole($_SESSION['user']);
   $membersince="June 2012";
   $avatar=BASE_PATH.$query->getPhotoLoc($_SESSION['user']);

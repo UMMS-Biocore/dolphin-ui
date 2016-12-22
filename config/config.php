@@ -15,6 +15,10 @@ if (!empty($_SERVER["HTTP_HOST"])){
    {
       $param_section="Dolphin";
    }
+   else if  ( preg_match("/localhost:8080/", $http_host) )
+   {
+      $param_section="Docker";
+   }
    else if  ( preg_match("/localhost/", $http_host) )
    {
       $param_section="Localhost";
