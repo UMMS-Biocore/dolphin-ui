@@ -412,12 +412,13 @@ class funcs_unittest extends PHPUnit_Framework_TestCase
 	*/
 	
 	public function testGetSampleList(){
-		ob_start();
+		//ob_start();
 		$funcs  = new funcs();
         $params['barcode'] = 'none';
         $params['runparamsid'] = '1';
+		echo $funcs->getSampleList($params);
 		$this->assertEquals($funcs->getSampleList($params), array());
-		ob_end_clean();
+		//ob_end_clean();
 	}
 	
 	public function testGetAmazonCredentials(){

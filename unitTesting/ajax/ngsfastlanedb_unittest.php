@@ -41,7 +41,7 @@ class ngsfastlanddb_unittest extends PHPUnit_Framework_TestCase
 		ob_start();
 		$_GET['p'] = 'directoryCheck';
 		$_GET['input'] = '/export/genome_data/mousetest/mm10/barcodetest';
-		$_GET['backup'] = '/export/backup/barcodetest';
+		$_GET['backup'] = '/export/genome_data/process';
 		$_GET['amazon'] = 's3';
 		include("ngsfastlanedb.php");
 		$this->assertEquals(json_decode($data),'1');
