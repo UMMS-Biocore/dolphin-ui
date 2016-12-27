@@ -1040,7 +1040,7 @@ function createTableElements(non_rna_object, lower_type, upper_type){
 		document.getElementById('tablerow').appendChild(createElement('th', ['id'], ['Duplicated Reads ('+upper_type+')']));
 		document.getElementById('Duplicated Reads ('+upper_type+')').innerHTML = 'Duplicated Reads ('+upper_type+')';
 	}
-	if (non_rna_object[lower_type]){
+	if (non_rna_object[lower_type+'_unique'] || non_rna_object[lower_type+'_multimap']){
 		document.getElementById('tablerow').appendChild(createElement('th', ['id'], [upper_type+' (>1)']));
 		document.getElementById(upper_type+' (>1)').innerHTML = '<span title="Reads mapped to more than one location for '+upper_type+'">'+upper_type+' (>1)</span>';
 		document.getElementById('tablerow').appendChild(createElement('th', ['id'], [upper_type+' (=1)']));
