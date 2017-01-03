@@ -43,7 +43,7 @@ class ngsquerydb_unittest extends PHPUnit_Framework_TestCase
 		$_GET['samp'] = '1,2,3';
 		include("ngsquerydb.php");
 		$this->assertEquals(json_decode($data)[0]->file_name,'control_rep1.1.fastq.gz,control_rep1.2.fastq.gz');
-		$this->assertEquals(json_decode($data)[0]->outdir,'/export/barcodetest');
+		$this->assertEquals(json_decode($data)[0]->outdir,'/export/genome_data/example_run');
 		ob_end_clean();
 	}
 	
