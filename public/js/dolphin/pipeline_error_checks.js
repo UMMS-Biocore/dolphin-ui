@@ -218,7 +218,7 @@ function checkIfFileExists(input, username){
 	var value = document.getElementById(input).value;
 	$.ajax({
 		type: 	'GET',
-		url: 	API_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+value,
+		url: 	BASE_PATH+'/public/api/service.php?func=checkFile&username='+username.clusteruser+'&file='+value,
 		async:	false,
 		success: function(s)
 		{

@@ -135,7 +135,7 @@ function checkNewRun(outdir) {
 	var perms = '';
 	$.ajax({
 		type: 	'GET',
-		url: 	API_PATH+'/public/api/service.php',
+		url: 	BASE_PATH+'/public/api/service.php',
 		data: { func:'checkNewRun', outdir:outdir },
 		async:	false,
 		success: function(s)

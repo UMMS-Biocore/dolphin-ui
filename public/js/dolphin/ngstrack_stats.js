@@ -663,7 +663,7 @@ $(function() {
 			if (json_obj == undefined || json_obj == []) {
 				//	Generate JSON data manually
 				$.ajax({ type: "GET",
-					url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
+					url: BASE_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
 					async: false,
 					success : function(s)
 					{
@@ -675,7 +675,7 @@ $(function() {
 				//	Create both JSON and JSON2 files
 				$.ajax({ type: "GET",
 					url: BASE_PATH +"/public/ajax/tablegenerator.php",
-					data: { p: "updateTableFile", url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
+					data: { p: "updateTableFile", url: BASE_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
 					async: false,
 					success : function(s)
 					{
@@ -690,7 +690,7 @@ $(function() {
 		}else{
 			//	Generate JSON data manually
 			$.ajax({ type: "GET",
-				url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
+				url: BASE_PATH +"/public/api/getsamplevals.php?" + table_params.parameters,
 				async: false,
 				success : function(s)
 				{
@@ -702,7 +702,7 @@ $(function() {
 				//	Create both JSON and JSON2 files
 			$.ajax({ type: "GET",
 				url: BASE_PATH +"/public/ajax/tablegenerator.php",
-				data: { p: "updateTableFile", url: API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
+				data: { p: "updateTableFile", url: BASE_PATH +"/public/api/getsamplevals.php?" + table_params.parameters, id: table_params.id},
 				async: false,
 				success : function(s)
 				{
@@ -748,7 +748,7 @@ $(function() {
 		}
 		
 		//	Log data path
-		console.log(API_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
+		console.log(BASE_PATH +"/public/api/getsamplevals.php?" + table_params.parameters);
 		
 	}else if (phpGrab.theSegment != 'report' && phpGrab.theSegment != 'table_viewer' && phpGrab.theSegment != "encode_submissions") {
 		var experiment_series_data = [];

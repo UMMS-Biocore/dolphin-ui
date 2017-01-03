@@ -282,7 +282,7 @@ function tableCreatorPage(){
 
 function changeTableType(format, query){
 	var json_obj;
-	var URL = API_PATH+"/public/api/getsamplevals.php?" + query + 'format=' + format;
+	var URL = BASE_PATH+"/public/api/getsamplevals.php?" + query + 'format=' + format;
 	window.open(URL);
 }
 
@@ -326,13 +326,13 @@ function saveTable() {
 		
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/tablegenerator.php",
-			data: { p: "createTableFile", url: API_PATH+"/public/api/getsamplevals.php?" + beforeFormat + 'format=json' },
+			data: { p: "createTableFile", url: BASE_PATH+"/public/api/getsamplevals.php?" + beforeFormat + 'format=json' },
 			async: false,
 			success : function(s)
 			{
 				file_name = s;
 				console.log(s);
-				console.log(API_PATH+"/public/api/getsamplevals.php?" + beforeFormat + 'format=json');
+				console.log(BASE_PATH+"/public/api/getsamplevals.php?" + beforeFormat + 'format=json');
 			}
 	});
 	console.log(file_name);
@@ -356,7 +356,7 @@ function downloadCreatedTSV(file_name){
 }
 
 function downloadGeneratedTSV(beforeFormat, format){
-	var url = API_PATH +"/public/api/getsamplevals.php?" + beforeFormat + format
+	var url = BASE_PATH +"/public/api/getsamplevals.php?" + beforeFormat + format
 	var file_name = '';
 	console.log(url);
 	$.ajax({ type: "GET",
@@ -689,10 +689,10 @@ $(function() {
 		if (beforeFormat.indexOf('rsem/') > -1 || beforeFormat.indexOf('mRNA') > -1 || beforeFormat.indexOf('tRNA') > -1) {
 			if (table_params.file != null && table_params.file != '') {
 				debrowser_string = '<li class="divider"></li>' +
-					'<li><a onclick="sendTableToDebrowser(\''+API_PATH+'/public/tmp/files/'+table_params.file+'\')" style="cursor:pointer">Send to DEBrowser</a></li>';
+					'<li><a onclick="sendTableToDebrowser(\''+BASE_PATH+'/public/tmp/files/'+table_params.file+'\')" style="cursor:pointer">Send to DEBrowser</a></li>';
 			}else{
 				debrowser_string = '<li class="divider"></li>' +
-					'<li><a onclick="sendTableToDebrowser(\''+API_PATH+'/public/api/getsamplevals.php?'+beforeFormat+'format=json\')" style="cursor:pointer">Send to DEBrowser</a></li>';
+					'<li><a onclick="sendTableToDebrowser(\''+BASE_PATH+'/public/api/getsamplevals.php?'+beforeFormat+'format=json\')" style="cursor:pointer">Send to DEBrowser</a></li>';
 			}
 		}
 		
@@ -741,10 +741,10 @@ $(function() {
 							var datafile = splitParameters[1].split('file=')[1].split(',').join(', ');
 							if (datafile.indexOf('rsem') > -1 || datafile.indexOf('mRNA') > -1 || datafile.indexOf('tRNA') > -1) {
 								if (s[x].file != null && s[x].file != '') {
-									debrowser_string = '<li><a id="' + s[x].id+'" onclick="sendTableToDebrowser(\''+API_PATH+'/public/tmp/files/'+s[x].file+'\')">Send to DEBrowser</a></li>' +
+									debrowser_string = '<li><a id="' + s[x].id+'" onclick="sendTableToDebrowser(\''+BASE_PATH+'/public/tmp/files/'+s[x].file+'\')">Send to DEBrowser</a></li>' +
 										'<li class="divider"></li>';
 								}else{
-									debrowser_string = '<li><a id="' + s[x].id+'" onclick="sendTableToDebrowser(\''+API_PATH+'/public/api/getsamplevals.php?'+s[x].parameters+'\')">Send to DEBrowser</a></li>' +
+									debrowser_string = '<li><a id="' + s[x].id+'" onclick="sendTableToDebrowser(\''+BASE_PATH+'/public/api/getsamplevals.php?'+s[x].parameters+'\')">Send to DEBrowser</a></li>' +
 										'<li class="divider"></li>';
 								}
 							}

@@ -203,7 +203,7 @@ function submitSRA(){
 		var dir_check_1;
 		$.ajax({
 			type: 	'GET',
-			url: 	API_PATH+'/public/api/service.php',
+			url: 	BASE_PATH+'/public/api/service.php',
 			data: { func: "checkPermissions", username: username.clusteruser, outdir: outdir},
 			async:	false,
 			success: function(s)
