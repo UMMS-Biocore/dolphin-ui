@@ -28,7 +28,7 @@ class ngsquerydb_unittest extends PHPUnit_Framework_TestCase
 		$_GET['groupID'] = '1';
 		include("ngsquerydb.php");
 		$this->assertEquals(json_decode($data)[0]->outdir,'/export/genome_data/example_run');
-		$this->assertEquals(json_decode($data)[0]->json_parameters,'{"genomebuild":"mousetest,mm10","spaired":"paired","resume":"resume","fastqc":"yes","barcodes":"distance,1:format,5 end read 1","adapter":"none","quality":"none","trim":"none","split":"none","commonind":"rRNA,miRNA,tRNA","pipeline":["RNASeqRSEM:--bowtie-e 70 --bowtie-chunkmbs 100:no:no"]}');
+		$this->assertEquals(json_decode($data)[0]->json_parameters,'{"genomebuild":"mousetest,mm10","spaired":"paired","resume":"resume","fastqc":"no","barcodes":"none","submission":"0","adapters":"none","quality":"none","trim":"none","split":"none","commonind":"none","pipeline":[{"Type":"Tophat","Params":"","MarkDuplicates":"no","RSeQC":"no","CollectRnaSeqMetrics":"no","CollectMultipleMetrics":"no","IGVTDF":"no","BAM2BW":"no","ExtFactor":"0","Custom":"no","CustomGenomeIndex":"None","CustomGenomeAnnotation":"None"}]}');
 		$this->assertEquals(json_decode($data)[0]->run_name,'barcode test');
 		$this->assertEquals(json_decode($data)[0]->run_description,'barcode test');
 		$this->assertEquals(json_decode($data)[0]->group_id,null);
