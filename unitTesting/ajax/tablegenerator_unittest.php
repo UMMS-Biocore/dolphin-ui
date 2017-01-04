@@ -36,7 +36,7 @@ class tablegenerator_unittest extends PHPUnit_Framework_TestCase
 		$_GET['wkey'] = '3pl8cmzYJ4ezgX2a9RevZxHmihpOA';
 		include('tablegenerator.php');
 		$this->assertEquals(json_decode($data)[0]->file,'rsem/genes_expression_tpm.tsv');
-		$this->assertEquals(json_decode($data)[0]->json_parameters,'{"genomebuild":"mousetest,mm10","spaired":"paired","resume":"resume","fastqc":"no","barcodes":"none","submission":"0","adapters":"none","quality":"none","trim":"none","split":"none","commonind":"none","pipeline":[{"Type":"Tophat","Params":"","MarkDuplicates":"no","RSeQC":"no","CollectRnaSeqMetrics":"no","CollectMultipleMetrics":"no","IGVTDF":"no","BAM2BW":"no","ExtFactor":"0","Custom":"no","CustomGenomeIndex":"None","CustomGenomeAnnotation":"None"}]}');
+		$this->assertEquals(json_decode($data)[0]->json_parameters,null);
 		ob_end_clean();
 	}
 	

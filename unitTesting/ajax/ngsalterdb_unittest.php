@@ -64,15 +64,6 @@ class ngsalterdb_unittest extends PHPUnit_Framework_TestCase
 		ob_end_clean();
 	}
 	
-	public function testDeleteRunparams(){
-		ob_start();
-		$_POST['p'] = 'deleteRunparams';
-		$_POST['run_id'] = '3';
-		include("ngsalterdb.php");
-		$this->assertEquals(json_decode($data),null);
-		ob_end_clean();
-	}
-	
 	public function testUpdateProfile(){
 		ob_start();
 		$_POST['p'] = 'updateProfile';
@@ -83,6 +74,14 @@ class ngsalterdb_unittest extends PHPUnit_Framework_TestCase
 	}
 	
 	/*
+	public function testDeleteRunparams(){
+		ob_start();
+		$_POST['p'] = 'deleteRunparams';
+		$_POST['run_id'] = '3';
+		include("ngsalterdb.php");
+		$this->assertEquals(json_decode($data),null);
+		ob_end_clean();
+	}
 	public function testAlterAccessKey(){
 		ob_start();
 		$_POST['p'] = 'alterAccessKey';
