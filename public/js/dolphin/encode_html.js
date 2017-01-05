@@ -107,15 +107,15 @@ function loadSamples(){
 					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].sample_id+", 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].experiment_series_id+"', 'lab_id')\">"+s[x].lab+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].experiment_series_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
-					"<button id=\"sample_removal_"+s[x].id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].sample_id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
+					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].e_id+"', 'lab_id')\">"+s[x].lab+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].e_id+"', 'grant', 'ngs_experiment_series', this, '', '', '')\">"+s[x].grant+"</p>",
+					"<button id=\"sample_removal_"+s[x].sample_id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].sample_id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'sample')\">"
 				]);
 				
 				//	Modal
-				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
-				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].id+'">'+s[x].samplename+'</option>'
+				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 			}
 			
 		}
@@ -141,7 +141,7 @@ function loadDonors(){
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'sex', 'ngs_donor', this, '', '', '')\">"+s[x].sex+"</p>",
 					s[x].donor_acc,
 					s[x].donor_uuid,
-					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'donor')\">"
+					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].donor_id+", 'donor')\">"
 				]);
 			}
 		}
@@ -195,7 +195,7 @@ function loadTreatments() {
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].concentration_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration', 'ngs_treatment', this, '', '', '')\">"+s[x].duration+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].duration_units+"</p>",
-					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'treatment')\">"
+					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].id+", 'treatment')\">"
 				]);
 			}
 		}
@@ -254,8 +254,8 @@ function loadLibraries() {
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'read_length', 'ngs_samples', this, '', '', '')\">"+s[x].read_length+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].imid+"', 'instrument_model', 'ngs_instrument_model', this, 'ngs_samples', '"+s[x].sample_id+"', 'instrument_model_id')\">"+s[x].instrument_model+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].flowcell_id+"', 'machine_name', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'machine_name')\">"+s[x].machine_name+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'flowcell', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'flowcell')\">"+s[x].flowcell+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'lane', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'lane')\">"+s[x].lane+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].flowcell_id+"', 'flowcell', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'flowcell')\">"+s[x].flowcell+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].flowcell_id+"', 'lane', 'ngs_flowcell', this, 'ngs_samples', '"+s[x].sample_id+"', 'flowcell_id', 'lane')\">"+s[x].lane+"</p>",
 					s[x].library_acc,
 					s[x].library_uuid,
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'library')\">"

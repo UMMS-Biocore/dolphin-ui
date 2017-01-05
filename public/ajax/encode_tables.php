@@ -38,7 +38,7 @@ else if ($p == 'getSamples')
 	$data=$query->queryTable("
 		SELECT ngs_samples.id AS sample_id, ngs_samples.samplename, ngs_samples.source_id,
 		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule,
-		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id,
+		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id as e_id,
 		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab		
 		FROM ngs_samples
 		LEFT JOIN ngs_donor

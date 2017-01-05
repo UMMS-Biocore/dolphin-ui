@@ -217,6 +217,13 @@ function submitChanges(ele, event = event) {
 			ele = document.getElementById('inputTextBox');
 		}
 		if (element_parent_table != '' && element_highlighted_id == '<br>') {
+			console.log('@@@@@ INSERT @@@@@')
+			console.log(element_highlighted_type)
+			console.log(element_highlighted_table)
+			console.log(ele.value)
+			console.log(element_parent_table)
+			console.log(element_parent_table_id)
+			console.log(element_parent_child)
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: 'insertDatabase', type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
@@ -238,6 +245,14 @@ function submitChanges(ele, event = event) {
 			if (window.location.href.split("/").indexOf("encode") > -1 ){
 				updateType = 'updateDatabaseEncode';
 			}
+			console.log('@@@@@ UPDATE @@@@@')
+			console.log(element_highlighted_id)
+			console.log(element_highlighted_type)
+			console.log(element_highlighted_table)
+			console.log(ele.value)
+			console.log(element_parent_table)
+			console.log(element_parent_table_id)
+			console.log(element_parent_child)
 			$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: updateType, id: element_highlighted_id, type: element_highlighted_type, table: element_highlighted_table, value: ele.value, parent: element_parent_table, parent_id: element_parent_table_id, parent_child: element_parent_child},
