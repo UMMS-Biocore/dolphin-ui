@@ -488,7 +488,7 @@ foreach($sample_name_query as $snq){
 				###################
 				# POST file to S3 #
 				###################
-				//if($inserted){
+				if($inserted){
 					$creds = $item->{'upload_credentials'};
 					$cmd_aws_launch = "python ../../scripts/encode_file_submission.py " . $submissionfile . " " . $creds->{'access_key'} . " " .
 						$creds->{'secret_key'} . " " . $creds->{'upload_url'} . " " . $creds->{'session_token'} . " " .
@@ -499,7 +499,7 @@ foreach($sample_name_query as $snq){
 					//echo $cmd_aws_launch . "\n\n";
 					//echo ','.$AWS_COMMAND_OUT;
 					//echo ','.$cmd_aws_launch;
-				//}
+				}
 			}else{
 				//	File Validation Failed
 				if(end($file_names) == $fn){
