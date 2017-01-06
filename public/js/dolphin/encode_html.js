@@ -368,13 +368,15 @@ function loadFiles() {
 		runs.splice(runs.indexOf('rid'), 1)
 		runs.splice(runs.indexOf('did'), 1)
 		var sample_options = "";
+		var directories = "";
 		for(var y = 0; y < runs.length; y++){
 			sample_options += "<option value=\""+runs[y]+"___"+runParams[runs[y]].run_name+"\">"+runParams[runs[y]].run_name+"</option>"
+			directories += "<option value=\""+runParams[runs[y]].outdir+"\" style=\"display:none\"></option>"
 		}
 		runtable.fnAddData([
 			keys[x],
 			"<select id=\""+keys[x]+"_select\" class=\"form-control\" onChange=\"runSelectionEncode(this)\">" + sample_options + "</select>",
-			runParams[runs[0]].outdir,
+			"<select id=\""+keys[x]+"_dirselect\" style=\"display:none\">"+directories+"</select><p id=\""+keys[x]+"_dirvalue\">"+runParams[runs[0]].outdir+"</p>",
 		]);
 	}
 	
@@ -450,7 +452,7 @@ function runSelectionEncode(select){
 	active_runs = gatherFileSelection()
 	var options = createRunOptions(active_runs)
 	var file_select = document.getElementById('addSampleFiles').innerHTML = options
-	
+	document.getElementById(id_name+'_dirvalue').innerHTML = document.getElementById(id_name+'_dirselect').options[select.selectedIndex].value
 }
 
 function gatherFileSelection() {
