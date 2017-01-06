@@ -52,7 +52,7 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 		}
 		$filename = $filename . ".gz";
 		$file_size = filesize($directory . $efn . ".gz");
-		$md5sum = md5_file($directory . $efn . "gz");
+		$md5sum = md5_file($directory . $efn . ".gz");
 	}else if($sub->file_type == 'peaks-bed'){	
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
@@ -88,11 +88,15 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 	}else if($sub->file_type == 'bam'){
 		$data['output_type'] = 'alignments';
 	}else if($sub->file_type == 'bigWig'){
-		$data['output_type'] = 'alignments';
+		$data['output_type'] = 'signal of all reads';
 	}else if($sub->file_type == 'tdf'){
-		$data['output_type'] = 'gene quantifications';
+		if(strpos($sub->file_name,".genes.results") !== false){
+			$data['output_type'] = 'gene quantifications';
+		}else{
+			$data['output_type'] = 'transcript quantifications';
+		}
 	}else if($sub->file_type == 'peaks-bed'){
-		$data['output_type'] = 'alignments';
+		$data['output_type'] = 'peaks';
 	}
 	return $data;
 }
@@ -167,9 +171,10 @@ function bamJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $gen
 	return $data;
 }
 
-function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $tdfcount){
+function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $tdfcount, $genome){
 	//	TDF/TSV
 	$data["file_format"] = 'tsv';
+	$data['assembly'] = $genome;
 	$data["aliases"] = array($my_lab.':tdf_'.$tdfcount.'_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
@@ -183,9 +188,10 @@ function tdfJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $tdf
 	return $data;
 }
 
-function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
+function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $genome){
 	//	BIGWIG
 	$data["file_format"] = 'bigWig';
+	$data['assembly'] = $genome;
 	$data["aliases"] = array($my_lab.':bigwig_'.$sample_name.'_'.$sub->parent_file);
 	if($sub->step_run != NULL && $sub->step_run != ''){
 		$data['step_run'] = $sub->step_run;
@@ -247,7 +253,7 @@ $sample_name_query = json_decode($query->queryTable("
 	WHERE ngs_samples.id = $sample_id
 	"));
 $file_sub = json_decode($query->queryTable("
-	SELECT ngs_file_submissions.id, file_name, file_type, parent_file, additional_derived_from, outdir, file_acc, file_uuid
+	SELECT ngs_file_submissions.id, file_name, file_type, parent_file, step_run, additional_derived_from, outdir, file_acc, file_uuid
 	FROM ngs_file_submissions
 	LEFT JOIN ngs_runparams
 	ON ngs_file_submissions.run_id = ngs_runparams.id
@@ -322,10 +328,10 @@ foreach($sample_name_query as $snq){
 			}else if($sub->file_type == 'bam'){
 				$data = bamJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $snq->organism_symbol);
 			}else if($sub->file_type == 'tdf'){
-				$data = tdfJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $tdfcount);
+				$data = tdfJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $tdfcount, $snq->organism_symbol);
 				$tdfcount++;
 			}else if($sub->file_type == 'bigWig'){
-				$data = bigwigJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list);
+				$data = bigwigJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $snq->organism_symbol);
 			}else if($sub->file_type == 'peaks-bed'){
 				$data = bedJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $step_list, $snq->organism_symbol);
 			}
@@ -344,12 +350,6 @@ foreach($sample_name_query as $snq){
 				"sam",
 				"wig"
 			);
-			
-			if(in_array($data['file_format'], $gzip_types) && explode('.',$fn)[count(explode('.',$fn))] == '.gz'){
-				$is_gzipped = 'Expected gzipped file';
-			}else{
-				$is_gzipped = 'Expected un-gzipped file';
-			}
 			
 			// Validation data
 			$chromInfo = '-chromInfo='.$encValData.'/'.$assembly.'/chrom.sizes';
@@ -416,7 +416,6 @@ foreach($sample_name_query as $snq){
 			$VALIDATE_READ =fread($VALIDATE, 2096);
 			pclose($VALIDATE);
 			*/
-			
 			$VALIDATE_READ = "Error count 0\n";
 			if($VALIDATE_READ == "Error count 0\n"){
 				//	File Validation Passed
@@ -455,7 +454,6 @@ foreach($sample_name_query as $snq){
 						}else{
 							$step_list[$step] = '/files/' . $file_accs[0] . $server_end;
 						}
-						
 					}
 				}else{
 					$inputType = "PATCH";

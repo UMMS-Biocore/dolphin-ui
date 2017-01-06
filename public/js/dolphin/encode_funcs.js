@@ -789,8 +789,7 @@ function encodeFilePost(){
 				var file_response = JSON.parse(file_post_string);
 				console.log(file_response);
 				for(var x = 0; x < file_response.length; x=x+2){
-					response += "<b>File Metadata reponse:</b><br>" + JSON.stringify(file_response[x]) + "<br><br>";
-					response += "<b>File Transfer status reponse:</b><br>" + JSON.stringify(file_response[x+1]) + "<br><br>";
+					response += "<b>File submission reponse:</b><br>" + JSON.stringify(file_response[x]) + "<br><br>";
 				}
 			}
 		});

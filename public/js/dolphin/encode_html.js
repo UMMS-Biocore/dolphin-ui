@@ -593,7 +593,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
 			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
-			options_parse = optionsCheck(options_parse, '/ucsc_rsem_ref.transcipts/', run_id, "bigWig")
+			options_parse = optionsCheck(options_parse, '/ucsc_rsem/', run_id, "bigWig")
 		}else if (type == 'chip' || type == 'atac'){
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
