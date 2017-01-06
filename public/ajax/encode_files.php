@@ -50,8 +50,16 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 		if(substr($directory, -1) == '/'){
 			$directory = substr($directory, 0, -1);
 		}
-		$file_size = filesize($directory . $efn);
-		$md5sum = md5_file($directory . $efn);
+		$filename = $filename . ".gz";
+		$file_size = filesize($directory . $efn . ".gz");
+		$md5sum = md5_file($directory . $efn . "gz");
+	}else if($sub->file_type == 'peaks-bed'){	
+		$directory = $sub->outdir;
+		if(substr($directory, -1) == '/'){
+			$directory = substr($directory, 0, -1);
+		}
+		$file_size = filesize($directory . $sub->file_name . ".gz");
+		$md5sum = md5_file($directory . $sub->file_name . ".gz");
 	}else{
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
@@ -193,7 +201,7 @@ function bigwigJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list){
 
 function bedJSON($data, $sub, $my_lab, $sample_name, $run_type, $step_list, $genome){
 	//	BIGWIG
-	$data["file_format"] = 'bigBed';
+	$data["file_format"] = 'bed';
 	$data['file_format_type'] = 'narrowPeak';
 	$data['assembly'] = $genome;
 	$data["aliases"] = array($my_lab.':bed_'.$sample_name.'_'.$sub->parent_file);
@@ -300,7 +308,9 @@ foreach($sample_name_query as $snq){
 			if($sub->parent_file == 0){
 				$submissionfile = $dir_query[0]->backup_dir . "/" . $fn;
 			}else if($sub->parent_file != 0 && $sub->file_type == "fastq"){
-				$submissionfile = $sub->outdir . "/" . $extended_file_names[$fnc];
+				$submissionfile = $sub->outdir . "/" . $extended_file_names[$fnc] . ".gz";
+			}else if($sub->parent_file != 0 && $sub->file_type == "peaks-bed"){
+				$submissionfile = $sub->outdir . "/" . $sub->file_name . ".gz";
 			}else{
 				$submissionfile = $sub->outdir . "/" . $sub->file_name;
 			}
