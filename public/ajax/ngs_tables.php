@@ -67,16 +67,6 @@ $sampleBackup = "CASE
 //	inner join for lane tables
 $laneJoin = "LEFT JOIN ngs_facility
                 ON ngs_lanes.facility_id = ngs_facility.id";
-$laneBackup = "CASE
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE aws_status = 2 AND ngs_lanes.id = ngs_fastq_files.lane_id) > 0 THEN '<td><button class=\"btn btn-warning\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != original_checksum AND (original_checksum != '' AND original_checksum IS NOT NULL) AND ngs_lanes.id = ngs_fastq_files.lane_id) > 0 THEN '<td><button class=\"btn btn-github\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != original_checksum AND (original_checksum != '' AND original_checksum IS NOT NULL) AND ngs_lanes.id = ngs_fastq_files.lane_id) > 0 THEN '<td><button class=\"btn btn-flickr\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != backup_checksum AND (backup_checksum != '' AND backup_checksum IS NOT NULL) AND ngs_lanes.id = ngs_fastq_files.lane_id $amazon_str) > 0 THEN '<td><button class=\"btn btn-danger\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE (backup_checksum = '' OR backup_checksum IS NULL) AND ngs_lanes.id = ngs_fastq_files.lane_id $amazon_str) > 0 THEN '<td><button class=\"btn\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE date_modified < DATE_SUB(now(), INTERVAL 2 MONTH) AND ngs_lanes.id = ngs_fastq_files.lane_id $amazon_str) > 0 THEN '<td><button class=\"btn btn-primary\" disabled></td>'
-					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE ngs_lanes.id = ngs_fastq_files.lane_id $amazon_str) = 0 THEN '<td></td>'
-					ELSE '<td><button class=\"btn btn-success\" disabled></td>'
-				END AS backup";
 //	inner join for experiment tables
 $experimentSeriesJoin = "LEFT JOIN ngs_lab
                         ON ngs_experiment_series.lab_id = ngs_lab.id
@@ -207,8 +197,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
 			$time="";
 			if (isset($start)){$time="WHERE `date_created`>='$start' and `date_created`<='$end'";}
 			$data=$query->queryTable("
-			SELECT ngs_lanes.id, series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id,
-			$laneBackup
+			SELECT ngs_lanes.id, series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id
 			FROM ngs_lanes
             $laneJoin
 			WHERE ngs_lanes.id
@@ -256,8 +245,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
 			$time="";
 			if (isset($start)){$time="WHERE `date_created`>='$start' and `date_created`<='$end'";}
 			$data=$query->queryTable("
-			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id,
-			$laneBackup
+			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id
 			FROM ngs_lanes
             $laneJoin
 			WHERE ngs_lanes.id
@@ -343,8 +331,7 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 			$time="";
 			if (isset($start)){$time="WHERE `date_created`>='$start' and `date_created`<='$end'";}
 			$data=$query->queryTable("
-			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id,
-			$laneBackup
+			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id
 			FROM ngs_lanes
             $laneJoin
 			WHERE ngs_lanes.id
@@ -390,8 +377,7 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 			$time="";
 			if (isset($start)){$time="WHERE `date_created`>='$start' and `date_created`<='$end'";}
 			$data=$query->queryTable("
-			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id,
-			$laneBackup
+			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id
 			FROM ngs_lanes
             $laneJoin
 			WHERE ngs_lanes.series_id = $q $andPerms $time
@@ -463,8 +449,7 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 			$time="";
 			if (isset($start)){$time="WHERE `date_created`>='$start' and `date_created`<='$end'";}
 			$data=$query->queryTable("
-			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id,
-			$laneBackup
+			SELECT ngs_lanes.id, ngs_lanes.series_id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes, owner_id
 			FROM ngs_lanes
             $laneJoin
             $perms $time

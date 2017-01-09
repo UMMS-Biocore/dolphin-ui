@@ -112,12 +112,12 @@
 						echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL, $dir_array);
 					}else{
 						if(!isset($_SESSION['ngs_lanes'])){
-							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
 						}else if($_SESSION['ngs_lanes'] == ''){
-							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
 						}else{
-							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Backup", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
-															  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", "backup",""]);
+							echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
+															  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
 						}
 					}
 					

@@ -6,7 +6,7 @@
   $totaldolphinruntext="Total Dolphin runs";
   $totalsamples=$query->getTotalSamples($username);
   $totalsamplestext="Total Samples";
-  $totalclusterjobs=$query->getTotalJobs($username);
+  $totalclusterjobs="N/A";//$query->getTotalJobs($username);
   $totalclusterjobstext="Total cluster submissions";
 ?>
 		    <!-- Small boxes (Stat box) -->

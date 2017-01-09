@@ -104,12 +104,12 @@
 								echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
 							}?>
 							<?php if(!isset($_SESSION['ngs_lanes'])){
-								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
 							}else if($_SESSION['ngs_lanes'] == ''){
-								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Backup","Selected"], ["id","name","facility", "total_reads", "total_samples","backup",""]);
+								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
 							}else{
-								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Backup", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
-																  ["id","name","facility", "total_reads", "total_samples", "backup", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
+								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
+																  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
 							}?>
 							<?php if(!isset($_SESSION['ngs_samples'])){
 								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
