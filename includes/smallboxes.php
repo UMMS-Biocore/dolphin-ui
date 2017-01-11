@@ -6,8 +6,8 @@
   $totaldolphinruntext="Total Dolphin runs";
   $totalsamples=$query->getTotalSamples($username);
   $totalsamplestext="Total Samples";
-  $totalclusterjobs="N/A";//$query->getTotalJobs($username);
-  $totalclusterjobstext="Total cluster submissions";
+  $totalclusterusers=$query->getTotalUsers();
+  $totalclusteruserstext="Total cluster users";
 ?>
 		    <!-- Small boxes (Stat box) -->
                     <div class="row">
@@ -74,10 +74,10 @@
                             <div class="small-box bg-red">
                                 <div class="inner">
                                     <h3>
-                                        <?php print $totalclusterjobs;?>
+                                        <?php print $totalclusterusers;?>
                                     </h3>
                                     <p>
-                                        <?php print $totalclusterjobstext;?>
+                                        <?php print $totalclusteruserstext;?>
                                     </p>
                                 </div>
                                 <div class="icon">
