@@ -537,13 +537,13 @@ function createEncodeJson(json_type){
 			}
 			if (protocol_info[proto_lib_type].library_strategy != null) {
 				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-					json['starting_amount'] = "2x10^6";
+					json['starting_amount'] = "2000000";
 					json['starting_amount_units'] = "cells";
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-					json['starting_amount'] = "1.5-2 x10^6";
+					json['starting_amount'] = "1500000";
 					json['starting_amount_units'] = "cells";
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-					json['starting_amount'] = "50,000";
+					json['starting_amount'] = "50000";
 					json['starting_amount_units'] = "cells";
 				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
 					json['starting_amount'] = "";
@@ -651,7 +651,11 @@ function createEncodeJson(json_type){
 			}else if (terms[y] == "duration_units") {
 				json['duration_units'] = treatment_info[treatment_lib_type].duration_units;
 			}else if (terms[y] == "donor") {
-				json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
+				if(sample_info[x].donor == 'Generic-C57BL|6'){
+						json['donor'] = 'ENCODE:Generic-C57BL|6';
+				}else{
+						json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
+				}
 			}else if (terms[y] == "source" && json_type == "antibody") {
 				if (antibody_info[x].source == undefined) {
 					json['source'] = "unknown";
@@ -666,7 +670,9 @@ function createEncodeJson(json_type){
 				}
 			}else if (terms[y] == "treatments") {
 				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
-				//	insert biosample link
+				if(sample_info[x].organism != 'human'){
+						json['derived_from']='manuel-garber:m1'
+				}
 			}else if (terms[y] == "date_obtained") {
 				var lane_id_pos = -1;
 				for(var z = 0; z < lane_info.length; z++){
