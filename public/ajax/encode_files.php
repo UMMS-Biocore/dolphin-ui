@@ -44,11 +44,7 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 			$directory = $directory . "/";
 		}
 		$file_size = filesize($directory . $filename);
-		if($sub->file_md5 != NULL && $sub != ''){
-			$md5sum = $sub->file_md5;
-		}else{
-			$md5sum = md5_file($directory . $filename);
-		}
+		$md5sum = md5_file($directory . $filename);
 	}else if($sub->file_type == 'fastq'){
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
