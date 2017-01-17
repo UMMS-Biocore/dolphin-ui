@@ -256,7 +256,7 @@ $dir_query=json_decode($query->queryTable("
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
 $sample_name_query = json_decode($query->queryTable("
-	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol, instrument_model, replicate_uuid, file_md5
+	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol, instrument_model, replicate_uuid
 	FROM ngs_samples
 	LEFT JOIN ngs_flowcell
 	ON ngs_samples.flowcell_id = ngs_flowcell.id
@@ -267,7 +267,7 @@ $sample_name_query = json_decode($query->queryTable("
 	WHERE ngs_samples.id = $sample_id
 	"));
 $file_sub = json_decode($query->queryTable("
-	SELECT ngs_file_submissions.id, file_name, file_type, parent_file, step_run, additional_derived_from, outdir, file_acc, file_uuid
+	SELECT ngs_file_submissions.id, file_name, file_type, parent_file, step_run, additional_derived_from, outdir, file_acc, file_uuid, file_md5
 	FROM ngs_file_submissions
 	LEFT JOIN ngs_runparams
 	ON ngs_file_submissions.run_id = ngs_runparams.id
