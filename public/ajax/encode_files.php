@@ -44,7 +44,11 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 			$directory = $directory . "/";
 		}
 		$file_size = filesize($directory . $filename);
-		$md5sum = md5_file($directory . $filename);
+		if($sub->file_md5 != NULL && $sub != ''){
+			$md5sum = $sub->file_md5;
+		}else{
+			$md5sum = md5_file($directory . $filename);
+		}
 	}else if($sub->file_type == 'fastq'){
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
@@ -52,14 +56,22 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 		}
 		$filename = $filename . ".gz";
 		$file_size = filesize($directory . $efn . ".gz");
-		$md5sum = md5_file($directory . $efn . ".gz");
+		if($sub->file_md5 != NULL && $sub != ''){
+			$md5sum = $sub->file_md5;
+		}else{
+			$md5sum = md5_file($directory . $efn . ".gz");
+		}
 	}else if($sub->file_type == 'peaks-bed'){	
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
 			$directory = substr($directory, 0, -1);
 		}
 		$file_size = filesize($directory . $sub->file_name . ".gz");
-		$md5sum = md5_file($directory . $sub->file_name . ".gz");
+		if($sub->file_md5 != NULL && $sub != ''){
+			$md5sum = $sub->file_md5;
+		}else{
+			$md5sum = md5_file($directory . $sub->file_name . ".gz");
+		}
 	}else{
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
