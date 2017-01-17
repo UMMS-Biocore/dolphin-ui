@@ -42,6 +42,9 @@ foreach ($json as $json_object) {
 	if(isset($json_object['technical_replicate_number'])){
 		$json_object['technical_replicate_number'] = intval($json_object['technical_replicate_number']);
 	}
+	if(isset($json_object['starting_amount'])){
+		$json_object['starting_amount'] = intval($json_object['starting_amount']);
+	}
 	#POST the JSON and get back response
 	$response = Requests::post($url, $headers, json_encode($json_object), $auth);
 	# If the POST succeeds, the response is the new object in JSON format

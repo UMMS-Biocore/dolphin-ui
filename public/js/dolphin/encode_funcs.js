@@ -254,7 +254,6 @@ function checkForEncodeSubmission(type){
 				errorMsg += '<br>';
 			}
 		}
-		//	Antibody Checks
 		
 		//	if boolPass passed
 		if (boolPass) {
@@ -536,6 +535,21 @@ function createEncodeJson(json_type){
 			if (sample_info[x].biosample_acc != null) {
 				post_bool = false;
 			}
+			if (protocol_info[proto_lib_type].library_strategy != null) {
+				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
+					json['starting_amount'] = "2x10^6";
+					json['starting_amount_units'] = "cells";
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
+					json['starting_amount'] = "1.5-2 x10^6";
+					json['starting_amount_units'] = "cells";
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
+					json['starting_amount'] = "50,000";
+					json['starting_amount_units'] = "cells";
+				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
+					json['starting_amount'] = "";
+					json['starting_amount_units'] = "cells";
+				}
+			}
 		}else if (json_type == 'library') {
 			terms = library_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_lib'];
@@ -652,6 +666,7 @@ function createEncodeJson(json_type){
 				}
 			}else if (terms[y] == "treatments") {
 				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
+				//	insert biosample link
 			}else if (terms[y] == "date_obtained") {
 				var lane_id_pos = -1;
 				for(var z = 0; z < lane_info.length; z++){
@@ -710,7 +725,7 @@ function createEncodeJson(json_type){
 				}
 			}else if (terms[y] == "purifications") {
 				if (antibody_info[x].purifications != null) {
-					json['purifications'] = antibody_info[x].purifications;
+					json['purifications'] = [antibody_info[x].purifications];
 				}
 			}else if (terms[y] == "url") {
 				if (antibody_info[x].url != null) {

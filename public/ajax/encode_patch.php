@@ -43,6 +43,9 @@ foreach ($accs as $acc) {
 		if(isset($json[$count]['technical_replicate_number'])){
 			$json[$count]['technical_replicate_number'] = intval($json[$count]['technical_replicate_number']);
 		}
+		if(isset($json[$count]['starting_amount'])){
+				$json[$count]['starting_amount'] = intval($json[$count]['starting_amount']);
+		}
 		# The URL is now the collection itself
 		$url = $server_start . $json_name . "/" . $acc . $server_end;
 		$response = Requests::patch($url, $headers, json_encode($json[$count]), $auth);

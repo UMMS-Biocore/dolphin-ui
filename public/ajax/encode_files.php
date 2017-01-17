@@ -59,21 +59,24 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 			$directory = substr($directory, 0, -1);
 		}
 		$file_size = filesize($directory . $sub->file_name . ".gz");
-		$md5sum = md5_file($directory . $sub->file_name . ".gz");
+		$md5sum = md5_sum($directory . $sub->file_name . ".gz");
 	}else{
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
 			$directory = substr($directory, 0, -1);
 		}
 		$file_size = filesize($directory . $sub->file_name);
-		$md5sum = md5_file($directory . $sub->file_name);
+		if($sub->file_md5 != NULL && $sub != ''){
+			$md5sum = $sub->file_md5;
+		}else{
+			$md5sum = md5_file($directory . $sub->file_name);
+		}
 	}
 	$data = array(
 		"dataset" => $dataset_acc,
 		"replicate" => $replicate,
 		"file_size" => $file_size,
 		"md5sum" => $md5sum,
-		"read_length" => (int)$read_length,
 		"platform" => $platform,
 		"submitted_file_name" => $filename,
 		"lab" => $my_lab,
@@ -85,6 +88,7 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 	);
 	if($sub->file_type == 'fastq'){
 		$data['output_type'] = 'reads';
+		$data["read_length"] = (int)$read_length;
 	}else if($sub->file_type == 'bam'){
 		$data['output_type'] = 'alignments';
 	}else if($sub->file_type == 'bigWig'){
@@ -244,12 +248,14 @@ $dir_query=json_decode($query->queryTable("
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
 $sample_name_query = json_decode($query->queryTable("
-	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol
+	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol, instrument_model, replicate_uuid, file_md5
 	FROM ngs_samples
 	LEFT JOIN ngs_flowcell
 	ON ngs_samples.flowcell_id = ngs_flowcell.id
 	LEFT JOIN ngs_organism
 	ON ngs_samples.organism_id = ngs_organism.id
+	LEFT JOIN ngs_instrument_model
+	ON ngs_samples.instrument_model_id = ngs_instrument_model.id
 	WHERE ngs_samples.id = $sample_id
 	"));
 $file_sub = json_decode($query->queryTable("
@@ -271,11 +277,6 @@ $dataset_acc = $experiment;
 $my_lab = $experiment_info[0]->lab;
 $my_award = $experiment_info[0]->grant;
 
-//Other information
-$encValData = 'encValData';
-$assembly = 'hg19';
-$replicate = "/replicates/" . $replicate . "/";
-
 $step = 0;
 $tdfcount = 0;
 $step_list = array();
@@ -284,6 +285,9 @@ $run_type = "";
 //For each file
 echo '{"status":"start"}';
 foreach($sample_name_query as $snq){
+	$encValData = 'encValData';
+	$assembly = $snq->organism_symbol;
+	$replicate = "/replicates/" . $replicate . "/";
 	$md5_sums = array();
 	foreach($file_sub as $sub){
 		$file_accs = array();
@@ -321,7 +325,7 @@ foreach($sample_name_query as $snq){
 				$submissionfile = $sub->outdir . "/" . $sub->file_name;
 			}
 			//	Future: Grab 'platform'
-			$data = baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $fn, "ENCODE:HiSeq2000", $dir_query, $extended_file_names[$fnc]);
+			$data = baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $fn, $snq->instrument_model, $dir_query, $extended_file_names[$fnc]);
 			$fnc++;
 			if($sub->file_type == 'fastq'){
 				$data = fastqJSON($data, $sub, $my_lab, $snq->samplename, $run_type, $fn, $file_names, $step_list);

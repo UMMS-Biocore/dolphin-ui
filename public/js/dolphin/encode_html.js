@@ -287,7 +287,7 @@ function loadAntibodies() {
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'isotype', 'ngs_antibody_target', this, '', '', '')\">"+s[x].isotype+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'purifications', 'ngs_antibody_target', this, '', '', '')\">"+s[x].purifications+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'url', 'ngs_antibody_target', this, '', '', '')\">"+s[x].url+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'uuid', 'ngs_antibody_target', this, '', '', '')\">"+s[x].uuid+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'uuid', 'ngs_antibody_target', this, '', '', '')\">"+s[x].antibody_lot_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'antibody')\">"
 				]);
 			}
