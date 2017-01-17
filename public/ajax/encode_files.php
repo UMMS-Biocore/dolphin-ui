@@ -59,7 +59,7 @@ function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, 
 			$directory = substr($directory, 0, -1);
 		}
 		$file_size = filesize($directory . $sub->file_name . ".gz");
-		$md5sum = md5_sum($directory . $sub->file_name . ".gz");
+		$md5sum = md5_file($directory . $sub->file_name . ".gz");
 	}else{
 		$directory = $sub->outdir;
 		if(substr($directory, -1) == '/'){
