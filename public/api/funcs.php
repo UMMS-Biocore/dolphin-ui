@@ -639,12 +639,15 @@ class funcs
                 $edir = $this->tool_path;
                 $command=str_replace("\"", "\\\"", $command);
                 #if($this->remotehost != "N")
-   		if($this->schedular == "LSF" || $this->schedular == "SGE")
+                if($this->schedular == "LSF" || $this->schedular == "SGE")
                 {
                    $command=str_replace("\\\"", "\\\\\"", $command);
                 }
-                $com = $this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
-                //$com = "source /etc/profile && ".$this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
+                if($this->config == 'Docker'){
+                    $com = $this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
+                }else{
+                    $com = "source /etc/profile && ".$this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
+                }
                 $com=$this->getCMDs($com);
                 $retval = $this->sysback($com);
              }
