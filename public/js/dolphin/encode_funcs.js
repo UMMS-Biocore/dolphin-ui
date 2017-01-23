@@ -1,18 +1,123 @@
+//	Info Tables
+sample_info = [];
+lane_info = [];
+protocol_info = [];
+experiment_info = [];
+treatment_info = [];
+antibody_info = [];
+
 //	JSON Tables
-var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
-var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
-var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
-var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
-var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "crosslinking_method", "spike-ins", "fragmentation_method", "instrument_model", "award", "size_range", "lab"];
-var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets", "clonality", "isotype", "purifications", "url"];
-var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
-//	Query data array arrays
-var sample_info = [];
-var lane_info = [];
-var protocol_info = [];
-var experiment_info = [];
-var treatment_info = [];
-var antibody_info = [];
+//	For each term, sort objects based on which table to parse
+//	The next object will display the JSON field on the left and the database variable on the right
+var donor_terms = {
+		'experiment_info':{
+				"award":'award',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"organism":'organism',
+				"life_stage":'life_stage',
+				"age":'age',
+				"sex":'sex'
+		}
+};
+//var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
+var experiment_terms = {
+		'experiment_info':{
+				"award":'award',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"assay_term_name":'',
+				"assay_term_id":'',
+				"biosample_term_name":'biosample_term_name',
+				"biosample_term_id":'biosample_term_id',
+				"biosample_type":'biosample_type',
+				"description":'description'
+		}
+}
+
+//var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
+var treatment_terms = {
+		'treatment_info':{
+				"treament_term_name":'treament_term_name',
+				"treatment_term_id":'treatment_term_id',
+				"treatment_type":'treatment_type',
+				"concentration":'concentration',
+				"concentration_units":'concentration_units',
+				"duration":'duration',
+				"duration_units":'duration_units'
+		}
+}
+//var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
+var biosample_terms = {
+		'experiment_info':{
+				"award":'award',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"donor":'',
+				"biosample_term_name":'biosample_term_name',
+				"biosample_term_id":'biosample_term_id',
+				"biosample_type":'biosample_type',
+				"source":'source',
+				"organism":'organism',
+				"treatments":''
+		},
+		'lane_info':{
+				"date_obtained":'date_received'
+		}
+}
+//var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
+var library_terms = {
+		'experiment_info':{
+				"award":'award',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"biosample":'',
+				"nucleic_acid_term_name":'',
+				"nucleic_acid_term_id":'',
+				"spike-ins":'spike_ins',
+				"instrument_model":'instrument_model',
+				"size_range":'avg_insert_size'
+		},
+		'protocol_info':{
+				"extraction_method":'extraction_method',
+				"crosslinking_method":'crosslinking_method',
+				"fragmentation_method":'fragmentation_method'
+		}
+}
+//var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "crosslinking_method", "spike-ins", "fragmentation_method", "instrument_model", "award", "size_range", "lab"];
+var antibody_terms = {
+		'experiment_info':{
+				"award":'award',
+				"lab":'lab'
+		},
+		'antibody_info':{
+				"source":'source',
+				"product_id":'product_id',
+				"lot_id":'lot_id',
+				"host_organism":'host_organism',
+				"targets":'targets',
+				"clonality":'clonality',
+				"isotype":'isotype',
+				"purifications":'purifications',
+				"url":'url'
+		}
+}
+//var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets", "clonality", "isotype", "purifications", "url"];
+var replicate_terms = {
+		'sample_info':{
+				"experiment":'',
+				"library":'',
+				"antibody":'',
+				"biological_replicate_number":'biological_replica',
+				"technical_replicate_number":'technical_replica'
+		}
+}
+//var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
+
 //	IDs/accessions/uuid arrays
 var donor_ids = [];
 var donor_accs = [];
