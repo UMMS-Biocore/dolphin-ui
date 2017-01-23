@@ -161,8 +161,8 @@ function loadExperiments(){
 				s[x] = responseCheck(s[x]);
 				experimenttable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_name', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_id')\">"+s[x].assay_term_name+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_id', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_id')\">"+s[x].assay_term_id+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_name', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_term_id')\">"+s[x].assay_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_id', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_term_id')\">"+s[x].assay_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>",
@@ -247,8 +247,8 @@ function loadLibraries() {
 				s[x] = responseCheck(s[x]);
 				librarytable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_name', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_id')\">"+s[x].nucleic_acid_term_name+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_id', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_id')\">"+s[x].nucleic_acid_term_id+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_name', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_term_id')\">"+s[x].nucleic_acid_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_id', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_term_id')\">"+s[x].nucleic_acid_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'crosslinking_method', 'ngs_protocols', this, '', '', '')\">"+s[x].crosslinking_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'spike_ins', 'ngs_samples', this, '', '', '')\">"+s[x].spike_ins+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",
@@ -668,21 +668,21 @@ function changeValuesEncode(type, table, ele, event = event){
 }
 
 function updateSingleTable(table){
-	if (table == "sample") {
+	if (table == "sample" || table == "SampleSelection") {
 		loadSamples();
-	}else if (table == "donor") {
+	}else if (table == "donor" || table == "Donors") {
 		loadDonors();
-	}else if (table == "experiment") {
+	}else if (table == "experiment" || table == "Experiments") {
 		loadExperiments();
-	}else if (table == "treatment") {
+	}else if (table == "treatment" || table == "Treatments") {
 		loadTreatments();
-	}else if (table == "biosample") {
+	}else if (table == "biosample" || table == "Biosamples") {
 		loadBiosamples();
-	}else if (table == "library") {
+	}else if (table == "library" || table == "Libraries") {
 		loadLibraries();
-	}else if (table == "antibody") {
+	}else if (table == "antibody" || table == "Antibodies") {
 		loadAntibodies();
-	}else if (table == "replicate") {
+	}else if (table == "replicate" || table == "Replicates") {
 		loadReplicates();
 	}
 }

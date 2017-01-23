@@ -31,6 +31,7 @@ var allcheck_bool = false;
 var selected_ids = [];
 
 function editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child){
+	console.log('test');
 	var havePermission = 0;
 	console.log([uid, id, type, table, element]);
 	$.ajax({ type: "GET",
@@ -369,6 +370,10 @@ function updateEncodeSubmissions(type){
 			console.log(r)
 		}
 	});
+	if (window.location.href.split("/").indexOf('encode') > -1) {
+		var table = $('.nav-tabs .active').text().replace(/[\s\t\n\r]/g,'');
+		updateSingleTable(table);
+	}
 }
 
 function deleteButton(){
