@@ -23,7 +23,6 @@ antibody_info = [];
 				<JSON KEY> : <INFO ARRAY VALUE>,
 				<JSON KEY> : <INFO ARRAY VALUE>
 */
-	
 var donor_terms = {
 		'experiment_info':{
 				"award":'grant',
@@ -57,8 +56,8 @@ var treatment_terms = {
 				"treatment_term_name":'treatment_term_name',
 				"treatment_term_id":'treatment_term_id',
 				"treatment_type":'treatment_type',
-				"concentration":'concentration',
-				"concentration_units":'concentration_units',
+				"amount":'concentration',
+				"amount_units":'concentration_units',
 				"duration":'duration',
 				"duration_units":'duration_units'
 		}
@@ -72,7 +71,6 @@ var biosample_terms = {
 				"biosample_term_name":'biosample_term_name',
 				"biosample_term_id":'biosample_term_id',
 				"biosample_type":'biosample_type',
-				"source":'source',
 				"organism":'organism',
 				"derived_from":'biosample_derived_from',
 		},

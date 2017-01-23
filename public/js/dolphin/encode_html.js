@@ -104,7 +104,6 @@ function loadSamples(){
 					s[x].sample_id,
 					s[x].samplename,
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id', 'donor')\">"+s[x].donor+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].sample_id+", 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].e_id+"', 'lab_id')\">"+s[x].lab+"</p>",
@@ -163,10 +162,9 @@ function loadExperiments(){
 				experimenttable.fnAddData([
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'ngs_library_strategy', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'library_strategy_id')\">"+s[x].library_strategy+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].sample_id+"', 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
-					s[x].experiment_acc,
-					s[x].experiment_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'experiment')\">"
 				]);
 			}
