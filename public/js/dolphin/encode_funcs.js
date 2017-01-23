@@ -6,9 +6,24 @@ experiment_info = [];
 treatment_info = [];
 antibody_info = [];
 
-//	JSON Tables
-//	For each term, sort objects based on which table to parse
-//	The next object will display the JSON field on the left and the database variable on the right
+/*	JSON Tables
+	For each term, sort objects based on which table to parse
+	The next object will display the JSON field on the left and the database variable on the right
+	
+	IE:
+	
+	<JSON TYPE> =
+		<INFO ARRAY TO GRAB DATA FROM>:
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>
+		,
+		<INFO ARRAY TO GRAB DATA FROM>:
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>
+*/
+	
 var donor_terms = {
 		'experiment_info':{
 				"award":'grant',
@@ -39,7 +54,7 @@ var experiment_terms = {
 }
 var treatment_terms = {
 		'treatment_info':{
-				"treament_term_name":'treatment_term_name',
+				"treatment_term_name":'treatment_term_name',
 				"treatment_term_id":'treatment_term_id',
 				"treatment_type":'treatment_type',
 				"concentration":'concentration',
@@ -54,14 +69,12 @@ var biosample_terms = {
 				"lab":'lab'
 		},
 		'sample_info':{
-				"donor":'ALIAS',
 				"biosample_term_name":'biosample_term_name',
 				"biosample_term_id":'biosample_term_id',
 				"biosample_type":'biosample_type',
 				"source":'source',
 				"organism":'organism',
 				"derived_from":'biosample_derived_from',
-				"treatments":'ALIAS'
 		},
 		'lane_info':{
 				"date_obtained":'date_received'
@@ -73,9 +86,7 @@ var library_terms = {
 				"lab":'lab'
 		},
 		'sample_info':{
-				"biosample":'ALIAS',
 				"spike-ins":'spike_ins',
-				"instrument_model":'instrument_model',
 				"size_range":'avg_insert_size'
 		},
 		'protocol_info':{
@@ -105,9 +116,6 @@ var antibody_terms = {
 }
 var replicate_terms = {
 		'sample_info':{
-				"experiment":'ALIAS',
-				"library":'ALIAS',
-				"antibody":'ALIAS',
 				"biological_replicate_number":'biological_replica',
 				"technical_replicate_number":'technical_replica'
 		}
@@ -625,6 +633,8 @@ function createEncodeJson(json_type){
 		}else if (json_type == 'biosample') {
 			terms = biosample_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
+			json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
+			json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
 			biosample_ids.push(sample_info[x].id);
 			biosample_accs.push(sample_info[x].biosample_acc);
 			if (sample_info[x].biosample_acc != null) {
@@ -634,6 +644,7 @@ function createEncodeJson(json_type){
 		}else if (json_type == 'library') {
 			terms = library_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_lib'];
+			json['biosample'] = experiment_info[0].lab + ':' + sample_info[x].samplename;
 			library_ids.push(sample_info[x].id);
 			library_accs.push(sample_info[x].library_acc);
 			if (sample_info[x].library_acc != null) {
@@ -652,6 +663,11 @@ function createEncodeJson(json_type){
 		}else if (json_type == 'replicate') {
 			terms = replicate_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_replica'];
+			json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_lib_type].assay_term_name;
+			json['library'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_lib';
+			if (sample_info[x].antibody_lot_id != null) {
+				json['antibody'] = antibody_info[antibody_lib_type].antibody_lot_acc;
+			}
 			replicate_ids.push(sample_info[x].id);
 			replicate_uuids.push(sample_info[x].replicate_uuid);
 			if (sample_info[x].replicate_uuid != null) {
