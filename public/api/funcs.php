@@ -13,6 +13,7 @@ class funcs
     public $config = "";
     public $python = "";
     public $schedular = "";
+	public $service = "";
     public $checkjob_cmd = "";
     public $job_num = "";
     public $username = "";
@@ -31,6 +32,7 @@ class funcs
             $this->config     = CONFIG;
             $this->python     = PYTHON;
             $this->schedular  = SCHEDULAR;
+			$this->service    = SERVICE;
             $this->setCMDs();
     }
     function getINI()
@@ -643,11 +645,8 @@ class funcs
                 {
                    $command=str_replace("\\\"", "\\\\\"", $command);
                 }
-                if($this->config == 'Docker'){
-                    $com = $this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
-                }else{
-                    $com = "source /etc/profile && ".$this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
-                }
+                
+                $com = $this->service." ".$this->python . " " . $edir . "/runService.py -f ".$this->config." $ipf $dpf -o $outdir -u $username -k $wkey -c \"$command\" -n $servicename -s $servicename";
                 $com=$this->getCMDs($com);
                 $retval = $this->sysback($com);
              }

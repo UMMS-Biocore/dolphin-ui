@@ -67,6 +67,7 @@ define('ENCODE_BUCKET', $ini_array['ENCODE_BUCKET']);
 define('VALIDATE_ENCODE', $ini_array['VALIDATE_ENCODE']);
 define('REQUESTS', $ini_array['REQUESTS']);
 define('PHPPYTHON', $ini_array['PHPPYTHON']);
+define('SERVICE', $ini_array['SERVICE']);
 
 $presalt = parse_ini_file(".salt", true);
 $salt = $presalt['Dolphin'];
