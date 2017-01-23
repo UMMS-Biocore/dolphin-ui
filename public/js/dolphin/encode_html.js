@@ -138,8 +138,8 @@ function loadDonors(){
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'life_stage', 'ngs_donor', this, '', '', '')\">"+s[x].life_stage+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'age', 'ngs_donor', this, '', '', '')\">"+s[x].age+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'sex', 'ngs_donor', this, '', '', '')\">"+s[x].sex+"</p>",
-					s[x].donor_acc,
-					s[x].donor_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_acc', 'ngs_donor', this, '', '', '')\">"+s[x].donor_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_uuid', 'ngs_donor', this, '', '', '')\">"+s[x].donor_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].donor_id+", 'donor')\">"
 				]);
 			}
@@ -161,7 +161,8 @@ function loadExperiments(){
 				s[x] = responseCheck(s[x]);
 				experimenttable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'ngs_library_strategy', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'library_strategy_id')\">"+s[x].library_strategy+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_name', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_id')\">"+s[x].assay_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_id', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_id')\">"+s[x].assay_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>",
@@ -214,14 +215,17 @@ function loadBiosamples() {
 				s[x] = responseCheck(s[x]);
 				biosampletable.fnAddData([
 					s[x].samplename,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount_units', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_submitted', 'ngs_lanes', this, '', '', '')\">"+s[x].date_submitted+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_received', 'ngs_lanes', this, '', '', '')\">"+s[x].date_received+"</p>",
-					s[x].biosample_acc,
-					s[x].biosample_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_acc', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'biosample')\">"
 				]);
 			}
@@ -243,7 +247,8 @@ function loadLibraries() {
 				s[x] = responseCheck(s[x]);
 				librarytable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_name', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_id')\">"+s[x].nucleic_acid_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_id', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_id')\">"+s[x].nucleic_acid_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'crosslinking_method', 'ngs_protocols', this, '', '', '')\">"+s[x].crosslinking_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'spike_ins', 'ngs_samples', this, '', '', '')\">"+s[x].spike_ins+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",

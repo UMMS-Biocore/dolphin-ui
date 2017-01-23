@@ -17,7 +17,7 @@ if($p == 'getSampleDataInfo')
 	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
 							 avg_insert_size, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
-							 time, ngs_donor.id as did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
+							 time, ngs_donor.id AS did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism, source, biosample_derived_from, 
 							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
 							 experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
@@ -70,7 +70,7 @@ else if ($p == 'getProtocolDataInfo')
 							 extraction, library_construction, crosslinking_method, fragmentation_method,
 							 strand_specific, library_strategy, assay_term_name, ngs_assay_term.assay_term_id,
 							 nucleic_acid_term_name, ngs_nucleic_acid_term.nucleic_acid_term_id, starting_amount,
-							 starting_amount_units
+							 starting_amount_units, ngs_protocols.assay_term_id AS assay_id
 							 FROM ngs_protocols
 							 LEFT JOIN ngs_library_strategy
 							 ON ngs_protocols.library_strategy_id = ngs_library_strategy.id

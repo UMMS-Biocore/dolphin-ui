@@ -67,6 +67,10 @@ var biosample_terms = {
 				"award":'grant',
 				"lab":'lab'
 		},
+		'protocol_info':{
+				"starting_amount":'starting_amount',
+				"starting_amount_units":'starting_amount_units'
+		},
 		'sample_info':{
 				"biosample_term_name":'biosample_term_name',
 				"biosample_term_id":'biosample_term_id',
