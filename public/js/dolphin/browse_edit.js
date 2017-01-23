@@ -31,7 +31,6 @@ var allcheck_bool = false;
 var selected_ids = [];
 
 function editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child){
-	console.log('test');
 	var havePermission = 0;
 	console.log([uid, id, type, table, element]);
 	$.ajax({ type: "GET",
