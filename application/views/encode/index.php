@@ -100,6 +100,66 @@
 					  </div>
 					</div>
 				</div><!-- End Antibody modal -->
+				<div class="modal fade" id="linkBiosampleModal" tabindex="-1" role="dialog" aria-labelledby="myBiosampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myBiosampleModalLabel">Link Samples</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="selectSampleLabel">Select Samples to link to one another:</label>
+										<br>
+										<select id="selectSample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<br>
+										<label id="linkBiosampleLabel">Select link if any:</label>
+										<br>
+										<select id="linkBiosample" class="form-control" type="text" class="form-control"></select>
+										<br>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="biosampleConfirm" class="btn btn-primary" data-dismiss="modal" onclick="">Link</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End biosample modal -->
+				<div class="modal fade" id="linkExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myExperimentModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myExperimentModalLabel">Link Samples</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="selectSampleLabel">Select Samples to link to one another:</label>
+										<br>
+										<select id="selectSample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<br>
+										<label id="linkExperimentLabel">Select link if any:</label>
+										<br>
+										<select id="linkExperiment" class="form-control" type="text" class="form-control"></select>
+										<br>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="experimentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="">Link</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End experiment modal -->
 				<section class="content-header">
 					<h1>
 						Encode Viewing/Submission
@@ -178,6 +238,7 @@
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','experiment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','experiment',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Link Experiments" onClick="linkExperiment()"/>
 									</div>
 									<div class="tab-pane" id="treatments_tab">
 										<?php
@@ -197,6 +258,7 @@
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','biosample',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','biosample',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Link Biosamples" onClick="linkBiosample()"/>
 									</div>
 									<div class="tab-pane" id="libraries_tab">
 										<?php

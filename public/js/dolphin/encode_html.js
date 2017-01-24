@@ -692,6 +692,20 @@ function editEncodeBox(uid, id, type, table, element, parent_table, parent_table
 	editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child);
 }
 
+function linkBiosample() {
+	$('#linkBiosampleModal').modal({
+		show: true
+	});
+	addModalType = 'biosample'
+}
+
+function linkExperiment() {
+	$('#linkExperimentModal').modal({
+		show: true
+	});
+	addModalType = 'experiment'
+}
+
 function addTreatment(){
 	$('#addTreatmentModal').modal({
 		show: true
