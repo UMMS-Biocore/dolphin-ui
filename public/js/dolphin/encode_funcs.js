@@ -77,6 +77,7 @@ var biosample_terms = {
 				"biosample_type":'biosample_type',
 				"organism":'organism',
 				"derived_from":'biosample_derived_from',
+				"source":'source'
 		},
 		'lane_info':{
 				"date_obtained":'date_received'
@@ -311,11 +312,6 @@ function checkForEncodeSubmission(type){
 				boolPass = false;
 				boolBreak = false;
 				errorMsg += '<b>Extraction</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
-			}
-			if (protocol_info[x].library_strategy == undefined) {
-				boolPass = false;
-				boolBreak = false;
-				errorMsg += '<b>Library strategy</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
 			}
 			if (!boolBreak) {
 				errorMsg += '<br>';

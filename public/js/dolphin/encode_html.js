@@ -251,6 +251,7 @@ function loadBiosamples() {
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].sample_id+"', 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount_units', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_submitted', 'ngs_lanes', this, '', '', '')\">"+s[x].date_submitted+"</p>",

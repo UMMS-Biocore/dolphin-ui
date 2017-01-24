@@ -19,8 +19,8 @@ if($p == 'getSampleDataInfo')
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
 							 time, ngs_donor.id AS did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism, source, biosample_derived_from, 
-							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
-							 experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
+							 ngs_biosample_acc.biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
+							 ngs_experiment_acc.experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
 							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
@@ -39,6 +39,10 @@ if($p == 'getSampleDataInfo')
 							 ON ngs_genotype.id = ngs_samples.genotype_id
 							 LEFT JOIN ngs_source
 							 ON ngs_source.id = ngs_samples.source_id
+							 LEFT JOIN ngs_experiment_acc
+							 ON ngs_samples.experiment_acc = ngs_experiment_acc.id
+							 LEFT JOIN ngs_biosample_acc
+							 ON ngs_samples.biosample_acc = ngs_biosample_acc.id
 							 WHERE ngs_samples.id IN ( $samples )");
 }
 else if($p == "getLaneDataInfo")
@@ -103,6 +107,38 @@ else if ($p == 'submitAccessionAndUuid')
 		$data=$query->runSQL("UPDATE $table
 							SET ".$type."_uuid = '$uuid'
 							WHERE id = $item");	
+	}else if($type == 'biosample' || $type == 'experiment'){
+		$acc_link=json_decode($query->queryTable("
+							SELECT ".$type."_acc
+							FROM $table
+							WHERE id = $item"
+							));
+		$typeacc = $type . '_acc';
+		if($acc_link[0]->$typeacc == NULL){
+			$data=json_decode($query->runSQL("
+				INSERT INTO ngs_" . $type . "_acc
+				(" . $type . "_acc) VALUES ('insert')
+				"));
+			$accid=json_decode($query->queryTable("
+				SELECT *
+				FROM ngs_" . $type . "_acc
+				WHERE " . $type . "_acc = 'insert'
+				"));
+			$data=json_decode($query->runSQL("
+				UPDATE ngs_samples
+				SET ". $type . "_acc = ".$accid[0]->id."
+				WHERE id = $item
+				"));
+		}
+		$data=$query->runSQL("UPDATE ngs_".$type."_acc
+							SET ".$type."_acc = '$accession'
+							WHERE id = (
+								SELECT ".$type."_acc
+								FROM ngs_samples
+								WHERE id = $item)");	
+		$data=$query->runSQL("UPDATE $table
+							SET ".$type."_uuid = '$uuid'
+							WHERE id = $item");
 	}else{
 		$data=$query->runSQL("UPDATE $table
 							SET ".$type."_acc = '$accession', ".$type."_uuid = '$uuid'

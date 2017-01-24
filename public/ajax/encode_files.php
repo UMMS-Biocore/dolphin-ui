@@ -256,7 +256,8 @@ $dir_query=json_decode($query->queryTable("
 	WHERE id = " . $fastq_data[0]->dir_id
 	));
 $sample_name_query = json_decode($query->queryTable("
-	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol, instrument_model, replicate_uuid
+	SELECT samplename, machine_name, flowcell, lane, read_length, organism_symbol, instrument_model, replicate_uuid,
+	ngs_experiment_acc.experiment_acc, replicate_uuid
 	FROM ngs_samples
 	LEFT JOIN ngs_flowcell
 	ON ngs_samples.flowcell_id = ngs_flowcell.id
@@ -264,6 +265,8 @@ $sample_name_query = json_decode($query->queryTable("
 	ON ngs_samples.organism_id = ngs_organism.id
 	LEFT JOIN ngs_instrument_model
 	ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+	LEFT JOIN ngs_experiment_acc
+	ON ngs_samples.experiment_acc = ngs_experiment_acc.id
 	WHERE ngs_samples.id = $sample_id
 	"));
 $file_sub = json_decode($query->queryTable("
@@ -278,9 +281,6 @@ $file_sub = json_decode($query->queryTable("
 $encoded_access_key = ENCODE_ACCESS;
 $encoded_secret_access_key = ENCODE_SECRET;
 
-//Experiment Accession number
-$dataset_acc = $experiment;
-
 //Lab info
 $my_lab = $experiment_info[0]->lab;
 $my_award = $experiment_info[0]->grant;
@@ -293,9 +293,10 @@ $run_type = "";
 //For each file
 echo '{"status":"start"}';
 foreach($sample_name_query as $snq){
+	$dataset_acc = $snq->experiment_acc;
 	$encValData = 'encValData';
 	$assembly = $snq->organism_symbol;
-	$replicate = "/replicates/" . $replicate . "/";
+	$replicate = "/replicates/" . $snq->replicate_uuid . "/";
 	$md5_sums = array();
 	foreach($file_sub as $sub){
 		$file_accs = array();
