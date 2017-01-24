@@ -39,7 +39,8 @@ else if ($p == 'getSamples')
 		SELECT ngs_samples.id AS sample_id, ngs_samples.samplename, ngs_samples.source_id,
 		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule,
 		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id as e_id,
-		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab		
+		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab,
+		ngs_biosample_acc.biosample_acc, ngs_experiment_acc.experiment_acc
 		FROM ngs_samples
 		LEFT JOIN ngs_donor
 		ON ngs_samples.donor_id = ngs_donor.id
@@ -53,6 +54,10 @@ else if ($p == 'getSamples')
 		ON ngs_samples.organism_id = ngs_organism.id
 		LEFT JOIN ngs_molecule
 		ON ngs_samples.molecule_id = ngs_molecule.id
+		LEFT JOIN ngs_biosample_acc
+		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
+		LEFT JOIN ngs_experiment_acc
+		ON ngs_samples.experiment_acc = ngs_experiment_acc.id
 		WHERE ngs_samples.id IN ($samples);
 	");
 }
@@ -392,6 +397,45 @@ else if ($p == 'enterFileSubmission')
 			$insertString;
 			");
 		$data = json_encode("insert occured");
+	}
+}
+else if ($p == 'linkSamples')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['acc'])){$acc = $_GET['acc'];}
+	if($acc == 'none' || $acc == ''){
+		$data=json_decode($query->runSQL("
+		INSERT INTO ngs_" . strtolower($type) . "_acc
+		(" . strtolower($type) . "_acc) VALUES ('insert')
+		"));
+		$accid=json_decode($query->queryTable("
+		SELECT *
+		FROM ngs_" . strtolower($type) . "_acc
+		WHERE " . strtolower($type) . "_acc = 'insert'
+		"));
+		var_dump($accid);
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_samples
+		SET ". strtolower($type) . "_acc = ".$accid[0]->id."
+		WHERE id in ($samples)
+		"));
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_" . strtolower($type) . "_acc
+		SET ". strtolower($type) . "_acc = NULL
+		WHERE id = ".$accid[0]->id
+		));
+	}else{
+		$accid=json_decode($query->queryTable("
+		SELECT *
+		FROM ngs_".strtolower($type)."_acc
+		WHERE ".strtolower($type)."_acc = '$acc'
+		"));
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_samples
+		SET ". strtolower($type) . "_acc = ".$accid[0]->id."
+		WHERE id in ($samples)
+		"));
 	}
 }
 

@@ -85,6 +85,22 @@ function loadInEncodeTables(){
 function loadSamples(){
 	var treatmentSelect = document.getElementById('addSampleTreatment')
 	var antibodySelect = document.getElementById('addSampleAntibody')
+	var biosampleSelect = document.getElementById('selectBiosample')
+	var experimentSelect = document.getElementById('selectExperiment')
+	
+	var linkBiosample = document.getElementById('linkBiosample')
+	var linkExperiment = document.getElementById('linkExperiment')
+	
+	var ret_biosample_accs = [];
+	var ret_experiment_accs = [];
+	
+	treatmentSelect.innerHTML = ''
+	antibodySelect.innerHTML = ''
+	biosampleSelect.innerHTML = ''
+	experimentSelect.innerHTML = ''
+	
+	linkBiosample.innerHTML = '<option value="none">* New Accession *</option>';
+	linkExperiment.innerHTML = '<option value="none">* New Accession *</option>';
 	
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -115,10 +131,25 @@ function loadSamples(){
 				//	Modal
 				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				biosampleSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				experimentSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				
+				if (ret_biosample_accs.indexOf(s[x].biosample_acc) == -1) {
+					ret_biosample_accs.push(s[x].biosample_acc)
+				}
+				if (ret_experiment_accs.indexOf(s[x].experiment_acc) == -1) {
+					ret_experiment_accs.push(s[x].experiment_acc)
+				}
 			}
 			
 		}
 	});
+	for(var x in ret_biosample_accs){
+		linkBiosample.innerHTML += '<option value="'+ret_biosample_accs[x]+'">'+ret_biosample_accs[x]+'</option>';
+	}
+	for(var x in ret_experiment_accs){
+		linkExperiment.innerHTML += '<option value="'+ret_experiment_accs[x]+'">'+ret_experiment_accs[x]+'</option>';
+	}
 }
 
 function loadDonors(){
@@ -767,6 +798,30 @@ function createNewData(type){
 			}
 		}
 	});
+}
+
+function createLink(type) {
+	var selected = document.getElementById('select'+type)
+	var samples = []
+	for (var i = 0; i < selected.length; i++) {
+		if (selected.options[i].selected){
+			samples.push(selected.options[i].value);
+		}
+	}
+	var acc = document.getElementById('link'+type).value
+	if (acc == undefined || acc == '') {
+		acc == 'none';
+	}
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "linkSamples", type:type, samples:samples.toString(), acc:acc },
+		async: false,
+		success : function(s)
+		{
+			
+		}
+	});
+	
 }
 
 function toSubmitEncode(){

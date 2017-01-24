@@ -111,9 +111,9 @@
 							<div class="modal-body">
 								<fieldset>
 									<div class="form-group" style="overflow:scroll">
-										<label id="selectSampleLabel">Select Samples to link to one another:</label>
+										<label id="selectBiosampleLabel">Select Samples to link to one another:</label>
 										<br>
-										<select id="selectSample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<select id="selectBiosample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
 										<br>
 										<label id="linkBiosampleLabel">Select link if any:</label>
 										<br>
@@ -123,7 +123,7 @@
 								</fieldset>   
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="biosampleConfirm" class="btn btn-primary" data-dismiss="modal" onclick="">Link</button>
+							  <button type="button" id="biosampleConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Biosample')">Link</button>
 							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>
 						</form>
@@ -141,9 +141,9 @@
 							<div class="modal-body">
 								<fieldset>
 									<div class="form-group" style="overflow:scroll">
-										<label id="selectSampleLabel">Select Samples to link to one another:</label>
+										<label id="selectExperimentLabel">Select Samples to link to one another:</label>
 										<br>
-										<select id="selectSample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<select id="selectExperiment" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
 										<br>
 										<label id="linkExperimentLabel">Select link if any:</label>
 										<br>
@@ -153,7 +153,7 @@
 								</fieldset>   
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="experimentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="">Link</button>
+							  <button type="button" id="experimentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Experiment')">Link</button>
 							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>
 						</form>
