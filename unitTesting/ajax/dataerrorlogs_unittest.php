@@ -12,7 +12,7 @@ class dataerrorlogs_unittest extends PHPUnit_Framework_TestCase
 		$_GET['p'] = 'getStdOut';
         $_GET['run_id'] = '1';
 		include("dataerrorlogs.php");
-		$this->assertEquals(json_decode($data)[0],'Error (line:248)running writeInput<br>');
+		$this->assertEquals(json_decode($data)[0],'Error (line:36)running runSQL<br>');
 		ob_end_clean();
     }
     
