@@ -46,11 +46,6 @@ define ('DEVELOPMENT_ENVIRONMENT',true);
 
 date_default_timezone_set($ini_array['TIMEZONE']);
 
-define('DB_NAME', $ini_array['DB_NAME']);
-define('DB_USER', $ini_array['DB_USER']);
-define('DB_PASSWORD', $ini_array['DB_PASSWORD']);
-define('DB_HOST', $ini_array['DB_HOST']);
-define('DB_PORT', $ini_array['DB_PORT']);
 define('DOLPHIN_TOOLS_SRC_PATH', $ini_array['DOLPHIN_TOOLS_SRC_PATH']);
 define('REMOTE_HOST', $ini_array['REMOTE_HOST']);
 define('JOB_STATUS', $ini_array['JOB_STATUS']);
@@ -78,6 +73,11 @@ define('AMAZON', $salt['AMAZON']);
 define('ENCODE_ACCESS', $salt['ENCODE_ACCESS']);
 define('ENCODE_SECRET', $salt['ENCODE_SECRET']);
 define('VERIFY', $salt['VERIFY']);
+define('DB_NAME', $salt['DB_NAME']);
+define('DB_USER', $salt['DB_USER']);
+define('DB_PASSWORD', $salt['DB_PASSWORD']);
+define('DB_HOST', $salt['DB_HOST']);
+define('DB_PORT', $salt['DB_PORT']);
 
 if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 if (isset($_SESSION['user']))
