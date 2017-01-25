@@ -217,8 +217,8 @@
 											<?php	
 												#Samples
 												echo $html->getRespBoxTableStreamNoExpand("Samples", "samples",
-																						  ["id","Sample Name","Title","Organism","Molecule","Backup","Selected"],
-																						  ["id","name","title","organism","molecule","backup","total_reads"]);
+																						  ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"],
+																						  ["id","name","title","organism","source","molecule","backup","total_reads"]);
 											?>
 									</div>
 									<div class="tab-pane" id="donors_tab">
