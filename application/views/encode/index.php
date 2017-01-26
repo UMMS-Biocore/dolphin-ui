@@ -244,7 +244,7 @@
 										<?php
 											#Treatments
 											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
-																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Selected</th>");
+																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Treatment UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
@@ -254,7 +254,7 @@
 										<?php
 											#Biosamples
 											echo $html->getRespBoxTable_ng("Biosamples", "encode_biosamples",
-																		   "<th>Sample</th><th>Derived From</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Source</th><th>Starting Amount</th><th>Starting Amount Units</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Derived From</th><th>Treatment</th><th>Duration</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Source</th><th>Starting Amount</th><th>Starting Amount Units</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','biosample',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','biosample',this,event)"/>

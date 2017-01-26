@@ -21,7 +21,7 @@ if($p == 'getSampleDataInfo')
 							 protocol_id, lane_id, organism, source, biosample_derived_from, 
 							 ngs_biosample_acc.biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
 							 ngs_experiment_acc.experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
-							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description
+							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description, ngs_samples.time
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
 							 ON ngs_donor.id = ngs_samples.donor_id
@@ -145,6 +145,16 @@ else if ($p == 'submitAccessionAndUuid')
 							WHERE id = $item");	
 	}
 }
+else if ($p == 'startLog')
+{
+	if(!isset($_SESSION['encode_log'])){
+		$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+	}
+	$logloc = $_SESSION['encode_log'];
+	$logfile = fopen($logloc, "a") or die("Unable to open file!");
+	fwrite($logfile, "Metadata Submission\n######################################################\n");
+	fclose($logfile);	
+}
 else if ($p == 'endLog')
 {
 	$current_samps = [];
@@ -162,30 +172,34 @@ else if ($p == 'endLog')
 	if(count($current_samps) > 0){
 		$query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = '1', output_file = '$file'
+			SET sub_status = '1', output_file = '$file', last_modified_user = ".$_SESSION['uid'].", date_modified = NOW()
 			WHERE sample_id in (".implode(",",$current_samps).")
 		");
 	}
 	$new_samps = array_diff($sample_ids, $current_samps);
 	foreach($new_samps as $ns){
-		array_push($push_new_samps, "( $ns, '1', '$file' )");
+		array_push($push_new_samps, "( $ns, '1', '$file', ".$_SESSION['uid'].", NOW(), NOW(), ".$_SESSION['uid']." )");
 	}
 	if(count($push_new_samps) > 0){
 		$query->runSQL("
 			INSERT INTO `encode_submissions`
-			(sample_id, sub_status, output_file)
+			(sample_id, sub_status, output_file, original_submission_user, date_created, date_modified, last_modified_user)
 			VALUES
 			".implode(",",$push_new_samps)."
 		");
 	}
+	$logloc = $_SESSION['encode_log'];
+	$logfile = fopen($logloc, "a") or die("Unable to open file!");
+	fwrite($logfile, "Submission End\n######################################################\n");
+	fclose($logfile);
 	unset($_SESSION['encode_log']);
 	
 	//batch submissions
 	$query->runSQL("
 		INSERT INTO encode_batch_submissions
-		(samples, output_file)
+		(samples, output_file, original_submission_user, date_created, date_modified, last_modified_user)
 		VALUES
-		('".implode(",",$sample_ids)."', '$file')
+		('".implode(",",$sample_ids)."', '$file', ".$_SESSION['uid'].", NOW(), NOW(), ".$_SESSION['uid'].")
 		ON DUPLICATE KEY UPDATE output_file = '$file';
 	");
 	

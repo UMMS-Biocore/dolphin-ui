@@ -225,6 +225,7 @@ function loadTreatments() {
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].concentration_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration', 'ngs_treatment', this, '', '', '')\">"+s[x].duration+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].duration_units+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'uuid', 'ngs_treatment', this, '', '', '')\">"+s[x].uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].id+", 'treatment')\">"
 				]);
 			}
@@ -248,6 +249,7 @@ function loadBiosamples() {
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
+					s[x].duration + " " + s[x].duration_units,
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
@@ -707,15 +709,19 @@ function updateSingleTable(table){
 	}else if (table == "experiment" || table == "Experiments") {
 		loadExperiments();
 	}else if (table == "treatment" || table == "Treatments") {
+		loadBiosamples();
 		loadTreatments();
 	}else if (table == "biosample" || table == "Biosamples") {
 		loadBiosamples();
+		loadTreatments();
 	}else if (table == "library" || table == "Libraries") {
 		loadLibraries();
 	}else if (table == "antibody" || table == "Antibodies") {
+		loadReplicates();
 		loadAntibodies();
 	}else if (table == "replicate" || table == "Replicates") {
 		loadReplicates();
+		loadAntibodies();
 	}
 }
 

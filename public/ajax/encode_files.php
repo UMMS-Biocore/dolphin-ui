@@ -16,7 +16,7 @@ if(!isset($_SESSION['encode_log'])){
 
 $logloc = $_SESSION['encode_log'];
 $logfile = fopen($logloc, "a") or die("Unable to open file!");
-fwrite($logfile,"###########################################\n\n");
+fwrite($logfile,"File Submission\n###########################################\n\n");
 fclose($logfile);
 
 function baselineJSON($dataset_acc, $replicate, $snq, $sub, $my_lab, $my_award, $filename, $platform, $dir_query, $efn){

@@ -140,6 +140,7 @@ var antibody_accs = [];
 var replicate_ids = [];
 var replicate_uuids = [];
 var submission = true;
+var log_str = '';
 var id_hash = {
 		donor: 0,
 		experiment: 0,
@@ -149,9 +150,6 @@ var id_hash = {
 		antibody_lot: 0,
 		replicate: 0
 	}
-//	RNA, DNA
-var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
-var log_str = '';
 
 function resetGlobals(){
 	sample_info = [];
@@ -422,6 +420,7 @@ function encodeCheckForPatch(type){
 		}
 	}
 	
+	startLog();
 	if (boolPass) {
 		if (type == 'metadata') {
 			encodePost()
@@ -895,6 +894,18 @@ function encodeSubmission(name, json, subType, type, table){
 	}
 	
 	return output;
+}
+
+function startLog(){
+    $.ajax({ type: "GET",
+		url: BASE_PATH + "/public/ajax/encode_data.php",
+		data: { p: 'startLog'},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
 }
 
 function logResponse(){

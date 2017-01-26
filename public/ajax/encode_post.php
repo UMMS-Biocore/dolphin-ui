@@ -4,10 +4,6 @@ require_once("../../config/config.php");
 if (isset($_GET['json_name'])){$json_name = $_GET['json_name'];}
 if (isset($_GET['json_passed'])){$json_passed = $_GET['json_passed'];}
 
-if(!isset($_SESSION['encode_log'])){
-	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
-}
-
 $server_start = ENCODE_URL;
 $server_end = "/";
 
@@ -55,7 +51,7 @@ foreach ($json as $json_object) {
 	}
 	$logloc = $_SESSION['encode_log'];
 	$logfile = fopen($logloc, "a") or die("Unable to open file!");
-	fwrite($logfile, $response->body . "\n\n");
+	fwrite($logfile, "POST $json_name\n" . $response->body . "\n\n");
 	fclose($logfile);
 }
 ?>

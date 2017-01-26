@@ -120,7 +120,8 @@ else if($p == 'getBiosamples')
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
-		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source
+		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
+		ngs_treatment.duration, ngs_treatment.duration_units
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -207,6 +208,11 @@ else if ($p == 'createEncodeRow')
 		($rowname)
 		VALUES
 		('$name')
+		WHERE NOT EXISTS(
+			SELECT 1
+			FROM $table
+			WHERE $rowname = '$name'
+		)
 	");
 	$typeID=json_decode($query->queryTable("
 		SELECT id
