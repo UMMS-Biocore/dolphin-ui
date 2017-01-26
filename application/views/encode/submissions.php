@@ -11,6 +11,27 @@
 				</section>
 				<!-- Main content -->
 				<?php echo $html->sendJScript("encode_submissions", "", "", "", $uid, $gids); ?>
+				<div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="myLogModalLabel" aria-hidden="true">
+					<div class="modal-dialog" style="width:75%">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myLogModalLabel">View Log</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div id="log_content" class="form-group" style="overflow:scroll">
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End experiment modal -->
 				<section class="content">
 					<div class="row">
 						<div class="col-md-12">

@@ -443,6 +443,11 @@ else if ($p == 'linkSamples')
 		"));
 	}
 }
+else if ($p == 'viewLog')
+{
+	if (isset($_GET['log'])){$log = $_GET['log'];}
+	$data=json_encode(file_get_contents("../../tmp/encode/$log"));
+}
 
 
 header('Cache-Control: no-cache, must-revalidate');

@@ -578,22 +578,34 @@ function createEncodeJson(json_type){
 		var json = {};
 		var post_bool = true;
 		//	Grab correct ids
-		var proto_lib_type = null;
+		var exp_index = null;
+		for(var y = 0; y < experiment_info.length; y++){
+			if (experiment_info[y].id == sample_info[x].series_id) {
+				exp_index = y;
+			}
+		}
+		var lane_index = null;
+		for(var y = 0; y < lane_info.length; y++){
+			if (lane_info[y].id == sample_info[x].lane_id) {
+				lane_index = y;
+			}
+		}
+		var proto_index = null;
 		for(var y = 0; y < protocol_info.length; y++){
 			if (protocol_info[y].id == sample_info[x].protocol_id) {
-				proto_lib_type = y;
+				proto_index = y;
 			}
 		}
-		var treatment_lib_type = null;
+		var treatment_index = null;
 		for(var y = 0; y < treatment_info.length; y++){
 			if (treatment_info[y].id == sample_info[x].treatment_id) {
-				treatment_lib_type = y;
+				treatment_index = y;
 			}
 		}
-		var antibody_lib_type = null;
+		var antibody_index = null;
 		for(var y = 0; y < antibody_info.length; y++){
 			if (antibody_info[y].id == sample_info[x].antibody_lot_id) {
-				antibody_lib_type = y;
+				antibody_index = y;
 			}
 		}
 		if (donors.indexOf(sample_info[x].donor) < 0 ){
@@ -607,38 +619,38 @@ function createEncodeJson(json_type){
 			if (donor_accs[x] != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, donor_terms)
+			json = createJSON(json, x, donor_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'experiment') {
 			terms = experiment_terms;
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_lib_type].assay_term_name];
+				json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_index].assay_term_name];
 			}
 			experiment_ids.push(sample_info[x].id);
 			experiment_accs.push(sample_info[x].experiment_acc);
 			if (sample_info[x].experiment_acc != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, experiment_terms)
+			json = createJSON(json, x, experiment_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'treatment') {
 			terms = treatment_terms;
-			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
+			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
 			treatment_ids.push(treatment_info[x].id);
 			treatment_uuid.push(treatment_info[x].uuid);
 			if (treatment_info[x].uuid != undefined) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, treatment_terms)
+			json = createJSON(json, x, treatment_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'biosample') {
 			terms = biosample_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
 			json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
-			json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
+			json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
 			biosample_ids.push(sample_info[x].id);
 			biosample_accs.push(sample_info[x].biosample_acc);
 			if (sample_info[x].biosample_acc != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, biosample_terms)
+			json = createJSON(json, x, biosample_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'library') {
 			terms = library_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_lib'];
@@ -648,30 +660,30 @@ function createEncodeJson(json_type){
 			if (sample_info[x].library_acc != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, library_terms)
+			json = createJSON(json, x, library_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'antibody') {
 			terms = antibody_terms;
-			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_lib_type].product_id];
+			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_index].product_id];
 			antibody_ids.push(antibody_info[x].id);
 			antibody_accs.push(antibody_info[x].antibody_lot_uuid);
 			if (antibody_info[x].antibody_lot_uuid != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, antibody_terms)
+			json = createJSON(json, x, antibody_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'replicate') {
 			terms = replicate_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_replica'];
-			json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_lib_type].assay_term_name;
+			json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_index].assay_term_name;
 			json['library'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_lib';
 			if (sample_info[x].antibody_lot_id != null) {
-				json['antibody'] = antibody_info[antibody_lib_type].antibody_lot_acc;
+				json['antibody'] = antibody_info[antibody_index].antibody_lot_acc;
 			}
 			replicate_ids.push(sample_info[x].id);
 			replicate_uuids.push(sample_info[x].replicate_uuid);
 			if (sample_info[x].replicate_uuid != null) {
 				post_bool = false;
 			}
-			json = createJSON(json, x, replicate_terms)
+			json = createJSON(json, x, replicate_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}
 		
 		if (post_bool) {
@@ -683,28 +695,32 @@ function createEncodeJson(json_type){
 	return [post, patch];
 }
 
-function createJSON(json, sample, terms){
+function createJSON(json, sample, terms, exp, lane, proto, treatment, antibody){
 		for (var k in terms) {
 				for(var p in terms[k]){
 						if (k == 'experiment_info') {
-								if (experiment_info[sample][terms[k][p]] != undefined) {
-										json[p] = experiment_info[sample][terms[k][p]]
+								if (experiment_info[exp][terms[k][p]] != undefined) {
+										json[p] = experiment_info[exp][terms[k][p]]
 								}
 						}else if (k == 'sample_info') {
 								if (sample_info[sample][terms[k][p]] != undefined) {
 										json[p] = sample_info[sample][terms[k][p]]
 								}
 						}else if (k == 'protocol_info') {
-								if (protocol_info[sample][terms[k][p]] != undefined) {
-										json[p] = protocol_info[sample][terms[k][p]]
+								if (protocol_info[proto][terms[k][p]] != undefined) {
+										json[p] = protocol_info[proto][terms[k][p]]
 								}
 						}else if (k == 'treatment_info') {
-								if (treatment_info[sample][terms[k][p]] != undefined) {
-										json[p] = treatment_info[sample][terms[k][p]]
+								if (treatment_info[treatment][terms[k][p]] != undefined) {
+										json[p] = treatment_info[treatment][terms[k][p]]
 								}
 						}else if (k == 'antibody_info') {
-								if (antibody_info[sample][terms[k][p]] != undefined) {
-										json[p] = antibody_info[sample][terms[k][p]]
+								if (antibody_info[antibody][terms[k][p]] != undefined) {
+										json[p] = antibody_info[antibody][terms[k][p]]
+								}
+						}else if (k == 'lane_info') {
+								if (lane_info[lane][terms[k][p]] != undefined) {
+										json[p] = lane_info[lane][terms[k][p]]
 								}
 						}
 						

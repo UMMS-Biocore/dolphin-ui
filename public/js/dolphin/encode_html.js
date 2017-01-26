@@ -33,7 +33,7 @@ function loadInEncodeSubmissions(){
 					s[x].id,
 					s[x].samples,
 					sub_status,
-					s[x].output_file,
+					"<button class=\"btn btn-primary pull-right\" onclick=\"viewEncodeLog('"+s[x].output_file+"')\">View Log</button>",
 					"<button class=\"btn btn-primary pull-right\" onclick=\"resubmitEncode('"+s[x].samples+"')\">Resubmit</button>",
 				]);
 			}
@@ -60,7 +60,7 @@ function loadInEncodeSubmissions(){
 					s[x].id,
 					s[x].samplename,
 					sub_status,
-					s[x].output_file
+					"<button class=\"btn btn-primary pull-right\" onclick=\"viewEncodeLog('"+s[x].output_file+"')\">View Log</button>",
 				]);
 			}
 		}
@@ -823,6 +823,26 @@ function createLink(type) {
 		}
 	});
 	
+}
+
+function viewEncodeLog(log){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "viewLog", log:log },
+		async: false,
+		success : function(s)
+		{
+			console.log(s)
+			if (s != false) {
+				document.getElementById('log_content').innerHTML = s.replace(/\n/g,"<br><br>");
+			}else{
+				document.getElementById('log_content').innerHTML = "Log file not found";
+			}
+		}
+	});
+	$('#logModal').modal({
+		show: true
+	});
 }
 
 function toSubmitEncode(){
