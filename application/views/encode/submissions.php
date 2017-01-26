@@ -41,7 +41,7 @@
 						</div>
 						<div class="col-md-12">
 							<div id="sub_table" class="margin col-md-12">
-								<?php echo $html->getRespBoxTable_ng("Encode Sample Submissions", "submissions_table", "<th>ID</th><th>Samples</th><th>Submission Status</th><th>Log File</th>"); ?>
+								<?php echo $html->getRespBoxTable_ng("Encode Sample Submissions", "submissions_table", "<th>Sample ID</th><th>Samples</th><th>Submission Status</th><th>Log File</th>"); ?>
 							</div>
 						</div>
 						<div class="col-md-12">

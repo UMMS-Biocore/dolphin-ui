@@ -14,7 +14,7 @@ $data = '';
 if ($p == 'getSubmissions')
 {
 	$data=$query->queryTable("
-		SELECT encode_submissions.id, sub_status, output_file, ngs_samples.samplename
+		SELECT ngs_samples.id, sub_status, output_file, ngs_samples.samplename
 		FROM encode_submissions
 		LEFT JOIN ngs_samples
 		ON encode_submissions.sample_id = ngs_samples.id
