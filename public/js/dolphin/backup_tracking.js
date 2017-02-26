@@ -5,6 +5,8 @@ function getTrackingDataGeneric(){
 		async: false,
 		success : function(s)
 		{
+			var new_json_array = [];
+
 			for(var i = 0; i < s.length; i++ ){
 				s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
 				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'></td>";
@@ -21,6 +23,7 @@ function getTrackingDataUnfiltered(){
 		async: false,
 		success : function(s)
 		{
+			var new_json_array = [];
 			for(var i = 0; i < s.length; i++ ){
 				s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
 				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'></td>";
@@ -37,6 +40,8 @@ function getTrackingDataAmazon(){
 		async: false,
 		success : function(s)
 		{
+			var new_json_array = [];
+
 			for(var i = 0; i < s.length; i++ ){
 				s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
 				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'></td>";
@@ -53,6 +58,8 @@ function getTrackingDataBackup(){
 		async: false,
 		success : function(s)
 		{
+			var new_json_array = [];
+
 			for(var i = 0; i < s.length; i++ ){
 				s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
 				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'></td>";
