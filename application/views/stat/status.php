@@ -15,7 +15,7 @@
 									<br>
 									<label>Are you sure you want to delete this run?</label>
 								</div>
-							</fieldset>   
+							</fieldset>
 						</div>
 						<div class="modal-footer">
 						  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -40,7 +40,7 @@
 									<br>
 									<p id="logDetails"></p>
 								</div>
-							</fieldset>   
+							</fieldset>
 						</div>
 						<div class="modal-footer">
 							<button type="button" id="modal_adv_status" class="btn btn-primary" data-dismiss="modal">Adv. Status</button>
@@ -66,7 +66,7 @@
 									<div id="groupsDiv">
 									</div>
 								</div>
-							</fieldset>   
+							</fieldset>
 						</div>
 						<div class="modal-footer">
 							<button type="button" id="confirmGroupsButton" class="btn btn-primary" data-dismiss="">Confirm</button>
@@ -117,7 +117,7 @@
 											<p class="help-block">Please select the security credentials for this import</p>
 										</div>
 								</div>
-							</fieldset>   
+							</fieldset>
 						</div>
 						<div class="modal-footer">
 							<button type="button" id="confirmPermsButton" class="btn btn-primary" data-dismiss="modal">Confirm</button>
@@ -143,7 +143,7 @@
 									<div id="runDiv">
 									</div>
 								</div>
-							</fieldset>   
+							</fieldset>
 						</div>
 						<div class="modal-footer">
 							<button type="button" id="runButton" class="btn btn-default" data-dismiss="modal">OK</button>
@@ -164,6 +164,11 @@
 					</ol>
 				</section>
 				<!-- Main content -->
+				<?php $title_list = ["ID", "Name", "Output Directory", "Description",
+			      "Status", "Fastq Dir", "Owner", "Options"];
+			      $fields_list = ["sample_id", "sample", "experiment", "lane", "file_name",
+			      "backup_dir", "amazon_bucket", "backup_status", "selected"]; ?>
+
 				<section class="">
 					<div class="row">
 						<div class="col-md-12 margin">
@@ -174,7 +179,14 @@
 						<?php echo $html->getStaticSelectionBox("View which runs?", "run_types", "<option value=\"0\">All Runs</option>
 																		<option value=\"1\">Initial Runs</option>
 																		<option value=\"2\">Normal Runs</option>", 4)?>
+
+						<div id="all_tracking_data_table" class="margin">
+		          <?php echo $html->getRespBoxTableStreamNoExpand("Current Run Status",
+		            "run_status_stream", ["ID","Run Name","Output Directory", "Description", "Status", "Owner", "Options"],
+								["id","run_name","outdir", "run_description", "status", "owner", "options"]); ?>
+		        </div>
+
+
 						</div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->
-

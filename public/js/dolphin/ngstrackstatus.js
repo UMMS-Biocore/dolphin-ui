@@ -9,10 +9,10 @@ var clusteruser;
 
 $(function() {
 	"use strict";
-	
+
 	//The Calender
 	$("#calendar").datepicker();
-	
+
 	/*##### PAGE DETERMINER #####*/
 
 	var qvar = "";
@@ -21,7 +21,7 @@ $(function() {
 	var theSearch = "";
 	var uid = "";
 	var gids = "";
-	
+
 	if (phpGrab) {
 		var segment = phpGrab.theSegment;
 		var theSearch = phpGrab.theSearch;
@@ -33,7 +33,7 @@ $(function() {
 	if (gids == '') {
 		gids = -1;
 	}
-	
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/ngs_stat_funcs.php",
 		data: { p: "getClusterUser" },
@@ -43,7 +43,7 @@ $(function() {
 			clusteruser = s;
 		}
 	});
-	
+
 	/*##### STATUS TABLE #####*/
 	if (segment == 'status') {
 		var run_type = getRunType();
@@ -56,7 +56,7 @@ $(function() {
 							{ className: "directory-col", "targets": [ 2 ] }
 						  ]
 		});
-		
+
 		$.ajax({ type: "GET",
 			 url: BASE_PATH+"/public/ajax/ngs_tables.php",
 			 data: { p: "getStatus", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
@@ -65,14 +65,15 @@ $(function() {
 			 {
 				console.log(s);
 				runparams.fnClearTable();
+				var all_objects = [];
 				for(var i = 0; i < s.length; i++) {
 					var runstat = "";
 					var disabled = '';
-					
+
 					if (s[i].run_status == 0 || s[i].run_status == 2) {
 						s[i].run_status = runningErrorCheck(s[i].id);
 					}
-						
+
 					if (s[i].run_status == 0) {
 						runstat = '<button id="'+s[i].id+'" class="btn btn-xs disabled" onclick="queueCheck(this.id)"><i class="fa fa-refresh">\tQueued</i></button>';
 						disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Cancel</a></li>';
@@ -92,7 +93,7 @@ $(function() {
 					}else if (s[i].run_status == 6) {
 						runstat = '<button id="'+s[i].id+'" class="btn btn-xs disabled" ><i class="fa fa-exchange">\tReset</i></button>';
 					}
-					
+
 					if (s[i].owner_id == uid) {
 						disabled += '<li><a href="#" id="perms_'+s[i].id+'" name="'+s[i].group_id+'" onclick="changeRunPerms(this.id, this.name)">Change Permissions</a></li>' +
 							'<li class="divider"></li>';
@@ -100,16 +101,10 @@ $(function() {
 					if (s[i].outdir.split("/")[s[i].outdir.split("/").length - 1] != 'initial_run' || s[i].run_status == 1) {
 						disabled = disabled + '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Rerun</a></li>';
 					}
-					
+
 					if (runstat != "") {
-						runparams.fnAddData([
-						s[i].id,
-						s[i].run_name,
-						s[i].outdir,
-						s[i].run_description,
-						runstat,
-						s[i].username,
-						'<div class="btn-group pull-right">' +
+						s[i].runstat_html = runstat;
+						s[i].options =  '<div class="btn-group pull-right">' +
 						'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options <span class="fa fa-caret-down"></span></button>' +
 						'</button>' +
 						'<ul class="dropdown-menu" role="menu">' +
@@ -121,16 +116,32 @@ $(function() {
 							'<li class="divider"></li>' +
 							'<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="deleteRunparams(\''+s[i].id+'\')">Delete</a></li>' +
 						'</ul>' +
-						'</div>',
-						]);
+						'</div>';
+
+						var data_to_add = [
+						s[i].id,
+						s[i].run_name,
+						s[i].outdir,
+						s[i].run_description,
+						runstat,
+						s[i].username,
+            s[i].options
+					];
+					all_objects[i] = {id:s[i].id, run_name:s[i].run_name, outdir:s[i].outdir,
+					  run_description:s[i].run_description, runstat_html:s[i].runstat_html,
+					  username:s[i].username, options:s[i].options};
+						runparams.fnAddData(data_to_add);
 					}
 				} // End For
+				console.log("now all arrays:");
+				console.log(all_objects);
+				createStreamTable('run_status_stream', all_objects, "", true, [10,20,50,100], 10, true, true);
 			}
 		});
 
 	runparams.fnSort( [ [0,'des'] ] );
 	//runparams.fnAdjustColumnSizing(true);
-	
+
 	}else if (segment == 'advstatus') {
 		$.ajax({ type: "GET",
 			url: BASE_PATH +"/ajax/sessionrequests.php",
@@ -142,13 +153,13 @@ $(function() {
 				run_id = s;
 			}
 		});
-		
+
 		wkey = getWKey(run_id);
 		document.getElementById('send_to_reports').name = run_id;
 		var runparams = $('#jsontable_services').dataTable();
-		console.log(wkey);	
+		console.log(wkey);
 		var progress_bars = progressBars();
-		
+
 		$.ajax({ type: "GET",
 			 url: BASE_PATH + "/public/ajax/dataservice.php?wkey=" + wkey,
 			 async: false,
@@ -183,7 +194,7 @@ $(function() {
 	}else if (segment == "reroute") {
 		window.location.href = BASE_PATH+'/stat/advstatus';
 	}
-	
+
 	$('#jsontable_runparams').on( 'page.dt', function () {
 		var table = $('#jsontable_runparams').DataTable();
 		var info = table.page.info();
@@ -199,7 +210,7 @@ $(function() {
 		var info = table.page.info();
 		page_mark_jobs = info.page;
 	} );
-	
+
 	setInterval( function () {
 		if (segment == 'status') {
 			var runparams = $('#jsontable_runparams').dataTable();
@@ -213,11 +224,11 @@ $(function() {
 					for(var i = 0; i < s.length; i++) {
 						var runstat = "";
 						var disabled = '';
-						
+
 						if (s[i].run_status == 0 || s[i].run_status == 2) {
 							s[i].run_status = runningErrorCheck(s[i].id);
 						}
-						
+
 						if (s[i].run_status == 0) {
 							runstat = '<button id="'+s[i].id+'" class="btn btn-xs disabled" onclick="queueCheck(this.id)"><i class="fa fa-refresh">\tQueued</i></button>';
 							disabled = '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onClick="killRun(this.id)">Cancel</a></li>';
@@ -244,7 +255,7 @@ $(function() {
 						if (s[i].outdir.split("/")[s[i].outdir.split("/").length - 1] != 'initial_run' || s[i].run_status == 1) {
 							disabled = disabled + '<li><a href="#" id="'+s[i].id+'" name="'+s[i].run_group_id+'" onclick="rerunSelected(this.id, this.name)">Rerun</a></li>';
 						}
-						
+
 						if (runstat != "") {
 							runparams.fnAddData([
 							s[i].id,
@@ -271,7 +282,7 @@ $(function() {
 					} // End For
 				}
 			});
-			
+
 			$('#jsontable_runparams').DataTable().page(page_mark_runparams).draw(false);
 		}else if (segment == 'advstatus') {
 			var runparams = $('#jsontable_services').dataTable();
@@ -306,7 +317,7 @@ $(function() {
 				});
 			runparams.fnSort( [ [4,'asc'] ] );
 			$('#jsontable_services').DataTable().page(page_mark_services).draw(false);
-			
+
 			if (service_id != undefined) {
 				var runjob = $('#jsontable_jobs').dataTable();
 				$.ajax({ type: "GET",
@@ -319,7 +330,7 @@ $(function() {
 							var reset = "";
 							for(var i = 0; i < parsed.length; i++) {
 								if (selected_service != parsed[i].title) {
-									reset = '<button id="'+parsed[i].num+'" class="btn btn-warning btn-xs pull-right" name="soft" title="Soft Reset"onclick="resetType('+run_id+', '+parsed[i].num+', \''+wkey+'\', \''+parsed[i].title+'\', \'jobs\', this)"><span class="fa fa-times"></span></button>'; 
+									reset = '<button id="'+parsed[i].num+'" class="btn btn-warning btn-xs pull-right" name="soft" title="Soft Reset"onclick="resetType('+run_id+', '+parsed[i].num+', \''+wkey+'\', \''+parsed[i].title+'\', \'jobs\', this)"><span class="fa fa-times"></span></button>';
 								}else{
 									reset = "";
 								}
