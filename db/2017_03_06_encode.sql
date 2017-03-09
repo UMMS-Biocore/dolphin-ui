@@ -64,4 +64,3 @@ ALTER TABLE `ngs_conds` ADD UNIQUE (
   `cond_symbol`,
   `condition`
 );
-

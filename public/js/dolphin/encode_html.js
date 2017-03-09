@@ -169,7 +169,8 @@ function comboBoxScript(){
   //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
 	// });
 
-	$('ul:not(#tabList, .pagination)').css({'z-index' : 999999, 'position' : 'relative'});
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative', 'background-color': '#40E0D0'});	
   $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
@@ -178,8 +179,10 @@ function comboBoxScript(){
 	$("#sample_conds_combobox").on('change', function () {
     alert($(this).val());
 });
-
 }
+
+
+
 
 
 function removeConditionDetails($sample_id, $cond_id) {
@@ -233,7 +236,6 @@ function updateConditionDetails($sample_id) {
 				condSampleList = [];
 			}
 
-
 	    //alert(this.value);
 	});
 }
@@ -262,7 +264,7 @@ function createNewTreatment(){
 			console.log(s);
 		}
 	});
-
+	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
   refreshConditionsTable();
 }
 
