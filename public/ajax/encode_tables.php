@@ -181,11 +181,13 @@ else if($p == 'getTreatments')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
-		 SELECT nsc.id, nc.cond_symbol name, nc.condition treatment_term_name,   nc.treatment_term_id,
-							 nc.treatment_type, nsc.concentration, nsc.duration, nsc.concentration_unit concentration_units,
-							 nsc.duration_unit duration_units, nsc.uuid
-							 FROM ngs_sample_conds nsc, ngs_conds nc WHERE nc.id=nsc.cond_id
-							 and nsc.sample_id in ($samples)
+		SELECT *
+		FROM ngs_treatment
+		WHERE id in (
+			SELECT treatment_id
+			FROM ngs_samples
+			WHERE id in ($samples)
+		)
 		");
 }
 else if($p == 'getBiosamples')
@@ -424,7 +426,7 @@ else if ($p == 'enterFileSubmission')
 				}else{
 					$filename = $subdata['l'] . "$current_sample_name.fastq";
 				}
-			}else if($subdata['t'] == "tsv"){
+			}else if($subdata['t'] == "tdf"){
 				if(preg_match("/rsem/", $subdata['l'])){
 					if($subdata['l'] == "/rsem/genes"){
 						$filename = "/rsem/pipe.rsem.$current_sample_name/rsem.out.$current_sample_name.genes.results";
@@ -439,8 +441,6 @@ else if ($p == 'enterFileSubmission')
 			}else if($subdata['t'] == 'bigWig'){
 				if(preg_match("/rsem/", $subdata['l']) && !preg_match("/dedup/", $subdata['l'])){
 					$filename = $subdata['l'] . "rsem.out.$current_sample_name.bw";
-				}else  if(preg_match("/dedup/", $subdata['l']) || preg_match("/merge/", $subdata['l'])){
-					$filename = $subdata['l'] . "$current_sample_name.bw";
 				}else{
 					$filename = $subdata['l'] . "$current_sample_name.sorted.bw";
 				}
@@ -454,7 +454,7 @@ else if ($p == 'enterFileSubmission')
 				if(preg_match("/merge/", $subdata['l'])){
 					$merge = true;
 				}
-				if($dedup || $merge){
+				if($dedup){
 					$filename = $subdata['l'] . "$current_sample_name.bam";
 				}else if(preg_match("/rsem/", $subdata['l'])){
 					$filename = $subdata['l'] . "pipe.rsem.$current_sample_name/rsem.out.$current_sample_name.transcript.bam";

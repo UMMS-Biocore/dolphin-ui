@@ -14,13 +14,13 @@ $data = '';
 if($p == 'getSampleDataInfo')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
-	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, ngs_sample_conds.concentration,
+	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
 							 avg_insert_size, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
 							 time, ngs_donor.id AS did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
 							 protocol_id, lane_id, organism, source, biosample_derived_from, 
 							 ngs_biosample_acc.biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
-							 ngs_experiment_acc.experiment_acc, experiment_uuid, ngs_sample_conds.id treatment_id, antibody_lot_id, biosample_id,
+							 ngs_experiment_acc.experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
 							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description, ngs_samples.time
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
@@ -37,8 +37,6 @@ if($p == 'getSampleDataInfo')
 							 ON ngs_instrument_model.id = ngs_samples.instrument_model_id
 							 LEFT JOIN ngs_genotype
 							 ON ngs_genotype.id = ngs_samples.genotype_id
-							 LEFT JOIN ngs_sample_conds
-							 ON ngs_samples.id = ngs_sample_conds.sample_id
 							 LEFT JOIN ngs_source
 							 ON ngs_source.id = ngs_samples.source_id
 							 LEFT JOIN ngs_experiment_acc
@@ -91,11 +89,7 @@ else if ($p == 'getProtocolDataInfo')
 else if ($p == 'getTreatmentDataInfo')
 {
 	if (isset($_GET['treatments'])){$treatments = $_GET['treatments'];}
-	$data=$query->queryTable("SELECT nsc.id, nc.cond_symbol name, nc.condition treatment_term_name,   nc.treatment_term_id,
-							 nc.treatment_type, nsc.concentration, nsc.duration, nsc.concentration_unit concentration_units,
-							 nsc.duration_unit duration_units, nsc.uuid
-							 FROM ngs_sample_conds nsc, ngs_conds nc WHERE nc.id=nsc.cond_id
-							 and nsc.sample_id IN ( $treatments )");
+	$data=$query->queryTable("SELECT * FROM ngs_treatment WHERE id IN ( $treatments )");
 }
 else if ($p == 'getAntibodyDataInfo')
 {

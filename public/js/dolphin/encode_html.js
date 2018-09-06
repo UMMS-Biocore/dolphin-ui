@@ -289,8 +289,8 @@ function getEditConditionHTML($cond_id, $condition, $cond_symbol,
 
 function addConditionToModal($sample_id) {
 	var editConditionDetails = document.getElementById('editConditionDetails');
-	//var newCondID =  $('#conditionInputModal').val();
-	var newCondID =  $('#sample_conds_combobox').val();
+	var newCondID =  $('#conditionInputModal').val();
+
 	 $.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getConditionsDetailsWithID", new_cond_id:newCondID },
@@ -981,8 +981,8 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 	if (dedup && merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tsv")
-			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tsv")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_dedupmergersem_ref.transcipts/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedupmerge'+type+'/', run_id, "bam")
@@ -994,34 +994,34 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 	}else if (merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tsv")
-			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tsv")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_rsem/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/merge'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
 				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
-			options_parse = optionsCheck(options_parse, '/ucsc_merge'+type+'/', run_id, "bigWig")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else if (dedup) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/deduprsem_ref.transcipts/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tsv")
-			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tsv")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_deduprsem_ref.transcipts/', run_id, "bigWig")
 		}else{
 			options_parse = optionsCheck(options_parse, '/dedup'+type+'/', run_id, "bam")
 			if (type == 'chip' || type == 'atac') {
 				options_parse = optionsCheck(options_parse, '/macs/', run_id, "peaks-bed")
 			}
-			options_parse = optionsCheck(options_parse, '/ucsc_dedup'+type+'/', run_id, "bigWig")
+			options_parse = optionsCheck(options_parse, '/ucsc_dedupmerge'+type+'/', run_id, "bigWig")
 		}
 	}else{
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/rsem/', run_id, "bam")
-			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tsv")
-			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tsv")
+			options_parse = optionsCheck(options_parse, '/rsem/genes', run_id, "tdf")
+			options_parse = optionsCheck(options_parse, '/rsem/isoforms', run_id, "tdf")
 			options_parse = optionsCheck(options_parse, '/ucsc_rsem/', run_id, "bigWig")
 		}else if (type == 'chip' || type == 'atac'){
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+type+'/', run_id, "bam")

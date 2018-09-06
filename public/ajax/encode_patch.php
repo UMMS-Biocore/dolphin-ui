@@ -8,12 +8,6 @@ if (isset($_GET['accession'])){$accession = $_GET['accession'];}
 $accs = explode(",", $accession);
 $server_start = ENCODE_URL;
 $server_end = "/";
-if(!isset($_SESSION['encode_log'])){
-	$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
-}
-#print "[".$_SESSION['encode_log']."]";
-$logloc = $_SESSION['encode_log'];
-$logfile = fopen($logloc, "a") or die("Unable to open file!");
 
 #Uses Requests library from https://github.com/rmccue/Requests
 include(REQUESTS.'/library/Requests.php');
@@ -49,13 +43,6 @@ foreach ($accs as $acc) {
 				$json[$count]['starting_amount'] = intval($json[$count]['starting_amount']);
 		}
 		# The URL is now the collection itself
-		fwrite($logfile, "PATCH: SERVER_START: [$server_start]\n");
-		fwrite($logfile, "PATCH: JSON_NAME: [$json_name]\n");
-		fwrite($logfile, "PATCH: ACC: [$acc]\n");
-		fwrite($logfile, "PATCH: SERVER_END: [$server_end]\n");
-		fwrite($logfile, "PATCH: JSON: \n\n[\n ".json_encode($json)." \n]\n");
-
-				
 		$url = $server_start . $json_name . "/" . $acc . $server_end;
 		$response = Requests::patch($url, $headers, json_encode($json[$count]), $auth);
 		$count++;
@@ -65,8 +52,10 @@ foreach ($accs as $acc) {
 			echo $response->body . ",";	
 		}
 		
+		$logloc = $_SESSION['encode_log'];
+		$logfile = fopen($logloc, "a") or die("Unable to open file!");
 		fwrite($logfile, "PATCH $json_name\n" . $response->body . "\n\n");
+		fclose($logfile);
 	}
 }
-fclose($logfile);
 ?>

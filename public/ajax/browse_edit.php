@@ -315,7 +315,7 @@ if($p == 'updateDatabase')
 		$type_list = json_decode($query->queryTable("SELECT id FROM ngs_".$type." WHERE $type = \"$value\""));
 		if($type_list != array()){
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = ".$type_list[0]->id." WHERE id = '$id'");
-		}else if ($value = ''){
+		}else if ($value == ''){
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = NULL WHERE id = '$id'");
 		}else{
 			$query->runSQL("INSERT INTO ngs_".$type." ($type) VALUES ('$value')");

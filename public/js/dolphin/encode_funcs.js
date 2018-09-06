@@ -41,7 +41,8 @@ var experiment_terms = {
 				"lab":'lab'
 		},
 		'protocol_info':{
-				"assay_term_name":'assay_term_name'
+				"assay_term_name":'assay_term_name',
+				"assay_term_id":'assay_term_id'
 		},
 		'sample_info':{
 				"biosample_term_name":'biosample_term_name',
@@ -88,10 +89,12 @@ var library_terms = {
 				"lab":'lab'
 		},
 		'sample_info':{
+				"spike-ins":'spike_ins',
 				"size_range":'avg_insert_size'
 		},
 		'protocol_info':{
 				"nucleic_acid_term_name":'nucleic_acid_term_name',
+				"nucleic_acid_term_id":'nucleic_acid_term_id',
 				"extraction_method":'extraction_method',
 				"crosslinking_method":'crosslinking_method',
 				"fragmentation_method":'fragmentation_method'
@@ -107,8 +110,10 @@ var antibody_terms = {
 				"product_id":'product_id',
 				"lot_id":'lot_id',
 				"host_organism":'host_organism',
+				"targets":'targets',
 				"clonality":'clonality',
 				"isotype":'isotype',
+				"purifications":'purifications',
 				"url":'url'
 		}
 }
@@ -292,9 +297,6 @@ function checkForEncodeSubmission(type){
 				boolPass = false;
 				boolBreak = false;
 				errorMsg += '<b>Date received</b> for <b>lane id: ' + lane_info[x].id + '</b> is not defined.<br>';
-			} else {
-                            var d1 = new Date(lane_info[x].date_received).toISOString().slice(0,10);
-                            lane_info[x].date_received = d1
 			}
 			if (!boolBreak) {
 				errorMsg += '<br>';
@@ -473,8 +475,8 @@ function getDataInfo(){
 		if (protocol_ids.indexOf(sample_info[x].protocol_id) < 0 ){
 			protocol_ids.push(sample_info[x].protocol_id);
 		}
-		if (treatment_ids.indexOf(sample_info[x].id && sample_info[x].id != null) < 0 ){
-			treatment_ids.push(sample_info[x].id);
+		if (treatment_ids.indexOf(sample_info[x].treatment_id && sample_info[x].treatment_id != null) < 0 ){
+			treatment_ids.push(sample_info[x].treatment_id);
 		}
 		if (antibody_lot_ids.indexOf(sample_info[x].antibody_lot_id) < 0 && sample_info[x].antibody_lot_id != null){
 			antibody_lot_ids.push(sample_info[x].antibody_lot_id);
@@ -627,8 +629,6 @@ function createEncodeJson(json_type){
 			if (sample_info[x].experiment_acc != null) {
 				post_bool = false;
 			}
-                        //json['target']='/targets/H3K27ac-human/'
-                        //json["documents"]= ["/documents/342b2d20-53cf-4698-b7db-48fefe735f56/"]
 			json = createJSON(json, x, experiment_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'treatment') {
 			terms = treatment_terms;
@@ -643,9 +643,7 @@ function createEncodeJson(json_type){
 			terms = biosample_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
 			json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
-                        if (treatment_index>0){
-			   json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
-                        }
+			json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
 			biosample_ids.push(sample_info[x].id);
 			biosample_accs.push(sample_info[x].biosample_acc);
 			if (sample_info[x].biosample_acc != null) {
@@ -665,8 +663,6 @@ function createEncodeJson(json_type){
 		}else if (json_type == 'antibody') {
 			terms = antibody_terms;
 			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_index].product_id];
-			json['targets'] = [antibody_info[antibody_index].target]
-			json['purifications'] = [antibody_info[antibody_index].purifications]
 			antibody_ids.push(antibody_info[x].id);
 			antibody_accs.push(antibody_info[x].antibody_lot_uuid);
 			if (antibody_info[x].antibody_lot_uuid != null) {
@@ -723,7 +719,7 @@ function createJSON(json, sample, terms, exp, lane, proto, treatment, antibody){
 								}
 						}else if (k == 'lane_info') {
 								if (lane_info[lane][terms[k][p]] != undefined) {
-									json[p] = lane_info[lane][terms[k][p]]
+										json[p] = lane_info[lane][terms[k][p]]
 								}
 						}
 						
@@ -800,8 +796,6 @@ function encodeSubmission(name, json, subType, type, table){
 		accs = replicate_uuids;
 	}
 	if (subType == "post") {
-		console.log(name);
-		console.log(json);
 		$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/ajax/encode_post.php",
 			data: { json_name: name, json_passed: json },
@@ -814,8 +808,6 @@ function encodeSubmission(name, json, subType, type, table){
 			}
 		});
 	}else{
-		console.log("PATCH started")
-                console.log(name)
 		$.ajax({ type: "GET",
 			url: BASE_PATH + "/public/ajax/encode_patch.php",
 			data: { json_name: name, json_passed: json, accession: accs.toString() },
@@ -1003,8 +995,6 @@ function encodePost(){
 	}
 	//	BIOSAMPLE SUBMISSION
 	console.log('biosample')
-	console.log("0:"+JSON.stringify(biosample_json[0]))
-	console.log("1:"+JSON.stringify(biosample_json[1]))
 	if (biosample_json[0].toString() != "") {
 		responseOutput += encodeSubmission('biosamples', biosample_json[0], "post", "biosample", "ngs_samples");
 	}
@@ -1013,8 +1003,6 @@ function encodePost(){
 	}
 	//	LIBRARY SUBMISSION
 	console.log('library')
-	console.log("0:"+JSON.stringify(library_json[0]))
-	console.log("1:"+JSON.stringify(library_json[1]))
 	if (library_json[0].toString() != "") {
 		responseOutput += encodeSubmission('libraries', library_json[0], "post", "library", "ngs_samples");
 	}
@@ -1033,8 +1021,6 @@ function encodePost(){
 	}
 	//	REPLICATE SUBMISSION
 	console.log('replicate')
-        console.log('R0:'+JSON.stringify(replicate_json[0]))
-        console.log('R1:'+JSON.stringify(replicate_json[1]))
 	if (replicate_json[0].toString() != "") {
 		responseOutput += encodeSubmission('replicate', replicate_json[0], "post", "replicate", "ngs_samples");
 	}
